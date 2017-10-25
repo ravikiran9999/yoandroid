@@ -34,6 +34,7 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.BuildConfig;
 import com.yo.android.vox.BalanceHelper;
+import com.yo.dialer.CallHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -292,12 +293,14 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                                                         @Override
                                                         public void onFailure(Call<ResponseBody> call, Throwable t) {
                                                             closeActivityAddBalance(Activity.RESULT_CANCELED, null);
+                                                            CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, "", "", "Failed to load balance");
                                                         }
                                                     });
                                                     break;
                                                 case 600:
                                                     Util.hideKeyboard(getActivity(), voucherNumberEdit);
                                                     mToastFactory.showToast(response.body().getData().toString());
+                                                    CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, "", "", "Failed to recharge voucher because of " + response.body().getData().toString());
                                                     closeActivityAddBalance(Activity.RESULT_CANCELED, null);
                                                     break;
                                                 case 708:
@@ -307,6 +310,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                                                     break;
                                                 default:
                                                     showMessage(R.string.invalid_voucher);
+                                                    CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, "", "", getResources().getString(R.string.invalid_voucher));
                                                     break;
                                             }
                                         } catch (ClassCastException e) {
@@ -314,10 +318,12 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                                         }
                                     } else {
                                         showMessage(R.string.invalid_voucher);
+                                        CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, "", "", getResources().getString(R.string.invalid_voucher));
                                     }
 
                                 } else {
                                     showMessage(R.string.invalid_voucher);
+                                    CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, "", "", getResources().getString(R.string.invalid_voucher));
                                 }
 
                             }
@@ -327,7 +333,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
 
                                 Util.hideKeyboard(getActivity(), voucherNumberEdit);
                                 mToastFactory.showToast(R.string.invalid_voucher);
-
+                                CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, "", "", getResources().getString(R.string.invalid_voucher));
                             }
                         });
                     } else {

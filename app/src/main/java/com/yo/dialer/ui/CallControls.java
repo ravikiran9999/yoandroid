@@ -15,12 +15,13 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.yo.android.R;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.dialer.DialerLogs;
+import com.yo.dialer.YoSipService;
 
 /**
  * Created by root on 17/8/17.
  */
 
-class CallControls {
+public class CallControls {
     private static final String TAG = CallControls.class.getSimpleName();
 
     public static CallControlsModel getCallControlsModel() {
@@ -35,14 +36,24 @@ class CallControls {
                 Boolean flag = Boolean.valueOf(v.getTag().toString());
                 DialerLogs.messageE(TAG, "toggleHold == v.getTag = " + flag);
                 sipBinder.getYOHandler().setHold(!flag);
-                changeSelection(v, !flag);
-                if (!flag) {
-                    callControlsModel.setHoldOn(true);
-                } else {
-                    callControlsModel.setHoldOn(false);
+                if(YoSipService.changeHoldUI) {
+                    changeSelection(v, !flag);
+                    if (!flag) {
+                        callControlsModel.setHoldOn(true);
+                        DialerLogs.messageE(TAG, "setHoldOn if ==" + !flag);
+                    } else {
+                        DialerLogs.messageE(TAG, "setHoldOn else ==");
+                        callControlsModel.setHoldOn(false);
+                        if (callControlsModel.isMicOn()) {
+                            DialerLogs.messageE(TAG, "If mic is on keep it on");
+                            callControlsModel.setMicOn(true);
+                            //sipBinder.getYOHandler().setMic(true);
+                        }
+                    }
+                    v.setTag(!flag);
+                    DialerLogs.messageE(TAG, "toggleHold Changing ==" + !flag);
+                    YoSipService.changeHoldUI = false;
                 }
-                v.setTag(!flag);
-                DialerLogs.messageE(TAG, "toggleHold Changing ==" + !flag);
                 return flag;
             } else {
                 DialerLogs.messageE(TAG, "YO====toggleHold == v.getTag null");

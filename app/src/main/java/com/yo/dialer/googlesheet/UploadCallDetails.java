@@ -87,7 +87,7 @@ public class UploadCallDetails {
         } else if (credential.getSelectedAccountName() == null) {
             chooseAccount(context, credential);
         } else if (!isDeviceOnline(context)) {
-
+               
         } else {
             new MakeRequestTask(credential, "").execute();
         }

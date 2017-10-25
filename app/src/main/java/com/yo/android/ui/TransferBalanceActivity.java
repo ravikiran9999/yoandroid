@@ -31,6 +31,7 @@ import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
+import com.yo.dialer.CallHelper;
 
 import java.text.DecimalFormat;
 import java.util.regex.Matcher;
@@ -288,41 +289,27 @@ public class TransferBalanceActivity extends BaseActivity {
                                     showAlertDialog(response.body().getBalance(),getString(R.string.transfer_success), getString(R.string.successful_transfer, mName), R.drawable.right_icon, true);
                                     break;
                                 case 606:
-                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
-
-                                    break;
                                 case 607:
-                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
-                                    break;
                                 case 608:
-                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
-                                    break;
                                 case 609:
-                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
-                                    break;
                                 case 610:
-                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
-                                    break;
                                 case 611:
-                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
-                                    break;
                                 case 612:
-                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
-                                    break;
                                 case 613:
-                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
-                                    break;
                                 case 614:
-                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
-                                    break;
                                 case 615:
-                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
-                                    break;
                                 case 616:
                                     showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
+                                    CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, phoneNo, name, "Failed to transfer balance because of " + response.body().getData().toString());
                                     break;
                                 default:
-                                    mToastFactory.showToast(R.string.transfer_balance_failed);
+                                    if(response.body().getData() != null) {
+                                        mToastFactory.showToast(response.body().getData().toString());
+                                        CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, phoneNo, name, "Failed to transfer balance because of " + response.body().getData().toString());
+                                    } else {
+                                        mToastFactory.showToast(R.string.transfer_balance_failed);
+                                        CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, phoneNo, name, "Failed to transfer balance");
+                                    }
                                     break;
                             }
                         } catch (ClassCastException e) {
@@ -330,9 +317,11 @@ public class TransferBalanceActivity extends BaseActivity {
                         }
                     } else {
                         mToastFactory.showToast(R.string.transfer_balance_failed);
+                        CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, phoneNo, name, "Failed to transfer balance");
                     }
                 } else {
                     mToastFactory.showToast(R.string.transfer_balance_failed);
+                    CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, phoneNo, name, "Failed to transfer balance");
                 }
             }
 
@@ -341,7 +330,7 @@ public class TransferBalanceActivity extends BaseActivity {
                 dismissProgressDialog();
 
                 mToastFactory.showToast(R.string.transfer_balance_failed);
-
+                CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, phoneNo, name, "Failed to transfer balance");
             }
         });
     }

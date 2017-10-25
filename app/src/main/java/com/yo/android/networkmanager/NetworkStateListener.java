@@ -9,13 +9,17 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
+
+import com.yo.services.BackgroundServices;
 
 /**
-* Created by Rajesh Babu Polamarasetti on 11/6/15.
-*/
+ * Created by Rajesh Babu Polamarasetti on 11/6/15.
+ */
 public class NetworkStateListener extends BroadcastReceiver {
 
     public static final int NETWORK_CONNECTED = 1;
+    public static final String YO_NETWORK_STATE_CONNECTED = "yo.action.network_state_connected";
 
     public static final int NO_NETWORK_CONNECTIVITY = 2;
 
@@ -30,6 +34,7 @@ public class NetworkStateListener extends BroadcastReceiver {
             if (networkInfo != null && networkInfo.getState() == NetworkInfo.State.CONNECTED
                     && !LISTENERS.isEmpty()) {
                 setNetworkState(NETWORK_CONNECTED);
+                startContactSync(context);
             } else if (networkInfo != null && networkInfo.getState() == NetworkInfo.State.DISCONNECTED && !LISTENERS.isEmpty()) {
                 setNetworkState(NO_NETWORK_CONNECTIVITY);
             }
@@ -38,12 +43,19 @@ public class NetworkStateListener extends BroadcastReceiver {
 
     }
 
+    private void startContactSync(Context context) {
+        Intent service = new Intent(context, BackgroundServices.class);
+        service.setAction(BackgroundServices.SYNC_OFFLINE_CONTACTS);
+        context.startService(service);
+    }
+
     private void setNetworkState(int networkConnected) {
         for (NetworkStateChangeListener mlistener : LISTENERS) {
             if (mlistener != null) {
                 mlistener.onNetworkStateChanged(networkConnected);
             }
         }
+
     }
 
     public static void registerNetworkState(NetworkStateChangeListener listener) {

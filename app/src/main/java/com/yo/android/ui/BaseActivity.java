@@ -150,7 +150,7 @@ public class BaseActivity extends ParentActivity {
         List<List<Object>> values = new ArrayList<>();
         String range = " ";
         if (type.equals("Calls")) {
-            range = "Calls17.4.1.0!A:L";
+            range = "RajeshCalls!A:L";
             DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
             if (TextUtils.isEmpty(model.getCallee().trim())) {
                 model.setCallee("Unknow..");
@@ -182,6 +182,20 @@ public class BaseActivity extends ParentActivity {
             }
             values = Arrays.asList(
                     Arrays.asList((Object) model.getName(), (Object) model.getCaller(), model.getCallee(), model.getCallMode(), model.getDate(), model.getTime(), model.getComments()
+                    )
+            );
+        } else if (type.equals("BalanceFailures")) {
+            range = "BalanceFailures!A:G";
+            DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
+            if (TextUtils.isEmpty(model.getCallee().trim())) {
+                model.setCallee("Unknown");
+            }
+
+            if (TextUtils.isEmpty(model.getToName().trim())) {
+                model.setToName("Unknown");
+            }
+            values = Arrays.asList(
+                    Arrays.asList((Object) model.getName(), (Object) model.getCaller(), model.getToName(), model.getCallee(), model.getDate(), model.getTime(), model.getComments()
                     )
             );
         }

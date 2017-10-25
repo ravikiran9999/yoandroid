@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.yo.dialer.CallExtras;
 import com.yo.dialer.DialerLogs;
+import com.yo.services.BackgroundServices;
 
 /**
  * Created by root on 23/8/17.
@@ -21,6 +22,14 @@ public class StartServiceAtBootReceiver extends BroadcastReceiver {
         if ("android.intent.action.BOOT_COMPLETED".equals(intent.getAction())) {
             Intent service = new Intent(context, com.yo.dialer.YoSipService.class);
             service.setAction(CallExtras.REGISTER);
+            context.startService(service);
+
+            service = new Intent(context, BackgroundServices.class);
+            service.setAction(BackgroundServices.FETCH_CALL_RATES);
+            context.startService(service);
+
+            service = new Intent(context, BackgroundServices.class);
+            service.setAction(BackgroundServices.SYNC_OFFLINE_CONTACTS);
             context.startService(service);
             Log.v(TAG, "Service loaded at start");
         }

@@ -58,6 +58,14 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         notifyDataSetChanged();
     }
 
+    public void updateItems(List<T> list) {
+        if (list != null) {
+            mList = new ArrayList<>(list);
+            mOriginalList = new ArrayList<>(list);
+            notifyDataSetChanged();
+        }
+    }
+
     public void addChatRoomItems(List<T> list) {
         mList = new ArrayList<>(list);
         if (mOriginalList.size() == 0) {
@@ -204,7 +212,7 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
         String searchKey = key.trim();
         if (searchKey.isEmpty()) {
             try {
-                Collections.sort((ArrayList<Room>)mOriginalList, new Comparator<Room>() {
+                Collections.sort((ArrayList<Room>) mOriginalList, new Comparator<Room>() {
                     @Override
                     public int compare(Room lhs, Room rhs) {
                         return Long.valueOf(rhs.getTime()).compareTo(lhs.getTime());
@@ -267,8 +275,8 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
             temp = new ArrayList<>();
             if (contactType.equalsIgnoreCase(Constants.Yo_CONT_FRAG)) {
                 if (mOriginalList != null && mOriginalList.size() > 0) {
-                    Contact mContact = ((Contact)mOriginalList.get(0));
-                    if(mContact.getNexgieUserName() == null && mContact.getPhoneNo() == null && mContact.getFirebaseRoomId() == null) {
+                    Contact mContact = ((Contact) mOriginalList.get(0));
+                    if (mContact.getNexgieUserName() == null && mContact.getPhoneNo() == null && mContact.getFirebaseRoomId() == null) {
                         temp.add(0, mOriginalList.get(0));
                     }
                 }
@@ -279,10 +287,9 @@ public abstract class AbstractBaseAdapter<T, V extends AbstractViewHolder> exten
                 } else if (((Contact) event).getPhoneNo() != null && ((Contact) event).getPhoneNo().contains(searchKey)) {
                     temp.add(event);
                 }
-
             }
 
-            if (temp.size() == 0 || temp.size() == 1 && ((Contact)temp.get(0)).getNexgieUserName() == null && contactType.equalsIgnoreCase(Constants.Yo_CONT_FRAG)) {
+            if (temp.size() == 0 || temp.size() == 1 && ((Contact) temp.get(0)).getNexgieUserName() == null && contactType.equalsIgnoreCase(Constants.Yo_CONT_FRAG)) {
                 noSearchResult.setVisibility(View.VISIBLE);
             } else {
                 noSearchResult.setVisibility(View.GONE);

@@ -121,7 +121,7 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
         holder.getMessageView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (item.getYoAppUser()) {
+                if (item.isYoAppUser()) {
 
                     navigateToChatScreen(item);
 
@@ -150,7 +150,7 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
             }
         });
 
-        if (item.getYoAppUser()) {
+        if (item.isYoAppUser()) {
             holder.getMessageView().setImageResource(R.drawable.ic_message);
             holder.getCallView().setImageResource(R.drawable.yo_call_free);
         } else {

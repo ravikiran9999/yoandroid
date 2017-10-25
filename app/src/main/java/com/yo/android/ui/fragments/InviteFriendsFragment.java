@@ -1,15 +1,10 @@
 package com.yo.android.ui.fragments;
 
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.MenuItemCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,14 +18,11 @@ import android.widget.TextView;
 import com.yo.android.R;
 import com.yo.android.adapters.InviteFriendsAdapter;
 import com.yo.android.chat.firebase.ContactsSyncManager;
-import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.Contact;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -105,7 +97,7 @@ public class InviteFriendsFragment extends BaseFragment implements AdapterView.O
                     List<Contact> contacts = mSyncManager.getContacts();
 
                     for (Contact con : contacts) {
-                        if (!con.getYoAppUser()) {
+                        if (!con.isYoAppUser()) {
                             nonYoAppContacts.add(con);
                         }
                     }
@@ -137,7 +129,7 @@ public class InviteFriendsFragment extends BaseFragment implements AdapterView.O
             List<Contact> nonYoAppContacts = new ArrayList<Contact>();
             List<Contact> contacts = mSyncManager.getContacts();
             for (Contact con : contacts) {
-                if (!con.getYoAppUser()) {
+                if (!con.isYoAppUser()) {
                     nonYoAppContacts.add(con);
                 }
             }
