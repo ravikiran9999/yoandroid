@@ -115,6 +115,7 @@
     </string-array>
     <string name="title_activity_magazine_article_details">MagazineArticleDetailsActivity</string>
     <string name="connectivity_network_settings">Unable to connect, Please check your network connection.</string>
+    <string name="socket_time_out">Uh! something went wrong. Please retry.</string>
     <string name="enter_mobile_number_started">Enter your mobile number to get started!</string>
     <string name="no_call_history">No call logs history available</string>
     <string name="no_history">No %s history available.</string>
@@ -232,7 +233,7 @@
     <string name="tc"><u>Privacy policy</u></string>
     <string name="add_balance_from_google_play">Add balance from Google Play</string>
     <string name="add_balance_from_voucher">Add balance from Voucher</string>
-    <string name="transfer_balance">Transfer Balance</string>
+
     <string name="button_allow">Allow</string>
     <string name="button_deny">Deny</string>
     <string name="permission_pick_rationale">READ_EXTERNAL_STORAGE permission is needed to pick image.</string>
@@ -258,6 +259,18 @@
     <string name="your_credit_balance">Your credit balance :</string>
 
     <string name="your_total_balance">Your yo balance</string>
+
+    <string name="your_yo_balance">Your\n YO! balance\n %1$s</string>
+    <string name="transfer_balance">Transfer Balance</string>
+    <string name="add_voucher_balance">Add Balance from Voucher</string>
+    <string name="offers">Offers</string>
+    <string name="give">GIVE</string>
+    <string name="five">$ 5</string>
+    <string name="ten">$ 10</string>
+    <string name="twenty">$ 20</string>
+    <string name="currency_code_with_denomination">%1$s %2$s </string>
+    <string name="transfer_amount">Amount To Transfer %1$s</string>
+
 
     <string name="invalid_request">Invalid Request.</string>
     <string name="insufficient_amount">Insufficient amount.</string>
@@ -403,5 +416,5 @@
 
     <!--error messages-->
     <string name="like_unlike_error_message">Something went wrong. Please try again</string>
-
+    <string name="nexge_register_error">Failed to register user with nexge</string>
 </resources>

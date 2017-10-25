@@ -48,6 +48,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.yo.android.ui.BottomTabsActivity.activity;
+
 public class CreditAccountFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, BalanceAdapter.MoreItemListener {
 
     private static final String TAG = CreditAccountFragment.class.getSimpleName();
@@ -216,7 +218,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                 data.add(new MoreData(activity.getString(R.string.transfer_balance), true, null));
             }
 
-            data.add(SEPERATOR);
+            //data.add(SEPERATOR);
 
         }
         balanceAdapter.addItems(data);
@@ -277,7 +279,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                                 if (response.isSuccessful()) {
                                     if (response.code() == 200) {
                                         try {
-                                            int statusCode = Integer.parseInt(response.body().getCode());
+                                            int statusCode = response.body().getCode();
                                             switch (statusCode) {
                                                 case 200:
                                                     mToastFactory.showToast(R.string.voucher_recharge_successful);
@@ -299,6 +301,11 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                                                     Util.hideKeyboard(getActivity(), voucherNumberEdit);
                                                     mToastFactory.showToast(response.body().getData().toString());
                                                     CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, "", "", "Failed to recharge voucher because of " + response.body().getData().toString());
+                                                    closeActivityAddBalance(Activity.RESULT_CANCELED, null);
+                                                    break;
+                                                case 708:
+                                                    Util.hideKeyboard(getActivity(), voucherNumberEdit);
+                                                    mToastFactory.showToast(response.body().getData().toString());
                                                     closeActivityAddBalance(Activity.RESULT_CANCELED, null);
                                                     break;
                                                 default:
@@ -371,12 +378,12 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                 } else {
                     String balance = mBalanceHelper.getCurrentBalance();
                     String currencySymbol = mBalanceHelper.getCurrencySymbol();
-                    boolean userType = preferenceEndPoint.getBooleanPreference(Constants.USER_TYPE, false);
-                    if(userType) {
+                    /*boolean userType = preferenceEndPoint.getBooleanPreference(Constants.USER_TYPE, false);
+                    if (userType) {
                         TransferBalanceActivity.start(activity, currencySymbol, balance, true);
                     } else {
                         TransferBalanceSelectContactActivity.start(activity, balance, false);
-                    }
+                    }*/
                 }
 
             }
