@@ -230,6 +230,7 @@ import dagger.Provides;
                 CallLogDetailsActivity.class,
                 FireBaseAuthToken.class,
                 NewDailerActivity.class,
+                NewContactsFragment.class,
                 MainImageCropActivity.class,
                 UserChatAdapter.class,
                 Util.class,

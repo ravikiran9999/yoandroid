@@ -23,4 +23,10 @@
         <attr name="indicatorName" format="string"/>
         <attr name="indicatorColor" format="color"/>
     </declare-styleable>
+
+        <declare-styleable name="YoChatMessageBox">
+            <attr name="viewPartMain" format="reference"></attr>
+            <attr name="viewPartSlave" format="reference"></attr>
+        </declare-styleable>
+
 </resources>

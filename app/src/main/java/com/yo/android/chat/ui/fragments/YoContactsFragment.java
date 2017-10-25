@@ -194,9 +194,9 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                 /*Intent intent = new Intent(activity, CreateGroupActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivityForResult(intent, CREATE_GROUP_RESULT);*/
-            } else if (activity != null && contact.getNexgieUserName() != null && forwardChatMessages != null && contact.getYoAppUser()) {
+            } else if (activity != null && contact.getNexgieUserName() != null && forwardChatMessages != null && contact.isYoAppUser()) {
                 ChatActivity.start(activity, contact, forwardChatMessages);
-            } else if (activity != null && contact.getNexgieUserName() != null && contact.getYoAppUser()) {
+            } else if (activity != null && contact.getNexgieUserName() != null && contact.isYoAppUser()) {
                 ChatActivity.start(activity, contact, share);
             }
         } catch (NullPointerException | IndexOutOfBoundsException e) {
@@ -241,7 +241,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
             List<Contact> yoList = new ArrayList<>();
 
             for (Contact contact : contactList) {
-                if (contact.getYoAppUser()) {
+                if (contact.isYoAppUser()) {
                     yoList.add(contact);
                 }
             }
@@ -260,7 +260,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         ArrayList<String> stringArrayList = new ArrayList<>();
         for (Contact contact : contactList) {
             if (getArguments().getBoolean(Constants.IS_CHAT_FORWARD, false)) {
-                if (contact.getYoAppUser()) {
+                if (contact.isYoAppUser()) {
                     stringArrayList.add(contact.getName());
                 }
             } else {

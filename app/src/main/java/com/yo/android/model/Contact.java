@@ -90,7 +90,7 @@ public class Contact implements Parcelable {
         this.phoneNo = phoneNo;
     }
 
-    public boolean getYoAppUser() {
+    public boolean isYoAppUser() {
         return yoAppUser;
     }
 

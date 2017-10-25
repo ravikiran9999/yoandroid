@@ -23,10 +23,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.google.gson.Gson;
@@ -40,9 +39,7 @@ import com.yo.android.helpers.PopupHelper;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Popup;
 import com.yo.android.provider.YoAppContactContract;
-import com.yo.android.sync.SyncUtils;
 import com.yo.android.ui.BottomTabsActivity;
-import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.PopupDialogListener;
@@ -265,7 +262,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_CONTACT_REQUEST) {
-           
+            Toast.makeText(getActivity(), "Contect added", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -290,7 +287,7 @@ public class ContactsFragment extends BaseFragment implements AdapterView.OnItem
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Contact contact = (Contact) listView.getItemAtPosition(position);
-        if (contact.getYoAppUser()) {
+        if (contact.isYoAppUser()) {
             Intent intent = new Intent(getActivity(), UserProfileActivity.class);
             intent.putExtra(Constants.CONTACT, contact);
             startActivity(intent);

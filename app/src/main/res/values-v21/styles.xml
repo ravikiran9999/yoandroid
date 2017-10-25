@@ -1,8 +1,18 @@
-<resources>>
+<resources xmlns:tools="http://schemas.android.com/tools">>
     <style name="activated" parent="android:Theme.Material">
         <item name="android:activatedBackgroundIndicator">@drawable/list_activated_background</item>
         <item name="android:background">?android:attr/activatedBackgroundIndicator</item>
         <item name="actionModeBackground">@color/colorPrimary</item>
         <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="PhotoAppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+        <item name="android:windowActionBarOverlay">true</item>
+
+        <item name="android:windowActivityTransitions" tools:targetApi="lollipop">true</item>
+        <!--For compatibility-->
+        <item name="actionBarStyle">@style/MyActionBar</item>
+        <item name="windowActionBarOverlay">true</item>
     </style>
 </resources>

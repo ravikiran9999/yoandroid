@@ -3,8 +3,6 @@ package com.yo.android.ui;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentProviderOperation;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -23,37 +20,30 @@ import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.gson.Gson;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.GroupActionAdapter;
 import com.yo.android.adapters.ProfileMembersAdapter;
-import com.yo.android.api.YOUserInfo;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
-import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.NonScrollListView;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.Contact;
 import com.yo.android.model.GroupAction;
 import com.yo.android.model.GroupMembers;
 import com.yo.android.model.GroupSubject;
-import com.yo.android.model.NotificationCountReset;
 import com.yo.android.model.RoomInfo;
 import com.yo.android.model.UserProfile;
 import com.yo.android.model.UserProfileInfo;
@@ -340,7 +330,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 profileNumber.setVisibility(View.GONE);
                 profileName.setVisibility(View.GONE);
             }
-            if (contact.getYoAppUser()) {
+            if (contact.isYoAppUser()) {
                 profileMsg.setImageResource(R.mipmap.ic_profile_chat);
             } else {
                 profileMsg.setImageResource(R.drawable.ic_invitefriends);
@@ -395,7 +385,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
     @OnClick(R.id.profile_message)
     public void messageUser() {
-        if (contact != null && contact.getYoAppUser()) {
+        if (contact != null && contact.isYoAppUser()) {
             if (fromChatRooms) {
                 finish();
             } else {

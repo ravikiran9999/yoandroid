@@ -39,7 +39,6 @@ import com.yo.android.di.Injector;
 import com.yo.android.model.Contact;
 import com.yo.android.provider.YoAppContactContract;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -310,7 +309,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
         List<Entry> list = new ArrayList<>();
         for (Contact contact : contacts) {
             Entry entry = new Entry(contact.getId(),
-                    contact.getName(), contact.getPhoneNo(), contact.getImage(), contact.getFirebaseRoomId(), contact.getYoAppUser(), contact.getNexgieUserName(), contact.getCountryCode());
+                    contact.getName(), contact.getPhoneNo(), contact.getImage(), contact.getFirebaseRoomId(), contact.isYoAppUser(), contact.getNexgieUserName(), contact.getCountryCode());
             list.add(entry);
         }
         return list;

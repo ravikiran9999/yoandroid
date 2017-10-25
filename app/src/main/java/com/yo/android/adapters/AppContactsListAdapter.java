@@ -11,7 +11,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
 import com.yo.android.helpers.AppRegisteredContactsViewHolder;
-import com.yo.android.helpers.RegisteredContactsViewHolder;
 import com.yo.android.helpers.Settings;
 import com.yo.android.model.Contact;
 import com.yo.android.photo.TextDrawable;
@@ -74,7 +73,7 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
                 holder.getContactNumber().setVisibility(View.GONE);
             }
 
-            if (!item.getYoAppUser()) {
+            if (!item.isYoAppUser()) {
                 holder.getInviteContact().setImageResource(R.drawable.ic_invitefriends);
                 holder.getInviteContact().setVisibility(View.VISIBLE);
             } else {
