@@ -4,7 +4,7 @@ package com.yo.dialer.ui;
  * Created by root on 17/8/17.
  */
 
-class CallControlsModel {
+public class CallControlsModel {
     private boolean isSpeakerOn;
     private boolean isHoldOn;
     private boolean isMicOn;

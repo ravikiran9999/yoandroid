@@ -257,7 +257,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 data.setIsChecked(false);
             }
 
-            Log.d("MagazineBaseAdapter", "Title and liked " + data.getTitle() + " " + Boolean.valueOf(data.getLiked()));
             holder.magazineLike.setText("");
             holder.magazineLike.setChecked(Boolean.valueOf(data.getLiked()));
 
@@ -443,7 +442,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             .listener(new RequestListener<String, GlideDrawable>() {
                                 @Override
                                 public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                                    mToastFactory.newToast(e.getMessage(), Toast.LENGTH_SHORT);
+                                    if(e!= null) {
+                                        mToastFactory.newToast(e.getMessage(), Toast.LENGTH_SHORT);
+                                    }
                                     return false;
                                 }
 

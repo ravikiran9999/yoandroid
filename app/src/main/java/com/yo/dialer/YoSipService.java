@@ -167,6 +167,8 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     private LocalBroadcastManager mLocalBroadcastManager; // for while gettin normal phone call, current call state should change
 
+    public static boolean changeHoldUI;
+
     public YoSipServiceHandler getSipServiceHandler() {
         return sipServiceHandler;
     }
@@ -543,13 +545,17 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             }
             if (yoCurrentCall != null && !yoCurrentCall.isPendingReInvite()) {
                 CallHelper.unHoldCall(yoCurrentCall);
-                yoCurrentCall.setPendingReInvite(true);
+                changeHoldUI = true;
             } else {
                 DialerLogs.messageE(TAG, "YO===Pending Re-Inviting");
+                yoCurrentCall.setPendingReInvite(true);
+                YoSipService.changeHoldUI = false;
             }
         } catch (Exception e) {
             getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_RE_CONNECTING);
             DialerLogs.messageE(TAG, "YO===Re-Inviting failed" + e.getMessage());
+            yoCurrentCall.setPendingReInvite(true);
+            YoSipService.changeHoldUI = false;
         }
     }
 
@@ -574,13 +580,21 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     public void setHold(boolean isHold) {
         DialerLogs.messageE(TAG, "Call HOld" + isHold);
         if (isHold) {
-            CallHelper.holdCall(yoCurrentCall, preferenceEndPoint, phoneNumber);
+            if(!yoCurrentCall.isPendingReInvite()) {
+                CallHelper.holdCall(yoCurrentCall, preferenceEndPoint, phoneNumber);
+                changeHoldUI = true;
+            }
         } else {
             try {
-                CallHelper.unHoldCall(yoCurrentCall);
-                CallHelper.uploadToGoogleSheet(preferenceEndPoint, phoneNumber, "Hold Off");
+                if(!yoCurrentCall.isPendingReInvite()) {
+                    CallHelper.unHoldCall(yoCurrentCall);
+                    CallHelper.uploadToGoogleSheet(preferenceEndPoint, phoneNumber, "Hold Off");
+                    changeHoldUI = true;
+                }
             } catch (Exception e) {
                 DialerLogs.messageE(TAG, "YO===Re-Inviting failed" + e.getMessage());
+                yoCurrentCall.setPendingReInvite(true);
+                changeHoldUI = false;
                 CallHelper.uploadToGoogleSheet(preferenceEndPoint, phoneNumber, "Hold Off failed because of " + e.getMessage());
             }
         }
@@ -591,21 +605,24 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     }
 
     public void callDisconnected(String code, String reason, String comment) {
-        SipHelper.isAlreadyStarted = false;
-
-        setCurrentCallToNull();
-        //If the call is rejected should stop rigntone
-        stopDefaultRingtone();
-        DialerLogs.messageE(TAG, "callDisconnected" + reason);
-        long callduration = storeCallLog(phoneNumber, callType, callStarted);
-        uploadGoogleSheet(code, reason, comment, callduration, null);
-        Util.cancelNotification(this, callNotificationId);
-        if (sipServiceHandler != null) {
-            sipServiceHandler.callDisconnected(reason);
+        if(getYoCurrentCall() == null && reason.equalsIgnoreCase("Registration request timeout")) {
+            uploadGoogleSheet(code, reason, comment, 0, null);
         } else {
-            DialerLogs.messageE(TAG, "SipServiceHandler is null");
+            SipHelper.isAlreadyStarted = false;
+            setCurrentCallToNull();
+            //If the call is rejected should stop rigntone
+            stopDefaultRingtone();
+            DialerLogs.messageE(TAG, "callDisconnected" + reason);
+            long callduration = storeCallLog(phoneNumber, callType, callStarted);
+            uploadGoogleSheet(code, reason, comment, callduration, null);
+            Util.cancelNotification(this, callNotificationId);
+            if (sipServiceHandler != null) {
+                sipServiceHandler.callDisconnected(reason);
+            } else {
+                DialerLogs.messageE(TAG, "SipServiceHandler is null");
+            }
+            callStarted = 0;
         }
-        callStarted = 0;
     }
 
     public void uploadGoogleSheet(String code, String reason, String comment, long callduration, String missedCallNumber) {

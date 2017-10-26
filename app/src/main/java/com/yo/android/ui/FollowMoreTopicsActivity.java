@@ -615,7 +615,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
     private void navigation() {
         Intent myCollectionsIntent = new Intent(FollowMoreTopicsActivity.this, BottomTabsActivity.class);
         myCollectionsIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        ArrayList<String> tagIds = new ArrayList<String>(followedTopicsIdsList);
+        ArrayList<String> tagIds = new ArrayList<>(followedTopicsIdsList);
         myCollectionsIntent.putStringArrayListExtra("tagIds", tagIds);
         startActivity(myCollectionsIntent);
         finish();
