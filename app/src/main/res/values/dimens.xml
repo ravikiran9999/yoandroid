@@ -97,4 +97,6 @@
     <dimen name="pin_min_width">32dp</dimen>
     <dimen name="balance_txt_size">14sp</dimen>
     <dimen name="d5">5dp</dimen>
+    <dimen name="d2">2dp</dimen>
+
 </resources>

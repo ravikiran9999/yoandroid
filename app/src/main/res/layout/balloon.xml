@@ -22,9 +22,9 @@
             android:layout_width="272dp"
             android:layout_height="wrap_content"
             android:layout_gravity="right|bottom"
-            android:layout_marginBottom="@dimen/d5"
+            android:layout_marginBottom="@dimen/d2"
             android:layout_marginLeft="@dimen/d5"
-            android:layout_marginTop="@dimen/d5"
+            android:layout_marginTop="@dimen/d2"
             android:gravity="left|center_vertical"
             android:padding="@dimen/d5"
             app:viewPartMain="@+id/chat_msg"
@@ -38,7 +38,7 @@
                 android:layout_gravity="right|bottom"
                 android:focusableInTouchMode="false"
                 android:gravity="left|top"
-                android:text="hjjfg" />
+                android:textSize="16sp" />
 
             <LinearLayout
                 android:id="@+id/lytStatusContainer"
@@ -53,7 +53,6 @@
                     style="@style/BallonMessageTimeText"
                     android:layout_alignParentRight="true"
                     android:layout_gravity="right|bottom"
-                    android:layout_marginRight="5dp"
                     android:gravity="right"
                     android:maxLines="1" />
 
@@ -62,9 +61,7 @@
                     layout="@layout/layout_im_message_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginRight="5dp"
-                    android:minWidth="40dp" />
+                    android:layout_gravity="bottom" />
 
             </LinearLayout>
 
