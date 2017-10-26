@@ -12,6 +12,7 @@ import com.yo.android.model.MagazineArticles;
 import com.yo.android.model.Notification;
 import com.yo.android.model.OTPResponse;
 import com.yo.android.model.OwnMagazine;
+import com.yo.android.model.PackageDenomination;
 import com.yo.android.model.PaymentHistoryItem;
 import com.yo.android.model.Response;
 import com.yo.android.model.Room;
@@ -335,6 +336,9 @@ public class YoApi {
 
         @GET("api/balance_transfer_denominations.json")
         Call<List<TransferBalanceDenomination>> transferBalanceDenominationAPI(@Query("access_token") String access_token);
+
+        @GET("api/packages.json")
+        Call<List<PackageDenomination>> giftPackageDenominationApi(@Query("access_token") String access_token);
 
     }
 

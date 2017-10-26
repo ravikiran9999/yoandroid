@@ -270,7 +270,7 @@
     <string name="ten">$ 10</string>
     <string name="twenty">$ 20</string>
     <string name="currency_code_with_denomination">%1$s %2$s </string>
-    <string name="transfer_amount">Amount To Transfer %1$s</string>
+    <string name="transfer_amount">Amount To Transfer <b> %1$s </b></string>
     <string name="mobile_number_hint">Enter mobile number</string>
     <string name="transfer">Transfer</string>
     <string name="transfer_success">Transfer Successful</string>
