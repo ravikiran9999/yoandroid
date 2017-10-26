@@ -41,11 +41,12 @@ public class MagazineDashboardHelper {
 
     /**
      * Gets the dashboard articles
+     *
      * @param magazineFlipArticlesFragment The MagazineFlipArticlesFragment object
-     * @param yoService The YoService object
-     * @param preferenceEndPoint The PreferenceEndPoint object
-     * @param readArticleIds The list of read articles ids
-     * @param unreadArticleIds The list of unread article ids
+     * @param yoService                    The YoService object
+     * @param preferenceEndPoint           The PreferenceEndPoint object
+     * @param readArticleIds               The list of read articles ids
+     * @param unreadArticleIds             The list of unread article ids
      */
 
     public void getDashboardArticles(final MagazineFlipArticlesFragment magazineFlipArticlesFragment, YoApi.YoService yoService, final PreferenceEndPoint preferenceEndPoint, List<String> readArticleIds, List<String> unreadArticleIds, boolean renewal) {
@@ -86,7 +87,7 @@ public class MagazineDashboardHelper {
                     }
                     magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                     magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
-                    if(t.getMessage().equalsIgnoreCase("timeout")) {
+                    if (t != null && t.getMessage() != null && t.getMessage().equalsIgnoreCase("timeout")) {
                         magazineFlipArticlesFragment.serverFailureText.setVisibility(View.VISIBLE);
                     } else {
                         magazineFlipArticlesFragment.networkFailureText.setVisibility(View.VISIBLE);
@@ -99,8 +100,9 @@ public class MagazineDashboardHelper {
 
     /**
      * Removes the read articles
-     * @param totalArticles The list of total articles
-     * @param context The Context
+     *
+     * @param totalArticles      The list of total articles
+     * @param context            The Context
      * @param preferenceEndPoint The PreferenceEndPoint object
      * @return The list of unread articles
      */
@@ -130,11 +132,12 @@ public class MagazineDashboardHelper {
 
     /**
      * Gets the next page of Dashboard articles
+     *
      * @param magazineFlipArticlesFragment The MagazineFlipArticlesFragment object
-     * @param yoService The YoService object
-     * @param preferenceEndPoint The PreferenceEndPoint object
-     * @param readArticleIds The list of read articles ids
-     * @param unreadArticleIds The list of unread article ids
+     * @param yoService                    The YoService object
+     * @param preferenceEndPoint           The PreferenceEndPoint object
+     * @param readArticleIds               The list of read articles ids
+     * @param unreadArticleIds             The list of unread article ids
      */
     public void getMoreDashboardArticles(final MagazineFlipArticlesFragment magazineFlipArticlesFragment, YoApi.YoService yoService, final PreferenceEndPoint preferenceEndPoint, List<String> readArticleIds, List<String> unreadArticleIds, final SwipeRefreshLayout swipeRefreshContainer) {
         if (magazineFlipArticlesFragment != null) {
@@ -188,7 +191,8 @@ public class MagazineDashboardHelper {
 
     /**
      * Removes the read article ids and stores the remaining unread article ids
-     * @param context The Context
+     *
+     * @param context            The Context
      * @param preferenceEndPoint The PreferenceEndPoint object
      */
     public void removeReadArticleIds(Context context, final PreferenceEndPoint preferenceEndPoint) {
@@ -204,13 +208,14 @@ public class MagazineDashboardHelper {
 
     /**
      * Gets more Dashboard articles after following a topic
+     *
      * @param magazineFlipArticlesFragment The MagazineFlipArticlesFragment object
-     * @param yoService The YoService object
-     * @param preferenceEndPoint The PreferenceEndPoint object
-     * @param readArticleIds The list of read articles ids
-     * @param unreadArticleIds The list of unread article ids
-     * @param unreadOtherFollowedArticles The unread other followed articles list
-     * @param followedArticlesList The followed articles list
+     * @param yoService                    The YoService object
+     * @param preferenceEndPoint           The PreferenceEndPoint object
+     * @param readArticleIds               The list of read articles ids
+     * @param unreadArticleIds             The list of unread article ids
+     * @param unreadOtherFollowedArticles  The unread other followed articles list
+     * @param followedArticlesList         The followed articles list
      */
     public void getMoreDashboardArticlesAfterFollow(final MagazineFlipArticlesFragment magazineFlipArticlesFragment, YoApi.YoService yoService, final PreferenceEndPoint preferenceEndPoint, List<String> readArticleIds, List<String> unreadArticleIds, final List<Articles> unreadOtherFollowedArticles, final List<Articles> followedArticlesList) {
         if (magazineFlipArticlesFragment != null) {
@@ -252,12 +257,12 @@ public class MagazineDashboardHelper {
 
     /**
      * Gets the latest Dashboard articles once a day
+     *
      * @param magazineFlipArticlesFragment The MagazineFlipArticlesFragment object
-     * @param yoService The YoService object
-     * @param preferenceEndPoint The PreferenceEndPoint object
-     * @param readArticleIds The list of read articles ids
-     * @param unreadArticleIds The list of unread article ids
-     * @param unreadOtherFollowedArticles The unread other followed articles list
+     * @param yoService                    The YoService object
+     * @param preferenceEndPoint           The PreferenceEndPoint object
+     * @param readArticleIds               The list of read articles ids
+     * @param unreadArticleIds             The list of unread article ids
      */
     public void getDashboardArticlesForDailyService(final MagazineFlipArticlesFragment magazineFlipArticlesFragment, YoApi.YoService yoService, final PreferenceEndPoint preferenceEndPoint, List<String> readArticleIds, List<String> unreadArticleIds) {
         if (magazineFlipArticlesFragment != null) {
@@ -300,9 +305,10 @@ public class MagazineDashboardHelper {
 
     /**
      * Removes the particular key from the cache
-     * @param context The Context
+     *
+     * @param context            The Context
      * @param preferenceEndPoint The PreferenceEndPoint object
-     * @param key The key
+     * @param key                The key
      */
     public static void removeArticlesFromCache(Context context, final PreferenceEndPoint preferenceEndPoint, String key) {
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);

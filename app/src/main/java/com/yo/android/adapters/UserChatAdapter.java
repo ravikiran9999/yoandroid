@@ -164,12 +164,13 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         extraText.setVisibility(View.GONE);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         if (!isRTL) {
             timer.setVisibility(View.GONE);
             sent.setVisibility(View.GONE);
-            seen.setVisibility(View.GONE);
-
+            seen.setVisibility(View.INVISIBLE);
+            //left marging for entire view
             lp.setMargins(30, 0, 0, 0);
             profileNameLayout.setVisibility(View.VISIBLE);
             gravityLayout.setGravity(Gravity.LEFT);
@@ -193,15 +194,10 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             }
             senderNameOrNumber.setTextColor(mColorGenerator.getRandomColor());
         } else {
-            lp.setMargins(0, 0, 0, 0);
+            lp.setMargins(0, 0, 30, 0);
             gravityLayout.setGravity(Gravity.RIGHT);
             profileNameLayout.setVisibility(View.GONE);
             gravityLayout.setBackgroundResource(R.drawable.msg_out_photo);
-            Drawable img = context.getResources().getDrawable(R.drawable.time_loader);
-            img.setBounds(10, 0, 30, 50);
-            img.setBounds(Helper.dp(context, 1), Helper.dp(context, 2), Helper.dp(context, 60), Helper.dp(context, 610));
-            //time.setCompoundDrawables(null, null, img, null);
-           // time.setCompoundDrawablePadding(10);
             String sentText = DateUtil.getTimeFormatForChat(context, item.getTime());
             time.setText(sentText);
 
@@ -217,6 +213,8 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 timer.setVisibility(View.GONE);
             }
         }
+        time.setTextColor(Color.WHITE);
+        time.setVisibility(View.VISIBLE);
         ImageLoader.updateImage(context, item, Constants.YOIMAGES, loadImage, progressBar);
         holder.getLl().addView(view, lp);
     }
@@ -237,8 +235,12 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
         TextView emojiTextView = (TextView) secretChatPlaceholder.findViewById(R.id.chat_msg);
         LinearLayout.LayoutParams rlp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        RelativeLayout.LayoutParams rrlp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
         emojiTextView.setText(item.getMessage());
         emojiTextView.setGravity(Gravity.BOTTOM);
+        rrlp.setMargins(10, 0, 0, 0);
+        emojiTextView.setLayoutParams(rrlp);
         LinearLayout mainLayout = (LinearLayout) secretChatPlaceholder.findViewById(R.id.lytStatusContainer);
         TextView time = (TextView) mainLayout.findViewById(R.id.date_view);
 
@@ -252,6 +254,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             timer.setVisibility(View.GONE);
             sent.setVisibility(View.GONE);
             seen.setVisibility(View.GONE);
+            time.setVisibility(View.VISIBLE);
             rlp.setMargins(30, 0, 0, 0);
             TextView senderId = new TextView(context);
             secretChatPlaceholder.setBackgroundResource(R.drawable.msg_in);
@@ -289,17 +292,19 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             secretChatPlaceholder.setBackgroundResource(R.drawable.msg_out);
             String sentText = DateUtil.getTimeFormatForChat(context, item.getTime());
             time.setText(sentText);
+            time.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+            time.setVisibility(View.VISIBLE);
             if (item.getSent() == 1) {
                 sent.setVisibility(View.VISIBLE);
                 seen.setVisibility(View.GONE);
                 timer.setVisibility(View.GONE);
-
             }
             if (item.getDeliveredTime() != 0) {
                 sent.setVisibility(View.GONE);
                 seen.setVisibility(View.VISIBLE);
                 timer.setVisibility(View.GONE);
             }
+            time.setTextColor(context.getResources().getColor(R.color.dark_bluish_gray));
         }
 
         secretChatPlaceholder.addView(linearLayout1, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, isRTL ? Gravity.RIGHT : Gravity.LEFT, isRTL ? 0 : 7, 0, 1, 0));

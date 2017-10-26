@@ -36,6 +36,7 @@ import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.OTPFragment;
 import com.yo.android.model.CountryCode;
 import com.yo.android.model.Response;
+import com.yo.android.pjsip.SipHelper;
 import com.yo.android.ui.NewOTPActivity;
 import com.yo.android.ui.PlainActivity;
 import com.yo.android.ui.fragments.GeneralWebViewFragment;
@@ -104,6 +105,9 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         bus.register(this);
+        // when user comes to login screen because of token expire, calls should work if user login again.
+        SipHelper.isAlreadyStarted = false;
+
         if (getIntent().getBooleanExtra(Constants.SESSION_EXPIRE, false)) {
             //Toast.makeText(this, "YoApp session expired.", Toast.LENGTH_LONG).show();
             Toast.makeText(this, getString(R.string.logged_in_another_device), Toast.LENGTH_LONG).show();
@@ -151,17 +155,17 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         mCountryCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Util.hideKeyboard(LoginActivity.this,view);
+                Util.hideKeyboard(LoginActivity.this, view);
                 Intent intent = new Intent(LoginActivity.this, CountryCodeActivity.class);
                 startActivityForResult(intent, SELECTED_OK);
 
             }
         });
 
-        mCountryCode.setOnTouchListener(new View.OnTouchListener(){
+        mCountryCode.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Util.hideKeyboard(LoginActivity.this,v);
+                Util.hideKeyboard(LoginActivity.this, v);
                 return false;
             }
         });

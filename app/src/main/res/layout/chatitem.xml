@@ -5,7 +5,7 @@
 
     android:id="@+id/chat_main_layout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_gravity="right"
     android:layout_marginTop="1dp"
     android:gravity="right">
@@ -35,12 +35,11 @@
     </RelativeLayout>
 
 
-
     <com.yo.android.chat.YoChatMessageBox
         android:id="@+id/msg_layout"
         style="@style/BalloonMessageLayoutRight"
         android:layout_width="252dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="right|bottom"
         android:layout_marginBottom="@dimen/d2"
         android:layout_marginLeft="@dimen/d5"
@@ -62,30 +61,38 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/lytStatusContainer"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:gravity="right"
+            android:layout_marginBottom="@dimen/d5"
+            android:layout_marginLeft="@dimen/d5"
+            android:layout_alignParentBottom="true"
+            android:gravity="right|bottom"
+            android:orientation="horizontal"
+            android:background="@drawable/timestampbackground"
             android:minWidth="60dp">
 
-            <TextView
-                android:id="@+id/date_view"
-                style="@style/BallonMessageTimeText"
-                android:layout_alignParentRight="true"
-                android:layout_gravity="right|bottom"
-                android:gravity="bottom"
-                android:maxLines="1" />
+            <include
+                android:id="@+id/lyttimeStatus"
+                layout="@layout/timelayoutout"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom"
+                android:layout_marginRight="3dp"
+                android:layout_marginBottom="4dp"
+                android:minWidth="40dp" />
 
             <include
                 android:id="@+id/lytStatus"
+                android:layout_marginRight="@dimen/d5"
                 layout="@layout/layout_im_message_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom" />
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="4dp" />
 
         </LinearLayout>
     </com.yo.android.chat.YoChatMessageBox>
