@@ -11,7 +11,8 @@
         android:layout_alignParentBottom="true"
         android:layout_gravity="left|bottom"
         android:drawableBottom="@drawable/time_loader"
-        android:gravity="bottom" />
+        android:gravity="bottom"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/sent_txt"
@@ -20,8 +21,8 @@
         android:layout_alignParentBottom="true"
         android:layout_gravity="left|bottom"
         android:drawableBottom="@drawable/sent"
-        android:visibility="gone"
-        android:gravity="bottom" />
+        android:gravity="bottom"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/seen_txt"

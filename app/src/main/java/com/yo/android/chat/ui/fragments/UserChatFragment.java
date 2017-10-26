@@ -64,6 +64,7 @@ import com.yo.android.R;
 import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.CompressImage;
+import com.yo.android.chat.DeleteConfirmationListener;
 import com.yo.android.chat.firebase.Clipboard;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.firebase.FirebaseService;
@@ -79,6 +80,7 @@ import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 import com.yo.android.util.Util;
+import com.yo.dialer.Dialogs;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -259,9 +261,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             if (chatForwards != null) {
                 forwardInt = chatForwards.size() + 1;
                 receiveForward(chatForwards);
-            }else if(share != null && share.getType().equals(Constants.IMAGE)) {
+            } else if (share != null && share.getType().equals(Constants.IMAGE)) {
                 addSelectPicture(share.getUri());
-            } else if(share != null && share.getType().equals(Constants.TEXT)) {
+            } else if (share != null && share.getType().equals(Constants.TEXT)) {
                 sendChatMessage(share.getText(), share.getType());
             }
         }
@@ -269,7 +271,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         if ((childRoomId == null) && (chatForwards != null)) {
             //createRoom("Message", null);
         }
-
 
 
         return view;
@@ -358,36 +359,47 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             }
 
             @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
 
                 switch (item.getItemId()) {
 
                     case R.id.delete:
-                        SparseBooleanArray selected = userChatAdapter.getSelectedIds();
-                        for (int i = selected.size() - 1; i >= 0; i--) {
-                            if (selected.valueAt(i)) {
-                                final ChatMessage selectedItem = (ChatMessage) listView.getItemAtPosition(selected.keyAt(i));
-                                roomReference.child(selectedItem.getMessageKey()).removeValue();
+                        final SparseBooleanArray selected = userChatAdapter.getSelectedIds();
 
-                                userChatAdapter.removeItem(selectedItem);
-                                chatMessageArray.remove(selectedItem);
+                        Dialogs.chatDeleteConformation(getActivity(), new DeleteConfirmationListener() {
+
+                            @Override
+                            public void deleteProceed() {
+                                for (int i = selected.size() - 1; i >= 0; i--) {
+                                    if (selected.valueAt(i)) {
+                                        final ChatMessage selectedItem = (ChatMessage) listView.getItemAtPosition(selected.keyAt(i));
+                                        roomReference.child(selectedItem.getMessageKey()).removeValue();
+                                        userChatAdapter.removeItem(selectedItem);
+                                        chatMessageArray.remove(selectedItem);
+                                    }
+                                }
+                                mode.finish();
+                                selected.clear();
                             }
-                        }
-                        mode.finish();
-                        selected.clear();
+
+                            @Override
+                            public void deleteCancle() {
+
+                            }
+                        }, selected.size());
                         break;
                     case R.id.copy:
                         StringBuilder builder = new StringBuilder();
-                        selected = userChatAdapter.getSelectedIds();
+                        SparseBooleanArray selectedItem = userChatAdapter.getSelectedIds();
 
-                        Toast.makeText(getActivity(), getResources().getQuantityString(R.plurals.copy_message, selected.size(), selected.size()), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), getResources().getQuantityString(R.plurals.copy_message, selectedItem.size(), selectedItem.size()), Toast.LENGTH_SHORT).show();
 
-                        for (int i = 0; i < selected.size(); i++) {
-                            if (selected.valueAt(i)) {
-                                final ChatMessage selectedItem = (ChatMessage) listView.getItemAtPosition(selected.keyAt(i));
-                                if (!selectedItem.getType().equals(getResources().getString(R.string.image))) {
-                                    builder.append(selectedItem.getMessage());
-                                    if (i < selected.size() - 1) {
+                        for (int i = 0; i < selectedItem.size(); i++) {
+                            if (selectedItem.valueAt(i)) {
+                                final ChatMessage selectedItems = (ChatMessage) listView.getItemAtPosition(selectedItem.keyAt(i));
+                                if (!selectedItems.getType().equals(getResources().getString(R.string.image))) {
+                                    builder.append(selectedItems.getMessage());
+                                    if (i < selectedItem.size() - 1) {
                                         builder.append("\n");
                                     }
                                 }
@@ -400,11 +412,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         break;
                     case R.id.forward:
                         ArrayList<ChatMessage> chatMessageArrayList = new ArrayList<>();
-                        selected = userChatAdapter.getSelectedIds();
-                        for (int i = 0; i < selected.size(); i++) {
-                            if (selected.valueAt(i)) {
-                                final ChatMessage selectedItem = (ChatMessage) listView.getItemAtPosition(selected.keyAt(i));
-                                chatMessageArrayList.add(selectedItem);
+                        selectedItem = userChatAdapter.getSelectedIds();
+                        for (int i = 0; i < selectedItem.size(); i++) {
+                            if (selectedItem.valueAt(i)) {
+                                final ChatMessage selectedItems = (ChatMessage) listView.getItemAtPosition(selectedItem.keyAt(i));
+                                chatMessageArrayList.add(selectedItems);
                             }
                         }
                         AppContactsActivity.start(getActivity(), chatMessageArrayList);
@@ -450,7 +462,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         switch (item.getItemId()) {
             case R.id.call:
                 if (sipAccountUserName != null) {
-                    SipHelper.makeCall(activity, sipAccountUserName,false);
+                    SipHelper.makeCall(activity, sipAccountUserName, false);
                 }
                 break;
             case R.id.camera:
@@ -515,7 +527,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             }
         } else if (v.getId() == R.id.cameraView) {
             takePicture();
-        } else if(v.getId() == R.id.chat_text) {
+        } else if (v.getId() == R.id.chat_text) {
             setSmoothScrollPosition(userChatAdapter, listView);
         }
     }

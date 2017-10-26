@@ -423,4 +423,8 @@
     <!--error messages-->
     <string name="like_unlike_error_message">Something went wrong. Please try again</string>
     <string name="nexge_register_error">Failed to register user with nexge</string>
+    <plurals name="delete_messages">
+        <item quantity="one">Delete %1$d message.</item>
+        <item quantity="other">Delete %1$d messages.</item>
+    </plurals>
 </resources>

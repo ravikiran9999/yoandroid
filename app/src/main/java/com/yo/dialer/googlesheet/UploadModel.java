@@ -151,7 +151,6 @@ public class UploadModel implements Serializable {
     public void setDuration(String duration) {
         this.duration = duration;
     }
-
     public String getToName() {
         return toName;
     }

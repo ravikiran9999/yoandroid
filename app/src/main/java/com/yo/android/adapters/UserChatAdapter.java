@@ -229,8 +229,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         TextView emojiTextView = (TextView) secretChatPlaceholder.findViewById(R.id.chat_msg);
         LinearLayout.LayoutParams rlp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         emojiTextView.setText(item.getMessage());
-
-
+        emojiTextView.setGravity(Gravity.BOTTOM);
         LinearLayout mainLayout = (LinearLayout) secretChatPlaceholder.findViewById(R.id.lytStatusContainer);
         TextView time = (TextView) mainLayout.findViewById(R.id.date_view);
 
@@ -240,7 +239,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         timer.setVisibility(View.VISIBLE);
         sent.setVisibility(View.GONE);
         seen.setVisibility(View.GONE);
-        sent.setGravity(Gravity.BOTTOM);
         if (!isRTL) {
             rlp.setMargins(30, 0, 0, 0);
             TextView senderId = new TextView(context);
@@ -276,7 +274,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             }
         } else {
             rlp.setMargins(0, 0, 30, 0);
-            sent.setVisibility(View.VISIBLE);
             secretChatPlaceholder.setBackgroundResource(R.drawable.msg_out);
             String sentText = DateUtil.getTimeFormatForChat(context, item.getTime());
             time.setText(sentText);
