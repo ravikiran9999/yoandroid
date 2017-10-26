@@ -2,31 +2,23 @@ package com.yo.android.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.helpers.Settings;
-import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -34,8 +26,6 @@ import com.yo.android.vox.BalanceHelper;
 import com.yo.dialer.CallHelper;
 
 import java.text.DecimalFormat;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
@@ -116,7 +106,6 @@ public class TransferBalanceActivity extends BaseActivity {
         getSupportActionBar().setTitle(title);
 
         String balance = getIntent().getStringExtra(Constants.CURRENT_BALANCE);
-        boolean userType = getIntent().getBooleanExtra(Constants.USER_TYPE, false);
         mTransferAmount = getIntent().getStringExtra(Constants.TRANSFER_AMOUNT);
 
         /*enterNumberView.setVisibility(View.VISIBLE);
@@ -377,7 +366,6 @@ public class TransferBalanceActivity extends BaseActivity {
         yesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 alertDialog.dismiss();
                 transferBalance(amount, phoneNumber);
             }
@@ -387,7 +375,6 @@ public class TransferBalanceActivity extends BaseActivity {
         noBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 alertDialog.dismiss();
 
             }

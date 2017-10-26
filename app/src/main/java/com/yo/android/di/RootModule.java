@@ -3,6 +3,7 @@ package com.yo.android.di;
 import android.content.Context;
 
 import com.yo.android.usecase.DenominationsUsecase;
+import com.yo.android.usecase.PackageDenominationsUsecase;
 import com.yo.android.usecase.WebserviceUsecase;
 import com.yo.android.adapters.ChatRoomListAdapter;
 import com.yo.android.adapters.CountryCodeListAdapter;
@@ -244,7 +245,8 @@ import dagger.Provides;
 
                 //usecases
                 WebserviceUsecase.class,
-                DenominationsUsecase.class
+                DenominationsUsecase.class,
+                PackageDenominationsUsecase.class
         },
         includes = {
                 AppModule.class,

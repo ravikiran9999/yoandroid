@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.wang.avi.AVLoadingIndicatorView;
 import com.yo.android.api.YoApi;
+import com.yo.android.model.PackageDenomination;
 import com.yo.android.usecase.DenominationsUsecase;
 import com.yo.android.R;
 import com.yo.android.api.ApiCallback;
@@ -26,6 +27,7 @@ import com.yo.android.model.Response;
 import com.yo.android.model.TransferBalanceDenomination;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.TransferBalanceActivity;
+import com.yo.android.usecase.PackageDenominationsUsecase;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
@@ -57,9 +59,23 @@ public class NewCreditAccountFragment extends BaseFragment {
     protected TextView tvSecond;
     @Bind(R.id.tv_third)
     protected TextView tvThird;
+    @Bind(R.id.give_first)
+    Button giveFirst;
+    @Bind(R.id.give_second)
+    Button giveSecond;
+    @Bind(R.id.give_third)
+    Button giveThird;
+    @Bind(R.id.buy_five_package)
+    Button buyFivePackage;
+    @Bind(R.id.buy_ten_package)
+    Button buyTenPackage;
+    @Bind(R.id.buy_twenty_package)
+    Button buyTwentyPackage;
 
     @Inject
     DenominationsUsecase denominationsUsecase;
+    @Inject
+    PackageDenominationsUsecase packageDenominationsUsecase;
     @Inject
     YoApi.YoService yoService;
 
@@ -78,36 +94,80 @@ public class NewCreditAccountFragment extends BaseFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        showAVLoader();
+        showDenominationAVLoader();
+        inActivePackageDenomination();
         getTransferBalanceDenominations();
+        getBuyPackageDenomination();
     }
 
-    private void showAVLoader() {
+    private void showDenominationAVLoader() {
         aviFirst.setIndicator("BallClipRotateMultipleIndicator");
         aviFirst.setIndicatorColor(getResources().getColor(R.color.colorPrimaryDark));
+        giveFirst.setAlpha(0.5f);
+        giveFirst.setClickable(false);
 
         aviSecond.setIndicator("BallClipRotateMultipleIndicator");
         aviSecond.setIndicatorColor(getResources().getColor(R.color.colorPrimaryDark));
+        giveSecond.setAlpha(0.5f);
+        giveSecond.setClickable(false);
 
         aviThird.setIndicator("BallClipRotateMultipleIndicator");
         aviThird.setIndicatorColor(getResources().getColor(R.color.colorPrimaryDark));
-
+        giveThird.setAlpha(0.5f);
+        giveThird.setClickable(false);
     }
 
     private void showDenominations(List<TransferBalanceDenomination> transferBalanceDenominationList) {
         aviFirst.setVisibility(View.GONE);
         tvFirst.setVisibility(View.VISIBLE);
         tvFirst.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), transferBalanceDenominationList.get(0).getCurrencySymbol(), transferBalanceDenominationList.get(0).getDenomination()));
+        giveFirst.setAlpha(1);
+        giveFirst.setClickable(true);
 
         aviSecond.setVisibility(View.GONE);
         tvSecond.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), transferBalanceDenominationList.get(1).getCurrencySymbol(), transferBalanceDenominationList.get(1).getDenomination()));
         tvSecond.setVisibility(View.VISIBLE);
+        giveSecond.setAlpha(1);
+        giveSecond.setClickable(true);
 
         aviThird.setVisibility(View.GONE);
         tvThird.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), transferBalanceDenominationList.get(2).getCurrencySymbol(), transferBalanceDenominationList.get(2).getDenomination()));
         tvThird.setVisibility(View.VISIBLE);
-
+        giveThird.setAlpha(1);
+        giveThird.setClickable(true);
     }
+
+    private void inActivePackageDenomination() {
+        buyFivePackage.setAlpha(0.5f);
+        buyFivePackage.setClickable(false);
+
+        buyTenPackage.setAlpha(0.5f);
+        buyTenPackage.setClickable(false);
+
+        buyTwentyPackage.setAlpha(0.5f);
+        buyTwentyPackage.setClickable(false);
+    }
+
+    private void showActivePackageDenomination(List<PackageDenomination> packageDenominationList) {
+        if(packageDenominationList.get(0) != null && packageDenominationList.get(0).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
+            buyFivePackage.setAlpha(1);
+            buyFivePackage.setClickable(true);
+        }
+        buyFivePackage.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), packageDenominationList.get(0).getCurrencySymbol(), packageDenominationList.get(0).getPackage()));
+
+        if(packageDenominationList.get(1) != null && packageDenominationList.get(1).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
+            buyTenPackage.setAlpha(1);
+            buyTenPackage.setClickable(true);
+        }
+        buyTenPackage.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), packageDenominationList.get(1).getCurrencySymbol(), packageDenominationList.get(1).getPackage()));
+
+        if(packageDenominationList.get(2) != null && packageDenominationList.get(2).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
+            buyTwentyPackage.setAlpha(1);
+            buyTwentyPackage.setClickable(true);
+        }
+        buyTwentyPackage.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), packageDenominationList.get(2).getCurrencySymbol(), packageDenominationList.get(2).getPackage()));
+    }
+
 
     @OnClick(R.id.give_first)
     public void giveFirst() {
@@ -124,6 +184,7 @@ public class NewCreditAccountFragment extends BaseFragment {
         transferBalance(tvThird.getText().toString());
     }
 
+    // Need to implement buy package
     @OnClick(R.id.buy_five_package)
     public void buyFivePackage() {
 
@@ -159,6 +220,20 @@ public class NewCreditAccountFragment extends BaseFragment {
             @Override
             public void onResult(ArrayList<TransferBalanceDenomination> result) {
                 showDenominations(result);
+            }
+
+            @Override
+            public void onFailure(String message) {
+                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void getBuyPackageDenomination() {
+        packageDenominationsUsecase.getPackageDenominationsUsecase(new ApiCallback<ArrayList<PackageDenomination>>() {
+            @Override
+            public void onResult(ArrayList<PackageDenomination> result) {
+                showActivePackageDenomination(result);
             }
 
             @Override
