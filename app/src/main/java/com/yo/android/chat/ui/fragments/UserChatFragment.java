@@ -364,12 +364,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 switch (item.getItemId()) {
 
                     case R.id.delete:
-                        final SparseBooleanArray selected = userChatAdapter.getSelectedIds();
                         if (Util.isOnline(getActivity())) {
                             Dialogs.chatDeleteConformation(getActivity(), new DeleteConfirmationListener() {
 
                                 @Override
                                 public void deleteProceed() {
+                                    SparseBooleanArray selected = userChatAdapter.getSelectedIds();
                                     for (int i = selected.size() - 1; i >= 0; i--) {
                                         if (selected.valueAt(i)) {
                                             final ChatMessage selectedItem = (ChatMessage) listView.getItemAtPosition(selected.keyAt(i));
@@ -386,23 +386,23 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                                 public void deleteCancle() {
 
                                 }
-                            }, selected.size());
+                            }, userChatAdapter.getSelectedIds().size());
                         } else {
                             Toast.makeText(getActivity(), getResources().getString(R.string.delete_chat_without_network), Toast.LENGTH_LONG).show();
                         }
                         break;
                     case R.id.copy:
                         StringBuilder builder = new StringBuilder();
-                        SparseBooleanArray selectedItem = userChatAdapter.getSelectedIds();
+                        SparseBooleanArray selected = userChatAdapter.getSelectedIds();
 
-                        Toast.makeText(getActivity(), getResources().getQuantityString(R.plurals.copy_message, selectedItem.size(), selectedItem.size()), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), getResources().getQuantityString(R.plurals.copy_message, selected.size(), selected.size()), Toast.LENGTH_SHORT).show();
 
-                        for (int i = 0; i < selectedItem.size(); i++) {
-                            if (selectedItem.valueAt(i)) {
-                                final ChatMessage selectedItems = (ChatMessage) listView.getItemAtPosition(selectedItem.keyAt(i));
-                                if (!selectedItems.getType().equals(getResources().getString(R.string.image))) {
-                                    builder.append(selectedItems.getMessage());
-                                    if (i < selectedItem.size() - 1) {
+                        for (int i = 0; i < selected.size(); i++) {
+                            if (selected.valueAt(i)) {
+                                final ChatMessage selectedItem = (ChatMessage) listView.getItemAtPosition(selected.keyAt(i));
+                                if (!selectedItem.getType().equals(getResources().getString(R.string.image))) {
+                                    builder.append(selectedItem.getMessage());
+                                    if (i < selected.size() - 1) {
                                         builder.append("\n");
                                     }
                                 }
@@ -415,11 +415,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                         break;
                     case R.id.forward:
                         ArrayList<ChatMessage> chatMessageArrayList = new ArrayList<>();
-                        selectedItem = userChatAdapter.getSelectedIds();
-                        for (int i = 0; i < selectedItem.size(); i++) {
-                            if (selectedItem.valueAt(i)) {
-                                final ChatMessage selectedItems = (ChatMessage) listView.getItemAtPosition(selectedItem.keyAt(i));
-                                chatMessageArrayList.add(selectedItems);
+                        selected = userChatAdapter.getSelectedIds();
+                        for (int i = 0; i < selected.size(); i++) {
+                            if (selected.valueAt(i)) {
+                                final ChatMessage selectedItem = (ChatMessage) listView.getItemAtPosition(selected.keyAt(i));
+                                chatMessageArrayList.add(selectedItem);
                             }
                         }
                         AppContactsActivity.start(getActivity(), chatMessageArrayList);

@@ -240,6 +240,9 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         sent.setVisibility(View.GONE);
         seen.setVisibility(View.GONE);
         if (!isRTL) {
+            timer.setVisibility(View.GONE);
+            sent.setVisibility(View.GONE);
+            seen.setVisibility(View.GONE);
             rlp.setMargins(30, 0, 0, 0);
             TextView senderId = new TextView(context);
             secretChatPlaceholder.setBackgroundResource(R.drawable.msg_in);
