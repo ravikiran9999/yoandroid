@@ -145,20 +145,31 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         holder.getLl().removeAllViews();
         holder.getLl().setTag(holder);
         boolean isRTL = userId.equalsIgnoreCase(item.getSenderID());
-        View view = inflater.inflate(R.layout.chatitem, null);
+        RelativeLayout view = (RelativeLayout) inflater.inflate(R.layout.chatitem, null);
         TextView senderNameOrNumber = (TextView) view.findViewById(R.id.sender_id);
         RelativeLayout profileNameLayout = (RelativeLayout) view.findViewById(R.id.chat_profilename_layout);
-        RelativeLayout gravityLayout = (RelativeLayout) view.findViewById(R.id.chat_gravity_decide_layout);
+        RelativeLayout gravityLayout = view;
         TextView profileName = (TextView) view.findViewById(R.id.profile_name);
         ImageView loadImage = (ImageView) view.findViewById(R.id.chat_image);
         TextView extraText = (TextView) view.findViewById(R.id.extra_chat_message);
 
-        TextView time = (TextView) view.findViewById(R.id.time);
+        TextView time = (TextView) view.findViewById(R.id.date_view);
+        TextView sent = (TextView) view.findViewById(R.id.sent_txt);
+        TextView seen = (TextView) view.findViewById(R.id.seen_txt);
+        TextView timer = (TextView) view.findViewById(R.id.timer);
+        timer.setVisibility(View.VISIBLE);
+        sent.setVisibility(View.GONE);
+        seen.setVisibility(View.GONE);
+
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         extraText.setVisibility(View.GONE);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         if (!isRTL) {
+            timer.setVisibility(View.GONE);
+            sent.setVisibility(View.GONE);
+            seen.setVisibility(View.GONE);
+
             lp.setMargins(30, 0, 0, 0);
             profileNameLayout.setVisibility(View.VISIBLE);
             gravityLayout.setGravity(Gravity.LEFT);
@@ -177,8 +188,8 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
                 profileNameLayout.setVisibility(View.GONE);
             }
             if (item.getDeliveredTime() != 0) {
-                String seen = DateUtil.getTimeFormatForChat(context, item.getDeliveredTime());
-                time.setText(seen);
+                String seenTxt = DateUtil.getTimeFormatForChat(context, item.getDeliveredTime());
+                time.setText(seenTxt);
             }
             senderNameOrNumber.setTextColor(mColorGenerator.getRandomColor());
         } else {
@@ -189,23 +200,21 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             Drawable img = context.getResources().getDrawable(R.drawable.time_loader);
             img.setBounds(10, 0, 30, 50);
             img.setBounds(Helper.dp(context, 1), Helper.dp(context, 2), Helper.dp(context, 60), Helper.dp(context, 610));
-            time.setCompoundDrawables(null, null, img, null);
-            time.setCompoundDrawablePadding(10);
-            String sent = DateUtil.getTimeFormatForChat(context, item.getTime());
-            time.setText(sent);
+            //time.setCompoundDrawables(null, null, img, null);
+           // time.setCompoundDrawablePadding(10);
+            String sentText = DateUtil.getTimeFormatForChat(context, item.getTime());
+            time.setText(sentText);
 
             if (item.getSent() == 1) {
-                img = context.getResources().getDrawable(R.drawable.sent);
-                img.setBounds(Helper.dp(context, 0), Helper.dp(context, 2), Helper.dp(context, 15), Helper.dp(context, 15));
-                time.setCompoundDrawables(null, null, img, null);
-                time.setCompoundDrawablePadding(10);
+                sent.setVisibility(View.VISIBLE);
+                seen.setVisibility(View.GONE);
+                timer.setVisibility(View.GONE);
 
             }
             if (item.getDeliveredTime() != 0) {
-                img = context.getResources().getDrawable(R.drawable.seen);
-                img.setBounds(Helper.dp(context, 0), Helper.dp(context, 2), Helper.dp(context, 15), Helper.dp(context, 15));
-                time.setCompoundDrawables(null, null, img, null);
-                time.setCompoundDrawablePadding(10);
+                sent.setVisibility(View.GONE);
+                seen.setVisibility(View.VISIBLE);
+                timer.setVisibility(View.GONE);
             }
         }
         ImageLoader.updateImage(context, item, Constants.YOIMAGES, loadImage, progressBar);

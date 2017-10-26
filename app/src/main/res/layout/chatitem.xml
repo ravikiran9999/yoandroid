@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+
     android:id="@+id/chat_main_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_gravity="right"
     android:layout_marginTop="1dp"
     android:gravity="right">
@@ -32,60 +34,61 @@
             tools:text="~Rajesh Babu" />
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/chat_gravity_decide_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="right"
-        android:layout_marginRight="15dp"
-        android:gravity="right">
 
-        <RelativeLayout
-            android:layout_width="252dp"
-            android:layout_height="match_parent"
+
+    <com.yo.android.chat.YoChatMessageBox
+        android:id="@+id/msg_layout"
+        style="@style/BalloonMessageLayoutRight"
+        android:layout_width="252dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"
+        android:layout_marginBottom="@dimen/d2"
+        android:layout_marginLeft="@dimen/d5"
+        android:layout_marginTop="@dimen/d2"
+        android:gravity="left|center_vertical"
+        android:padding="@dimen/d5"
+        app:viewPartMain="@+id/chat_msg"
+        app:viewPartSlave="@+id/lytStatusContainer">
+
+        <ImageView
+            android:id="@+id/chat_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY" />
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="visible" />
+
+        <LinearLayout
+            android:id="@+id/lytStatusContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
             android:gravity="right"
-            android:padding="5dp">
+            android:minWidth="60dp">
 
-            <ImageView
-                android:id="@+id/chat_image"
+            <TextView
+                android:id="@+id/date_view"
+                style="@style/BallonMessageTimeText"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="right|bottom"
+                android:gravity="bottom"
+                android:maxLines="1" />
+
+            <include
+                android:id="@+id/lytStatus"
+                layout="@layout/layout_im_message_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:scaleType="fitXY" />
+                android:layout_gravity="bottom" />
 
-            <ProgressBar
-                android:id="@+id/progress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:visibility="visible" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:gravity="right|bottom">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/time"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end|bottom"
-                        android:background="@color/transperantDarkGray"
-                        android:padding="4dp"
-                        android:textColor="@color/white"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        tools:text="10:00" />
-                </LinearLayout>
-            </RelativeLayout>
-        </RelativeLayout>
-
-    </RelativeLayout>
+        </LinearLayout>
+    </com.yo.android.chat.YoChatMessageBox>
 
 
     <TextView
