@@ -54,7 +54,6 @@
                     android:layout_alignParentRight="true"
                     android:layout_gravity="right|bottom"
                     android:gravity="bottom"
-                    android:background="@color/background_dialpad"
                     android:maxLines="1" />
 
                 <include

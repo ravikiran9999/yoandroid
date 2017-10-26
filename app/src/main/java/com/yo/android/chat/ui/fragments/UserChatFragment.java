@@ -365,28 +365,31 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
                     case R.id.delete:
                         final SparseBooleanArray selected = userChatAdapter.getSelectedIds();
+                        if (Util.isOnline(getActivity())) {
+                            Dialogs.chatDeleteConformation(getActivity(), new DeleteConfirmationListener() {
 
-                        Dialogs.chatDeleteConformation(getActivity(), new DeleteConfirmationListener() {
-
-                            @Override
-                            public void deleteProceed() {
-                                for (int i = selected.size() - 1; i >= 0; i--) {
-                                    if (selected.valueAt(i)) {
-                                        final ChatMessage selectedItem = (ChatMessage) listView.getItemAtPosition(selected.keyAt(i));
-                                        roomReference.child(selectedItem.getMessageKey()).removeValue();
-                                        userChatAdapter.removeItem(selectedItem);
-                                        chatMessageArray.remove(selectedItem);
+                                @Override
+                                public void deleteProceed() {
+                                    for (int i = selected.size() - 1; i >= 0; i--) {
+                                        if (selected.valueAt(i)) {
+                                            final ChatMessage selectedItem = (ChatMessage) listView.getItemAtPosition(selected.keyAt(i));
+                                            roomReference.child(selectedItem.getMessageKey()).removeValue();
+                                            userChatAdapter.removeItem(selectedItem);
+                                            chatMessageArray.remove(selectedItem);
+                                        }
                                     }
+                                    mode.finish();
+                                    selected.clear();
                                 }
-                                mode.finish();
-                                selected.clear();
-                            }
 
-                            @Override
-                            public void deleteCancle() {
+                                @Override
+                                public void deleteCancle() {
 
-                            }
-                        }, selected.size());
+                                }
+                            }, selected.size());
+                        } else {
+                            Toast.makeText(getActivity(), getResources().getString(R.string.delete_chat_without_network), Toast.LENGTH_LONG).show();
+                        }
                         break;
                     case R.id.copy:
                         StringBuilder builder = new StringBuilder();

@@ -92,7 +92,7 @@ public class Dialogs {
             TextView deleteMessage = (TextView) view.findViewById(R.id.dialog_content);
 
             Resources res = context.getResources();
-            String text = res.getQuantityString(R.plurals.delete_messages, count);
+            String text = res.getQuantityString(R.plurals.delete_messages, count,count);
             deleteMessage.setText(text);
 
             final android.app.AlertDialog alertDialog = builder.create();

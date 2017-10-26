@@ -424,7 +424,9 @@
     <string name="like_unlike_error_message">Something went wrong. Please try again</string>
     <string name="nexge_register_error">Failed to register user with nexge</string>
     <plurals name="delete_messages">
-        <item quantity="one">Delete %1$d message.</item>
-        <item quantity="other">Delete %1$d messages.</item>
+        <item quantity="one">Delete %1$s message.</item>
+        <item quantity="other">Delete %1$s messages.</item>
     </plurals>
+    <string name="delete_chat_without_network">Unable to delete, Please check your network connection.</string>
+
 </resources>
