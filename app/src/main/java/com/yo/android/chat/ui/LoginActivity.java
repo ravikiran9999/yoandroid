@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -151,17 +152,17 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         mCountryCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Util.hideKeyboard(LoginActivity.this,view);
+                Util.hideKeyboard(LoginActivity.this, view);
                 Intent intent = new Intent(LoginActivity.this, CountryCodeActivity.class);
                 startActivityForResult(intent, SELECTED_OK);
 
             }
         });
 
-        mCountryCode.setOnTouchListener(new View.OnTouchListener(){
+        mCountryCode.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Util.hideKeyboard(LoginActivity.this,v);
+                Util.hideKeyboard(LoginActivity.this, v);
                 return false;
             }
         });
@@ -358,17 +359,19 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
         yesBtn.setText(getResources().getString(R.string.yes));
         Button noBtn = (Button) view.findViewById(R.id.no_btn);
+        noBtn.setVisibility(View.VISIBLE);
+        noBtn.setText(R.string.no);
 
 
         final AlertDialog alertDialog = builder.create();
         alertDialog.setCancelable(false);
+        alertDialog.getWindow().setBackgroundDrawable(new BitmapDrawable());
         alertDialog.show();
 
 
         yesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 alertDialog.dismiss();
                 performLogin(phoneNumber);
             }
@@ -378,7 +381,6 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         noBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 alertDialog.dismiss();
 
             }

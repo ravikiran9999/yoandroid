@@ -199,6 +199,8 @@ public class Constants {
     public static final String VIDEO_URL = "video_url";
     public static final String TITLE = "title";
 
+    public static final String PACKAGE_STATUS = "Active";
+
     // Add, chat and call from group
     public static final String Add_CONTACT = "Add to contacts";
     public static final String CHAT = "Message";
