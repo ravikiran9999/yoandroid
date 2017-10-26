@@ -149,6 +149,10 @@ public class YoApi {
         @GET("api/user/contacts_with_name.json")
         Call<List<Contact>> getContacts(@Query("access_token") String access_token);
 
+        // get contacts on search in transfer balance
+        @GET("api/user/contacts_with_name.json")
+        Call<List<Contact>> getContactsOnSearch(@Query("access_token") String access_token, @Query("is_from_balance_transfer") boolean is_from_balance_transfer);
+
         @FormUrlEncoded
         @PUT("/api/magzines/{magzine_id}.json")
         Call<Response> addArticleMagazineApi(@Field("access_token") String access_token, @Path("magzine_id") String magzine_id, @Field("article_ids[]") List<String> articles);

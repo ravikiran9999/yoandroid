@@ -58,9 +58,9 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
     private TextView noData;
     private LinearLayout llNoPeople;
 
-    public static void start(Activity activity, String availableBalance, boolean userType) {
-        Intent intent = createIntent(activity, availableBalance, userType);
-        activity.startActivityForResult(intent, 11);
+    public static void start(Activity activity) {
+        Intent intent = new Intent(activity, TransferBalanceSelectContactActivity.class);
+        activity.startActivityForResult(intent, 33);
     }
 
     private static Intent createIntent(Activity activity, String availableBalance, boolean userType) {
@@ -321,7 +321,11 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         String userId = contact.getId();
         boolean userType = preferenceEndPoint.getBooleanPreference(Constants.USER_TYPE, false);
 
-        TransferBalanceActivity.start(this, currencySymbol, balance, fullName, phoneNumber, userAvatar, userId, userType);
+        //TransferBalanceActivity.start(this, currencySymbol, balance, fullName, phoneNumber, userAvatar, userId, userType);
+        Intent intent = new Intent();
+        intent.putExtra(Constants.SELECTED_CONTACT_TO_TRANSFER, phoneNumber);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     @Override

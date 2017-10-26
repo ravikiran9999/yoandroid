@@ -1,5 +1,7 @@
 package com.yo.android.ui;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -41,9 +43,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import de.greenrobot.event.EventBus;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+
 import static com.yo.android.flip.MagazineFlipArticlesFragment.updateCalled;
 
 public class TabsHeaderActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener, ViewPager.OnPageChangeListener {
+    private static final String TAG = TabsHeaderActivity.class.getSimpleName();
 
     private boolean isAlreadyShown;
     //private boolean isRemoved;
@@ -150,6 +158,8 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
                 }
             }
         }
+
+        EventBus.getDefault().register(this);
     }
 
 
@@ -269,5 +279,10 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         if (Constants.BALANCE_UPDATED_ACTION.equals(action) && balanceText != null) {
             balanceText.setText(String.format(getString(R.string.your_yo_balance), mBalanceHelper.getCurrentBalance()));
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

@@ -384,6 +384,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                     } else {
                         TransferBalanceSelectContactActivity.start(activity, balance, false);
                     }*/
+
                 }
 
             }

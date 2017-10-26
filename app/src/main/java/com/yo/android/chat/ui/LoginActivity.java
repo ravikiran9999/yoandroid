@@ -352,7 +352,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
         builder.setView(view);
 
         TextView textView = (TextView) view.findViewById(R.id.dialog_content);
-        textView.setText(String.format(getResources().getString(R.string.Dialog_text), phoneNumber));
+        textView.setText(String.format(getResources().getString(R.string.dialog_text), phoneNumber));
 
 
         Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
