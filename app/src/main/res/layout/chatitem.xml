@@ -72,7 +72,7 @@
             android:layout_alignParentBottom="true"
             android:gravity="right|bottom"
             android:orientation="horizontal"
-            android:background="@drawable/timestampbackground"
+            android:background="@drawable/background_chattimestamp"
             android:minWidth="60dp">
 
             <include

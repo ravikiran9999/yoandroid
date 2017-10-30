@@ -5,6 +5,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
@@ -73,6 +77,8 @@ public class PushNotificationService extends FirebaseMessagingService {
 
         mLog.i(TAG, "From: %s", remoteMessage.getFrom());
         mLog.i(TAG, "onMessageReceived: title- %s and data- %s", data.get("title"), data.get("message"));
+        //title- Group zxzxzxzx has been created. and data- Group zxzxzxzx has been created with users 917207535681,918897524475,919490570720,918008407207
+
         EventBus.getDefault().post(Constants.UPDATE_NOTIFICATIONS);
 
         if (data.get("tag").equals("Topic")) {
@@ -81,6 +87,8 @@ public class PushNotificationService extends FirebaseMessagingService {
             EventBus.getDefault().post(Constants.BALANCE_TRANSFER_NOTIFICATION_ACTION);
         } else if (data.get("tag").equals("POPUP")) {
             PopupHelper.handlePop(preferenceEndPoint, data);
+        } else if (data.get("tag").equals("Chat")) {
+            sendChatGroupCreatedNotification(data);
         }
 
         if (DialerConfig.UPLOAD_REPORTS_GOOGLE_SHEET) {
@@ -115,6 +123,40 @@ public class PushNotificationService extends FirebaseMessagingService {
         setBigStyleNotification(data.get("title").toString(), data.get("message").toString(), data.get("tag").toString(), data.get("id").toString());
     }
 
+    private void sendChatGroupCreatedNotification(Map data) {
+        final int NOTIFICATION_ID = 3;
+
+        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+        PendingIntent notificationPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setSmallIcon(R.drawable.ic_yo_notification)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_yo_notification))
+                .setColor(getResources().getColor(R.color.colorPrimary))
+                .setContentTitle(data.get("group_name").toString())
+                .setContentIntent(notificationPendingIntent)
+                .setContentText(data.get("admin_name").toString() + " added you")
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setStyle(new NotificationCompat.BigTextStyle())
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setPriority(Notification.PRIORITY_HIGH | Notification.PRIORITY_MAX);
+        mNotificationManager.notify(NOTIFICATION_ID, builder.build());
+        playNotificationSound();
+    }
+
+    private void playNotificationSound() {
+        try {
+            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+            r.play();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private int getNotificationIcon() {
         boolean useWhiteIcon = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP;
@@ -138,6 +180,7 @@ public class PushNotificationService extends FirebaseMessagingService {
         data.setDescription(message);
         List<UserData> notificationList = new ArrayList<>();
         notificationList.add(data);
+
         notification.buildInboxStyleNotifications(this, notificationIntent, notificationsInboxData, notificationList, SIX, false, false);
     }
 
