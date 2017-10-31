@@ -19,6 +19,7 @@
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
             <android.support.v7.widget.Toolbar
                 android:id="@+id/htab_toolbar"
                 android:layout_width="match_parent"
@@ -28,6 +29,7 @@
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:titleMarginTop="13dp" />
+
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -52,11 +54,12 @@
                     android:background="@drawable/white_circle"
                     android:gravity="center"
                     android:text="@string/your_yo_balance"
-                    android:textColor="@color/colorPrimary" />
+                    android:textColor="@color/black" />
             </FrameLayout>
 
 
         </android.support.design.widget.CollapsingToolbarLayout>
+
         <android.support.design.widget.TabLayout
             android:id="@+id/htab_tabs"
             android:layout_width="match_parent"
@@ -64,7 +67,10 @@
             android:layout_gravity="bottom"
             android:background="@color/dark_red_bg"
             app:tabIndicatorColor="@android:color/white"
-            app:tabMode="fixed" />
+            app:tabIndicatorHeight="3dp"
+            app:tabMode="fixed"
+            app:tabPaddingBottom="5dp"
+            app:tabTextAppearance="@style/tabLayoutTextStyle" />
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.view.ViewPager

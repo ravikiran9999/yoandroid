@@ -13,7 +13,6 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
 
-
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/htab_collapse_toolbar"
             android:layout_width="match_parent"
@@ -21,49 +20,51 @@
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/htab_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:gravity="top"
-                android:minHeight="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:titleMarginTop="13dp" />
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/htab_toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="top"
+                    android:minHeight="?attr/actionBarSize"
+                    app:layout_collapseMode="pin"
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                    app:titleMarginTop="13dp" />
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/htab_toolbar"
-                app:layout_collapseMode="parallax">
-
-                <ImageView
-                    android:id="@+id/htab_header"
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/yo_credit_banner"
-                    android:fitsSystemWindows="true"
-                    android:scaleType="centerCrop" />
+                    android:layout_below="@+id/htab_toolbar"
+                    app:layout_collapseMode="parallax">
 
-                <TextView
-                    android:id="@+id/your_available_amount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center|bottom"
-                    android:layout_marginBottom="30dp"
-                    android:background="@drawable/white_circle"
-                    android:gravity="center"
-                    android:text="@string/your_yo_balance"
-                    android:textColor="@color/colorPrimary" />
-            </FrameLayout>
+                    <ImageView
+                        android:id="@+id/htab_header"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/yo_credit_banner"
+                        android:fitsSystemWindows="true"
+                        android:scaleType="centerCrop" />
+
+                    <TextView
+                        android:id="@+id/your_available_amount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center|bottom"
+                        android:layout_marginBottom="30dp"
+                        android:background="@drawable/white_circle"
+                        android:gravity="center"
+                        android:text="@string/your_yo_balance"
+                        android:textColor="@color/black" />
+                </FrameLayout>
             </RelativeLayout>
 
 
         </android.support.design.widget.CollapsingToolbarLayout>
+
         <android.support.design.widget.TabLayout
             android:id="@+id/htab_tabs"
             android:layout_width="match_parent"
@@ -71,7 +72,10 @@
             android:layout_gravity="bottom"
             android:background="@color/dark_red_bg"
             app:tabIndicatorColor="@android:color/white"
-            app:tabMode="fixed" />
+            app:tabIndicatorHeight="3dp"
+            app:tabMode="fixed"
+            app:tabPaddingBottom="5dp"
+            app:tabTextAppearance="@style/tabLayoutTextStyle" />
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.NestedScrollView
@@ -84,8 +88,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:paddingTop="5dp">
+            android:orientation="vertical">
 
             <android.support.v4.view.ViewPager
                 android:id="@+id/htab_viewpager"

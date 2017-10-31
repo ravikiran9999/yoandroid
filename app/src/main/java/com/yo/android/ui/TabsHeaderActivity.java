@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
@@ -12,10 +13,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,14 +48,14 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
 
 import static com.yo.android.flip.MagazineFlipArticlesFragment.updateCalled;
 
 public class TabsHeaderActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener, ViewPager.OnPageChangeListener {
-    private static final String TAG = TabsHeaderActivity.class.getSimpleName();
+
+    public static final String CREDIT_ACCOUNT = "CREDIT ACCOUNT";
+    public static final String RECHARGE_DETAILS = "RECHARGE DETAILS";
+    public static final String SPEND_DETAILS = "SPEND DETAILS";
 
     private boolean isAlreadyShown;
     //private boolean isRemoved;
@@ -75,7 +79,8 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         } else {
             setContentView(R.layout.new_yo_credit_screen);
             balanceText = (TextView) findViewById(R.id.your_available_amount);
-            balanceText.setText(String.format(getString(R.string.your_yo_balance), mBalanceHelper.getCurrentBalance()));
+
+            balanceText.setText(spannableString());
         }
         updateCalled = 0;
         final Toolbar toolbar = (Toolbar) findViewById(R.id.htab_toolbar);
@@ -97,7 +102,7 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         tabLayout.setupWithViewPager(viewPager);
 
         // Collapsing toolbar
-        if(!BuildConfig.NEW_YO_CREDIT_SCREEN) {
+        if (!BuildConfig.NEW_YO_CREDIT_SCREEN) {
             final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.htab_collapse_toolbar);
             collapsingToolbarLayout.setTitleEnabled(false);
 
@@ -185,10 +190,10 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
             bundle.putBoolean(Constants.RENEWAL, isRenewal);
             fragment.setArguments(bundle);
         }
-        adapter.addFragment(fragment, "Credit Account");
+        adapter.addFragment(fragment, CREDIT_ACCOUNT);
         if (!getIntent().hasExtra(Constants.OPEN_ADD_BALANCE)) {
-            adapter.addFragment(new RechargeDetailsFragment(), "Recharge Details");
-            adapter.addFragment(new SpendDetailsFragment(), "Spend Details");
+            adapter.addFragment(new RechargeDetailsFragment(), RECHARGE_DETAILS);
+            adapter.addFragment(new SpendDetailsFragment(), SPEND_DETAILS);
         }
         viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(adapter);
@@ -277,12 +282,25 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
 
     public void onEventMainThread(String action) {
         if (Constants.BALANCE_UPDATED_ACTION.equals(action) && balanceText != null) {
-            balanceText.setText(String.format(getString(R.string.your_yo_balance), mBalanceHelper.getCurrentBalance()));
+            //balanceText.setText(String.format(getString(R.string.your_yo_balance), mBalanceHelper.getCurrentBalance()));
+            balanceText.setText(spannableString());
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private SpannableStringBuilder spannableString() {
+        String yoBalanceString = String.format(getString(R.string.your_yo_balance), mBalanceHelper.getCurrentBalance());
+        final SpannableStringBuilder text = new SpannableStringBuilder(yoBalanceString);
+        // Span to make text bold
+        final StyleSpan bss = new StyleSpan(android.graphics.Typeface.BOLD);
+        text.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorPrimary)), 17, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        // make them also bold
+        text.setSpan(bss, 17, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+
+        return text;
     }
 }
