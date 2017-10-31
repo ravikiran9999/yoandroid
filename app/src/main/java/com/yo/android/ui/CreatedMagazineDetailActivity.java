@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +20,7 @@ import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -332,6 +334,8 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
             ImageView photoView = holder.articlePhoto;
 
+            photoView.setImageResource(R.drawable.img_placeholder);
+
             if (data.getImage_filename() != null) {
                 Glide.with(context)
                         .load(data.getImage_filename())
@@ -344,6 +348,23 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                         .into(photoView);
             } else {
                 photoView.setImageResource(R.drawable.img_placeholder);
+            }
+
+            Log.d("CreatedMagazineDetail", "The photoView.getDrawable() is " + photoView.getDrawable());
+
+            if(photoView.getDrawable() != null) {
+                int newHeight = getWindowManager().getDefaultDisplay().getHeight() / 2;
+                int orgWidth = photoView.getDrawable().getIntrinsicWidth();
+                int orgHeight = photoView.getDrawable().getIntrinsicHeight();
+
+                int newWidth = (int) Math.floor((orgWidth * newHeight) / orgHeight);
+
+                Log.d("CreatedMagazineDetail", "The new width is " + newWidth + "  new height is " + newHeight);
+
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                        newWidth, newHeight);
+                params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+                photoView.setLayoutParams(params);
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {

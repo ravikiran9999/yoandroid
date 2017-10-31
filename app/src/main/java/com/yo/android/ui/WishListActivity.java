@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -311,7 +312,7 @@ public class WishListActivity extends BaseActivity {
 
             ImageView photoView = holder.articlePhoto;
 
-            RelativeLayout rl = (UI.findViewById(layout, R.id.rl_top));
+            /*RelativeLayout rl = (UI.findViewById(layout, R.id.rl_top));
             final float scale = context.getResources().getDisplayMetrics().density;
             int height;
             if (scale == 4.0) {
@@ -323,12 +324,14 @@ public class WishListActivity extends BaseActivity {
             } else if (scale == 2.0) {
                 height = 250;
             } else {
-                height = 200;
+                height = 450;
             }
             int pixels = (int) (height * scale + 0.5f);
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, pixels);
-            rl.setLayoutParams(layoutParams);
+            rl.setLayoutParams(layoutParams);*/
+
+            photoView.setImageResource(R.drawable.img_placeholder);
 
             if (data.getImage_filename() != null) {
                 Glide.with(context)
@@ -342,6 +345,23 @@ public class WishListActivity extends BaseActivity {
                         .into(photoView);
             } else {
                 photoView.setImageResource(R.drawable.img_placeholder);
+            }
+
+            Log.d("WishListActivity", "The photoView.getDrawable() is " + photoView.getDrawable());
+
+            if(photoView.getDrawable() != null) {
+                int newHeight = getWindowManager().getDefaultDisplay().getHeight() / 2;
+                int orgWidth = photoView.getDrawable().getIntrinsicWidth();
+                int orgHeight = photoView.getDrawable().getIntrinsicHeight();
+
+                int newWidth = (int) Math.floor((orgWidth * newHeight) / orgHeight);
+
+                Log.d("WishListActivity", "The new width is " + newWidth + "  new height is " + newHeight);
+
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                        newWidth, newHeight);
+                params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+                photoView.setLayoutParams(params);
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {
