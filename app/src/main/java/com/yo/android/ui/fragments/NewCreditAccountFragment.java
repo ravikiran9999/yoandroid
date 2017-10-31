@@ -4,6 +4,7 @@ package com.yo.android.ui.fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -30,6 +31,7 @@ import com.yo.android.ui.TransferBalanceActivity;
 import com.yo.android.usecase.PackageDenominationsUsecase;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
+import com.yo.android.vox.BalanceHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,9 +80,13 @@ public class NewCreditAccountFragment extends BaseFragment {
     PackageDenominationsUsecase packageDenominationsUsecase;
     @Inject
     YoApi.YoService yoService;
+    @Inject
+    BalanceHelper mBalanceHelper;
 
     View view;
     EditText voucherNumberEdit;
+    String currencySymbol;
+    List<TransferBalanceDenomination> transferBalanceDenominationList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -117,24 +123,36 @@ public class NewCreditAccountFragment extends BaseFragment {
         giveThird.setClickable(false);
     }
 
-    private void showDenominations(List<TransferBalanceDenomination> transferBalanceDenominationList) {
-        aviFirst.setVisibility(View.GONE);
-        tvFirst.setVisibility(View.VISIBLE);
-        tvFirst.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), transferBalanceDenominationList.get(0).getCurrencySymbol(), transferBalanceDenominationList.get(0).getDenomination()));
-        giveFirst.setAlpha(1);
-        giveFirst.setClickable(true);
+    private void hideDenominationAVLoader() {
+        aviFirst.setVisibility(View.INVISIBLE);
+        aviSecond.setVisibility(View.INVISIBLE);
+        aviThird.setVisibility(View.INVISIBLE);
+    }
 
-        aviSecond.setVisibility(View.GONE);
-        tvSecond.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), transferBalanceDenominationList.get(1).getCurrencySymbol(), transferBalanceDenominationList.get(1).getDenomination()));
-        tvSecond.setVisibility(View.VISIBLE);
-        giveSecond.setAlpha(1);
-        giveSecond.setClickable(true);
+    private void showDenominations() {
+        hideDenominationAVLoader();
+        currencySymbol = transferBalanceDenominationList.get(0).getCurrencySymbol();
+        preferenceEndPoint.saveStringPreference(Constants.CURRENCY_SYMBOL, currencySymbol);
+        if (transferBalanceDenominationList.get(0) != null && transferBalanceDenominationList.get(0).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
+            tvFirst.setVisibility(View.VISIBLE);
+            tvFirst.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, transferBalanceDenominationList.get(0).getDenomination()));
+            giveFirst.setAlpha(1);
+            giveFirst.setClickable(true);
+        }
 
-        aviThird.setVisibility(View.GONE);
-        tvThird.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), transferBalanceDenominationList.get(2).getCurrencySymbol(), transferBalanceDenominationList.get(2).getDenomination()));
-        tvThird.setVisibility(View.VISIBLE);
-        giveThird.setAlpha(1);
-        giveThird.setClickable(true);
+        if (transferBalanceDenominationList.get(1) != null && transferBalanceDenominationList.get(1).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
+            tvSecond.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, transferBalanceDenominationList.get(1).getDenomination()));
+            tvSecond.setVisibility(View.VISIBLE);
+            giveSecond.setAlpha(1);
+            giveSecond.setClickable(true);
+        }
+
+        if (transferBalanceDenominationList.get(2) != null && transferBalanceDenominationList.get(2).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
+            tvThird.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, transferBalanceDenominationList.get(2).getDenomination()));
+            tvThird.setVisibility(View.VISIBLE);
+            giveThird.setAlpha(1);
+            giveThird.setClickable(true);
+        }
     }
 
     private void inActivePackageDenomination() {
@@ -149,23 +167,24 @@ public class NewCreditAccountFragment extends BaseFragment {
     }
 
     private void showActivePackageDenomination(List<PackageDenomination> packageDenominationList) {
-        if(packageDenominationList.get(0) != null && packageDenominationList.get(0).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
+        String pCurrencySymbol = packageDenominationList.get(0).getCurrencySymbol();
+        if (packageDenominationList.get(0) != null && packageDenominationList.get(0).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
             buyFivePackage.setAlpha(1);
             buyFivePackage.setClickable(true);
         }
-        buyFivePackage.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), packageDenominationList.get(0).getCurrencySymbol(), packageDenominationList.get(0).getPackage()));
+        buyFivePackage.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), pCurrencySymbol, packageDenominationList.get(0).getPackage()));
 
-        if(packageDenominationList.get(1) != null && packageDenominationList.get(1).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
+        if (packageDenominationList.get(1) != null && packageDenominationList.get(1).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
             buyTenPackage.setAlpha(1);
             buyTenPackage.setClickable(true);
         }
-        buyTenPackage.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), packageDenominationList.get(1).getCurrencySymbol(), packageDenominationList.get(1).getPackage()));
+        buyTenPackage.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), pCurrencySymbol, packageDenominationList.get(1).getPackage()));
 
-        if(packageDenominationList.get(2) != null && packageDenominationList.get(2).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
+        if (packageDenominationList.get(2) != null && packageDenominationList.get(2).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
             buyTwentyPackage.setAlpha(1);
             buyTwentyPackage.setClickable(true);
         }
-        buyTwentyPackage.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), packageDenominationList.get(2).getCurrencySymbol(), packageDenominationList.get(2).getPackage()));
+        buyTwentyPackage.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), pCurrencySymbol, packageDenominationList.get(2).getPackage()));
     }
 
 
@@ -182,6 +201,11 @@ public class NewCreditAccountFragment extends BaseFragment {
     @OnClick(R.id.give_third)
     public void giveThird() {
         transferBalance(tvThird.getText().toString());
+    }
+
+    @OnClick(R.id.add_more_amount)
+    public void addMoreAmount() {
+        showBalanceDialog();
     }
 
     // Need to implement buy package
@@ -219,12 +243,16 @@ public class NewCreditAccountFragment extends BaseFragment {
         denominationsUsecase.getDenominations(new ApiCallback<ArrayList<TransferBalanceDenomination>>() {
             @Override
             public void onResult(ArrayList<TransferBalanceDenomination> result) {
-                showDenominations(result);
+                if (result != null && result.size() > 0) {
+                    transferBalanceDenominationList = result;
+                    showDenominations();
+                }
             }
 
             @Override
             public void onFailure(String message) {
                 Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                hideDenominationAVLoader();
             }
         });
     }
@@ -233,7 +261,9 @@ public class NewCreditAccountFragment extends BaseFragment {
         packageDenominationsUsecase.getPackageDenominationsUsecase(new ApiCallback<ArrayList<PackageDenomination>>() {
             @Override
             public void onResult(ArrayList<PackageDenomination> result) {
-                showActivePackageDenomination(result);
+                if (result != null && result.size() > 0) {
+                    showActivePackageDenomination(result);
+                }
             }
 
             @Override
@@ -424,5 +454,92 @@ public class NewCreditAccountFragment extends BaseFragment {
         intent.putExtra(Constants.USER_TYPE, userType);
         intent.putExtra(Constants.TRANSFER_AMOUNT, transferAmount);
         startActivityForResult(intent, 11);
+    }
+
+    /**
+     * Dialog which shows complete balance cannot be transferred
+     */
+    private void showBalanceDialog() {
+        if (transferBalanceDenominationList != null && transferBalanceDenominationList.size() > 3) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+            final View view = layoutInflater.inflate(R.layout.add_more_amount_dialog, null);
+            builder.setView(view);
+
+            TextView textView = (TextView) view.findViewById(R.id.current_balance);
+            textView.setText(getCurrentAvailableBalance());
+
+            Button processed = (Button) view.findViewById(R.id.processed_btn);
+            Button cancel = (Button) view.findViewById(R.id.cancel);
+            final EditText editText = (EditText) view.findViewById(R.id.edit_amount);
+            final TextView giveFour = (TextView) view.findViewById(R.id.give_four);
+            final TextView giveFive = (TextView) view.findViewById(R.id.give_five);
+
+            if (transferBalanceDenominationList.get(3) != null && transferBalanceDenominationList.get(3).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
+                giveFour.setVisibility(View.VISIBLE);
+                giveFour.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, transferBalanceDenominationList.get(3).getDenomination()));
+                giveFour.setAlpha(1);
+                giveFour.setClickable(true);
+            }
+
+            if (transferBalanceDenominationList.get(4) != null && transferBalanceDenominationList.get(4).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
+                giveFive.setVisibility(View.VISIBLE);
+                giveFive.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, transferBalanceDenominationList.get(4).getDenomination()));
+                giveFive.setAlpha(1);
+                giveFive.setClickable(true);
+            }
+
+            giveFour.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    double selectedValue = mBalanceHelper.removeCurrencyCode(giveFour.getText().toString());
+                    editText.setText(String.valueOf(selectedValue));
+                }
+            });
+
+            giveFive.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    double selectedValue = mBalanceHelper.removeCurrencyCode(giveFive.getText().toString());
+                    editText.setText(String.valueOf(selectedValue));
+                }
+            });
+            processed.setText(getResources().getString(R.string.processed));
+
+
+            final AlertDialog alert = builder.create();
+            alert.setCancelable(false);
+            alert.getWindow().setBackgroundDrawable(new BitmapDrawable());
+            alert.show();
+
+            processed.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (editText.getText() != null) {
+                        alert.dismiss();
+                        String enteredAmount = editText.getText().toString();
+                        if (!TextUtils.isEmpty(enteredAmount) && !enteredAmount.contains(currencySymbol)) {
+                            enteredAmount = String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, enteredAmount);
+                        } else {
+                            mToastFactory.newToast(getResources().getString(R.string.correct_denomination), Toast.LENGTH_LONG);
+                        }
+                        transferBalance(enteredAmount);
+
+                    }
+                }
+            });
+
+            cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alert.dismiss();
+                }
+            });
+        }
+    }
+
+    private String getCurrentAvailableBalance() {
+        String availableBalance = String.valueOf(mBalanceHelper.removeCurrencyCode(mBalanceHelper.getCurrentBalance()));
+        return String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, availableBalance);
     }
 }
