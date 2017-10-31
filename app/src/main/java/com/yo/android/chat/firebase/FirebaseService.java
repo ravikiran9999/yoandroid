@@ -4,6 +4,9 @@ import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -239,7 +242,18 @@ public class FirebaseService extends InjectedService {
         return useWhiteIcon ? R.drawable.ic_yo_notification_white : R.drawable.ic_notification;
     }
 
+    private void playNotificationSound() {
+        try {
+            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+            r.play();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void sendTrayNotifications(int mode, String roomId, ChatMessage chatMessage) {
+        playNotificationSound();
         Notifications notification = new Notifications();
         String title = chatMessage.getSenderID();
         String voxUsername = chatMessage.getVoxUserName();

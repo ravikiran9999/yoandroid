@@ -276,6 +276,9 @@
     <string name="transfer_success">Transfer Successful</string>
     <string name="transfer_failure">Sorry, Your transaction failed</string>
     <string name="transfer_failure_reason">%1$s please try again</string>
+    <string name="wallet">WALLET</string>
+    <string name="processed">Processed</string>
+    <string name="correct_denomination">Please correct the denomination</string>
 
 
     <string name="invalid_request">Invalid Request.</string>

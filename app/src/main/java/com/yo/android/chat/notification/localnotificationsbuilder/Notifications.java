@@ -1,5 +1,6 @@
 package com.yo.android.chat.notification.localnotificationsbuilder;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -11,14 +12,12 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 
-
 import com.yo.android.R;
 import com.yo.android.chat.notification.helper.AppRunningState;
 import com.yo.android.chat.notification.helper.Constants;
 import com.yo.android.chat.notification.helper.NotificationCache;
 import com.yo.android.chat.notification.pojo.NotificationBuilderObject;
 import com.yo.android.chat.notification.pojo.UserData;
-import com.yo.android.model.Notification;
 
 import java.util.List;
 
@@ -58,6 +57,7 @@ public class Notifications {
                 NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext)
                         .setContentTitle(pushNotificationList.size() + " " + newMessage)
                         .setSmallIcon(R.drawable.ic_yo_notification);
+
                 if (userData.getSenderName() != null && !TextUtils.isEmpty(userData.getSenderName())) {
                     mBuilder.setContentText(userData.getSenderName() + " : " + userData.getDescription());
                 } else {
@@ -84,6 +84,7 @@ public class Notifications {
 
                 mBuilder.setNumber(pushNotificationList.size());
                 mBuilder.setContentIntent(contentIntent);
+                mBuilder.setPriority(Notification.PRIORITY_HIGH);
                 if (onGoing) {
                     mBuilder.setOngoing(true);
                 } else {

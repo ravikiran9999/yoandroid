@@ -72,4 +72,6 @@
     <color name="contacts_unselected_red">#ff9999</color>
     <color name="magazine_background">#EFEFEF</color>
 
+    <color name="border_bg">#CDD5DD</color>
+
 </resources>
