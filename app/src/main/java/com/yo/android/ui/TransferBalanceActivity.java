@@ -486,4 +486,12 @@ public class TransferBalanceActivity extends BaseActivity {
             enteredPhoneNumber.setText(selectedContactToTransfer);
         }
     }
+
+    private void setToolTipHint() {
+        if(currencySymbol.equalsIgnoreCase("Rs")) {
+            enteredPhoneNumber.setHint(R.string.mobile_number_hint_india);
+        } else if(currencySymbol.equalsIgnoreCase("$")){
+            enteredPhoneNumber.setHint(R.string.mobile_number_hint_singapore);
+        }
+    }
 }

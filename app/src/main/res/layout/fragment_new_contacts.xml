@@ -3,49 +3,53 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/light_gray"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/tabs_layout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:weightSum="1"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:weightSum="1">
+
         <TextView
             android:id="@+id/tv_contacts_count"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp"/>
+            android:layout_marginLeft="10dp"
+            android:layout_weight="0.5" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_weight="0.5"
-            android:gravity="right">
+            android:gravity="right"
+            android:orientation="horizontal">
+
             <Button
                 android:id="@+id/allContactsSection"
                 android:layout_width="50dp"
                 android:layout_height="45dp"
+                android:background="@color/white"
                 android:text="@string/contacts_all"
                 android:textSize="14sp"
-                android:background="@color/white"/>
+                android:textStyle="bold" />
 
-        <!--</LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="0.5">-->
+            <!--</LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="0.5">-->
             <Button
                 android:id="@+id/yoContactsSection"
                 android:layout_width="50dp"
                 android:layout_height="45dp"
+                android:background="@color/white"
                 android:text="@string/contacts_yo"
                 android:textSize="14sp"
-                android:background="@color/white"/>
+                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
 
@@ -71,22 +75,22 @@
         android:id="@+id/lv_contacts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/tabs_layout"
         android:layout_marginTop="5dp"
         android:layout_toLeftOf="@+id/side_index"
-        android:divider="@android:color/transparent"
-        android:layout_below="@+id/tabs_layout"/>
+        android:divider="@android:color/transparent" />
 
     <ListView
         android:id="@+id/side_index"
         android:layout_width="30dp"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
+        android:layout_below="@+id/tabs_layout"
+        android:layout_marginTop="10dp"
         android:background="@android:color/white"
         android:divider="@android:color/transparent"
         android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:layout_below="@+id/tabs_layout"
-        android:layout_marginTop="10dp"/>
+        android:orientation="vertical" />
 
 
 </RelativeLayout>

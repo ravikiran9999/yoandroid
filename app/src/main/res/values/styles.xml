@@ -223,4 +223,17 @@
 
     </style>
 
+    <style name="textField">
+        <item name="android:layout_height">50dp</item>
+        <item name="android:background">@drawable/text_field</item>
+        <item name="android:paddingLeft">@dimen/small_padding</item>
+        <item name="android:paddingRight">@dimen/small_padding</item>
+        <item name="android:textSize">@dimen/xsmall_textsize</item>
+    </style>
+
+    <style name="tabLayoutTextStyle" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>
