@@ -268,7 +268,7 @@ public class NewCreditAccountFragment extends BaseFragment {
 
             @Override
             public void onFailure(String message) {
-                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -312,7 +312,7 @@ public class NewCreditAccountFragment extends BaseFragment {
             yesBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    showProgressDialog();
                     String voucherNumber = voucherNumberEdit.getText().toString();
 
                     if (!TextUtils.isEmpty(voucherNumber.trim())) {
@@ -320,7 +320,7 @@ public class NewCreditAccountFragment extends BaseFragment {
                         yoService.voucherRechargeAPI(accessToken, voucherNumber).enqueue(new Callback<com.yo.android.model.Response>() {
                             @Override
                             public void onResponse(Call<com.yo.android.model.Response> call, retrofit2.Response<Response> response) {
-
+                                dismissProgressDialog();
                                 if (response.isSuccessful()) {
                                     if (response.code() == 200) {
                                         try {
@@ -346,6 +346,7 @@ public class NewCreditAccountFragment extends BaseFragment {
                                                     mToastFactory.showToast(response.body().getData().toString());
                                                     closeActivityAddBalance(Activity.RESULT_CANCELED, null);
                                                     break;
+                                                case 706:
                                                 case 708:
                                                     Util.hideKeyboard(getActivity(), voucherNumberEdit);
                                                     mToastFactory.showToast(response.body().getData().toString());
@@ -370,7 +371,7 @@ public class NewCreditAccountFragment extends BaseFragment {
 
                             @Override
                             public void onFailure(Call<com.yo.android.model.Response> call, Throwable t) {
-
+                                dismissProgressDialog();
                                 Util.hideKeyboard(getActivity(), voucherNumberEdit);
                                 mToastFactory.showToast(R.string.invalid_voucher);
 

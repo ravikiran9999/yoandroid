@@ -2,11 +2,16 @@ package com.yo.android.usecase;
 
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.R;
 import com.yo.android.api.ApiCallback;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.PackageDenomination;
 import com.yo.android.model.TransferBalanceDenomination;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,6 +20,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,10 +52,8 @@ public class PackageDenominationsUsecase {
                         }
                     });
                     packageCallback.onResult(denominations);
-                } else if (response.code() == 404 || response.code() == 422) {
-                    packageCallback.onFailure(response.message());
                 } else {
-                    packageCallback.onFailure(response.message());
+                    errorMessage(response, packageCallback);
                 }
 
             }
@@ -61,4 +65,18 @@ public class PackageDenominationsUsecase {
         });
     }
 
+    private void errorMessage(Response<List<PackageDenomination>> response, final ApiCallback<ArrayList<PackageDenomination>> mPackageCallback) {
+        try {
+            JSONObject jsonObjectError = new JSONObject(response.errorBody().string());
+            int code = jsonObjectError.getInt("code");
+            if (code == 422 || code == 404) {
+                mPackageCallback.onFailure(jsonObjectError.getString("data"));
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -54,7 +54,9 @@
         android:layout_marginRight="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="30dp"
-        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/xsmall_textsize"
+        android:textStyle="bold"
         tools:text="@string/transfer_amount" />
 
     <ImageView
@@ -67,6 +69,7 @@
 
     <EditText
         android:id="@+id/et_enter_phone"
+        style="@style/textField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -74,7 +77,6 @@
         android:layout_marginRight="15dp"
         android:layout_marginTop="10dp"
         android:ems="10"
-        android:hint="@string/mobile_number_hint"
         android:imeOptions="actionDone"
         android:inputType="number|phone"
         android:padding="13dp" />
