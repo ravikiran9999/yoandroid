@@ -2,6 +2,7 @@ package com.yo.android.di;
 
 import android.content.Context;
 
+import com.yo.android.chat.ChatRefreshBackground;
 import com.yo.android.usecase.DenominationsUsecase;
 import com.yo.android.usecase.PackageDenominationsUsecase;
 import com.yo.android.usecase.WebserviceUsecase;
@@ -242,7 +243,7 @@ import dagger.Provides;
                 com.yo.dialer.YoSipService.class,
                 YoSipServiceHandler.class,
                 DialerHelper.class,
-
+                ChatRefreshBackground.class,
                 //usecases
                 WebserviceUsecase.class,
                 DenominationsUsecase.class,

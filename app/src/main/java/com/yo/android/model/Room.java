@@ -31,6 +31,7 @@ public class Room implements Parcelable {
     private String phoneNumber;
     private String nexgeUserName = "";
     private String youserId;
+    private String created_at;
     private List<GroupMembers> groupMembers = new ArrayList<>();
 
     public String getNexgeUserName() {
@@ -158,6 +159,7 @@ public class Room implements Parcelable {
         dest.writeString(nexgeUserName);
         dest.writeString(youserId);
         dest.writeString(phoneNumber);
+        dest.writeString(created_at);
     }
 
     public String getYouserId() {
@@ -180,6 +182,7 @@ public class Room implements Parcelable {
         this.nexgeUserName = in.readString();
         this.youserId = in.readString();
         this.phoneNumber = in.readString();
+        this.created_at = in.readString();
     }
 
     public static final Parcelable.Creator<Room> CREATOR = new Parcelable.Creator<Room>() {
@@ -224,5 +227,13 @@ public class Room implements Parcelable {
     @Override
     public int hashCode() {
         return firebaseRoomId != null ? firebaseRoomId.hashCode() : 0;
+    }
+
+    public String getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(String created_at) {
+        this.created_at = created_at;
     }
 }

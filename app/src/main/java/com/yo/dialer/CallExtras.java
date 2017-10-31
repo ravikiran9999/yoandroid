@@ -89,5 +89,8 @@ public interface CallExtras {
         public static final String COM_YO_ACTION_CALL_NORMAL_CALL = "com.yo.action.CALL_NORMAL_CALL";
         public static final String COM_YO_ACTION_CALL_NORMAL_CALL_DISCONNECTED = "com.yo.action.CALL_NORMAL_CALL_DISCONNECTED";
 
+        public static final String CHAT_GROUP_CREATED = "com.yo.action.CHAT_GROUP_CREATED";
+
+
     }
 }

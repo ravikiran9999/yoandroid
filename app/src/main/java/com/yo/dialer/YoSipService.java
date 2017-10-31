@@ -578,24 +578,26 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
 
     public void setHold(boolean isHold) {
-        DialerLogs.messageE(TAG, "Call HOld" + isHold);
-        if (isHold) {
-            if(!yoCurrentCall.isPendingReInvite()) {
-                CallHelper.holdCall(yoCurrentCall, preferenceEndPoint, phoneNumber);
-                changeHoldUI = true;
-            }
-        } else {
-            try {
-                if(!yoCurrentCall.isPendingReInvite()) {
-                    CallHelper.unHoldCall(yoCurrentCall);
-                    CallHelper.uploadToGoogleSheet(preferenceEndPoint, phoneNumber, "Hold Off");
+        if (yoCurrentCall != null) {
+            DialerLogs.messageE(TAG, "Call HOld" + isHold);
+            if (isHold) {
+                if (!yoCurrentCall.isPendingReInvite()) {
+                    CallHelper.holdCall(yoCurrentCall, preferenceEndPoint, phoneNumber);
                     changeHoldUI = true;
                 }
-            } catch (Exception e) {
-                DialerLogs.messageE(TAG, "YO===Re-Inviting failed" + e.getMessage());
-                yoCurrentCall.setPendingReInvite(true);
-                changeHoldUI = false;
-                CallHelper.uploadToGoogleSheet(preferenceEndPoint, phoneNumber, "Hold Off failed because of " + e.getMessage());
+            } else {
+                try {
+                    if (!yoCurrentCall.isPendingReInvite()) {
+                        CallHelper.unHoldCall(yoCurrentCall);
+                        CallHelper.uploadToGoogleSheet(preferenceEndPoint, phoneNumber, "Hold Off");
+                        changeHoldUI = true;
+                    }
+                } catch (Exception e) {
+                    DialerLogs.messageE(TAG, "YO===Re-Inviting failed" + e.getMessage());
+                    yoCurrentCall.setPendingReInvite(true);
+                    changeHoldUI = false;
+                    CallHelper.uploadToGoogleSheet(preferenceEndPoint, phoneNumber, "Hold Off failed because of " + e.getMessage());
+                }
             }
         }
     }
@@ -605,7 +607,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     }
 
     public void callDisconnected(String code, String reason, String comment) {
-        if(getYoCurrentCall() == null && reason.equalsIgnoreCase("Registration request timeout")) {
+        if (getYoCurrentCall() == null && reason.equalsIgnoreCase("Registration request timeout")) {
             uploadGoogleSheet(code, reason, comment, 0, null);
         } else {
             SipHelper.isAlreadyStarted = false;

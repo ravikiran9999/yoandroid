@@ -25,10 +25,13 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.yo.android.R;
 import com.yo.android.api.YOUserInfo;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.notification.helper.NotificationCache;
+import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.helpers.Settings;
 import com.yo.android.model.ChatMessage;
@@ -179,7 +182,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                             args.putString(Constants.OPPONENT_CONTACT_IMAGE, yoUserInfo.getAvatar());
                             args.putString(Constants.OPPONENT_ID, yoUserInfo.getId());
                             args.putParcelable(Constants.CONTACT, contact);
-                            if(yoUserInfo.getFirebaseRoomId()!= null && !TextUtils.isEmpty(yoUserInfo.getFirebaseRoomId())) {
+                            if (yoUserInfo.getFirebaseRoomId() != null && !TextUtils.isEmpty(yoUserInfo.getFirebaseRoomId())) {
                                 callUserChat(args, userChatFragment);
                             } else {
                                 mToastFactory.showToast(R.string.chat_room_id_error);
@@ -203,7 +206,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                     args.putString(Constants.CHAT_ROOM_ID, firebaseRoomId);
                     args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
                     //args.putParcelable(Constants.CONTACT, contact);
-                    if(firebaseRoomId!= null && !TextUtils.isEmpty(firebaseRoomId)) {
+                    if (firebaseRoomId != null && !TextUtils.isEmpty(firebaseRoomId)) {
                         callUserChat(args, userChatFragment);
                     } else {
                         mToastFactory.showToast(R.string.chat_room_id_error);
@@ -400,7 +403,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
     protected void onResume() {
         super.onResume();
         bindCallService();
-
     }
 
     ServiceConnection connection = new ServiceConnection() {
@@ -428,7 +430,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
     private void bindCallService() {
         bindService(new Intent(this, YoSipService.class), connection, Context.BIND_AUTO_CREATE);
     }
-
 
     private String getOpponent(@NonNull Room room) {
 
@@ -493,4 +494,5 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
     public void onEventMainThread(GroupSubject groupSubject) {
         customTitle.setText(groupSubject.getUpdatedSubject());
     }
+
 }

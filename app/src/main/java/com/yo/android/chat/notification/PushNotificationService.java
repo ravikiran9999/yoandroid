@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
@@ -18,6 +19,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
+import com.yo.android.chat.ChatRefreshBackground;
 import com.yo.android.chat.notification.helper.NotificationCache;
 import com.yo.android.chat.notification.localnotificationsbuilder.Notifications;
 import com.yo.android.chat.notification.pojo.NotificationBuilderObject;
@@ -55,7 +57,7 @@ import de.greenrobot.event.EventBus;
 
 public class PushNotificationService extends FirebaseMessagingService {
     private static final String TAG = "PushNotificationService";
-
+    private Handler handler = new Handler();
     @Inject
     protected Log mLog;
     @Inject
@@ -73,7 +75,7 @@ public class PushNotificationService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        Map data = remoteMessage.getData();
+        final Map data = remoteMessage.getData();
 
         mLog.i(TAG, "From: %s", remoteMessage.getFrom());
         mLog.i(TAG, "onMessageReceived: title- %s and data- %s", data.get("title"), data.get("message"));
@@ -88,7 +90,14 @@ public class PushNotificationService extends FirebaseMessagingService {
         } else if (data.get("tag").equals("POPUP")) {
             PopupHelper.handlePop(preferenceEndPoint, data);
         } else if (data.get("tag").equals("Chat")) {
-            sendChatGroupCreatedNotification(data);
+            //update UI , if chat is opened.
+            ChatRefreshBackground.getInstance().doRefresh(getApplicationContext(), data.get("firebase_room_id").toString());
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    sendChatGroupCreatedNotification(data);
+                }
+            }, 2000);
         }
 
         if (DialerConfig.UPLOAD_REPORTS_GOOGLE_SHEET) {
@@ -127,6 +136,10 @@ public class PushNotificationService extends FirebaseMessagingService {
         final int NOTIFICATION_ID = 3;
 
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+        intent.putExtra(Constants.CHAT_ROOM_ID, data.get("firebase_room_id").toString());
+        intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, data.get("group_name").toString());
+        intent.putExtra(Constants.TYPE, Constants.YO_NOTIFICATION);
+
         PendingIntent notificationPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
