@@ -4,6 +4,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
@@ -42,7 +45,12 @@ import com.yo.android.util.ArticlesComparator;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -57,6 +65,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import se.emilsjolander.flipview.FlipView;
+
+import static com.yo.android.R.id.date;
 
 /**
  * This activity is used to display the articles of a followed topic
@@ -463,35 +473,13 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
             photoView.setImageResource(R.drawable.img_placeholder);
 
+            int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
+
+            // Resize a Bitmap maintaining aspect ratio based on screen width
             if (data.getImage_filename() != null) {
-                Glide.with(context)
-                        .load(data.getImage_filename())
-                        .placeholder(R.drawable.img_placeholder)
-                        //Image size will be reduced 50%
-                        .thumbnail(0.5f)
-                        .crossFade()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .dontAnimate()
-                        .into(photoView);
-            } else {
-                photoView.setImageResource(R.drawable.img_placeholder);
-            }
-
-            Log.d("MyCollectionDetails", "The photoView.getDrawable() is " + photoView.getDrawable());
-
-            if(photoView.getDrawable() != null) {
-                int newHeight = getWindowManager().getDefaultDisplay().getHeight() / 2;
-                int orgWidth = photoView.getDrawable().getIntrinsicWidth();
-                int orgHeight = photoView.getDrawable().getIntrinsicHeight();
-
-                int newWidth = (int) Math.floor((orgWidth * newHeight) / orgHeight);
-
-                Log.d("MyCollectionDetails", "The new width is " + newWidth + "  new height is " + newHeight);
-
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                        newWidth, newHeight);
-                params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-                photoView.setLayoutParams(params);
+                if(BitmapCache.getBitmapFromMemCache())
+                // Resize a Bitmap maintaining aspect ratio based on screen width
+                new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {
@@ -614,9 +602,11 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
         /**
          * Shows the unfollow confirmation dialog
-         * @param data The articles object
+         *
+         * @param data        The articles object
          * @param finalHolder The ViewHolder object
          */
+
         private void showUnFollowConfirmationDialog(final Articles data, final ViewHolder finalHolder) {
 
 
@@ -689,6 +679,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
         /**
          * Adds the articles to the list
+         *
          * @param articlesList The articles list
          */
         public void addItems(List<Articles> articlesList) {
@@ -700,9 +691,10 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
         /**
          * Updates the list of articles
-         * @param isLiked isLiked article or not
-         * @param articles The Articles object
-         * @param position The position
+         *
+         * @param isLiked      isLiked article or not
+         * @param articles     The Articles object
+         * @param position     The position
          * @param articlePlace The article placement
          */
         public void updateArticle(boolean isLiked, Articles articles, int position, String articlePlace) {
@@ -938,6 +930,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
     /**
      * Checks the cached magazines list with the topicId of the selected topic
+     *
      * @return
      */
     private List<String> checkCachedMagazines() {
@@ -958,6 +951,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
     /**
      * Gets the remaining articles of the topic
+     *
      * @param existingArticles The list of existing article ids
      */
     private void getRemainingArticlesInTopics(List<String> existingArticles) {
@@ -1039,6 +1033,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
     /**
      * Gets the remaining articles of the magazine
+     *
      * @param existingArticles The list of existing article ids
      */
     private void getRemainingArticlesInMagazine(List<String> existingArticles) {
@@ -1118,6 +1113,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
     /**
      * Gets the cached articles list
+     *
      * @return The list of cached articles
      */
     private List<Articles> getCachedMagazinesList() {
@@ -1146,6 +1142,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
     /**
      * Saves the list of cached articles
+     *
      * @param cachedMagazinesList The articles to cache
      */
     private void saveCachedMagazinesList(List<Articles> cachedMagazinesList) {

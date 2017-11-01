@@ -125,6 +125,9 @@ public class ChatRefreshBackground {
                 ArrayList<String> roomsListdata = new Gson().fromJson(rooms,
                         new TypeToken<ArrayList<String>>() {
                         }.getType());
+                if (roomsListdata == null) {
+                    roomsListdata = new ArrayList<String>();
+                }
                 roomsListdata.addAll(roomsList);
                 String listString = new Gson().toJson(roomsListdata,
                         new TypeToken<ArrayList<String>>() {
