@@ -472,12 +472,10 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             rl.setLayoutParams(layoutParams);*/
 
             photoView.setImageResource(R.drawable.img_placeholder);
-
-            // Resize a Bitmap maintaining aspect ratio based on screen width
             if (data.getImage_filename() != null) {
-
                 new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
-
+            } else {
+                photoView.setImageResource(R.drawable.img_placeholder);
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {

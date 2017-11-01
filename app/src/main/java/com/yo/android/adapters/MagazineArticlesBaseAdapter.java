@@ -208,7 +208,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
             holder.articleFollowRight = UI.findViewById(layout, R.id.imv_magazine_follow_right);
 
-            holder.lvSuggestions = UI.findViewById(layout, R.id.lv_suggestions);
+            //holder.lvSuggestions = UI.findViewById(layout, R.id.lv_suggestions);
+            holder.lvSuggestions = (ListView) layout.findViewById(R.id.lv_suggestions);
 
             holder.tvFollowMoreTopics = UI.findViewById(layout, R.id.tv_follow_more_topics);
 
