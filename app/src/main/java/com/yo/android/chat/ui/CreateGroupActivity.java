@@ -237,7 +237,8 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                         }
                         Intent intent = new Intent();
                         Room body1 = response.body();
-                        body1 = addTimeStamp(body1);
+                        long time = addTimeStamp(body1.getCreated_at());
+                        body1.setTime(time);
                         intent.putExtra(Constants.ROOM, body1);
                         setResult(Activity.RESULT_OK, intent);
                         updateCache(body1);
@@ -259,21 +260,21 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
         }
     }
 
-    private Room addTimeStamp(Room body1) {
-        String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    private long addTimeStamp(String timeStamp) {
+        String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS";
         DateFormat sdf = new SimpleDateFormat(DATE_FORMAT_PATTERN) {
             public Date parse(String source, ParsePosition pos) {
                 return super.parse(source.replaceFirst(":(?=[0-9]{2}$)", ""), pos);
             }
         };
         try {
-            Date mDate = sdf.parse(body1.getCreated_at());
+            Date mDate = sdf.parse(timeStamp);
             long timeInMilliseconds = mDate.getTime();
-            body1.setTime(timeInMilliseconds);
+            return timeInMilliseconds;
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return body1;
+        return 0;
     }
 
     private void updateCache(final Room room) {

@@ -603,9 +603,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
                         Room mRoom = getMembersProfile(dataSnapshot);
-                        if (mRoom != null) {
-                            Log.i(TAG, "Activate Members " + mRoom.getGroupName());
-                        }
                         if (mRoom != null && !arrayOfUsers.contains(mRoom))
                             arrayOfUsers.add(mRoom);
                         if (activity != null) {

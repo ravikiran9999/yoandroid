@@ -160,6 +160,7 @@ public class Room implements Parcelable {
         dest.writeString(youserId);
         dest.writeString(phoneNumber);
         dest.writeString(created_at);
+        dest.writeLong(time);
     }
 
     public String getYouserId() {
@@ -183,6 +184,7 @@ public class Room implements Parcelable {
         this.youserId = in.readString();
         this.phoneNumber = in.readString();
         this.created_at = in.readString();
+        this.time = in.readLong();
     }
 
     public static final Parcelable.Creator<Room> CREATOR = new Parcelable.Creator<Room>() {
