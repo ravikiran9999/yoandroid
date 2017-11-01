@@ -651,8 +651,6 @@ public class BottomTabsActivity extends BaseActivity {
                 }
                 break;
         }
-
-
         if (requestCode == Helper.CROP_ACTIVITY) {
             if (data != null && data.hasExtra(Helper.IMAGE_PATH)) {
                 Uri imagePath = Uri.parse(data.getStringExtra(Helper.IMAGE_PATH));
@@ -891,6 +889,7 @@ public class BottomTabsActivity extends BaseActivity {
 
         Intent intent = new Intent(getApplicationContext(), FirebaseService.class);
         startService(intent);
+
 
         if (preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT) == 0) {
             notificationCount.setVisibility(View.GONE);

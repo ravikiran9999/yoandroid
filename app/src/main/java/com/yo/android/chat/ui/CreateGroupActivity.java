@@ -18,11 +18,14 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.SelectedContactsAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.CompressImage;
+import com.yo.android.chat.ui.fragments.ChatFragment;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Room;
 import com.yo.android.ui.BaseActivity;
@@ -31,7 +34,12 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -227,8 +235,13 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                         if (!ContactsArrayList.isEmpty()) {
                             ContactsArrayList.clear();
                         }
-                        //setResult(Activity.RESULT_OK);
-                        ChatActivity.start(CreateGroupActivity.this, response.body());
+                        Intent intent = new Intent();
+                        Room body1 = response.body();
+                        long time = addTimeStamp(body1.getCreated_at());
+                        body1.setTime(time);
+                        intent.putExtra(Constants.ROOM, body1);
+                        setResult(Activity.RESULT_OK, intent);
+                        updateCache(body1);
                         finish();
                     } else {
                         Toast.makeText(CreateGroupActivity.this, getResources().getString(R.string.group_creation_error), Toast.LENGTH_SHORT).show();
@@ -245,6 +258,35 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
             Util.hideKeyboard(this, getCurrentFocus());
             Toast.makeText(this, "Atleast one contact should be selected", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private long addTimeStamp(String timeStamp) {
+        String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+        DateFormat sdf = new SimpleDateFormat(DATE_FORMAT_PATTERN) {
+            public Date parse(String source, ParsePosition pos) {
+                return super.parse(source.replaceFirst(":(?=[0-9]{2}$)", ""), pos);
+            }
+        };
+        try {
+            Date mDate = sdf.parse(timeStamp);
+            long timeInMilliseconds = mDate.getTime();
+            return timeInMilliseconds;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    private void updateCache(final Room room) {
+        String rooms = loginPrefs.getStringPreference(Constants.FIRE_BASE_ROOMS);
+        ArrayList<String> roomsListdata = new Gson().fromJson(rooms,
+                new TypeToken<ArrayList<String>>() {
+                }.getType());
+        roomsListdata.add(room.getFirebaseRoomId());
+        String listString = new Gson().toJson(roomsListdata,
+                new TypeToken<ArrayList<String>>() {
+                }.getType());
+        loginPrefs.saveStringPreference(Constants.FIRE_BASE_ROOMS, listString);
     }
 
     @Override

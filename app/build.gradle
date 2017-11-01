@@ -27,7 +27,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1
-        versionName "17.4.3.0"
+        versionName "17.4.4.0"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
@@ -61,6 +61,8 @@ android {
             applicationIdSuffix ".stage"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
+            buildConfigField "String", "RELEASE_USER_TYPE_END", "\"D\""
+
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
             buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "false"
             buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"

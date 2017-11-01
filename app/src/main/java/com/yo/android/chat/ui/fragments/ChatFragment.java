@@ -2,13 +2,18 @@ package com.yo.android.chat.ui.fragments;
 
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.SearchView;
@@ -52,6 +57,7 @@ import com.yo.android.util.DateUtil;
 import com.yo.android.util.FireBaseHelper;
 import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
+import com.yo.dialer.CallExtras;
 
 import org.json.JSONArray;
 
@@ -79,6 +85,7 @@ import de.greenrobot.event.EventBus;
 public class ChatFragment extends BaseFragment implements AdapterView.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = "ChatFragment";
+    public static final int GROUP_CREATED = 100;
 
     @Bind(R.id.lv_chat_room)
     ListView listView;
@@ -89,7 +96,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Bind(R.id.swipeContainer)
     protected SwipeRefreshLayout swipeRefreshContainer;
 
-    private ArrayList<Room> arrayOfUsers;
+    private static ArrayList<Room> arrayOfUsers = new ArrayList<>();
     private ChatRoomListAdapter chatRoomListAdapter;
     private Menu menu;
     private Room room;
@@ -101,6 +108,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private int executed;
     private int activeCount;
     private Room tempRoom;
+
+    Handler handler = new Handler();
+
 
     @Inject
     FireBaseHelper fireBaseHelper;
@@ -129,13 +139,14 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        arrayOfUsers = new ArrayList<>();
         roomIdList = new ArrayList<>();
         EventBus.getDefault().register(this);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         executed = 0;
         activeCount = 0;
         isShowDefault = false;
+        //Load from Cache first
+        loadRoomsFromPref();
         synchronized (this) {
             isRoomsExist(null);
         }
@@ -216,7 +227,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 startActivity(new Intent(activity, AppContactsActivity.class));
                 break;
             case R.id.create_group:
-                startActivity(new Intent(activity, CreateGroupActivity.class));
+                startActivityForResult(new Intent(activity, CreateGroupActivity.class), GROUP_CREATED);
                 break;
             default:
                 break;
@@ -226,6 +237,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     }
 
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -233,6 +245,14 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         if (activity != null) {
             chatRoomListAdapter = new ChatRoomListAdapter(activity.getApplicationContext());
             listView.setAdapter(chatRoomListAdapter);
+            if (arrayOfUsers != null && arrayOfUsers.size() > 0) {
+                ArrayList<Room> roomsSortedList = sortedList(arrayOfUsers);
+                chatRoomListAdapter.addChatRoomItems(roomsSortedList);
+            }
+            mLocalBroadcastManager = LocalBroadcastManager.getInstance(activity);
+            IntentFilter mIntentFilter = new IntentFilter();
+            mIntentFilter.addAction(CallExtras.Actions.CHAT_GROUP_CREATED);
+            mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, mIntentFilter);
         }
     }
 
@@ -265,20 +285,27 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         if (searchView != null && !TextUtils.isEmpty(searchView.getQuery())) {
             searchView.setQuery(searchView.getQuery(), false);
         } else {
-            String rooms = loginPrefs.getStringPreference(Constants.FIRE_BASE_ROOMS);
-
-            ArrayList<String> roomsListdata = new Gson().fromJson(rooms,
-                    new TypeToken<ArrayList<String>>() {
-                    }.getType());
-
-            String databaseReference = loginPrefs.getStringPreference(Constants.FIRE_BASE_ROOMS_REFERENCE);
-            if (!"".equalsIgnoreCase(databaseReference)) {
-                Firebase firebaseDatabaseReference = new Firebase(databaseReference);
-                activeMembers(firebaseDatabaseReference, roomsListdata);
+            if (arrayOfUsers != null && arrayOfUsers.size() > 0) {
+                ArrayList<Room> roomsSortedList = sortedList(arrayOfUsers);
+                chatRoomListAdapter.clearAll();
+                chatRoomListAdapter.addItemsAll(roomsSortedList);
             }
-            //isRoomsExist(null);
+            loadRoomsFromPref();
         }
 
+    }
+
+    private void loadRoomsFromPref() {
+        String rooms = loginPrefs.getStringPreference(Constants.FIRE_BASE_ROOMS);
+        ArrayList<String> roomsListdata = new Gson().fromJson(rooms,
+                new TypeToken<ArrayList<String>>() {
+                }.getType());
+
+        String databaseReference = loginPrefs.getStringPreference(Constants.FIRE_BASE_ROOMS_REFERENCE);
+        if (!"".equalsIgnoreCase(databaseReference)) {
+            Firebase firebaseDatabaseReference = new Firebase(databaseReference);
+            activeMembers(firebaseDatabaseReference, roomsListdata);
+        }
     }
 
     private void isRoomsExists(final SwipeRefreshLayout swipeRefreshContainer) {
@@ -318,7 +345,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         }
     }
 
-    private void isRoomsExist(final SwipeRefreshLayout swipeRefreshContainer) {
+    public void isRoomsExist(final SwipeRefreshLayout swipeRefreshContainer) {
         try {
             refreshProgress(swipeRefreshContainer);
             if (isAdded() && activity != null) {
@@ -363,7 +390,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(added == false) {
+                if (added == false) {
                     new FirebaseAsync().execute(dataSnapshot, null, allRoomsRefreshContainer);
                 } else {
                     for (final DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
@@ -467,7 +494,8 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) { }
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
@@ -488,6 +516,11 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     public void onRefresh() {
         isRoomsExist(swipeRefreshContainer);
     }
+
+    public static void addNewGroup(Room room) {
+        arrayOfUsers.add(0, room);
+    }
+
 
     private class FirebaseAsync extends AsyncTask<Object, Void, List<String>> {
         Firebase databaseReference = null;
@@ -572,6 +605,15 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         Room mRoom = getMembersProfile(dataSnapshot);
                         if (mRoom != null && !arrayOfUsers.contains(mRoom))
                             arrayOfUsers.add(mRoom);
+                        if (activity != null) {
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ArrayList<Room> roomsSortedList = sortedList(arrayOfUsers);
+                                    chatRoomListAdapter.addChatRoomItems(roomsSortedList);
+                                }
+                            });
+                        }
                     }
                 }
 
@@ -662,7 +704,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         emptyImageView.setVisibility(View.VISIBLE);
     }
 
-    private ArrayList<Room> sortedList(ArrayList<Room> mSortedList) {
+    private static ArrayList<Room> sortedList(ArrayList<Room> mSortedList) {
         Collections.sort(mSortedList, new Comparator<Room>() {
             @Override
             public int compare(Room lhs, Room rhs) {
@@ -685,23 +727,24 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
                 FlurryAgent.logEvent("Chats", chatsParams, true);
 
-            if (activity instanceof BottomTabsActivity) {
-                BottomTabsActivity bottomTabsActivity = (BottomTabsActivity) activity;
-                if (bottomTabsActivity.getFragment() instanceof ChatFragment) {
-                    if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
-                        Type type = new TypeToken<List<Popup>>() {
-                        }.getType();
-                        List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
-                        if (popup != null) {
-                            Collections.reverse(popup);
-                            isAlreadyShown = false;
-                            for (Popup p : popup) {
-                                if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CHATS) {
-                                    if (!isAlreadyShown) {
-                                        PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.CHATS, p, getActivity(), preferenceEndPoint, this, this, popup);
-                                        isAlreadyShown = true;
-                                        isSharedPreferenceShown = false;
-                                        break;
+                if (activity instanceof BottomTabsActivity) {
+                    BottomTabsActivity bottomTabsActivity = (BottomTabsActivity) activity;
+                    if (bottomTabsActivity.getFragment() instanceof ChatFragment) {
+                        if (preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION) != null) {
+                            Type type = new TypeToken<List<Popup>>() {
+                            }.getType();
+                            List<Popup> popup = new Gson().fromJson(preferenceEndPoint.getStringPreference(Constants.POPUP_NOTIFICATION), type);
+                            if (popup != null) {
+                                Collections.reverse(popup);
+                                isAlreadyShown = false;
+                                for (Popup p : popup) {
+                                    if (p.getPopupsEnum() == PopupHelper.PopupsEnum.CHATS) {
+                                        if (!isAlreadyShown) {
+                                            PopupHelper.getSinglePopup(PopupHelper.PopupsEnum.CHATS, p, getActivity(), preferenceEndPoint, this, this, popup);
+                                            isAlreadyShown = true;
+                                            isSharedPreferenceShown = false;
+                                            break;
+                                        }
                                     }
                                 }
                             }
@@ -709,7 +752,6 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                     }
                 }
             }
-        }
 
         } else {
         }
@@ -736,11 +778,12 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                             }
                         }
                     }
-
+                } else if (key != null && key.equalsIgnoreCase(Constants.FIRE_BASE_ROOMS)) {
+                    Toast.makeText(getActivity(), "Chat room update", Toast.LENGTH_LONG).show();
+                    loadRoomsFromPref();
                 }
             }
         }
-
     }
 
     @Override
@@ -776,6 +819,31 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             swipeRefreshContainer.setRefreshing(false);
         } else {
             showProgressDialog();
+        }
+    }
+
+    LocalBroadcastManager mLocalBroadcastManager;
+    BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(CallExtras.Actions.CHAT_GROUP_CREATED)) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadRoomsFromPref();
+                    }
+                }, 1000);
+            }
+        }
+    };
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == GROUP_CREATED && data != null) {
+            Room room = (Room) data.getParcelableExtra(Constants.ROOM);
+            ChatFragment.addNewGroup(room);
+            ChatActivity.start(getActivity(), room);
         }
     }
 }

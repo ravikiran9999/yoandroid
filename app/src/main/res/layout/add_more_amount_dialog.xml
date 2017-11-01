@@ -52,6 +52,7 @@
                 android:background="@drawable/white_circle_small"
                 android:gravity="center"
                 android:textColor="@color/black"
+                android:visibility="gone"
                 tools:text="Rs 50" />
 
             <TextView
@@ -59,10 +60,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
                 android:background="@drawable/white_circle_small"
                 android:gravity="center"
                 android:textColor="@color/black"
+                android:visibility="gone"
                 tools:text="Rs 100" />
         </RelativeLayout>
 

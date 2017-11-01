@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -368,6 +370,8 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
 
             ImageView photoView = holder.articlePhoto;
 
+            photoView.setImageResource(R.drawable.img_placeholder);
+
             if (data.getImage_filename() != null) {
                 Glide.with(context)
                         .load(data.getImage_filename())
@@ -380,6 +384,23 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                         .into(photoView);
             } else {
                 photoView.setImageResource(R.drawable.img_placeholder);
+            }
+
+            Log.d("OthersProfileLiked", "The photoView.getDrawable() is " + photoView.getDrawable());
+
+            if(photoView.getDrawable() != null) {
+                int newHeight = ((BaseActivity) context).getWindowManager().getDefaultDisplay().getHeight() / 4;
+                int orgWidth = photoView.getDrawable().getIntrinsicWidth();
+                int orgHeight = photoView.getDrawable().getIntrinsicHeight();
+
+                int newWidth = (int) Math.floor((orgWidth * newHeight) / orgHeight);
+
+                Log.d("OthersProfileLiked", "The new width is " + newWidth + "  new height is " + newHeight);
+
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                        newWidth, newHeight);
+                params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+                photoView.setLayoutParams(params);
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {

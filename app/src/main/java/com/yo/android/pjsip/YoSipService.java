@@ -360,7 +360,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
             lastLaunchCallHandler = currentElapsedTime;
             if (preferenceEndPoint.getBooleanPreference(Constants.NOTIFICATION_ALERTS)) {
                 inComingCallNotificationId = Util.createNotification(this, parseVoxUser(getPhoneNumber(mycall.getInfo().getRemoteUri())), "Incoming call", InComingCallActivity.class, intent);
-/*                inComingCallNotificationId = Notifications.NOTIFICATION_ID;
+/*                inComingCallNotificationId = Notifications.CHAT_NOTIFICATION_ID;
                 Util.setBigStyleNotification(this, parseVoxUser(getPhoneNumber(mycall.getInfo().getRemoteUri())), "Incoming call", "Incoming call", "", true, true, InComingCallActivity.class, intent);*/
             }
         }
@@ -929,7 +929,7 @@ public class YoSipService extends InjectedService implements MyAppObserver, SipS
         destination = parseVoxUser(destination);
         if (preferenceEndPoint.getBooleanPreference(Constants.NOTIFICATION_ALERTS)) {
             outGoingCallNotificationId = Util.createNotification(this, destination, "Outgoing call", OutGoingCallActivity.class, intent);
-            /*outGoingCallNotificationId = Notifications.NOTIFICATION_ID;
+            /*outGoingCallNotificationId = Notifications.CHAT_NOTIFICATION_ID;
             Util.setBigStyleNotification(this, destination, "Outgoing call", "Outgoing call", "", true, true, OutGoingCallActivity.class, intent);*/
         }
     }

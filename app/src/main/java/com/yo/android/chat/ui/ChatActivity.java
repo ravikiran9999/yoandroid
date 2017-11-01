@@ -1,17 +1,12 @@
 package com.yo.android.chat.ui;
 
 import android.app.Activity;
-import android.app.NotificationManager;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -28,7 +23,7 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.yo.android.R;
 import com.yo.android.api.YOUserInfo;
 import com.yo.android.chat.firebase.ContactsSyncManager;
-import com.yo.android.chat.notification.helper.NotificationCache;
+import com.yo.android.chat.notification.localnotificationsbuilder.Notifications;
 import com.yo.android.chat.ui.fragments.UserChatFragment;
 import com.yo.android.helpers.Settings;
 import com.yo.android.model.ChatMessage;
@@ -38,9 +33,7 @@ import com.yo.android.model.NotificationCountReset;
 import com.yo.android.model.Room;
 import com.yo.android.model.Share;
 import com.yo.android.photo.util.ColorGenerator;
-import com.yo.android.pjsip.CallDisconnectedListner;
 import com.yo.android.pjsip.SipBinder;
-import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
@@ -127,6 +120,9 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         final UserChatFragment userChatFragment = new UserChatFragment();
         final Bundle args = new Bundle();
 
+        Util.cancelNotification(this, Notifications.CHAT_NOTIFICATION_ID);
+        Util.cancelNotification(this, Notifications.GROUP_NOTIFICATION_ID);
+
         if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.ROOM)) {
             room = getIntent().getParcelableExtra(Constants.ROOM);
 
@@ -153,7 +149,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
 
             args.putString(Constants.OPPONENT_ID, room.getYouserId());
 
-            Util.cancelAllNotification(this);
             callUserChat(args, userChatFragment);
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.CONTACT)) {
             final Contact contact = getIntent().getParcelableExtra(Constants.CONTACT);
@@ -179,7 +174,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                             args.putString(Constants.OPPONENT_CONTACT_IMAGE, yoUserInfo.getAvatar());
                             args.putString(Constants.OPPONENT_ID, yoUserInfo.getId());
                             args.putParcelable(Constants.CONTACT, contact);
-                            if(yoUserInfo.getFirebaseRoomId()!= null && !TextUtils.isEmpty(yoUserInfo.getFirebaseRoomId())) {
+                            if (yoUserInfo.getFirebaseRoomId() != null && !TextUtils.isEmpty(yoUserInfo.getFirebaseRoomId())) {
                                 callUserChat(args, userChatFragment);
                             } else {
                                 mToastFactory.showToast(R.string.chat_room_id_error);
@@ -203,15 +198,12 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                     args.putString(Constants.CHAT_ROOM_ID, firebaseRoomId);
                     args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
                     //args.putParcelable(Constants.CONTACT, contact);
-                    if(firebaseRoomId!= null && !TextUtils.isEmpty(firebaseRoomId)) {
+                    if (firebaseRoomId != null && !TextUtils.isEmpty(firebaseRoomId)) {
                         callUserChat(args, userChatFragment);
                     } else {
                         mToastFactory.showToast(R.string.chat_room_id_error);
                     }
                 }
-
-                Util.cancelAllNotification(this);
-
             }
 
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.YO_NOTIFICATION)) {
@@ -335,15 +327,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    private void clearNotifications() {
-        NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-        if (sipBinder != null) {
-            /*if (!sipBinder.getHandler().isOnGOingCall()) {
-                mNotificationManager.cancelAll();
-                NotificationCache.clearNotifications();
-            }*/
-        }
-    }
 
     @Override
     public void onClick(View v) {
@@ -396,39 +379,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        bindCallService();
-
-    }
-
-    ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            sipBinder = (SipBinder) service;
-            clearNotifications();
-            sipBinder.getHandler().disconnectCallBack(new CallDisconnectedListner() {
-                @Override
-                public void callDisconnected() {
-                    Log.w("ChatActivity", "ChatActivity Service.....Disconnected");
-                    clearNotifications();
-                }
-            });
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            sipBinder = null;
-            Log.w("ChatActivity", "Chat Activity Disconnected.");
-
-        }
-    };
-
-    private void bindCallService() {
-        bindService(new Intent(this, YoSipService.class), connection, Context.BIND_AUTO_CREATE);
-    }
-
 
     private String getOpponent(@NonNull Room room) {
 
@@ -446,10 +396,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         return null;
     }
 
-
-    /*private void clearNotification(String opponent) {
-        Util.cancelAllNotification(this);
-    }*/
 
     private Drawable loadAvatarImage(ImageView imageview, boolean isgroup) {
         if (imageview.getTag() != null) {
@@ -487,10 +433,10 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
     protected void onPause() {
         super.onPause();
         progressLayout.setVisibility(View.GONE);
-        unbindService(connection);
     }
 
     public void onEventMainThread(GroupSubject groupSubject) {
         customTitle.setText(groupSubject.getUpdatedSubject());
     }
+
 }

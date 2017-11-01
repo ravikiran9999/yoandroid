@@ -8,24 +8,32 @@
     <RelativeLayout
         android:id="@+id/rl_top"
         android:layout_width="match_parent"
-        android:layout_height="100dp">
+        android:layout_height="wrap_content">
 
-        <ImageView
+<!--        <ImageView
             android:id="@+id/photo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
             android:scaleType="fitXY"
             android:src="@drawable/profile"
-            />
+            />-->
 
         <ImageView
+            android:id="@+id/photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:background="@color/magazine_background"></ImageView>
+
+<!--        <ImageView
             android:id="@+id/iv_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
             android:layout_alignParentTop="true"
-            android:src="@drawable/youtube" />
+            android:src="@drawable/youtube" />-->
 
         <Button
             android:id="@+id/imv_magazine_follow"
@@ -47,19 +55,19 @@
             android:id="@+id/imv_magazine_topic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:background="@color/colorPrimary"
-            android:ellipsize="end"
             android:gravity="center"
             android:padding="5dp"
+            android:textSize="14sp"
             android:singleLine="true"
+            android:ellipsize="end"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
-            android:textSize="14sp" />
+            android:layout_alignBottom="@id/photo"/>
 
     </RelativeLayout>
 

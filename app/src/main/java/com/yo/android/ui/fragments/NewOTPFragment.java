@@ -53,6 +53,7 @@ import java.util.Random;
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -61,7 +62,7 @@ import retrofit2.Response;
  * Created by creatives on 7/31/2017.
  */
 
-public class NewOTPFragment extends BaseFragment implements View.OnClickListener,View.OnFocusChangeListener, View.OnKeyListener, TextWatcher {
+public class NewOTPFragment extends BaseFragment implements View.OnClickListener, View.OnFocusChangeListener, View.OnKeyListener, TextWatcher {
 
     private TextView reSendTextBtn;
     private Handler mHandler = new Handler();
@@ -119,14 +120,14 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.new_otp_layout, container, false);
 
-       View gvKeypad =  view.findViewById(R.id.gv_keypad);
-       View llPin =  view.findViewById(R.id.pin_content_layout);
+        View gvKeypad = view.findViewById(R.id.gv_keypad);
+        View llPin = view.findViewById(R.id.pin_content_layout);
         reSendTextBtn = (TextView) view.findViewById(R.id.tv_resend);
         tvEnterOTP = (TextView) view.findViewById(R.id.tv_enter_otp);
         nextBtn = (Button) view.findViewById(R.id.next_btn);
         etOtp = (DigitsEditText) view.findViewById(R.id.et_otp);
 
-       // View viewDigits = inflater.inflate(R.layout.otp_keypad, container, false);
+        // View viewDigits = inflater.inflate(R.layout.otp_keypad, container, false);
         initDigitsViews(gvKeypad);
         init(llPin);
         setPINListeners();
@@ -145,7 +146,7 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
                     }
 
                 } else {*/
-                    performNext();
+                performNext();
                 //}
             }
         });
@@ -214,7 +215,6 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
             mToastFactory.showToast(getActivity().getResources().getString(R.string.connectivity_network_settings));
             return;
         }
-        showProgressDialog();
         count = 0;
         String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
         showProgressDialog();
@@ -370,14 +370,26 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         } else if (!balanceAdded) {
-            preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_PROFILE_SCREEN, false);
-            preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, true);
-            preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
-            preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN_AND_VERIFIED, true);
-            Intent intent = new Intent(getActivity(), FollowMoreTopicsActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra("From", "UpdateProfileActivity");
-            startActivity(intent);
+            mBalanceHelper.checkBalance(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    dismissProgressDialog();
+                    preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_PROFILE_SCREEN, false);
+                    preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, true);
+                    preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
+                    preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN_AND_VERIFIED, true);
+                    Intent intent = new Intent(getActivity(), FollowMoreTopicsActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.putExtra("From", "UpdateProfileActivity");
+                    startActivity(intent);
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    dismissProgressDialog();
+                }
+            });
+
         } else {
             startActivity(new Intent(getActivity(), BottomTabsActivity.class));
         }
@@ -409,8 +421,8 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
         String otp = IncomingSmsReceiver.extractOTP(bundle);
         if (otp != null) {
 
-            for(int i=0; i<otp.length(); i++) {
-                enterText(otp.charAt(i)+"");
+            for (int i = 0; i < otp.length(); i++) {
+                enterText(otp.charAt(i) + "");
             }
 
             nextBtn.performClick();
@@ -645,6 +657,7 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
 
     /**
      * Initialize EditText fields.
+     *
      * @param llPin
      */
     private void init(View llPin) {
@@ -904,8 +917,8 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
             mPinFirstDigitEditText.setText("");
 
         if (mPinHiddenEditText.length() > 0)
-           // mPinHiddenEditText.setText(mPinHiddenEditText.getText().subSequence(0, mPinHiddenEditText.length() - 1));
-        mPinHiddenEditText.setText("");
+            // mPinHiddenEditText.setText(mPinHiddenEditText.getText().subSequence(0, mPinHiddenEditText.length() - 1));
+            mPinHiddenEditText.setText("");
     }
 
 }

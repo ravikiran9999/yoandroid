@@ -27,7 +27,9 @@ import java.util.List;
 public class Notifications {
     private static final int ONE = 1;
     private static final int ZERO = 0;
-    public static final int NOTIFICATION_ID = 2;
+    public static final int CHAT_NOTIFICATION_ID = 1000;
+    public static final int GROUP_NOTIFICATION_ID = 10001;
+
     private NotificationManager mNotificationManager;
     private static Intent intent;
 
@@ -92,12 +94,12 @@ public class Notifications {
                 }
                 if (!isDialer) {
                     if (!AppRunningState.isRunning(mContext)) {
-                        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+                        mNotificationManager.notify(CHAT_NOTIFICATION_ID, mBuilder.build());
                     } else if(notificationBuilderObject != null && notificationBuilderObject.getNotificationTitle().equals(com.yo.android.util.Constants.RECHARGE_SUCCESSFUL)) {
-                        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+                        mNotificationManager.notify(CHAT_NOTIFICATION_ID, mBuilder.build());
                     }
                 } else {
-                    mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+                    mNotificationManager.notify(CHAT_NOTIFICATION_ID, mBuilder.build());
                 }
             }
         } catch (IndexOutOfBoundsException iobe) {
@@ -173,7 +175,7 @@ public class Notifications {
         }
         mBuilder.setContentIntent(contentIntent);
         //  if (!AppRunningState.isRunning(mContext) || AppRunningState.isLocked(mContext)) {
-        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+        mNotificationManager.notify(CHAT_NOTIFICATION_ID, mBuilder.build());
         //  }
     }
 

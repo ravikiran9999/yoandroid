@@ -24,6 +24,7 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
+import com.yo.android.chat.ChatRefreshBackground;
 import com.yo.android.chat.ImageLoader;
 import com.yo.android.chat.notification.localnotificationsbuilder.GeneratePictureStyleNotification;
 import com.yo.android.chat.notification.localnotificationsbuilder.Notifications;
@@ -110,6 +111,7 @@ public class FirebaseService extends InjectedService {
             FireBaseAuthToken.getInstance(this).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
                 @Override
                 public void onSuccess() {
+                    ChatRefreshBackground.getInstance().doRefresh(FirebaseService.this, null);
                     getAllRooms();
                 }
 

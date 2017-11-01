@@ -224,14 +224,12 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         holder.getLl().removeAllViews();
         holder.getLl().setTag(holder);
         LinearLayout secretChatPlaceholder = (LinearLayout) inflater.inflate(R.layout.balloon, null);
-        secretChatPlaceholder.setOrientation(LinearLayout.HORIZONTAL);
         boolean isRTL = userId.equalsIgnoreCase(item.getSenderID());
-
-        LinearLayout linearLayout1 = new LinearLayout(context);
-        linearLayout1.setOrientation(LinearLayout.VERTICAL);
-        linearLayout1.setPadding(Helper.dp(context, 2), Helper.dp(context, 8), Helper.dp(context, 2), Helper.dp(context, 8));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.setMargins(10, 0, 20, 0);
+
+        TextView profileName = (TextView) secretChatPlaceholder.findViewById(R.id.profile_name);
+        LinearLayout profileNameLayout = (LinearLayout) secretChatPlaceholder.findViewById(R.id.chat_profilename_layout);
 
         TextView emojiTextView = (TextView) secretChatPlaceholder.findViewById(R.id.chat_msg);
         LinearLayout.LayoutParams rlp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -256,30 +254,30 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             seen.setVisibility(View.GONE);
             time.setVisibility(View.VISIBLE);
             rlp.setMargins(30, 0, 0, 0);
-            TextView senderId = new TextView(context);
             secretChatPlaceholder.setBackgroundResource(R.drawable.msg_in);
-            senderId.setLayoutParams(lp);
             if (roomType != null) {
+                profileNameLayout.setVisibility(View.VISIBLE);
                 Contact contact = mContactsSyncManager.getContactByVoxUserName(item.getVoxUserName());
                 if (contact != null && !TextUtils.isEmpty(contact.getName())) {
-                    senderId.setText(contact.getName());
+                    profileName.setText(contact.getName());
                     int existingColor = mColorGenerator.getColor(contact.getName());
                     if (existingColor == 0) {
-                        senderId.setTextColor(mColorGenerator.getRandomColor());
+                        profileName.setTextColor(mColorGenerator.getRandomColor());
                     } else {
-                        senderId.setTextColor(existingColor);
+                        profileName.setTextColor(existingColor);
                     }
                 } else {
-                    senderId.setText(item.getSenderID());
+                    profileName.setText(item.getSenderID());
                     int existingColor = mColorGenerator.getColor(item.getSenderID());
                     if (existingColor == 0) {
-                        senderId.setTextColor(mColorGenerator.getRandomColor());
+                        profileName.setTextColor(mColorGenerator.getRandomColor());
                     } else {
-                        senderId.setTextColor(existingColor);
+                        profileName.setTextColor(existingColor);
                     }
                 }
 
-                linearLayout1.addView(senderId);
+            }else{
+                profileNameLayout.setVisibility(View.GONE);
             }
             //   seenLayout.setVisibility(View.GONE);
             if (item.getDeliveredTime() != 0) {
@@ -289,6 +287,8 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             }
         } else {
             rlp.setMargins(0, 0, 30, 0);
+            profileNameLayout.setVisibility(View.GONE);
+
             secretChatPlaceholder.setBackgroundResource(R.drawable.msg_out);
             String sentText = DateUtil.getTimeFormatForChat(context, item.getTime());
             time.setText(sentText);
@@ -307,7 +307,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
             time.setTextColor(context.getResources().getColor(R.color.dark_bluish_gray));
         }
 
-        secretChatPlaceholder.addView(linearLayout1, Helper.createLinear(context, Helper.WRAP_CONTENT, Helper.WRAP_CONTENT, isRTL ? Gravity.RIGHT : Gravity.LEFT, isRTL ? 0 : 7, 0, 1, 0));
         holder.getLl().addView(secretChatPlaceholder, rlp);
         return secretChatPlaceholder;
     }

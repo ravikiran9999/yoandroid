@@ -323,7 +323,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         String balance = mBalanceHelper.getCurrentBalance();
         String currencySymbol = mBalanceHelper.getCurrencySymbol();
         //menuDataList.add(new MoreData(String.format(getString(R.string.yocredit), currencySymbolDollarNoSpace, balance), true));
-        menuDataList.add(new MoreData(String.format(getString(R.string.yocredit), balance), true, null));
+        menuDataList.add(new MoreData(String.format(getString(R.string.your_yo_balance_without_line_break), balance), true, null));
         menuDataList.add(new MoreData(getString(R.string.accountdetails), true, null));
         menuDataList.add(new MoreData(getString(R.string.invitefriends), true, null));
         menuDataList.add(new MoreData(getString(R.string.morenotifications), true, null));
