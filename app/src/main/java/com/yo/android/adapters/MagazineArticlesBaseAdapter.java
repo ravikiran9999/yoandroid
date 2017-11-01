@@ -43,6 +43,7 @@ import com.yo.android.model.Topics;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.FollowMoreTopicsActivity;
+import com.yo.android.ui.NewImageRenderTask;
 import com.yo.android.ui.OtherProfilesLikedArticles;
 import com.yo.android.ui.TopicsDetailActivity;
 import com.yo.android.ui.fragments.MagazinesFragment;
@@ -207,7 +208,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
             holder.articleFollowRight = UI.findViewById(layout, R.id.imv_magazine_follow_right);
 
-            holder.lvSuggestions = UI.findViewById(layout, R.id.lv_suggestions);
+            //holder.lvSuggestions = UI.findViewById(layout, R.id.lv_suggestions);
+            holder.lvSuggestions = (ListView) layout.findViewById(R.id.lv_suggestions);
 
             holder.tvFollowMoreTopics = UI.findViewById(layout, R.id.tv_follow_more_topics);
 
@@ -436,33 +438,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             rl.setLayoutParams(layoutParams);*/
 
             photoView.setImageResource(R.drawable.img_placeholder);
-
             if (data.getImage_filename() != null) {
-                if (!((BaseActivity) context).hasDestroyed()) {
-                    Glide.with(context)
-                            .load(data.getImage_filename())
-                            .listener(new RequestListener<String, GlideDrawable>() {
-                                @Override
-                                public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                                    if(e!= null) {
-                                        mToastFactory.newToast(e.getMessage(), Toast.LENGTH_SHORT);
-                                    }
-                                    return false;
-                                }
-
-                                @Override
-                                public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                                    return false;
-                                }
-                            })
-                            .placeholder(R.drawable.img_placeholder)
-                            //Image size will be reduced 50%
-                            .thumbnail(0.5f)
-                            .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .dontAnimate()
-                            .into(photoView);
-                }
+                new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
             } else {
                 photoView.setImageResource(R.drawable.img_placeholder);
             }
@@ -1101,19 +1078,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         if (holder.articlePhotoTop != null) {
             ImageView photoView = holder.articlePhotoTop;
-
+            photoView.setImageResource(R.drawable.img_placeholder);
             if (data.getImage_filename() != null) {
-                if (!((BaseActivity) context).hasDestroyed()) {
-                    Glide.with(context)
-                            .load(data.getImage_filename())
-                            .placeholder(R.drawable.img_placeholder)
-                            //Image size will be reduced 50%
-                            .thumbnail(0.5f)
-                            .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .dontAnimate()
-                            .into(photoView);
-                }
+                new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
             } else {
                 photoView.setImageResource(R.drawable.img_placeholder);
             }
@@ -1384,18 +1351,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         if (holder.articlePhotoLeft != null) {
             ImageView photoView = holder.articlePhotoLeft;
             photoView.setVisibility(View.VISIBLE);
-
+            photoView.setImageResource(R.drawable.img_placeholder);
             if (data.getImage_filename() != null) {
-                if (!((BaseActivity) context).hasDestroyed()) {
-                    Glide.with(context)
-                            .load(data.getImage_filename())
-                            .placeholder(R.drawable.img_placeholder)
-                            .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .dontAnimate()
-                            .error(R.drawable.img_placeholder)
-                            .into(photoView);
-                }
+                new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
             } else {
                 photoView.setImageResource(R.drawable.img_placeholder);
             }
@@ -1680,18 +1638,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         if (holder.articlePhotoRight != null) {
             ImageView photoView = holder.articlePhotoRight;
             photoView.setVisibility(View.VISIBLE);
-
+            photoView.setImageResource(R.drawable.img_placeholder);
             if (data.getImage_filename() != null) {
-                if (!((BaseActivity) context).hasDestroyed()) {
-                    Glide.with(context)
-                            .load(data.getImage_filename())
-                            .placeholder(R.drawable.img_placeholder)
-                            .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .dontAnimate()
-                            .error(R.drawable.img_placeholder)
-                            .into(photoView);
-                }
+                new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
             } else {
                 photoView.setImageResource(R.drawable.img_placeholder);
             }

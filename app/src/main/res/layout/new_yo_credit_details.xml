@@ -29,6 +29,7 @@
                 android:background="@color/yo_credit_label"
                 android:drawablePadding="12dp"
                 android:drawableStart="@drawable/transfer_balance_icon"
+                android:drawableLeft="@drawable/transfer_balance_icon"
                 android:padding="4dp"
                 android:text="@string/transfer_balance"
                 android:textStyle="bold" />
@@ -230,6 +231,7 @@
             android:background="@color/yo_credit_label"
             android:drawablePadding="12dp"
             android:drawableStart="@drawable/add_balance_voucher"
+            android:drawableLeft="@drawable/add_balance_voucher"
             android:padding="4dp"
             android:text="@string/add_voucher_balance"
             android:textStyle="bold" />
@@ -255,6 +257,7 @@
                 android:background="@color/yo_credit_label"
                 android:drawablePadding="12dp"
                 android:drawableStart="@drawable/offers_icon"
+                android:drawableLeft="@drawable/offers_icon"
                 android:padding="4dp"
                 android:text="@string/offers"
                 android:textStyle="bold" />

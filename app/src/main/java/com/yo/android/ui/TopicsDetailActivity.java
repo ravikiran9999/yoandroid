@@ -333,15 +333,7 @@ public class TopicsDetailActivity extends BaseActivity {
             photoView.setImageResource(R.drawable.img_placeholder);
 
             if (data.getImage_filename() != null) {
-                Glide.with(context)
-                        .load(data.getImage_filename())
-                        .placeholder(R.drawable.img_placeholder)
-                        //Image size will be reduced 50%
-                        .thumbnail(0.5f)
-                        .crossFade()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .dontAnimate()
-                        .into(photoView);
+                new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
             } else {
                 photoView.setImageResource(R.drawable.img_placeholder);
             }
@@ -484,7 +476,8 @@ public class TopicsDetailActivity extends BaseActivity {
 
         /**
          * Shows the unfollow confirmation dialog
-         * @param data The Articles object
+         *
+         * @param data        The Articles object
          * @param finalHolder The View holder object
          */
         private void showUnFollowConfirmationDialog(final Articles data, final ViewHolder finalHolder) {
@@ -558,6 +551,7 @@ public class TopicsDetailActivity extends BaseActivity {
 
         /**
          * Adds articles to the list
+         *
          * @param articlesList
          */
         public void addItems(List<Articles> articlesList) {
@@ -569,9 +563,10 @@ public class TopicsDetailActivity extends BaseActivity {
 
         /**
          * Updates the article
-         * @param isLiked isLiked or not
-         * @param articles The articles object
-         * @param position The position
+         *
+         * @param isLiked      isLiked or not
+         * @param articles     The articles object
+         * @param position     The position
          * @param articlePlace The article's placement
          */
         public void updateArticle(boolean isLiked, Articles articles, int position, String articlePlace) {

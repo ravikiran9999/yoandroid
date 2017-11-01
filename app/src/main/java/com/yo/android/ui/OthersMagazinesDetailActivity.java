@@ -343,15 +343,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
             photoView.setImageResource(R.drawable.img_placeholder);
 
             if (data.getImage_filename() != null) {
-                Glide.with(context)
-                        .load(data.getImage_filename())
-                        .placeholder(R.drawable.img_placeholder)
-                        //Image size will be reduced 50%
-                        .thumbnail(0.5f)
-                        .crossFade()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .dontAnimate()
-                        .into(photoView);
+                new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
             } else {
                 photoView.setImageResource(R.drawable.img_placeholder);
             }
