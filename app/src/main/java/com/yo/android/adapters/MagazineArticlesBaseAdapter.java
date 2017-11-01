@@ -43,6 +43,7 @@ import com.yo.android.model.Topics;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.FollowMoreTopicsActivity;
+import com.yo.android.ui.NewImageRenderTask;
 import com.yo.android.ui.OtherProfilesLikedArticles;
 import com.yo.android.ui.TopicsDetailActivity;
 import com.yo.android.ui.fragments.MagazinesFragment;
@@ -416,73 +417,11 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         if (holder.articlePhoto != null) {
             ImageView photoView = holder.articlePhoto;
-
-            /*RelativeLayout rl = (UI.findViewById(layout, R.id.rl_top));
-            final float scale = context.getResources().getDisplayMetrics().density;
-            int height;
-            if (scale == 4.0) {
-                height = 400;
-            } else if (scale == 3.5) {
-                height = 350;
-            } else if (scale == 3.0) {
-                height = 300;
-            } else if (scale == 2.0) {
-                height = 250;
-            } else {
-                height = 450;
-            }
-            int pixels = (int) (height * scale + 0.5f);
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT, pixels);
-            rl.setLayoutParams(layoutParams);*/
-
             photoView.setImageResource(R.drawable.img_placeholder);
-
             if (data.getImage_filename() != null) {
-                if (!((BaseActivity) context).hasDestroyed()) {
-                    Glide.with(context)
-                            .load(data.getImage_filename())
-                            .listener(new RequestListener<String, GlideDrawable>() {
-                                @Override
-                                public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                                    if(e!= null) {
-                                        mToastFactory.newToast(e.getMessage(), Toast.LENGTH_SHORT);
-                                    }
-                                    return false;
-                                }
-
-                                @Override
-                                public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                                    return false;
-                                }
-                            })
-                            .placeholder(R.drawable.img_placeholder)
-                            //Image size will be reduced 50%
-                            .thumbnail(0.5f)
-                            .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .dontAnimate()
-                            .into(photoView);
-                }
+                new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
             } else {
                 photoView.setImageResource(R.drawable.img_placeholder);
-            }
-
-            Log.d("ArticlesBaseAdapter", "The photoView.getDrawable() is " + photoView.getDrawable());
-
-            if(photoView.getDrawable() != null) {
-                int newHeight = ((BaseActivity) context).getWindowManager().getDefaultDisplay().getHeight() / 3;
-                int orgWidth = photoView.getDrawable().getIntrinsicWidth();
-                int orgHeight = photoView.getDrawable().getIntrinsicHeight();
-
-                int newWidth = (int) Math.floor((orgWidth * newHeight) / orgHeight);
-
-                Log.d("ArticlesBaseAdapter", "The new width is " + newWidth + "  new height is " + newHeight);
-
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                        newWidth, newHeight);
-                params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-                photoView.setLayoutParams(params);
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {
@@ -1102,19 +1041,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         if (holder.articlePhotoTop != null) {
             ImageView photoView = holder.articlePhotoTop;
-
+            photoView.setImageResource(R.drawable.img_placeholder);
             if (data.getImage_filename() != null) {
-                if (!((BaseActivity) context).hasDestroyed()) {
-                    Glide.with(context)
-                            .load(data.getImage_filename())
-                            .placeholder(R.drawable.img_placeholder)
-                            //Image size will be reduced 50%
-                            .thumbnail(0.5f)
-                            .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .dontAnimate()
-                            .into(photoView);
-                }
+                new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
             } else {
                 photoView.setImageResource(R.drawable.img_placeholder);
             }
@@ -1385,18 +1314,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         if (holder.articlePhotoLeft != null) {
             ImageView photoView = holder.articlePhotoLeft;
             photoView.setVisibility(View.VISIBLE);
-
+            photoView.setImageResource(R.drawable.img_placeholder);
             if (data.getImage_filename() != null) {
-                if (!((BaseActivity) context).hasDestroyed()) {
-                    Glide.with(context)
-                            .load(data.getImage_filename())
-                            .placeholder(R.drawable.img_placeholder)
-                            .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .dontAnimate()
-                            .error(R.drawable.img_placeholder)
-                            .into(photoView);
-                }
+                new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
             } else {
                 photoView.setImageResource(R.drawable.img_placeholder);
             }
@@ -1681,18 +1601,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         if (holder.articlePhotoRight != null) {
             ImageView photoView = holder.articlePhotoRight;
             photoView.setVisibility(View.VISIBLE);
-
+            photoView.setImageResource(R.drawable.img_placeholder);
             if (data.getImage_filename() != null) {
-                if (!((BaseActivity) context).hasDestroyed()) {
-                    Glide.with(context)
-                            .load(data.getImage_filename())
-                            .placeholder(R.drawable.img_placeholder)
-                            .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .dontAnimate()
-                            .error(R.drawable.img_placeholder)
-                            .into(photoView);
-                }
+                new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
             } else {
                 photoView.setImageResource(R.drawable.img_placeholder);
             }

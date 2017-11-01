@@ -11,6 +11,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
 import com.yo.android.helpers.MyCollectionsViewHolder;
 import com.yo.android.model.Collections;
+import com.yo.android.ui.NewImageRenderTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,16 +53,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
                     .into(holder.getImageView());
 
         } else if (!TextUtils.isEmpty(item.getImage())) {
-
-            Glide.with(mContext)
-                    .load(item.getImage())
-                    .placeholder(R.drawable.img_placeholder)
-
-                    .fitCenter()
-                    .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .dontAnimate()
-                    .into(holder.getImageView());
+            new NewImageRenderTask(mContext,item.getImage(),holder.getImageView()).execute();
         } else {
             if(item.getArticlesCount() == 0) {
                 Glide.with(mContext)

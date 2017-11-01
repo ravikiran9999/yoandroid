@@ -266,7 +266,6 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
         boolean renewalStatus = preferenceEndPoint.getBooleanPreference(Constants.RENEWAL, false);
         switch (item.getItemId()) {
             case R.id.menu_move_to_first :
-
                 mMagazineFlipArticlesFragment.getLandingCachedArticles();
                 break;
             case R.id.menu_create_magazines:
