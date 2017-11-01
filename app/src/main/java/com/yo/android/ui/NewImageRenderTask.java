@@ -18,7 +18,7 @@ import java.net.URL;
  * Created by root on 1/11/17.
  */
 
-class NewImageRenderTask extends AsyncTask<Void, Void, Bitmap> {
+public  class NewImageRenderTask extends AsyncTask<Void, Void, Bitmap> {
     private String imageLink;
     private ImageView articleImageView;
     private Context mContext;
@@ -41,6 +41,7 @@ class NewImageRenderTask extends AsyncTask<Void, Void, Bitmap> {
         int screenWidth = DeviceDimensionsHelper.getDisplayWidth(mContext);
         if (urlBitmap != null) {
             Bitmap bmp = BitmapScaler.scaleToFitWidth(urlBitmap, screenWidth);
+            BitmapCache.getInstance(mContext).addBitmapToMemoryCache(imageLink,bmp);
             articleImageView.setImageBitmap(bmp);
         } else {
             articleImageView.setImageResource(R.drawable.img_placeholder);

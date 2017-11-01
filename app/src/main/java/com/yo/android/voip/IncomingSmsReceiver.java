@@ -34,7 +34,7 @@ public class IncomingSmsReceiver extends BroadcastReceiver {
 
                     // if the SMS is not from our gateway, ignore the message
                     if (senderAddress != null && (senderAddress.toLowerCase().contains("020001")
-                            || senderAddress.contains("Beepse"))) {
+                            || senderAddress.contains("TSTSMS"))) {
                         // verification code from sms
                         String verificationCode = getVerificationCode(message);
                         Log.e(TAG, "OTP received: " + verificationCode);

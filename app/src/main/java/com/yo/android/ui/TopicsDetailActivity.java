@@ -311,58 +311,13 @@ public class TopicsDetailActivity extends BaseActivity {
 
             ImageView photoView = holder.articlePhoto;
 
-            /*RelativeLayout rl = (UI.findViewById(layout, R.id.rl_top));
-            final float scale = context.getResources().getDisplayMetrics().density;
-            int height;
-            if (scale == 4.0) {
-                height = 400;
-            } else if (scale == 3.5) {
-                height = 350;
-            } else if (scale == 3.0) {
-                height = 300;
-            } else if (scale == 2.0) {
-                height = 250;
-            } else {
-                height = 450;
-            }
-            int pixels = (int) (height * scale + 0.5f);
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT, pixels);
-            rl.setLayoutParams(layoutParams);*/
-
             photoView.setImageResource(R.drawable.img_placeholder);
 
             if (data.getImage_filename() != null) {
-                Glide.with(context)
-                        .load(data.getImage_filename())
-                        .placeholder(R.drawable.img_placeholder)
-                        //Image size will be reduced 50%
-                        .thumbnail(0.5f)
-                        .crossFade()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .dontAnimate()
-                        .into(photoView);
+                new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
             } else {
                 photoView.setImageResource(R.drawable.img_placeholder);
             }
-
-            Log.d("TopicsDetailActivity", "The photoView.getDrawable() is " + photoView.getDrawable());
-
-            if(photoView.getDrawable() != null) {
-                int newHeight = getWindowManager().getDefaultDisplay().getHeight() / 2;
-                int orgWidth = photoView.getDrawable().getIntrinsicWidth();
-                int orgHeight = photoView.getDrawable().getIntrinsicHeight();
-
-                int newWidth = (int) Math.floor((orgWidth * newHeight) / orgHeight);
-
-                Log.d("TopicsDetailActivity", "The new width is " + newWidth + "  new height is " + newHeight);
-
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                        newWidth, newHeight);
-                params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-                photoView.setLayoutParams(params);
-            }
-
             photoView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -484,7 +439,8 @@ public class TopicsDetailActivity extends BaseActivity {
 
         /**
          * Shows the unfollow confirmation dialog
-         * @param data The Articles object
+         *
+         * @param data        The Articles object
          * @param finalHolder The View holder object
          */
         private void showUnFollowConfirmationDialog(final Articles data, final ViewHolder finalHolder) {
@@ -558,6 +514,7 @@ public class TopicsDetailActivity extends BaseActivity {
 
         /**
          * Adds articles to the list
+         *
          * @param articlesList
          */
         public void addItems(List<Articles> articlesList) {
@@ -569,9 +526,10 @@ public class TopicsDetailActivity extends BaseActivity {
 
         /**
          * Updates the article
-         * @param isLiked isLiked or not
-         * @param articles The articles object
-         * @param position The position
+         *
+         * @param isLiked      isLiked or not
+         * @param articles     The articles object
+         * @param position     The position
          * @param articlePlace The article's placement
          */
         public void updateArticle(boolean isLiked, Articles articles, int position, String articlePlace) {

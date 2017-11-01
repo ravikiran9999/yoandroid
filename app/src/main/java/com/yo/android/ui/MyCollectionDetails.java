@@ -473,13 +473,11 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
             photoView.setImageResource(R.drawable.img_placeholder);
 
-            int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
-
             // Resize a Bitmap maintaining aspect ratio based on screen width
             if (data.getImage_filename() != null) {
-                if(BitmapCache.getBitmapFromMemCache())
-                // Resize a Bitmap maintaining aspect ratio based on screen width
+
                 new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
+
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {
