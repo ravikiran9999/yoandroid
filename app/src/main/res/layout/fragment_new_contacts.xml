@@ -30,10 +30,10 @@
             <Button
                 android:id="@+id/allContactsSection"
                 android:layout_width="50dp"
-                android:layout_height="45dp"
+                android:layout_height="50dp"
                 android:background="@color/white"
                 android:text="@string/contacts_all"
-                android:textSize="14sp"
+                android:textSize="@dimen/xsmall_textsize"
                 android:textStyle="bold" />
 
             <!--</LinearLayout>
@@ -45,10 +45,10 @@
             <Button
                 android:id="@+id/yoContactsSection"
                 android:layout_width="50dp"
-                android:layout_height="45dp"
+                android:layout_height="50dp"
                 android:background="@color/white"
                 android:text="@string/contacts_yo"
-                android:textSize="14sp"
+                android:textSize="@dimen/xsmall_textsize"
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>

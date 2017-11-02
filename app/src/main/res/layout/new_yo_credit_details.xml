@@ -29,6 +29,7 @@
                 android:background="@color/yo_credit_label"
                 android:drawablePadding="12dp"
                 android:drawableStart="@drawable/transfer_balance_icon"
+                android:drawableLeft="@drawable/transfer_balance_icon"
                 android:padding="4dp"
                 android:text="@string/transfer_balance"
                 android:textStyle="bold" />
@@ -185,11 +186,13 @@
 
                             <ImageView
                                 android:id="@+id/add_more_amount"
-                                android:layout_width="15dp"
-                                android:layout_height="15dp"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
                                 android:layout_alignParentEnd="true"
+                                android:layout_alignParentRight="true"
                                 android:layout_alignParentTop="true"
                                 android:layout_marginEnd="2dp"
+                                android:layout_marginRight="2dp"
                                 android:src="@drawable/green_plus_icon" />
                         </RelativeLayout>
                     </LinearLayout>
@@ -228,6 +231,7 @@
             android:background="@color/yo_credit_label"
             android:drawablePadding="12dp"
             android:drawableStart="@drawable/add_balance_voucher"
+            android:drawableLeft="@drawable/add_balance_voucher"
             android:padding="4dp"
             android:text="@string/add_voucher_balance"
             android:textStyle="bold" />
@@ -253,6 +257,7 @@
                 android:background="@color/yo_credit_label"
                 android:drawablePadding="12dp"
                 android:drawableStart="@drawable/offers_icon"
+                android:drawableLeft="@drawable/offers_icon"
                 android:padding="4dp"
                 android:text="@string/offers"
                 android:textStyle="bold" />
@@ -278,13 +283,13 @@
                         android:src="@drawable/giftbox" />
 
                     <Button
-                        android:id="@+id/buy_five_package"
+                        android:id="@+id/buy_first_package"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:layout_weight="1"
                         android:background="@drawable/btn_give"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="@color/white"
                         android:textStyle="bold"
                         tools:text="@string/five" />
                 </LinearLayout>
@@ -309,13 +314,13 @@
                         android:src="@drawable/giftbox" />
 
                     <Button
-                        android:id="@+id/buy_ten_package"
+                        android:id="@+id/buy_second_package"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:layout_weight="1"
                         android:background="@drawable/btn_give"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="@color/white"
                         android:textStyle="bold"
                         tools:text="@string/ten" />
                 </LinearLayout>
@@ -340,13 +345,13 @@
                         android:src="@drawable/giftbox" />
 
                     <Button
-                        android:id="@+id/buy_twenty_package"
+                        android:id="@+id/buy_third_package"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:layout_weight="1"
                         android:background="@drawable/btn_give"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="@color/white"
                         android:textStyle="bold"
                         tools:text="@string/twenty" />
                 </LinearLayout>

@@ -417,11 +417,48 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         if (holder.articlePhoto != null) {
             ImageView photoView = holder.articlePhoto;
+
+            /*RelativeLayout rl = (UI.findViewById(layout, R.id.rl_top));
+            final float scale = context.getResources().getDisplayMetrics().density;
+            int height;
+            if (scale == 4.0) {
+                height = 400;
+            } else if (scale == 3.5) {
+                height = 350;
+            } else if (scale == 3.0) {
+                height = 300;
+            } else if (scale == 2.0) {
+                height = 250;
+            } else {
+                height = 450;
+            }
+            int pixels = (int) (height * scale + 0.5f);
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, pixels);
+            rl.setLayoutParams(layoutParams);*/
+
             photoView.setImageResource(R.drawable.img_placeholder);
             if (data.getImage_filename() != null) {
                 new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
             } else {
                 photoView.setImageResource(R.drawable.img_placeholder);
+            }
+
+            Log.d("ArticlesBaseAdapter", "The photoView.getDrawable() is " + photoView.getDrawable());
+
+            if(photoView.getDrawable() != null) {
+                int newHeight = ((BaseActivity) context).getWindowManager().getDefaultDisplay().getHeight() / 3;
+                int orgWidth = photoView.getDrawable().getIntrinsicWidth();
+                int orgHeight = photoView.getDrawable().getIntrinsicHeight();
+
+                int newWidth = (int) Math.floor((orgWidth * newHeight) / orgHeight);
+
+                Log.d("ArticlesBaseAdapter", "The new width is " + newWidth + "  new height is " + newHeight);
+
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                        newWidth, newHeight);
+                params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+                photoView.setLayoutParams(params);
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {

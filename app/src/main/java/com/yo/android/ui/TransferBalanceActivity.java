@@ -9,8 +9,10 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -487,11 +489,4 @@ public class TransferBalanceActivity extends BaseActivity {
         }
     }
 
-    private void setToolTipHint() {
-        if(currencySymbol.equalsIgnoreCase("Rs")) {
-            enteredPhoneNumber.setHint(R.string.mobile_number_hint_india);
-        } else if(currencySymbol.equalsIgnoreCase("$")){
-            enteredPhoneNumber.setHint(R.string.mobile_number_hint_singapore);
-        }
-    }
 }

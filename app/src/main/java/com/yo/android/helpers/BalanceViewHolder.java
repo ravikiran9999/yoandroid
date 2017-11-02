@@ -1,6 +1,11 @@
 package com.yo.android.helpers;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,6 +21,7 @@ import butterknife.ButterKnife;
  */
 
 public class BalanceViewHolder extends RecyclerView.ViewHolder {
+    private static final String YOUR_YO_BALANCE = "Your YO! balance";
 
     @Bind(R.id.title)
     TextView textView;
@@ -33,7 +39,12 @@ public class BalanceViewHolder extends RecyclerView.ViewHolder {
     public void bind(Object data) {
 
         MoreData item = (MoreData) data;
-        textView.setText(item.getName());
+        if(item.getName().contains(YOUR_YO_BALANCE)) {
+            textView.setText(spannableString(item.getName()));
+        } else {
+            textView.setText(item.getName());
+        }
+
         if (item.isHasOptions()) {
             arrowView.setVisibility(View.VISIBLE);
         } else {
@@ -45,5 +56,13 @@ public class BalanceViewHolder extends RecyclerView.ViewHolder {
         } else {
             balanceView.setVisibility(View.GONE);
         }
+    }
+
+    private SpannableStringBuilder spannableString(String yoBalanceString) {
+        final SpannableStringBuilder text = new SpannableStringBuilder(yoBalanceString);
+        // Span to make text bold
+        final StyleSpan bss = new StyleSpan(android.graphics.Typeface.BOLD);
+        text.setSpan(new ForegroundColorSpan(Color.RED), 17, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return text;
     }
 }

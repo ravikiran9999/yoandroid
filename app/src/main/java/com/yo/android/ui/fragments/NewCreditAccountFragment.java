@@ -67,12 +67,12 @@ public class NewCreditAccountFragment extends BaseFragment {
     Button giveSecond;
     @Bind(R.id.give_third)
     Button giveThird;
-    @Bind(R.id.buy_five_package)
-    Button buyFivePackage;
-    @Bind(R.id.buy_ten_package)
-    Button buyTenPackage;
-    @Bind(R.id.buy_twenty_package)
-    Button buyTwentyPackage;
+    @Bind(R.id.buy_first_package)
+    Button buyFirstPackage;
+    @Bind(R.id.buy_second_package)
+    Button buySecondPackage;
+    @Bind(R.id.buy_third_package)
+    Button buyThirdPackage;
 
     @Inject
     DenominationsUsecase denominationsUsecase;
@@ -156,35 +156,35 @@ public class NewCreditAccountFragment extends BaseFragment {
     }
 
     private void inActivePackageDenomination() {
-        buyFivePackage.setAlpha(0.5f);
-        buyFivePackage.setClickable(false);
+        buyFirstPackage.setAlpha(0.5f);
+        buyFirstPackage.setClickable(false);
 
-        buyTenPackage.setAlpha(0.5f);
-        buyTenPackage.setClickable(false);
+        buySecondPackage.setAlpha(0.5f);
+        buySecondPackage.setClickable(false);
 
-        buyTwentyPackage.setAlpha(0.5f);
-        buyTwentyPackage.setClickable(false);
+        buyThirdPackage.setAlpha(0.5f);
+        buyThirdPackage.setClickable(false);
     }
 
     private void showActivePackageDenomination(List<PackageDenomination> packageDenominationList) {
         String pCurrencySymbol = packageDenominationList.get(0).getCurrencySymbol();
-        if (packageDenominationList.get(0) != null && packageDenominationList.get(0).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
-            buyFivePackage.setAlpha(1);
-            buyFivePackage.setClickable(true);
-        }
-        buyFivePackage.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), pCurrencySymbol, packageDenominationList.get(0).getPackage()));
+        //if (packageDenominationList.get(0) != null && packageDenominationList.get(0).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
+        buyFirstPackage.setAlpha(1);
+        buyFirstPackage.setClickable(true);
+        //}
+        buyFirstPackage.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), pCurrencySymbol, packageDenominationList.get(0).getPackage()));
 
-        if (packageDenominationList.get(1) != null && packageDenominationList.get(1).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
-            buyTenPackage.setAlpha(1);
-            buyTenPackage.setClickable(true);
-        }
-        buyTenPackage.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), pCurrencySymbol, packageDenominationList.get(1).getPackage()));
+        //if (packageDenominationList.get(1) != null && packageDenominationList.get(1).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
+        buySecondPackage.setAlpha(1);
+        buySecondPackage.setClickable(true);
+        //}
+        buySecondPackage.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), pCurrencySymbol, packageDenominationList.get(1).getPackage()));
 
-        if (packageDenominationList.get(2) != null && packageDenominationList.get(2).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
-            buyTwentyPackage.setAlpha(1);
-            buyTwentyPackage.setClickable(true);
-        }
-        buyTwentyPackage.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), pCurrencySymbol, packageDenominationList.get(2).getPackage()));
+        //if (packageDenominationList.get(2) != null && packageDenominationList.get(2).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
+        buyThirdPackage.setAlpha(1);
+        buyThirdPackage.setClickable(true);
+        //}
+        buyThirdPackage.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), pCurrencySymbol, packageDenominationList.get(2).getPackage()));
     }
 
 
@@ -209,19 +209,19 @@ public class NewCreditAccountFragment extends BaseFragment {
     }
 
     // Need to implement buy package
-    @OnClick(R.id.buy_five_package)
+    @OnClick(R.id.buy_first_package)
     public void buyFivePackage() {
-
+        showAlertDialog("", getResources().getString(R.string.offers_error_message));
     }
 
-    @OnClick(R.id.buy_ten_package)
+    @OnClick(R.id.buy_second_package)
     public void buyTenPackage() {
-
+        showAlertDialog("", getResources().getString(R.string.offers_error_message));
     }
 
-    @OnClick(R.id.buy_twenty_package)
+    @OnClick(R.id.buy_third_package)
     public void buyTwentyPackage() {
-
+        showAlertDialog("", getResources().getString(R.string.offers_error_message));
     }
 
     @OnClick(R.id.add_balance_from_voucher)
@@ -461,86 +461,115 @@ public class NewCreditAccountFragment extends BaseFragment {
      * Dialog which shows complete balance cannot be transferred
      */
     private void showBalanceDialog() {
-        if (transferBalanceDenominationList != null && transferBalanceDenominationList.size() > 3) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-            final View view = layoutInflater.inflate(R.layout.add_more_amount_dialog, null);
-            builder.setView(view);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+        final View view = layoutInflater.inflate(R.layout.add_more_amount_dialog, null);
+        builder.setView(view);
 
-            TextView textView = (TextView) view.findViewById(R.id.current_balance);
-            textView.setText(getCurrentAvailableBalance());
+        TextView textView = (TextView) view.findViewById(R.id.current_balance);
+        textView.setText(getCurrentAvailableBalance());
 
-            Button processed = (Button) view.findViewById(R.id.processed_btn);
-            Button cancel = (Button) view.findViewById(R.id.cancel);
-            final EditText editText = (EditText) view.findViewById(R.id.edit_amount);
-            final TextView giveFour = (TextView) view.findViewById(R.id.give_four);
-            final TextView giveFive = (TextView) view.findViewById(R.id.give_five);
+        Button processed = (Button) view.findViewById(R.id.processed_btn);
+        Button cancel = (Button) view.findViewById(R.id.cancel);
+        final EditText editText = (EditText) view.findViewById(R.id.edit_amount);
+        final TextView giveFour = (TextView) view.findViewById(R.id.give_four);
+        final TextView giveFive = (TextView) view.findViewById(R.id.give_five);
 
-            if (transferBalanceDenominationList.get(3) != null && transferBalanceDenominationList.get(3).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
-                giveFour.setVisibility(View.VISIBLE);
-                giveFour.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, transferBalanceDenominationList.get(3).getDenomination()));
-                giveFour.setAlpha(1);
-                giveFour.setClickable(true);
-            }
-
-            if (transferBalanceDenominationList.get(4) != null && transferBalanceDenominationList.get(4).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
-                giveFive.setVisibility(View.VISIBLE);
-                giveFive.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, transferBalanceDenominationList.get(4).getDenomination()));
-                giveFive.setAlpha(1);
-                giveFive.setClickable(true);
-            }
-
-            giveFour.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    double selectedValue = mBalanceHelper.removeCurrencyCode(giveFour.getText().toString());
-                    editText.setText(String.valueOf(selectedValue));
-                }
-            });
-
-            giveFive.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    double selectedValue = mBalanceHelper.removeCurrencyCode(giveFive.getText().toString());
-                    editText.setText(String.valueOf(selectedValue));
-                }
-            });
-            processed.setText(getResources().getString(R.string.processed));
-
-
-            final AlertDialog alert = builder.create();
-            alert.setCancelable(false);
-            alert.getWindow().setBackgroundDrawable(new BitmapDrawable());
-            alert.show();
-
-            processed.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (editText.getText() != null) {
-                        alert.dismiss();
-                        String enteredAmount = editText.getText().toString();
-                        if (!TextUtils.isEmpty(enteredAmount) && !enteredAmount.contains(currencySymbol)) {
-                            enteredAmount = String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, enteredAmount);
-                        } else {
-                            mToastFactory.newToast(getResources().getString(R.string.correct_denomination), Toast.LENGTH_LONG);
-                        }
-                        transferBalance(enteredAmount);
-
-                    }
-                }
-            });
-
-            cancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    alert.dismiss();
-                }
-            });
+        if (transferBalanceDenominationList.get(3) != null && transferBalanceDenominationList.get(3).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
+            giveFour.setVisibility(View.VISIBLE);
+            giveFour.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, transferBalanceDenominationList.get(3).getDenomination()));
+            giveFour.setAlpha(1);
+            giveFour.setClickable(true);
         }
+
+        if (transferBalanceDenominationList.get(4) != null && transferBalanceDenominationList.get(4).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
+            giveFive.setVisibility(View.VISIBLE);
+            giveFive.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, transferBalanceDenominationList.get(4).getDenomination()));
+            giveFive.setAlpha(1);
+            giveFive.setClickable(true);
+        }
+
+        giveFour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                double selectedValue = mBalanceHelper.removeCurrencyCode(giveFour.getText().toString());
+                editText.setText(String.valueOf(selectedValue));
+            }
+        });
+
+        giveFive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                double selectedValue = mBalanceHelper.removeCurrencyCode(giveFive.getText().toString());
+                editText.setText(String.valueOf(selectedValue));
+            }
+        });
+        processed.setText(getResources().getString(R.string.processed));
+
+
+        final AlertDialog alert = builder.create();
+        alert.setCancelable(false);
+        alert.getWindow().setBackgroundDrawable(new BitmapDrawable());
+        alert.show();
+
+        processed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (editText.getText() != null) {
+                    alert.dismiss();
+                    String enteredAmount = editText.getText().toString();
+                    if (!TextUtils.isEmpty(enteredAmount) && !enteredAmount.contains(currencySymbol)) {
+                        enteredAmount = String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, enteredAmount);
+                    } else {
+                        mToastFactory.newToast(getResources().getString(R.string.correct_denomination), Toast.LENGTH_LONG);
+                    }
+                    transferBalance(enteredAmount);
+
+                }
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alert.dismiss();
+            }
+        });
     }
 
     private String getCurrentAvailableBalance() {
         String availableBalance = String.valueOf(mBalanceHelper.removeCurrencyCode(mBalanceHelper.getCurrentBalance()));
         return String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, availableBalance);
+    }
+
+    private void showAlertDialog(String titleMsg, String contentMsg) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+        final View view = layoutInflater.inflate(R.layout.custom_error_dialog, null);
+        builder.setView(view);
+
+        Button okBtn = (Button) view.findViewById(R.id.yes_btn);
+        //TextView tvTitle = (TextView) view.findViewById(R.id.dialog_title);
+        TextView tvDesc = (TextView) view.findViewById(R.id.dialog_content);
+
+        /*tvTitle.setText(titleMsg);
+        tvTitle.setVisibility(View.VISIBLE);
+        tvTitle.setCompoundDrawablesWithIntrinsicBounds(drawable, 0, 0, 0);
+        tvTitle.setCompoundDrawablePadding(5);*/
+        tvDesc.setText(contentMsg);
+        okBtn.setText(R.string.ok);
+
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.setCancelable(false);
+        alertDialog.getWindow().setBackgroundDrawable(new BitmapDrawable());
+        alertDialog.show();
+
+        okBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
     }
 }

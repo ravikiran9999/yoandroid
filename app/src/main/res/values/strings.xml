@@ -271,8 +271,8 @@
     <string name="twenty">$ 20</string>
     <string name="currency_code_with_denomination">%1$s %2$s </string>
     <string name="transfer_amount">Amount To Transfer %1$s</string>
-    <string name="mobile_number_hint_india">Enter mobile number XXXXXXXXXX</string>
-    <string name="mobile_number_hint_singapore">Enter mobile number XXXXXXXX</string>
+    <string name="mobile_number_hint">Enter mobile number </string>
+    <string name="mobile_number_info">Please Note: Provide mobile number without country code</string>
     <string name="transfer">Transfer</string>
     <string name="transfer_success">Transfer Successful</string>
     <string name="transfer_failure">Sorry, Your transaction failed</string>
@@ -281,6 +281,7 @@
     <string name="processed">Processed</string>
     <string name="correct_denomination">Please correct the denomination</string>
     <string name="voucher_hint">Enter Voucher Number</string>
+    <string name="offers_error_message">Offers are not open today. Please recheck when Offers are on promotion</string>
 
 
     <string name="invalid_request">Invalid Request.</string>

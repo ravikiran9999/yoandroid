@@ -478,6 +478,23 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 photoView.setImageResource(R.drawable.img_placeholder);
             }
 
+            Log.d("MyCollectionDetails", "The photoView.getDrawable() is " + photoView.getDrawable());
+
+            if(photoView.getDrawable() != null) {
+                int newHeight = getWindowManager().getDefaultDisplay().getHeight() / 2;
+                int orgWidth = photoView.getDrawable().getIntrinsicWidth();
+                int orgHeight = photoView.getDrawable().getIntrinsicHeight();
+
+                int newWidth = (int) Math.floor((orgWidth * newHeight) / orgHeight);
+
+                Log.d("MyCollectionDetails", "The new width is " + newWidth + "  new height is " + newHeight);
+
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                        newWidth, newHeight);
+                params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+                photoView.setLayoutParams(params);
+            }
+
             photoView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
