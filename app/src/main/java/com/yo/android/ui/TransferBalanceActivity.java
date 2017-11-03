@@ -197,7 +197,7 @@ public class TransferBalanceActivity extends BaseActivity {
                 double val = mBalanceHelper.removeCurrencyCode(mTransferAmount);
                 if (val != 0) {
                     if (mBalanceHelper.removeCurrencyCode(mBalanceHelper.getCurrentBalance()) > val) {
-                        String tranferVal = String.valueOf(val);
+                        String tranferVal = decimalFormat(val);
                         showMessageDialog(tranferVal, mBalanceHelper.getCurrentBalance(), mPhoneNumber);
 
                     } else if (mBalanceHelper.removeCurrencyCode(mBalanceHelper.getCurrentBalance()) == val) {
@@ -341,7 +341,9 @@ public class TransferBalanceActivity extends BaseActivity {
         builder.setView(view);
 
         TextView textView = (TextView) view.findViewById(R.id.dialog_content);
+
         String mAmount = Util.addDenomination(amount, amountWithDenomination);
+
         String confirmationText;
 
         if (name != null) {
@@ -489,4 +491,9 @@ public class TransferBalanceActivity extends BaseActivity {
         }
     }
 
+    private String decimalFormat(double mValue) {
+        DecimalFormat format = new DecimalFormat("#");
+        format.setMinimumFractionDigits(2);
+        return format.format(mValue);
+    }
 }

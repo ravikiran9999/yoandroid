@@ -217,7 +217,7 @@
     <string name="dialing">Dialing...</string>
     <string name="balance">Balance </string>
     <string name="failed_add_balance">Failed to add balance.</string>
-    <string name="yo_credit">Yo Credit</string>
+    <string name="yo_credit">yo! Credit</string>
     <string name="add_balance_title">Add Balance</string>
     <string name="send_a_message">Send a message</string>
     <string name="call_details">Call details</string>
@@ -260,7 +260,7 @@
 
     <string name="your_total_balance">Your yo balance</string>
 
-    <string name="your_yo_balance">Your\n YO! balance\n %1$s</string>
+    <string name="your_yo_balance">Your\n yo! balance\n %1$s</string>
     <string name="your_yo_balance_without_line_break">Your YO! balance %1$s</string>
     <string name="transfer_balance">Transfer Balance</string>
     <string name="add_voucher_balance">Add Balance from Voucher</string>

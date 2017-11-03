@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
@@ -17,7 +18,9 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import android.text.style.TypefaceSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -31,6 +34,7 @@ import com.yo.android.adapters.TabsPagerAdapter;
 import com.yo.android.chat.notification.helper.NotificationCache;
 import com.yo.android.helpers.PopupHelper;
 import com.yo.android.model.Popup;
+import com.yo.android.typeface.CustomTypefaceSpan;
 import com.yo.android.ui.fragments.CreditAccountFragment;
 import com.yo.android.ui.fragments.NewCreditAccountFragment;
 import com.yo.android.ui.fragments.RechargeDetailsFragment;
@@ -84,12 +88,15 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         }
         updateCalled = 0;
         final Toolbar toolbar = (Toolbar) findViewById(R.id.htab_toolbar);
+        TextView titleView = (TextView)findViewById(R.id.title);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             if (getIntent().hasExtra(Constants.OPEN_ADD_BALANCE)) {
-                getSupportActionBar().setTitle(R.string.add_balance_title);
+                //getSupportActionBar().setTitle(R.string.add_balance_title);
+                titleView.setText(R.string.add_balance_title);
             } else {
-                getSupportActionBar().setTitle(R.string.yo_credit);
+                //getSupportActionBar().setTitle(spannableStringTitle(R.string.yo_credit));
+                titleView.setText(spannableStringTitle(R.string.yo_credit));
             }
         }
         isRenewal = getIntent().getBooleanExtra(Constants.RENEWAL, false);
@@ -293,13 +300,35 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
     }
 
     private SpannableStringBuilder spannableString() {
+        Typeface alexBrushRegular = getAlexBrushRegular();
+        TypefaceSpan alexBrushRegularSpan = new CustomTypefaceSpan("", alexBrushRegular);
         String yoBalanceString = String.format(getString(R.string.your_yo_balance), mBalanceHelper.getCurrentBalance());
         final SpannableStringBuilder text = new SpannableStringBuilder(yoBalanceString);
         // Span to make text bold
         final StyleSpan bss = new StyleSpan(android.graphics.Typeface.BOLD);
+
+        text.setSpan(alexBrushRegularSpan, 6, 9, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        text.setSpan(new RelativeSizeSpan(2f), 6,9, 0); // set size
         text.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorPrimary)), 17, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         // make them also bold
         text.setSpan(bss, 17, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+
+        return text;
+    }
+
+    private SpannableStringBuilder spannableStringTitle(int title) {
+        String mTitle = getResources().getString(title);
+        Typeface alexBrushRegular = getAlexBrushRegular();
+        TypefaceSpan alexBrushRegularSpan = new CustomTypefaceSpan("", alexBrushRegular);
+        final SpannableStringBuilder text = new SpannableStringBuilder(mTitle);
+        // Span to make text bold
+        //final StyleSpan bss = new StyleSpan(android.graphics.Typeface.BOLD);
+
+        text.setSpan(alexBrushRegularSpan, 0, 3, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        text.setSpan(new RelativeSizeSpan(2f), 0,3, 0); // set size
+        //text.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorPrimary)), 17, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        // make them also bold
+        //text.setSpan(bss, 17, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
 
         return text;
     }

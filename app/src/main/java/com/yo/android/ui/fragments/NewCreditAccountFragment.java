@@ -492,7 +492,9 @@ public class NewCreditAccountFragment extends BaseFragment {
         giveFour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                double selectedValue = mBalanceHelper.removeCurrencyCode(giveFour.getText().toString());
+                /*double selectedValue = mBalanceHelper.removeCurrencyCode(giveFour.getText().toString());
+                editText.setText(String.valueOf(selectedValue));*/
+                String selectedValue = mBalanceHelper.removeCurrencyCodeString(giveFour.getText().toString());
                 editText.setText(String.valueOf(selectedValue));
             }
         });
@@ -500,8 +502,10 @@ public class NewCreditAccountFragment extends BaseFragment {
         giveFive.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                double selectedValue = mBalanceHelper.removeCurrencyCode(giveFive.getText().toString());
-                editText.setText(String.valueOf(selectedValue));
+                //double selectedValue = mBalanceHelper.removeCurrencyCode(giveFive.getText().toString());
+                //editText.setText(String.valueOf(selectedValue));
+                String selectedValue = mBalanceHelper.removeCurrencyCodeString(giveFive.getText().toString());
+                editText.setText(selectedValue);
             }
         });
         processed.setText(getResources().getString(R.string.processed));

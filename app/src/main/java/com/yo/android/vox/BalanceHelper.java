@@ -483,4 +483,8 @@ public class BalanceHelper {
         String val = amountWithDenomination.replaceAll("[^\\d.]", "");
         return Double.parseDouble(val);
     }
+
+    public String removeCurrencyCodeString(String amountWithDenomination) {
+        return amountWithDenomination.replaceAll("[^\\d.]", "");
+    }
 }
