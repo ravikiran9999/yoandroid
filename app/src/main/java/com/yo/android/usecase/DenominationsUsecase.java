@@ -6,6 +6,7 @@ import com.yo.android.api.ApiCallback;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.TransferBalanceDenomination;
 
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -19,6 +20,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class DenominationsUsecase {
+
+    private static final String noWifiError = "Please check your wifi connection";
 
     @Inject
     YoApi.YoService yoService;
@@ -55,7 +58,11 @@ public class DenominationsUsecase {
 
             @Override
             public void onFailure(Call<List<TransferBalanceDenomination>> call, Throwable t) {
-                balanceTransferCallback.onFailure(t.getMessage());
+                if(t != null && t instanceof ConnectException) {
+                    balanceTransferCallback.onFailure(noWifiError);
+                } else {
+                    balanceTransferCallback.onFailure(t.getMessage());
+                }
             }
         });
     }

@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,6 +27,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class PackageDenominationsUsecase {
+
+    private static final String noWifiError = "Please check your wifi connection";
 
     @Inject
     YoApi.YoService yoService;
@@ -60,7 +63,11 @@ public class PackageDenominationsUsecase {
 
             @Override
             public void onFailure(Call<List<PackageDenomination>> call, Throwable t) {
-                packageCallback.onFailure(t.getMessage());
+                if(t != null && t instanceof ConnectException) {
+                    packageCallback.onFailure(noWifiError);
+                } else {
+                    packageCallback.onFailure(t.getMessage());
+                }
             }
         });
     }
