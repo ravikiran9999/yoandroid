@@ -1,5 +1,6 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/htab_maincontent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -27,12 +28,21 @@
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/htab_toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:gravity="top"
-                    android:minHeight="?attr/actionBarSize"
-                    app:layout_collapseMode="pin"
-                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                    app:titleMarginTop="13dp" />
+                    android:layout_height="?attr/actionBarSize"
+                    app:contentInsetLeft="10dp"
+                    app:contentInsetStart="10dp"
+                    app:contentInsetStartWithNavigation="10dp"
+                    app:layout_collapseMode="pin">
+
+                    <TextView
+                        android:id="@+id/title"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        tools:text="@string/yo_credit" />
+                </android.support.v7.widget.Toolbar>
 
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -44,6 +54,7 @@
                         android:id="@+id/htab_header"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginTop="-8dp"
                         android:background="@drawable/yo_credit_banner"
                         android:fitsSystemWindows="true"
                         android:scaleType="centerCrop" />

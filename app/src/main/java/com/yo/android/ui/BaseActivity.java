@@ -6,15 +6,13 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
-import com.firebase.jobdispatcher.Constraint;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
-import com.firebase.jobdispatcher.Job.Builder;
-import com.firebase.jobdispatcher.Trigger;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.ValueRange;
@@ -24,7 +22,7 @@ import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.ui.ParentActivity;
 import com.yo.android.di.AwsLogsCallBack;
-import com.yo.android.di.JobsModule;
+import com.yo.android.typeface.TypefacePath;
 import com.yo.android.vox.VoxFactory;
 import com.yo.dialer.CallExtras;
 import com.yo.dialer.DialerLogs;
@@ -66,6 +64,7 @@ public class BaseActivity extends ParentActivity {
     //private FirebaseJobDispatcher firebaseJobDispatcher;
 
     private static Activity activity;
+    private Typeface alexBrushRegular;
 
     @Override
 
@@ -226,5 +225,12 @@ public class BaseActivity extends ParentActivity {
             e.printStackTrace();
 
         }
+    }
+
+    protected Typeface getAlexBrushRegular() {
+        if (alexBrushRegular == null) {
+            alexBrushRegular = Typeface.createFromAsset(getAssets(), TypefacePath.ALEX_BRUSH_REGULAR);
+        }
+        return alexBrushRegular;
     }
 }
