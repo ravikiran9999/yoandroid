@@ -165,7 +165,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 int pos = data.getIntExtra("Pos", 0);
                 boolean isTopicFollowing = Boolean.valueOf(topic.getTopicFollowing());
                 String articlePlace = data.getStringExtra("ArticlePlace");
-                myBaseAdapter.updateTopic(isTopicFollowing, topic, pos, articlePlace);
+                if(isTopicFollowing) {
+                    myBaseAdapter.updateTopic(isTopicFollowing, topic, pos, articlePlace);
+                }
             }
 
         } else if (requestCode == 500 && resultCode == getActivity().RESULT_OK) {

@@ -780,6 +780,11 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                             yoService.removeTopicsAPI(accessToken, topicIds).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                                    if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
+                                        MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(topicId, Constants.FOLLOW_TOPIC_EVENT);
+                                    }
+
                                     Intent intent = new Intent();
                                     setResult(6, intent);
                                     finish();
@@ -828,6 +833,11 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     dismissProgressDialog();
+
+                                    if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
+                                        MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(topicId, Constants.FOLLOW_TOPIC_EVENT);
+                                    }
+
                                     Intent intent = new Intent();
                                     setResult(6, intent);
                                     finish();

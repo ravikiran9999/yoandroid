@@ -1867,6 +1867,69 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     }
 
+    @Override
+    public void updateUnfollowTopicStatus(String topicId, String follow) {
+        if (!TextUtils.isEmpty(topicId)) {
+
+            List<Articles> followedTopicArticlesList = new ArrayList<Articles>();
+
+            allArticles = getAllItems();
+
+            for (Articles article : allArticles) {
+
+                if (topicId.equals(article.getTopicId())) {
+                    article.setTopicFollowing("false");
+                    followedTopicArticlesList.add(article);
+                }
+            }
+
+            removeItems(followedTopicArticlesList);
+
+            List<Articles> finalArticles = getAllItems();
+            allArticles = new ArrayList<Articles>(new LinkedHashSet<Articles>(finalArticles));
+
+            if(topicId.equals(secondArticle.getTopicId())) {
+                allArticles.remove(secondArticle);
+            }
+
+            if(topicId.equals(thirdArticle.getTopicId())) {
+                allArticles.remove(thirdArticle);
+            }
+
+            if(allArticles.size() >= 2) {
+                secondArticle = allArticles.get(1);
+            }
+
+            if(allArticles.size() >= 3) {
+                thirdArticle = allArticles.get(2);
+            }
+
+            if (!((BaseActivity) context).hasDestroyed()) {
+                notifyDataSetChanged();
+            }
+
+            if(allArticles.size() == 0) {
+                magazineFlipArticlesFragment.loadArticles(null, false);
+            }
+
+            List<Articles> cachedMagazinesList = getCachedMagazinesList();
+
+            if (cachedMagazinesList != null) {
+                List<Articles> tempList = new ArrayList<>();
+                for (int i = 0; i < cachedMagazinesList.size(); i++) {
+                    if (topicId.equals(cachedMagazinesList.get(i).getTopicId())) {
+                        cachedMagazinesList.get(i).setTopicFollowing("false");
+                        tempList.add(cachedMagazinesList.get(i));
+                    }
+                }
+                cachedMagazinesList.removeAll(tempList);
+
+                saveCachedMagazinesList(cachedMagazinesList);
+            }
+        }
+
+    }
+
     /**
      * The View Holder class
      */

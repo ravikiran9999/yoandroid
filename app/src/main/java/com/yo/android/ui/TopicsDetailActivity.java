@@ -685,7 +685,7 @@ public class TopicsDetailActivity extends BaseActivity {
                             alertDialog.dismiss();
                             showProgressDialog();
                             String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                            List<String> topicIds = new ArrayList<String>();
+                            final List<String> topicIds = new ArrayList<String>();
                             topicIds.add(topic.getTopicId());
                             yoService.removeTopicsAPI(accessToken, topicIds).enqueue(new Callback<ResponseBody>() {
                                 @Override
@@ -697,9 +697,10 @@ public class TopicsDetailActivity extends BaseActivity {
                                     topic.setTopicFollowing("false");
 
                                     if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
-                                        MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateFollowTopicStatus(topic, Constants.FOLLOW_TOPIC_EVENT);
+                                        for(int i=0; i < topicIds.size(); i++) {
+                                            MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(topicIds.get(i), Constants.FOLLOW_TOPIC_EVENT);
+                                        }
                                     }
-
                                 }
 
                                 @Override
