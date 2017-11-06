@@ -10,10 +10,12 @@ import org.pjsip.pjsua2.CallMediaInfoVector;
 import org.pjsip.pjsua2.Media;
 import org.pjsip.pjsua2.OnCallMediaStateParam;
 import org.pjsip.pjsua2.OnCallStateParam;
+import org.pjsip.pjsua2.OnCallTsxStateParam;
 import org.pjsip.pjsua2.VideoPreview;
 import org.pjsip.pjsua2.VideoWindow;
 import org.pjsip.pjsua2.pjmedia_type;
 import org.pjsip.pjsua2.pjsip_inv_state;
+import org.pjsip.pjsua2.pjsip_tsx_state_e;
 import org.pjsip.pjsua2.pjsua2;
 import org.pjsip.pjsua2.pjsua_call_media_status;
 
@@ -99,5 +101,17 @@ public class YoCall extends Call {
         }
 
         YoApp.observer.notifyCallMediaState(this);
+    }
+
+    @Override
+    public void onCallTsxState(OnCallTsxStateParam prm) {
+        DialerLogs.messageI(TAG, "YO========onCallTsxState===========");
+
+        // Check if previous INVITE/UPDATE transaction has been completed
+        if (prm.getE().getBody().getTsxState().getTsx().getState() == pjsip_tsx_state_e.PJSIP_TSX_STATE_TERMINATED &&
+                (prm.getE().getBody().getTsxState().getTsx().getMethod()=="INVITE" || prm.getE().getBody().getTsxState().getTsx().getMethod()=="UPDATE"))
+        {
+            YoApp.observer.notifyCallTsxState(this);
+        }
     }
 }
