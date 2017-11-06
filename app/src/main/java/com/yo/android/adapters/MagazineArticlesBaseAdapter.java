@@ -1872,6 +1872,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 notifyDataSetChanged();
             }
 
+            if (getCount() > 0) {
+                magazineFlipArticlesFragment.flipView.flipTo(0);
+            }
+
             if(allArticles.size() == 0) {
                 magazineFlipArticlesFragment.loadArticles(null, false);
             }
