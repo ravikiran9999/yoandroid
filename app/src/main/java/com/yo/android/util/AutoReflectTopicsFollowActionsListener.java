@@ -7,4 +7,6 @@ import com.yo.android.model.Articles;
  */
 public interface AutoReflectTopicsFollowActionsListener {
     void updateFollowTopicStatus(Articles data, String follow);
+
+    void updateUnfollowTopicStatus(String topicId, String follow);
 }

@@ -701,7 +701,10 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                     menuItem.setTitle("Follow");
                                     isFollowingMagazine = false;
                                     ownMagazine.setIsFollowing("false");
-                                    EventBus.getDefault().post(Constants.OTHERS_MAGAZINE_ACTION);
+                                    //EventBus.getDefault().post(Constants.OTHERS_MAGAZINE_ACTION);
+                                    if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
+                                        MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(ownMagazine.getId(), Constants.FOLLOW_TOPIC_EVENT);
+                                    }
                                 }
 
                                 @Override
