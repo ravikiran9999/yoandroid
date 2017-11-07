@@ -97,7 +97,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     @Inject
     ConnectivityHelper mHelper;
 
-    public static int suggestionsPosition;
+    public static int suggestionsPosition = 0;
 
     public static int lastReadArticle = 0;
 
@@ -165,7 +165,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 int pos = data.getIntExtra("Pos", 0);
                 boolean isTopicFollowing = Boolean.valueOf(topic.getTopicFollowing());
                 String articlePlace = data.getStringExtra("ArticlePlace");
-                myBaseAdapter.updateTopic(isTopicFollowing, topic, pos, articlePlace);
+                if(isTopicFollowing) {
+                    myBaseAdapter.updateTopic(isTopicFollowing, topic, pos, articlePlace);
+                }
             }
 
         } else if (requestCode == 500 && resultCode == getActivity().RESULT_OK) {
@@ -330,10 +332,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     if (llNoArticles != null) {
                         llNoArticles.setVisibility(View.GONE);
                         flipContainer.setVisibility(View.VISIBLE);
-                        if (myBaseAdapter.getCount() > 0) {
+/*                        if (myBaseAdapter.getCount() > 0) {
                             Random r = new Random();
                             suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
-                        }
+                        }*/
                     }
                 }
             } else {
@@ -461,6 +463,17 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         if (position != 0) {
             swipeRefreshContainer.setEnabled(false);
             swipeRefreshContainer.setRefreshing(false);
+        }
+
+        if(position > 0 && position % Constants.SUGGESTIONS_PAGE_FREQUENCY == 0) {
+            if (myBaseAdapter.getCount() > 0) {
+                try {
+                    suggestionsPosition = position + 5;
+                    myBaseAdapter.getAllItems().add(suggestionsPosition, new Articles());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         currentFlippedPosition = position;
@@ -651,14 +664,16 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     if (llNoArticles != null) {
                         llNoArticles.setVisibility(View.GONE);
                         flipContainer.setVisibility(View.VISIBLE);
-                        if (myBaseAdapter.getCount() > 0) {
+/*                        if (myBaseAdapter.getCount() > 0) {
                             try {
                                 Random r = new Random();
-                                suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
+                                //suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
+                                suggestionsPosition = r.nextInt((suggestionsPosition + 30) - suggestionsPosition) + suggestionsPosition;
+                                myBaseAdapter.getAllItems().add(suggestionsPosition, new Articles());
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                        }
+                        }*/
                     }
                 } else {
                     flipContainer.setVisibility(View.GONE);
@@ -754,12 +769,13 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         if (llNoArticles != null) {
             llNoArticles.setVisibility(View.GONE);
             flipContainer.setVisibility(View.VISIBLE);
-            if (myBaseAdapter.getCount() > 0) {
+/*            if (myBaseAdapter.getCount() > 0) {
                 Random r = new Random();
-                suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
+                //suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
+                suggestionsPosition = r.nextInt((suggestionsPosition + 30) - suggestionsPosition) + suggestionsPosition;
                 myBaseAdapter.getAllItems().add(suggestionsPosition, new Articles());
                 myBaseAdapter.notifyDataSetChanged();
-            }
+            }*/
         }
     }
 
@@ -832,12 +848,13 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             if (llNoArticles != null) {
                 llNoArticles.setVisibility(View.GONE);
                 flipContainer.setVisibility(View.VISIBLE);
-                if (myBaseAdapter.getCount() > 0) {
+/*                if (myBaseAdapter.getCount() > 0) {
                     Random r = new Random();
-                    suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
+                    //suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
+                    suggestionsPosition = r.nextInt((suggestionsPosition + 30) - suggestionsPosition) + suggestionsPosition;
                     myBaseAdapter.getAllItems().add(suggestionsPosition, new Articles());
                     myBaseAdapter.notifyDataSetChanged();
-                }
+                }*/
             }
         }
     }
@@ -867,7 +884,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 for (int i = 0; i <= currentFlippedPosition; i++) {
                     if(myBaseAdapter.getItem(i) != null) {
                         String articleId = myBaseAdapter.getItem(i).getId();
-                        Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(i).getTitle() + " Articles size " + myBaseAdapter.getCount());
+                        //Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(i).getTitle() + " Articles size " + myBaseAdapter.getCount());
 
                         readIds.add(articleId);
                     }

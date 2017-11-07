@@ -348,23 +348,6 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                 photoView.setImageResource(R.drawable.img_placeholder);
             }
 
-            Log.d("OthersMagazineDetail", "The photoView.getDrawable() is " + photoView.getDrawable());
-
-            if(photoView.getDrawable() != null) {
-                int newHeight = getWindowManager().getDefaultDisplay().getHeight() / 2;
-                int orgWidth = photoView.getDrawable().getIntrinsicWidth();
-                int orgHeight = photoView.getDrawable().getIntrinsicHeight();
-
-                int newWidth = (int) Math.floor((orgWidth * newHeight) / orgHeight);
-
-                Log.d("OthersMagazineDetail", "The new width is " + newWidth + "  new height is " + newHeight);
-
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                        newWidth, newHeight);
-                params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-                photoView.setLayoutParams(params);
-            }
-
             photoView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -718,7 +701,10 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                     menuItem.setTitle("Follow");
                                     isFollowingMagazine = false;
                                     ownMagazine.setIsFollowing("false");
-                                    EventBus.getDefault().post(Constants.OTHERS_MAGAZINE_ACTION);
+                                    //EventBus.getDefault().post(Constants.OTHERS_MAGAZINE_ACTION);
+                                    if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
+                                        MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(ownMagazine.getId(), Constants.FOLLOW_TOPIC_EVENT);
+                                    }
                                 }
 
                                 @Override
