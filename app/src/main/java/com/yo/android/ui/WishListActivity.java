@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
@@ -26,6 +27,8 @@ import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.yo.android.R;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
@@ -310,11 +313,34 @@ public class WishListActivity extends BaseActivity {
                     });
 
 
-            ImageView photoView = holder.articlePhoto;
+            final ImageView photoView = holder.articlePhoto;
 
             photoView.setImageResource(R.drawable.img_placeholder);
             if (data.getImage_filename() != null) {
-                new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
+                //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
+                Glide.with(context)
+                        .load(data.getImage_filename())
+                        .asBitmap()
+                        .placeholder(R.drawable.img_placeholder)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate()
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                                int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
+                                if (resource != null) {
+                                    Bitmap bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
+                                    Glide.with(context)
+                                            .load(data.getImage_filename())
+                                            .override(bmp.getWidth(), bmp.getHeight())
+                                            .placeholder(R.drawable.img_placeholder)
+                                            .crossFade()
+                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                            .dontAnimate()
+                                            .into(photoView);
+                                }
+                            }
+                        });
             } else {
                 photoView.setImageResource(R.drawable.img_placeholder);
             }

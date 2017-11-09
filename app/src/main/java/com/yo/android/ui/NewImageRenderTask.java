@@ -3,12 +3,17 @@ package com.yo.android.ui;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
 import com.yo.android.model.Articles;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -39,10 +44,37 @@ public  class NewImageRenderTask extends AsyncTask<Void, Void, Bitmap> {
     protected void onPostExecute(Bitmap urlBitmap) {
         super.onPostExecute(urlBitmap);
         int screenWidth = DeviceDimensionsHelper.getDisplayWidth(mContext);
+        int screenHeight = DeviceDimensionsHelper.getDisplayHeight(mContext);
         if (urlBitmap != null) {
             Bitmap bmp = BitmapScaler.scaleToFitWidth(urlBitmap, screenWidth);
-            BitmapCache.getInstance(mContext).addBitmapToMemoryCache(imageLink,bmp);
-            articleImageView.setImageBitmap(bmp);
+            //BitmapCache.getInstance(mContext).addBitmapToMemoryCache(imageLink,bmp);
+            //articleImageView.setImageBitmap(bmp);
+            //byte[] byteArray = bitmapToByte(bmp);
+            Drawable drawable = new BitmapDrawable(mContext.getResources(), bmp);
+            if (!((BaseActivity) mContext).hasDestroyed()) {
+                /*Glide.with(mContext)
+                        .load(byteArray)
+                        .override(screenWidth, screenHeight)
+                        .placeholder(R.drawable.img_placeholder)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate()
+                        .into(articleImageView);*/
+/*                Glide.with(mContext)
+                        .load("")
+                        .placeholder(drawable)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate()
+                        .into(articleImageView);*/
+                Glide.with(mContext)
+                        .load(imageLink)
+                        .override(bmp.getWidth(), bmp.getHeight())
+                        .placeholder(R.drawable.img_placeholder)
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                        .dontAnimate()
+                        .into(articleImageView);
+            }
+
         } else {
             articleImageView.setImageResource(R.drawable.img_placeholder);
         }
@@ -61,5 +93,12 @@ public  class NewImageRenderTask extends AsyncTask<Void, Void, Bitmap> {
             // Log exception
             return null;
         }
+    }
+
+    private byte[] bitmapToByte(Bitmap bitmap){
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        return byteArray;
     }
 }

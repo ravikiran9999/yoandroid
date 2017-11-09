@@ -1,6 +1,7 @@
 package com.yo.android.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -9,9 +10,13 @@ import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.yo.android.R;
 import com.yo.android.helpers.OwnMagazineViewHolder;
 import com.yo.android.model.OwnMagazine;
+import com.yo.android.ui.BitmapScaler;
+import com.yo.android.ui.DeviceDimensionsHelper;
 
 /**
  * Created by creatives on 7/9/2016.
@@ -43,12 +48,27 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
 
                 Glide.with(mContext)
                         .load(item.getImage())
+                        .asBitmap()
                         .placeholder(R.drawable.img_placeholder)
-                        .fitCenter()
-                        .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate()
-                        .into(holder.getImageView());
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                                int screenWidth = DeviceDimensionsHelper.getDisplayWidth(mContext);
+                                if (resource != null) {
+                                    Bitmap bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
+                                    Glide.with(mContext)
+                                            .load(item.getImage())
+                                            .override(bmp.getWidth(), bmp.getHeight())
+                                            .placeholder(R.drawable.img_placeholder)
+                                            .crossFade()
+                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                            .dontAnimate()
+                                            .into(holder.getImageView());
+                                }
+                            }
+                        });
 
             } else {
                 if(item.getArticlesCount() == 0) {
@@ -83,12 +103,27 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
 
                 Glide.with(mContext)
                         .load(item.getImage())
+                        .asBitmap()
                         .placeholder(R.drawable.img_placeholder)
-                        .fitCenter()
-                        .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate()
-                        .into(holder.getImageView());
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                                int screenWidth = DeviceDimensionsHelper.getDisplayWidth(mContext);
+                                if (resource != null) {
+                                    Bitmap bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
+                                    Glide.with(mContext)
+                                            .load(item.getImage())
+                                            .override(bmp.getWidth(), bmp.getHeight())
+                                            .placeholder(R.drawable.img_placeholder)
+                                            .crossFade()
+                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                            .dontAnimate()
+                                            .into(holder.getImageView());
+                                }
+                            }
+                        });
 
             } else {
                 if(item.getArticlesCount() == 0) {
