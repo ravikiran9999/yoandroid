@@ -264,13 +264,18 @@ public class MagazineDashboardHelper {
      * @param readArticleIds               The list of read articles ids
      * @param unreadArticleIds             The list of unread article ids
      */
-    public void getDashboardArticlesForDailyService(final MagazineFlipArticlesFragment magazineFlipArticlesFragment, YoApi.YoService yoService, final PreferenceEndPoint preferenceEndPoint, List<String> readArticleIds, List<String> unreadArticleIds) {
+    public void getDashboardArticlesForDailyService(final MagazineFlipArticlesFragment magazineFlipArticlesFragment, YoApi.YoService yoService, final PreferenceEndPoint preferenceEndPoint, List<String> readArticleIds, List<String> unreadArticleIds, final SwipeRefreshLayout swipeRefreshContainer) {
         if (magazineFlipArticlesFragment != null) {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             boolean autoRenewalSubscription = preferenceEndPoint.getBooleanPreference(Constants.AUTO_RENEWAL_SUBSCRIPTION, false);
             yoService.getDashboardArticlesAPI(accessToken, readArticleIds, unreadArticleIds, autoRenewalSubscription, false).enqueue(new Callback<LandingArticles>() {
                 @Override
                 public void onResponse(Call<LandingArticles> call, Response<LandingArticles> response) {
+                    MagazineFlipArticlesFragment.refreshing = false;
+
+                    if (swipeRefreshContainer != null) {
+                        swipeRefreshContainer.setRefreshing(false);
+                    }
                     if (magazineFlipArticlesFragment.mProgress != null) {
                         magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
                     }
@@ -290,6 +295,10 @@ public class MagazineDashboardHelper {
 
                 @Override
                 public void onFailure(Call<LandingArticles> call, Throwable t) {
+                    MagazineFlipArticlesFragment.refreshing = false;
+                    if (swipeRefreshContainer != null) {
+                        swipeRefreshContainer.setRefreshing(false);
+                    }
                     if (magazineFlipArticlesFragment.mProgress != null) {
                         magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
                     }

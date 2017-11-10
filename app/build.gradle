@@ -59,7 +59,7 @@ android {
 
         stage {
             applicationIdSuffix ".stage"
-            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
             buildConfigField "String", "RELEASE_USER_TYPE_END", "\"D\""
 

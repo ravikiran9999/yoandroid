@@ -7,12 +7,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.text.Html;
+import android.text.Layout;
+import android.text.SpannableString;
 import android.text.TextUtils;
 import android.transition.Transition;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -231,6 +234,18 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
             holder.articleSummaryRight = UI.findViewById(layout, R.id.tv_article_short_desc_summary_right);
 
+            holder.fullImageTitle = UI.findViewById(layout, R.id.tv_full_image_title_top);
+
+            holder.blackMask = UI.findViewById(layout, R.id.imv_black_mask);
+
+            holder.rlFullImageOptions = UI.findViewById(layout, R.id.rl_full_image_options);
+
+            holder.fullImageMagazineLike = UI.findViewById(layout, R.id.cb_full_image_magazine_like_top);
+
+            holder.fullImageMagazineAdd = UI.findViewById(layout, R.id.imv_full_image_magazine_add_top);
+
+            holder.fullImageMagazineShare = UI.findViewById(layout, R.id.imv_full_image_magazine_share_top);
+
             layout.setTag(holder);
         } else {
             holder = (ViewHolder) layout.getTag();
@@ -246,14 +261,54 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         }
 
         if (holder.articleTitle != null) {
+            holder.fullImageTitle.setVisibility(View.GONE);
+            holder.blackMask.setVisibility(View.GONE);
+            holder.rlFullImageOptions.setVisibility(View.GONE);
             holder.articleTitle
                     .setText(AphidLog.format("%s", data.getTitle()));
         }
 
         if (holder.articleShortDesc != null) {
             if (data.getSummary() != null && holder.articleShortDesc != null) {
+                holder.articleShortDesc.setMaxLines(1000);
                 holder.articleShortDesc
-                        .setText(Html.fromHtml(data.getSummary()));
+                        .setText(Html.fromHtml(data.getSummary()) + "\n");
+                Log.d("BaseAdapter", "The text size is " + holder.articleShortDesc.getTextSize());
+                final TextView shortDesc = holder.articleShortDesc;
+                ViewTreeObserver vto = holder.articleShortDesc.getViewTreeObserver();
+                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        Log.d("BaseAdapter", "The short desc line count is " + shortDesc.getLineCount());
+                        //calculateHeight(shortDesc);
+                        /*final Layout layout = shortDesc.getLayout();
+                        String contentToBeWrite = "";
+                        int start = 0;
+
+                        int height = shortDesc.getHeight();
+                        int scrollY = shortDesc.getScrollY();
+                        int firstVisibleLineNumber = layout.getLineForVertical(scrollY);
+                        int lastVisibleLineNumber = layout.getLineForVertical(scrollY + height);
+
+                        String content = shortDesc.getText().toString();
+                        Log.d("BaseAdapter", "lastVisibleLineNumber " + lastVisibleLineNumber);
+                        for (int i = 0; i < lastVisibleLineNumber-1; i++) {
+                            int end = layout.getLineEnd(i);
+
+                            contentToBeWrite = contentToBeWrite + content.substring(start, end);
+                            start = end + 1;
+                            Log.d("BaseAdapter", "contentToBeWrite " + contentToBeWrite);
+                        }
+                        shortDesc.setText(contentToBeWrite);*/
+
+                        //shortDesc.setMaxLines(lastVisibleLineNumber);
+
+                        /*if(lastVisibleLineNumber != 0 && shortDesc.getLineCount()>lastVisibleLineNumber){
+                            shortDesc.setLines(lastVisibleLineNumber);
+                        }*/
+                    }
+                });
+                //doEllipsize(holder.articleShortDesc);
             }
         }
 
@@ -395,6 +450,146 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 }
             });
         }
+
+        if (holder.fullImageMagazineLike != null) {
+            holder.fullImageMagazineLike.setOnCheckedChangeListener(null);
+            if (Boolean.valueOf(data.getLiked())) {
+                data.setIsChecked(true);
+            } else {
+                data.setIsChecked(false);
+            }
+
+            holder.fullImageMagazineLike.setText("");
+            holder.fullImageMagazineLike.setChecked(Boolean.valueOf(data.getLiked()));
+
+            holder.fullImageMagazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    Log.d("MagazineBaseAdapter", "Title and liked... " + data.getTitle() + " " + Boolean.valueOf(data.getLiked()));
+
+                    if (isChecked) {
+                        ((BaseActivity) context).showProgressDialog();
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                                ((BaseActivity) context).dismissProgressDialog();
+                                data.setIsChecked(true);
+                                data.setLiked("true");
+                                if (!((BaseActivity) context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
+                                if (OtherProfilesLikedArticles.getListener() != null) {
+                                    OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
+                                }
+                                mToastFactory.showToast("You have liked the article " + data.getTitle());
+
+                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
+                                if (cachedMagazinesList != null) {
+                                    List<Articles> tempList = cachedMagazinesList;
+                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
+                                        if (data.getId().equals(tempList.get(i).getId())) {
+                                            tempList.get(i).setLiked("true");
+                                        }
+                                    }
+
+                                    cachedMagazinesList = tempList;
+
+                                    saveCachedMagazinesList(cachedMagazinesList);
+                                }
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                ((BaseActivity) context).dismissProgressDialog();
+                                mToastFactory.showToast("Error while liking article " + data.getTitle());
+                                data.setIsChecked(false);
+                                data.setLiked("false");
+                                if (!((BaseActivity) context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
+
+                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
+                                if (cachedMagazinesList != null) {
+                                    List<Articles> tempList = cachedMagazinesList;
+                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
+                                        if (data.getId().equals(tempList.get(i).getId())) {
+                                            tempList.get(i).setLiked("false");
+                                        }
+                                    }
+
+                                    cachedMagazinesList = tempList;
+
+                                    saveCachedMagazinesList(cachedMagazinesList);
+                                }
+                            }
+                        });
+                    } else {
+                        ((BaseActivity) context).showProgressDialog();
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                ((BaseActivity) context).dismissProgressDialog();
+                                data.setIsChecked(false);
+                                data.setLiked("false");
+                                if (OtherProfilesLikedArticles.getListener() != null) {
+                                    OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
+                                }
+                                if (!((BaseActivity) context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
+
+                                mToastFactory.showToast("You have un-liked the article " + data.getTitle());
+
+                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
+                                if (cachedMagazinesList != null) {
+                                    List<Articles> tempList = cachedMagazinesList;
+                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
+                                        if (data.getId().equals(tempList.get(i).getId())) {
+                                            tempList.get(i).setLiked("false");
+                                        }
+                                    }
+
+                                    cachedMagazinesList = tempList;
+
+                                    saveCachedMagazinesList(cachedMagazinesList);
+                                }
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                ((BaseActivity) context).dismissProgressDialog();
+                                Toast.makeText(context, "Error while un liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
+                                data.setIsChecked(true);
+                                data.setLiked("true");
+                                if (!((BaseActivity) context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
+
+                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
+                                if (cachedMagazinesList != null) {
+                                    List<Articles> tempList = cachedMagazinesList;
+                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
+                                        if (data.getId().equals(tempList.get(i).getId())) {
+                                            tempList.get(i).setLiked("true");
+                                        }
+                                    }
+
+                                    cachedMagazinesList = tempList;
+
+                                    saveCachedMagazinesList(cachedMagazinesList);
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
         if (UI
                 .<TextView>findViewById(layout, R.id.tv_category_full_story)
                 != null) {
@@ -428,29 +623,51 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             if (data.getImage_filename() != null) {
                 if (!((BaseActivity) context).hasDestroyed()) {
                     //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
+                    final TextView fullImageTitle = holder.fullImageTitle;
+                    final TextView articleTitle = holder.articleTitle;
+                    final ImageView blackMask = holder.blackMask;
+                    final RelativeLayout rlFullImageOptions = holder.rlFullImageOptions;
                     Glide.with(context)
                             .load(data.getImage_filename())
                             .asBitmap()
                             .placeholder(R.drawable.img_placeholder)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .dontAnimate()
-                           .into(new SimpleTarget<Bitmap>() {
-                               @Override
-                               public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                                   int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
-                                   if (resource != null) {
-                                       Bitmap bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
-                                       Glide.with(context)
-                                               .load(data.getImage_filename())
-                                               .override(bmp.getWidth(), bmp.getHeight())
-                                               .placeholder(R.drawable.img_placeholder)
-                                               .crossFade()
-                                               .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                               .dontAnimate()
-                                               .into(photoView);
-                                   }
-                               }
-                           });
+                            .into(new SimpleTarget<Bitmap>() {
+                                @Override
+                                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                                    int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
+                                    if (resource != null) {
+                                        Bitmap bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
+                                        Glide.with(context)
+                                                .load(data.getImage_filename())
+                                                .override(bmp.getWidth(), bmp.getHeight())
+                                                .placeholder(R.drawable.img_placeholder)
+                                                .crossFade()
+                                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                                .dontAnimate()
+                                                .into(photoView);
+                                        int screenHeight = DeviceDimensionsHelper.getDisplayHeight(context);
+                                        Log.d("BaseAdapter", "screenHeight " + screenHeight);
+                                       /*int spaceForImage = screenHeight - 120;
+                                       Log.d("BaseAdapter", "spaceForImage" + spaceForImage);*/
+                                        Log.d("BaseAdapter", "bmp.getHeight()" + bmp.getHeight());
+                                        int total = bmp.getHeight() + 120;
+                                        //if(bmp.getHeight() >= spaceForImage-30) {
+                                        Log.d("BaseAdapter", "total" + total);
+                                        if (screenHeight - total <= 250) {
+
+                                            Log.d("BaseAdapter", "Full screen image");
+                                            if (fullImageTitle != null && articleTitle != null && blackMask != null && rlFullImageOptions != null) {
+                                                fullImageTitle.setVisibility(View.VISIBLE);
+                                                fullImageTitle.setText(articleTitle.getText().toString());
+                                                blackMask.setVisibility(View.VISIBLE);
+                                                rlFullImageOptions.setVisibility(View.VISIBLE);
+                                            }
+                                        }
+                                    }
+                                }
+                            });
                 }
             } else {
                 photoView.setImageResource(R.drawable.img_placeholder);
@@ -502,6 +719,35 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         if (holder.magazineShare != null) {
             ImageView share = holder.magazineShare;
+            share.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (data.getImage_filename() != null) {
+                        new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
+                    } else {
+                        String summary = Html.fromHtml(data.getSummary()).toString();
+                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, null);
+                    }
+                }
+            });
+        }
+
+        if (holder.fullImageMagazineAdd != null) {
+            ImageView add = holder.fullImageMagazineAdd;
+            add.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, CreateMagazineActivity.class);
+                    intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
+                    if (context instanceof Activity) {
+                        ((Activity) context).startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
+                    }
+                }
+            });
+        }
+
+        if (holder.fullImageMagazineShare != null) {
+            ImageView share = holder.fullImageMagazineShare;
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -614,6 +860,23 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             });
         }
         return layout;
+    }
+
+    private void calculateHeight(TextView shortDesc) {
+        int height = shortDesc.getHeight();
+        int scrollY = shortDesc.getScrollY();
+        Layout layout = shortDesc.getLayout();
+
+        int firstVisibleLineNumber = layout.getLineForVertical(scrollY);
+        int lastVisibleLineNumber = layout.getLineForVertical(scrollY + height);
+        Log.d("BaseAdapter", "The lastVisibleLineNumber is " + lastVisibleLineNumber);
+
+        /*int start = shortDesc.getLayout().getLineStart(lastVisibleLineNumber - 1); //start position
+        int end = shortDesc.getLayout().getLineEnd(lastVisibleLineNumber - 1); //last visible position*/
+
+        String displayedText = shortDesc.getText().toString().substring(0, layout.getLineEnd(lastVisibleLineNumber-1));
+        Log.d("BaseAdapter", "The displayedText is " + displayedText);
+        shortDesc.setText(displayedText + "..." + "\n");
     }
 
     /**
@@ -1958,19 +2221,19 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             List<Articles> finalArticles = getAllItems();
             allArticles = new ArrayList<Articles>(new LinkedHashSet<Articles>(finalArticles));
 
-            if(topicId.equals(secondArticle.getTopicId())) {
+            if (topicId.equals(secondArticle.getTopicId())) {
                 allArticles.remove(secondArticle);
             }
 
-            if(topicId.equals(thirdArticle.getTopicId())) {
+            if (topicId.equals(thirdArticle.getTopicId())) {
                 allArticles.remove(thirdArticle);
             }
 
-            if(allArticles.size() >= 2) {
+            if (allArticles.size() >= 2) {
                 secondArticle = allArticles.get(1);
             }
 
-            if(allArticles.size() >= 3) {
+            if (allArticles.size() >= 3) {
                 thirdArticle = allArticles.get(2);
             }
 
@@ -1982,7 +2245,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 magazineFlipArticlesFragment.flipView.flipTo(0);
             }
 
-            if(allArticles.size() == 0) {
+            if (allArticles.size() == 0) {
                 magazineFlipArticlesFragment.loadArticles(null, false);
             }
 
@@ -2074,6 +2337,18 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         private TextView articleSummaryLeft;
 
         private TextView articleSummaryRight;
+
+        private TextView fullImageTitle;
+
+        private ImageView blackMask;
+
+        private RelativeLayout rlFullImageOptions;
+
+        private CheckBox fullImageMagazineLike;
+
+        private ImageView fullImageMagazineAdd;
+
+        private ImageView fullImageMagazineShare;
     }
 
     /**
@@ -2228,5 +2503,33 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void doEllipsize(final TextView tv) {
+        ViewTreeObserver vto = tv.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+            @SuppressWarnings("deprecation")
+            @Override
+            public void onGlobalLayout() {
+
+                ViewTreeObserver obs = tv.getViewTreeObserver();
+                obs.removeGlobalOnLayoutListener(this);
+
+                //int visibleLines = (tv.getHeight() - tv.getPaddingTop() - tv.getPaddingBottom())/tv.getLineHeight();
+                int height = tv.getHeight();
+                int scrollY = tv.getScrollY();
+                Layout layout = tv.getLayout();
+
+                int firstVisibleLineNumber = layout.getLineForVertical(scrollY);
+                int lastVisibleLineNumber = layout.getLineForVertical(scrollY + height);
+
+                if (tv.getLineCount() > lastVisibleLineNumber) {
+                    tv.setMaxLines(lastVisibleLineNumber);
+                    tv.setEllipsize(TextUtils.TruncateAt.END);
+                }
+
+            }
+        });
     }
 }
