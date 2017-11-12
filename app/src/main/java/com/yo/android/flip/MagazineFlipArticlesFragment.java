@@ -788,7 +788,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
      * @param totalArticles The total articles
      * @param isFromFollow Is from clicking Follow button
      */
-    public void handleMoreDashboardResponse(List<Articles> totalArticles, boolean isFromFollow) {
+    public void handleMoreDashboardResponse(List<Articles> totalArticles, boolean isFromFollow, boolean isFromDailyService) {
         mLog.d("Magazines", "lastReadArticle" + lastReadArticle);
         if (myBaseAdapter.getCount() > lastReadArticle) {
             flipView.flipTo(lastReadArticle);
@@ -825,12 +825,20 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     if (!TextUtils.isEmpty(sharedFollowedCachedMagazines)) {
                         String cachedMagazines = sharedFollowedCachedMagazines;
                         cachedFollowedMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                        cachedFollowedMagazinesList.addAll(followedTopicArticles1);
+                        if(isFromDailyService) {
+                            cachedFollowedMagazinesList.addAll(0, followedTopicArticles1);
+                        } else {
+                            cachedFollowedMagazinesList.addAll(followedTopicArticles1);
+                        }
                     }
                     if (!TextUtils.isEmpty(sharedRandomCachedMagazines)) {
                         String cachedMagazines = sharedRandomCachedMagazines;
                         cachedRandomMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                        cachedRandomMagazinesList.addAll(randomTopicArticles1);
+                        if(isFromDailyService) {
+                            cachedRandomMagazinesList.addAll(0, randomTopicArticles1);
+                        } else {
+                            cachedRandomMagazinesList.addAll(randomTopicArticles1);
+                        }
                     }
                 }
 
@@ -1289,26 +1297,37 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
         if (!followedTopicArticles.isEmpty()) {
             if (totalOtherUnreadArticles.size() > positionToAdd) {
-                totalOtherUnreadArticles.addAll(positionToAdd, followedTopicArticles);
+                if(positionToAdd == 0) {
+                    totalOtherUnreadArticles.addAll(positionToAdd, followedTopicArticles);
+                } else {
+                    totalOtherUnreadArticles.addAll(currentFlippedPosition + positionToAdd, followedTopicArticles);
+                }
             } else {
                 if (totalOtherUnreadArticles.size() > 0) {
                     totalOtherUnreadArticles.addAll(totalOtherUnreadArticles.size() - 1, followedTopicArticles);
                 }
             }
         } else {
-            if (totalOtherUnreadArticles.size() > positionToAdd) {
+           /* if (totalOtherUnreadArticles.size() > positionToAdd) {
                 totalOtherUnreadArticles.addAll(positionToAdd, randomTopicArticles);
             } else {
                 if (totalOtherUnreadArticles.size() > 0) {
                     totalOtherUnreadArticles.addAll(totalOtherUnreadArticles.size() - 1, randomTopicArticles);
                 }
+            }*/
+            if (totalOtherUnreadArticles.size() > 0) {
+                totalOtherUnreadArticles.addAll(totalOtherUnreadArticles.size() - 1, randomTopicArticles);
             }
         }
 
         articlesList.removeAll(totalOtherUnreadArticles);
         myBaseAdapter.removeItems(totalOtherUnreadArticles);
-        myBaseAdapter.addItemsAll(totalOtherUnreadArticles);
+        myBaseAdapter.removeItems(articlesList);
+        myBaseAdapter.clear();
+        myBaseAdapter.addItems(totalOtherUnreadArticles);
+        myBaseAdapter.notifyDataSetChanged();
 
+        handleMoreDashboardResponse(totalOtherUnreadArticles, false, true);
         deleteExtraArticlesFromCache();
     }
 

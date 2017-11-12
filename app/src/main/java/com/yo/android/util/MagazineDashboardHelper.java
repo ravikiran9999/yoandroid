@@ -428,17 +428,17 @@ public class MagazineDashboardHelper {
 
     private void addMoreDashboardArticlesList(MagazineFlipArticlesFragment articlesFragment, List<Articles> totalArticles) {
         articlesFragment.myBaseAdapter.addItemsAll(totalArticles);
-        articlesFragment.handleMoreDashboardResponse(totalArticles, false);
+        articlesFragment.handleMoreDashboardResponse(totalArticles, false, false);
     }
 
     private void addMoreDashboardArticlesAfterFollow(MagazineFlipArticlesFragment articlesFragment, List<Articles> totalArticles, List<Articles> unreadOtherFollowedArticles, final List<Articles> followedArticlesList) {
         articlesFragment.performSortingAfterFollow(totalArticles, unreadOtherFollowedArticles, followedArticlesList);
-        articlesFragment.handleMoreDashboardResponse(totalArticles, true);
+        articlesFragment.handleMoreDashboardResponse(totalArticles, true, false);
     }
 
     private void addDashboardArticlesForDailyService(MagazineFlipArticlesFragment articlesFragment, List<Articles> totalArticles, List<Articles> unreadOtherFollowedArticles) {
         articlesFragment.performSortingAfterDailyService(totalArticles, unreadOtherFollowedArticles);
-        articlesFragment.handleMoreDashboardResponse(totalArticles, false);
+        //articlesFragment.handleMoreDashboardResponse(totalArticles, false);
     }
 
     private void renewMagazines(@StringRes int message, Activity activity, int id, PreferenceEndPoint preferenceEndPoint, MagazineFlipArticlesFragment magazineFlipArticlesFragment, List<Articles> totalArticles, final List<Articles> unreadOtherFollowedArticles, List<Articles> followedArticlesList) {
