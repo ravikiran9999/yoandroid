@@ -112,6 +112,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     private MagazineDashboardHelper magazineDashboardHelper;
     private String followedTopicId;
     private static int articleCountThreshold = 2000;
+    private boolean isFetchArticlesPosted;
 
     @SuppressLint("ValidFragment")
     public MagazineFlipArticlesFragment(MagazineTopicsSelectionFragment fragment) {
@@ -512,6 +513,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         if (Constants.OTHERS_MAGAZINE_ACTION.equals(action) || Constants.TOPIC_NOTIFICATION_ACTION.equals(action) || Constants.TOPIC_FOLLOWING_ACTION.equals(action)) {
             updateArticlesAfterFollowTopic(followedTopicId);
         } else if (Constants.START_FETCHING_ARTICLES_ACTION.equals(action)) {
+            isFetchArticlesPosted = true;
             callDailyArticlesService(null);
         } else if (Constants.RENEWAL.equalsIgnoreCase(action)) {
             loadArticles(null, true);
@@ -678,6 +680,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                                 e.printStackTrace();
                             }
                         }*/
+                    }
+                    if(preferenceEndPoint.getBooleanPreference(Constants.IS_SERVICE_RUNNING) && !isFetchArticlesPosted) {
+                        callDailyArticlesService(null);
                     }
                 } else {
                     flipContainer.setVisibility(View.GONE);
@@ -1177,7 +1182,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         } else {
             unreadArticles.addAll(articlesList);
             for (Articles articles : unreadArticles) {
-                unreadArticleIds.add(articles.getId());
+                if(articles != null) {
+                    unreadArticleIds.add(articles.getId());
+                }
             }
         }
 
@@ -1187,10 +1194,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         List<Articles> randomUnreadTopicArticles = new ArrayList<>();
 
         for (Articles articles : unreadOtherArticles) {
-            if ("true".equals(articles.getTopicFollowing())) {
-                followedUnreadTopicArticles.add(articles);
-            } else {
-                randomUnreadTopicArticles.add(articles);
+            if(articles != null) {
+                if ("true".equals(articles.getTopicFollowing())) {
+                    followedUnreadTopicArticles.add(articles);
+                } else {
+                    randomUnreadTopicArticles.add(articles);
+                }
             }
         }
 
