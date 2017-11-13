@@ -2,4 +2,6 @@
 <resources>
     <dimen name="balance_txt_size">12sp</dimen>
     <dimen name="xsmall_textsize">12sp</dimen>
+    <dimen name="article_textsize">14sp</dimen>
+    <dimen name="article_title_textsize">16sp</dimen>
 </resources>

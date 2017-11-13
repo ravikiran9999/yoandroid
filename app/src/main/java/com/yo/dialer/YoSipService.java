@@ -741,6 +741,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 e.printStackTrace();
             }
         } catch (Exception exc) {
+            exc.printStackTrace();
             Logger.warn("Error while trying to play ringtone!" + exc.getMessage());
         }
     }
@@ -763,6 +764,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             });
             mRingTone.start();
         } catch (Exception exc) {
+            exc.printStackTrace();
             Logger.warn("Error while trying to play ringtone!");
         }
     }
@@ -792,14 +794,18 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         if (mRingTone != null) {
             try {
                 if (mRingTone.isPlaying()) {
+                    Logger.warn("mRingTone playing " + mRingTone.isPlaying());
                     mRingTone.stop();
+                    Logger.warn("mRingTone playing after stop " + mRingTone.isPlaying());
                 }
             } catch (Exception ignored) {
+                ignored.printStackTrace();
             }
             try {
                 mRingTone.reset();
                 mRingTone.release();
             } catch (Exception ignored) {
+                ignored.printStackTrace();
             }
         }
 

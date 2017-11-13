@@ -30,6 +30,8 @@ import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
@@ -338,31 +340,37 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                     });
 
 
-            ImageView photoView = holder.articlePhoto;
+            final ImageView photoView = holder.articlePhoto;
 
             photoView.setImageResource(R.drawable.img_placeholder);
 
             if (data.getImage_filename() != null) {
-                new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
+                //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
+                Glide.with(context)
+                        .load(data.getImage_filename())
+                        .asBitmap()
+                        .placeholder(R.drawable.img_placeholder)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate()
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                                int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
+                                if (resource != null) {
+                                    Bitmap bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
+                                    Glide.with(context)
+                                            .load(data.getImage_filename())
+                                            .override(bmp.getWidth(), bmp.getHeight())
+                                            .placeholder(R.drawable.img_placeholder)
+                                            .crossFade()
+                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                            .dontAnimate()
+                                            .into(photoView);
+                                }
+                            }
+                        });
             } else {
                 photoView.setImageResource(R.drawable.img_placeholder);
-            }
-
-            Log.d("OthersMagazineDetail", "The photoView.getDrawable() is " + photoView.getDrawable());
-
-            if(photoView.getDrawable() != null) {
-                int newHeight = getWindowManager().getDefaultDisplay().getHeight() / 2;
-                int orgWidth = photoView.getDrawable().getIntrinsicWidth();
-                int orgHeight = photoView.getDrawable().getIntrinsicHeight();
-
-                int newWidth = (int) Math.floor((orgWidth * newHeight) / orgHeight);
-
-                Log.d("OthersMagazineDetail", "The new width is " + newWidth + "  new height is " + newHeight);
-
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                        newWidth, newHeight);
-                params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-                photoView.setLayoutParams(params);
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {
@@ -718,7 +726,10 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                     menuItem.setTitle("Follow");
                                     isFollowingMagazine = false;
                                     ownMagazine.setIsFollowing("false");
-                                    EventBus.getDefault().post(Constants.OTHERS_MAGAZINE_ACTION);
+                                    //EventBus.getDefault().post(Constants.OTHERS_MAGAZINE_ACTION);
+                                    if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
+                                        MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(ownMagazine.getId(), Constants.FOLLOW_TOPIC_EVENT);
+                                    }
                                 }
 
                                 @Override

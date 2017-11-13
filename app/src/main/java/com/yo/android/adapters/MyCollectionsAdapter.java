@@ -1,6 +1,7 @@
 package com.yo.android.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -8,9 +9,13 @@ import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.yo.android.R;
 import com.yo.android.helpers.MyCollectionsViewHolder;
 import com.yo.android.model.Collections;
+import com.yo.android.ui.BitmapScaler;
+import com.yo.android.ui.DeviceDimensionsHelper;
 import com.yo.android.ui.NewImageRenderTask;
 
 import java.util.ArrayList;
@@ -40,7 +45,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
     }
 
     @Override
-    public void bindView(int position, MyCollectionsViewHolder holder, Collections item) {
+    public void bindView(int position, final MyCollectionsViewHolder holder, final Collections item) {
 
         if (position == 0 && "Follow more topics".equalsIgnoreCase(item.getName())) {
 
@@ -53,7 +58,30 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
                     .into(holder.getImageView());
 
         } else if (!TextUtils.isEmpty(item.getImage())) {
-            new NewImageRenderTask(mContext,item.getImage(),holder.getImageView()).execute();
+            //new NewImageRenderTask(mContext,item.getImage(),holder.getImageView()).execute();
+            Glide.with(mContext)
+                    .load(item.getImage())
+                    .asBitmap()
+                    .placeholder(R.drawable.img_placeholder)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .dontAnimate()
+                    .into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                            int screenWidth = DeviceDimensionsHelper.getDisplayWidth(mContext);
+                            if (resource != null) {
+                                Bitmap bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
+                                Glide.with(mContext)
+                                        .load(item.getImage())
+                                        .override(bmp.getWidth(), bmp.getHeight())
+                                        .placeholder(R.drawable.img_placeholder)
+                                        .crossFade()
+                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                        .dontAnimate()
+                                        .into(holder.getImageView());
+                            }
+                        }
+                    });
         } else {
             if(item.getArticlesCount() == 0) {
                 Glide.with(mContext)

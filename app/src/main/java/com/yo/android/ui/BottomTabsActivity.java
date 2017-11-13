@@ -347,14 +347,22 @@ public class BottomTabsActivity extends BaseActivity {
             }
         });
 
-        if (!preferenceEndPoint.getBooleanPreference(Constants.IS_SERVICE_RUNNING))
+        /*if (!preferenceEndPoint.getBooleanPreference(Constants.IS_SERVICE_RUNNING))
 
         {
             int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
             if (currentHour == 0) {
                 startServiceToFetchNewArticles();
             }
-        }
+        }*/
+
+        // if (!preferenceEndPoint.getBooleanPreference(Constants.IS_SERVICE_RUNNING)) {
+            int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
+            int currentMin = Calendar.getInstance().get(Calendar.MINUTE); //Current hour
+            int currentSec = Calendar.getInstance().get(Calendar.SECOND); //Current hour
+            startServiceToFetchNewArticles(currentHour * 60 * 60 + currentMin * 60 + currentSec);
+
+       // }
 
         // firebase service
 
@@ -899,7 +907,7 @@ public class BottomTabsActivity extends BaseActivity {
         }
     }
 
-    private void startServiceToFetchNewArticles() {
+    private void startServiceToFetchNewArticles(int currentTimeInSec) {
         // Start service using AlarmManager
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -910,8 +918,8 @@ public class BottomTabsActivity extends BaseActivity {
         pintent = PendingIntent.getService(this, 1014, intent,
                 0);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
-                Constants.FETCHING_NEW_ARTICLES_FREQUENCY, pintent);
+        alarm.setRepeating(AlarmManager.RTC_WAKEUP, (((24 * 60 * 60) - currentTimeInSec) * 1000),
+                AlarmManager.INTERVAL_DAY, pintent);
     }
 
     public static Context getAppContext() {

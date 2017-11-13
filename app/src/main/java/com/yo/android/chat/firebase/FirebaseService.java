@@ -88,7 +88,8 @@ public class FirebaseService extends InjectedService {
     private boolean isRunning = false;
     private int initRoomCount;
     private int count;
-
+    private static Uri notification;
+    private static Ringtone ringtone;
 
     @Override
     public void onCreate() {
@@ -246,9 +247,13 @@ public class FirebaseService extends InjectedService {
 
     private void playNotificationSound() {
         try {
-            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-            r.play();
+            if (notification == null) {
+                notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
+            }
+            if (ringtone != null && !ringtone.isPlaying()) {
+                ringtone.play();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

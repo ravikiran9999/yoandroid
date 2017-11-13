@@ -206,4 +206,13 @@ public class YoCallObserver implements YoAppObserver {
             DialerLogs.messageI(TAG, "notifyBuddyState===========" + info.getUri() + ", State = " + info.getPresStatus().getStatusText());
         }
     }
+
+    @Override
+    public void notifyCallTsxState(YoCall call) {
+        YoSipService yoSipService = (YoSipService) YoCallObserver.mContext;
+        YoCall yoCurrentCall = yoSipService.getYoCurrentCall();
+        if (yoCurrentCall != null) {
+            yoCurrentCall.setPendingReInvite(false);
+        }
+    }
 }

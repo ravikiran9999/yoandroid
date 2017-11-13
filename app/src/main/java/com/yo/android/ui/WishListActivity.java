@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
@@ -26,6 +27,8 @@ import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.yo.android.R;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
@@ -310,49 +313,36 @@ public class WishListActivity extends BaseActivity {
                     });
 
 
-            ImageView photoView = holder.articlePhoto;
-
-            /*RelativeLayout rl = (UI.findViewById(layout, R.id.rl_top));
-            final float scale = context.getResources().getDisplayMetrics().density;
-            int height;
-            if (scale == 4.0) {
-                height = 400;
-            } else if (scale == 3.5) {
-                height = 350;
-            } else if (scale == 3.0) {
-                height = 300;
-            } else if (scale == 2.0) {
-                height = 250;
-            } else {
-                height = 450;
-            }
-            int pixels = (int) (height * scale + 0.5f);
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT, pixels);
-            rl.setLayoutParams(layoutParams);*/
+            final ImageView photoView = holder.articlePhoto;
 
             photoView.setImageResource(R.drawable.img_placeholder);
             if (data.getImage_filename() != null) {
-                new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
+                //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
+                Glide.with(context)
+                        .load(data.getImage_filename())
+                        .asBitmap()
+                        .placeholder(R.drawable.img_placeholder)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate()
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                                int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
+                                if (resource != null) {
+                                    Bitmap bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
+                                    Glide.with(context)
+                                            .load(data.getImage_filename())
+                                            .override(bmp.getWidth(), bmp.getHeight())
+                                            .placeholder(R.drawable.img_placeholder)
+                                            .crossFade()
+                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                            .dontAnimate()
+                                            .into(photoView);
+                                }
+                            }
+                        });
             } else {
                 photoView.setImageResource(R.drawable.img_placeholder);
-            }
-
-            Log.d("WishListActivity", "The photoView.getDrawable() is " + photoView.getDrawable());
-
-            if(photoView.getDrawable() != null) {
-                int newHeight = getWindowManager().getDefaultDisplay().getHeight() / 2;
-                int orgWidth = photoView.getDrawable().getIntrinsicWidth();
-                int orgHeight = photoView.getDrawable().getIntrinsicHeight();
-
-                int newWidth = (int) Math.floor((orgWidth * newHeight) / orgHeight);
-
-                Log.d("WishListActivity", "The new width is " + newWidth + "  new height is " + newHeight);
-
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                        newWidth, newHeight);
-                params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-                photoView.setLayoutParams(params);
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {
