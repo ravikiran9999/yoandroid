@@ -236,14 +236,14 @@ public class BottomTabsActivity extends BaseActivity {
         int index = 0;
         for (TabsData data : dataList) {
             final TabLayout.Tab tab = tabLayout.getTabAt(index);
-            if(tab != null) {
+            if (tab != null) {
                 tab.setCustomView(setTabs(data.getTitle(), data.getDrawable()));
             }
             index++;
         }
 
         customActionBar = (ViewGroup) getLayoutInflater().inflate(R.layout.custom_action_bar, null);
-        if(getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setCustomView(customActionBar);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayShowCustomEnabled(true);
@@ -340,177 +340,177 @@ public class BottomTabsActivity extends BaseActivity {
                 }
 
             }
+
             @Override
-            public void onPageScrollStateChanged ( int state){
+            public void onPageScrollStateChanged(int state) {
 
             }
         });
 
-        if(!preferenceEndPoint.getBooleanPreference(Constants.IS_SERVICE_RUNNING))
+       // if (!preferenceEndPoint.getBooleanPreference(Constants.IS_SERVICE_RUNNING)) {
+            int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
+            int currentMin = Calendar.getInstance().get(Calendar.MINUTE); //Current hour
+            int currentSec = Calendar.getInstance().get(Calendar.SECOND); //Current hour
+            startServiceToFetchNewArticles(currentHour * 60 * 60 + currentMin * 60 + currentSec);
 
-            {
-                int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
-                if (currentHour == 0) {
-                    startServiceToFetchNewArticles();
-                }
-            }
+       // }
 
-            // firebase service
+        // firebase service
 
-        if(myServiceConnection !=null&&!myServiceConnection.isServiceConnection())
+        if (myServiceConnection != null && !myServiceConnection.isServiceConnection())
 
-            {
-                //bindService(intent, myServiceConnection, Context.BIND_AUTO_CREATE);
-            }
+        {
+            //bindService(intent, myServiceConnection, Context.BIND_AUTO_CREATE);
+        }
 
-            //
-            Intent in = new Intent(getApplicationContext(), SipService.class);
+        //
+        Intent in = new Intent(getApplicationContext(), SipService.class);
 
-            startService(in);
+        startService(in);
 
-            //balanceHelper.checkBalance(null);
-            //
-            loadUserProfileInfo();
+        //balanceHelper.checkBalance(null);
+        //
+        loadUserProfileInfo();
 
-            updateDeviceToken();
-            //contactsSyncManager.syncContacts();
-        SyncUtils.createSyncAccount(BottomTabsActivity.this,preferenceEndPoint);
+        updateDeviceToken();
+        //contactsSyncManager.syncContacts();
+        SyncUtils.createSyncAccount(BottomTabsActivity.this, preferenceEndPoint);
         mContactSyncHelper.init();
         mContactSyncHelper.checkContacts();
 
-        bindService(new Intent(BottomTabsActivity.this, YoSipService.class),connection,BIND_AUTO_CREATE);
+        bindService(new Intent(BottomTabsActivity.this, YoSipService.class), connection, BIND_AUTO_CREATE);
         EventBus.getDefault().
 
-            register(this);
+                register(this);
 
-            List<UserData> notificationList = NotificationCache.get().getCacheNotifications();
+        List<UserData> notificationList = NotificationCache.get().getCacheNotifications();
 
-            Intent intent1 = getIntent();
-        if(!intent1.getBooleanExtra("fromLowBalNotification",false))
+        Intent intent1 = getIntent();
+        if (!intent1.getBooleanExtra("fromLowBalNotification", false))
 
-            {
-                balanceHelper.checkBalance(null);
-            }
+        {
+            balanceHelper.checkBalance(null);
+        }
 
-            String tag = intent1.getStringExtra("tag");
-        if(notificationList.size()==1)
+        String tag = intent1.getStringExtra("tag");
+        if (notificationList.size() == 1)
 
-            {
-                String title = intent1.getStringExtra("title");
-                String message = intent1.getStringExtra("message");
-                final String redirectId = intent1.getStringExtra("id");
+        {
+            String title = intent1.getStringExtra("title");
+            String message = intent1.getStringExtra("message");
+            final String redirectId = intent1.getStringExtra("id");
 
-                if (!("POPUP").equals(tag)) {
-                    if ("User".equals(tag)) {
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.getUserInfoFromId(redirectId, accessToken).enqueue(new Callback<FindPeople>() {
-                            @Override
-                            public void onResponse(Call<FindPeople> call, Response<FindPeople> response) {
+            if (!("POPUP").equals(tag)) {
+                if ("User".equals(tag)) {
+                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    yoService.getUserInfoFromId(redirectId, accessToken).enqueue(new Callback<FindPeople>() {
+                        @Override
+                        public void onResponse(Call<FindPeople> call, Response<FindPeople> response) {
 
-                                if (response.body() != null) {
-                                    FindPeople userInfo = response.body();
-                                    Intent intent = new Intent(BottomTabsActivity.this, OthersProfileActivity.class);
-                                    intent.putExtra(Constants.USER_ID, redirectId);
-                                    intent.putExtra("PersonName", userInfo.getFirst_name() + " " + userInfo.getLast_name());
-                                    intent.putExtra("PersonPic", userInfo.getAvatar());
-                                    intent.putExtra("PersonIsFollowing", userInfo.getIsFollowing());
-                                    intent.putExtra("MagazinesCount", userInfo.getMagzinesCount());
-                                    intent.putExtra("FollowersCount", userInfo.getFollowersCount());
-                                    intent.putExtra("LikedArticlesCount", userInfo.getLikedArticlesCount());
-                                    startActivity(intent);
-                                    finish();
-                                }
+                            if (response.body() != null) {
+                                FindPeople userInfo = response.body();
+                                Intent intent = new Intent(BottomTabsActivity.this, OthersProfileActivity.class);
+                                intent.putExtra(Constants.USER_ID, redirectId);
+                                intent.putExtra("PersonName", userInfo.getFirst_name() + " " + userInfo.getLast_name());
+                                intent.putExtra("PersonPic", userInfo.getAvatar());
+                                intent.putExtra("PersonIsFollowing", userInfo.getIsFollowing());
+                                intent.putExtra("MagazinesCount", userInfo.getMagzinesCount());
+                                intent.putExtra("FollowersCount", userInfo.getFollowersCount());
+                                intent.putExtra("LikedArticlesCount", userInfo.getLikedArticlesCount());
+                                startActivity(intent);
+                                finish();
                             }
-
-                            @Override
-                            public void onFailure(Call<FindPeople> call, Throwable t) {
-
-                            }
-                        });
-
-                    } else if ("Topic".equals(tag)) {
-                        Intent intent = new Intent(BottomTabsActivity.this, MyCollectionDetails.class);
-                        intent.putExtra("TopicId", redirectId);
-                        intent.putExtra("TopicName", title);
-                        intent.putExtra("Type", "Tag");
-                        startActivity(intent);
-                        finish();
-                    } else if ("Article".equals(tag)) {
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.getArticleInfo(redirectId, accessToken).enqueue(new Callback<Articles>() {
-                            @Override
-                            public void onResponse(Call<Articles> call, Response<Articles> response) {
-                                if (response.body() != null) {
-                                    Articles articles = response.body();
-                                    Intent intent = new Intent(BottomTabsActivity.this, MagazineArticleDetailsActivity.class);
-                                    intent.putExtra("Title", articles.getTitle());
-                                    intent.putExtra("Image", articles.getUrl());
-                                    intent.putExtra("Article", articles);
-                                    intent.putExtra("Position", 0);
-                                    startActivity(intent);
-                                    finish();
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<Articles> call, Throwable t) {
-
-                            }
-                        });
-
-                    } else if ("Magzine".equals(tag)) {
-                        Intent intent = new Intent(BottomTabsActivity.this, MyCollectionDetails.class);
-                        intent.putExtra("TopicId", redirectId);
-                        intent.putExtra("TopicName", title);
-                        intent.putExtra("Type", "Magzine");
-                        startActivity(intent);
-                        finish();
-                    } else if ("Recharge".equals(tag) || "Credit".equals(tag) || "BalanceTransferred".equals(tag)) {
-                        startActivity(new Intent(BottomTabsActivity.this, TabsHeaderActivity.class));
-                        finish();
-                    } else if ("Broadcast".equals(tag) || "Tip".equals(tag) || "PriceUpdate".equals(tag)) {
-                        if (Constants.ADDFRIENDS.equals(redirectId)) {
-                            startActivity(new Intent(BottomTabsActivity.this, InviteActivity.class));
-                            finish();
-                        } else if (Constants.ADDBALANCE.equals(redirectId)) {
-                            startActivity(new Intent(BottomTabsActivity.this, TabsHeaderActivity.class));
-                            finish();
                         }
 
-                    } else if ("Missed call".equals(tag)) {
-                        //startActivity(new Intent(this, DialerActivity.class));
-                        viewPager.setCurrentItem(2);
-                    }
-                }
-            } else
+                        @Override
+                        public void onFailure(Call<FindPeople> call, Throwable t) {
 
-            {
-                if ("Recharge".equals(tag) || "Credit".equals(tag) || "BalanceTransferred".equals(tag)) {
+                        }
+                    });
 
+                } else if ("Topic".equals(tag)) {
+                    Intent intent = new Intent(BottomTabsActivity.this, MyCollectionDetails.class);
+                    intent.putExtra("TopicId", redirectId);
+                    intent.putExtra("TopicName", title);
+                    intent.putExtra("Type", "Tag");
+                    startActivity(intent);
+                    finish();
+                } else if ("Article".equals(tag)) {
+                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    yoService.getArticleInfo(redirectId, accessToken).enqueue(new Callback<Articles>() {
+                        @Override
+                        public void onResponse(Call<Articles> call, Response<Articles> response) {
+                            if (response.body() != null) {
+                                Articles articles = response.body();
+                                Intent intent = new Intent(BottomTabsActivity.this, MagazineArticleDetailsActivity.class);
+                                intent.putExtra("Title", articles.getTitle());
+                                intent.putExtra("Image", articles.getUrl());
+                                intent.putExtra("Article", articles);
+                                intent.putExtra("Position", 0);
+                                startActivity(intent);
+                                finish();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Articles> call, Throwable t) {
+
+                        }
+                    });
+
+                } else if ("Magzine".equals(tag)) {
+                    Intent intent = new Intent(BottomTabsActivity.this, MyCollectionDetails.class);
+                    intent.putExtra("TopicId", redirectId);
+                    intent.putExtra("TopicName", title);
+                    intent.putExtra("Type", "Magzine");
+                    startActivity(intent);
+                    finish();
+                } else if ("Recharge".equals(tag) || "Credit".equals(tag) || "BalanceTransferred".equals(tag)) {
                     startActivity(new Intent(BottomTabsActivity.this, TabsHeaderActivity.class));
                     finish();
-                }
-            }
+                } else if ("Broadcast".equals(tag) || "Tip".equals(tag) || "PriceUpdate".equals(tag)) {
+                    if (Constants.ADDFRIENDS.equals(redirectId)) {
+                        startActivity(new Intent(BottomTabsActivity.this, InviteActivity.class));
+                        finish();
+                    } else if (Constants.ADDBALANCE.equals(redirectId)) {
+                        startActivity(new Intent(BottomTabsActivity.this, TabsHeaderActivity.class));
+                        finish();
+                    }
 
-            Intent intent = getIntent();
-        if(intent.hasExtra("type"))
-
-            {
-                if ("Missed call".equals(intent.getStringExtra("type").trim())) {
+                } else if ("Missed call".equals(tag)) {
+                    //startActivity(new Intent(this, DialerActivity.class));
                     viewPager.setCurrentItem(2);
                 }
             }
+        } else
 
-            // Capture user id
-            Map<String, String> appUsageParams = new HashMap<String, String>();
-            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-            //param keys and values have to be of String type
-        appUsageParams.put("UserId",userId);
+        {
+            if ("Recharge".equals(tag) || "Credit".equals(tag) || "BalanceTransferred".equals(tag)) {
 
-        FlurryAgent.logEvent("Opened Yo App",appUsageParams);
-
-            // Test.startInComingCallScreen(context);
+                startActivity(new Intent(BottomTabsActivity.this, TabsHeaderActivity.class));
+                finish();
+            }
         }
+
+        Intent intent = getIntent();
+        if (intent.hasExtra("type"))
+
+        {
+            if ("Missed call".equals(intent.getStringExtra("type").trim())) {
+                viewPager.setCurrentItem(2);
+            }
+        }
+
+        // Capture user id
+        Map<String, String> appUsageParams = new HashMap<String, String>();
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        //param keys and values have to be of String type
+        appUsageParams.put("UserId", userId);
+
+        FlurryAgent.logEvent("Opened Yo App", appUsageParams);
+
+        // Test.startInComingCallScreen(context);
+    }
 
     private void clearNotifications() {
         NotificationCache.get().clearNotifications();
@@ -828,7 +828,7 @@ public class BottomTabsActivity extends BaseActivity {
             yoService.updateDeviceTokenAPI(accessToken, refreshedToken).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                   Log.i(TAG, "FCM token updated successfully");
+                    Log.i(TAG, "FCM token updated successfully");
                 }
 
                 @Override
@@ -898,7 +898,7 @@ public class BottomTabsActivity extends BaseActivity {
         }
     }
 
-    private void startServiceToFetchNewArticles() {
+    private void startServiceToFetchNewArticles(int currentTimeInSec) {
         // Start service using AlarmManager
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -909,8 +909,8 @@ public class BottomTabsActivity extends BaseActivity {
         pintent = PendingIntent.getService(this, 1014, intent,
                 0);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
-                Constants.FETCHING_NEW_ARTICLES_FREQUENCY, pintent);
+        alarm.setRepeating(AlarmManager.RTC_WAKEUP, (((24 * 60 * 60) - currentTimeInSec) * 1000),
+                AlarmManager.INTERVAL_DAY, pintent);
     }
 
     public static Context getAppContext() {
