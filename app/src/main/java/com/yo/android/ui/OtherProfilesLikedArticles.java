@@ -30,6 +30,8 @@ import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yo.android.R;
@@ -368,25 +370,39 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                     });
 
 
-            ImageView photoView = holder.articlePhoto;
+            final ImageView photoView = holder.articlePhoto;
 
             photoView.setImageResource(R.drawable.img_placeholder);
 
             if (data.getImage_filename() != null) {
                 Glide.with(context)
                         .load(data.getImage_filename())
+                        .asBitmap()
                         .placeholder(R.drawable.img_placeholder)
-                        //Image size will be reduced 50%
-                        .thumbnail(0.5f)
-                        .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate()
-                        .into(photoView);
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                                int screenHeight = DeviceDimensionsHelper.getDisplayHeight(context);
+                                if (resource != null) {
+                                    Bitmap bmp = BitmapScaler.scaleToFitHeight(resource, screenHeight);
+                                    Glide.with(context)
+                                            .load(data.getImage_filename())
+                                            .override(bmp.getWidth(), bmp.getHeight())
+                                            .placeholder(R.drawable.img_placeholder)
+                                            .crossFade()
+                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                            .dontAnimate()
+                                            .into(photoView);
+                                }
+                            }
+                        });
             } else {
                 photoView.setImageResource(R.drawable.img_placeholder);
             }
 
-            Log.d("OthersProfileLiked", "The photoView.getDrawable() is " + photoView.getDrawable());
+            /*Log.d("OthersProfileLiked", "The photoView.getDrawable() is " + photoView.getDrawable());
 
             if(photoView.getDrawable() != null) {
                 int newHeight = ((BaseActivity) context).getWindowManager().getDefaultDisplay().getHeight() / 4;
@@ -401,7 +417,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                         newWidth, newHeight);
                 params.addRule(RelativeLayout.CENTER_HORIZONTAL);
                 photoView.setLayoutParams(params);
-            }
+            }*/
 
             photoView.setOnClickListener(new View.OnClickListener() {
                 @Override

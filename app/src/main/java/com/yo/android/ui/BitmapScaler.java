@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
  * Created by root on 1/11/17.
  */
 
-class BitmapScaler {
+public class BitmapScaler {
     // Scale and maintain aspect ratio given a desired width
     // BitmapScaler.scaleToFitWidth(bitmap, 100);
 

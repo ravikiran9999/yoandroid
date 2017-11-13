@@ -112,6 +112,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     private MagazineDashboardHelper magazineDashboardHelper;
     private String followedTopicId;
     private static int articleCountThreshold = 2000;
+    private boolean isFetchArticlesPosted;
 
     @SuppressLint("ValidFragment")
     public MagazineFlipArticlesFragment(MagazineTopicsSelectionFragment fragment) {
@@ -512,45 +513,50 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         if (Constants.OTHERS_MAGAZINE_ACTION.equals(action) || Constants.TOPIC_NOTIFICATION_ACTION.equals(action) || Constants.TOPIC_FOLLOWING_ACTION.equals(action)) {
             updateArticlesAfterFollowTopic(followedTopicId);
         } else if (Constants.START_FETCHING_ARTICLES_ACTION.equals(action)) {
-            getReadArticleIds();
-            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-            if (getActivity() != null) {
-                String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("read_article_ids", "");
-                if (!TextUtils.isEmpty(readCachedIds)) {
-                    Type type1 = new TypeToken<List<String>>() {
-                    }.getType();
-                    String cachedIds = readCachedIds;
-                    List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
-                    mLog.d("MagazineFlipArticlesFragment", "Calling service for next articles");
-                    List<Articles> allArticles = myBaseAdapter.getAllItems();
-                    if (allArticles != null) {
-                        List<String> allArticlesIds = new ArrayList<>();
-                        for (Articles articles : allArticles) {
-                            if(articles != null) {
-                                allArticlesIds.add(articles.getId());
-                            }
-                        }
-                        List<String> unreadArticleIds = new ArrayList<>(allArticlesIds);
-                        unreadArticleIds.removeAll(cachedReadList);
-                        updateArticlesAfterDailyService();
-                    }
-                } else {
-                    List<String> cachedReadList = new ArrayList<>();
-                    List<Articles> allArticles = myBaseAdapter.getAllItems();
-                    if (allArticles != null) {
-                        List<String> allArticlesIds = new ArrayList<>();
-                        for (Articles articles : allArticles) {
-                            if(articles != null) {
-                                allArticlesIds.add(articles.getId());
-                            }
-                        }
-                        List<String> unreadArticleIds = new ArrayList<>(allArticlesIds);
-                        updateArticlesAfterDailyService();
-                    }
-                }
-            }
+            isFetchArticlesPosted = true;
+            callDailyArticlesService(null);
         } else if (Constants.RENEWAL.equalsIgnoreCase(action)) {
             loadArticles(null, true);
+        }
+    }
+
+    private void callDailyArticlesService(final SwipeRefreshLayout swipeRefreshContainer) {
+        getReadArticleIds();
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        if (getActivity() != null) {
+            String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("read_article_ids", "");
+            if (!TextUtils.isEmpty(readCachedIds)) {
+                Type type1 = new TypeToken<List<String>>() {
+                }.getType();
+                String cachedIds = readCachedIds;
+                List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
+                mLog.d("MagazineFlipArticlesFragment", "Calling service for next articles");
+                List<Articles> allArticles = myBaseAdapter.getAllItems();
+                if (allArticles != null) {
+                    List<String> allArticlesIds = new ArrayList<>();
+                    for (Articles articles : allArticles) {
+                        if(articles != null) {
+                            allArticlesIds.add(articles.getId());
+                        }
+                    }
+                    List<String> unreadArticleIds = new ArrayList<>(allArticlesIds);
+                    unreadArticleIds.removeAll(cachedReadList);
+                    updateArticlesAfterDailyService(swipeRefreshContainer);
+                }
+            } else {
+                List<String> cachedReadList = new ArrayList<>();
+                List<Articles> allArticles = myBaseAdapter.getAllItems();
+                if (allArticles != null) {
+                    List<String> allArticlesIds = new ArrayList<>();
+                    for (Articles articles : allArticles) {
+                        if(articles != null) {
+                            allArticlesIds.add(articles.getId());
+                        }
+                    }
+                    List<String> unreadArticleIds = new ArrayList<>(allArticlesIds);
+                    updateArticlesAfterDailyService(swipeRefreshContainer);
+                }
+            }
         }
     }
 
@@ -675,6 +681,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                             }
                         }*/
                     }
+                    if(preferenceEndPoint.getBooleanPreference(Constants.IS_SERVICE_RUNNING) && !isFetchArticlesPosted) {
+                        callDailyArticlesService(null);
+                    }
                 } else {
                     flipContainer.setVisibility(View.GONE);
                     llNoArticles.setVisibility(View.VISIBLE);
@@ -784,7 +793,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
      * @param totalArticles The total articles
      * @param isFromFollow Is from clicking Follow button
      */
-    public void handleMoreDashboardResponse(List<Articles> totalArticles, boolean isFromFollow) {
+    public void handleMoreDashboardResponse(List<Articles> totalArticles, boolean isFromFollow, boolean isFromDailyService) {
         mLog.d("Magazines", "lastReadArticle" + lastReadArticle);
         if (myBaseAdapter.getCount() > lastReadArticle) {
             flipView.flipTo(lastReadArticle);
@@ -821,12 +830,20 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     if (!TextUtils.isEmpty(sharedFollowedCachedMagazines)) {
                         String cachedMagazines = sharedFollowedCachedMagazines;
                         cachedFollowedMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                        cachedFollowedMagazinesList.addAll(followedTopicArticles1);
+                        if(isFromDailyService) {
+                            cachedFollowedMagazinesList.addAll(0, followedTopicArticles1);
+                        } else {
+                            cachedFollowedMagazinesList.addAll(followedTopicArticles1);
+                        }
                     }
                     if (!TextUtils.isEmpty(sharedRandomCachedMagazines)) {
                         String cachedMagazines = sharedRandomCachedMagazines;
                         cachedRandomMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                        cachedRandomMagazinesList.addAll(randomTopicArticles1);
+                        if(isFromDailyService) {
+                            cachedRandomMagazinesList.addAll(0, randomTopicArticles1);
+                        } else {
+                            cachedRandomMagazinesList.addAll(randomTopicArticles1);
+                        }
                     }
                 }
 
@@ -1115,7 +1132,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     /**
      * Updating the articles after the daily service to fetch the new articles
      */
-    public void updateArticlesAfterDailyService() {
+    public void updateArticlesAfterDailyService(final SwipeRefreshLayout swipeRefreshContainer) {
         List<Articles> articlesList = myBaseAdapter.getAllItems();
         List<Articles> unreadArticles = new ArrayList<>();
         List<String> readIdsList = new ArrayList<>();
@@ -1165,7 +1182,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         } else {
             unreadArticles.addAll(articlesList);
             for (Articles articles : unreadArticles) {
-                unreadArticleIds.add(articles.getId());
+                if(articles != null) {
+                    unreadArticleIds.add(articles.getId());
+                }
             }
         }
 
@@ -1175,10 +1194,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         List<Articles> randomUnreadTopicArticles = new ArrayList<>();
 
         for (Articles articles : unreadOtherArticles) {
-            if ("true".equals(articles.getTopicFollowing())) {
-                followedUnreadTopicArticles.add(articles);
-            } else {
-                randomUnreadTopicArticles.add(articles);
+            if(articles != null) {
+                if ("true".equals(articles.getTopicFollowing())) {
+                    followedUnreadTopicArticles.add(articles);
+                } else {
+                    randomUnreadTopicArticles.add(articles);
+                }
             }
         }
 
@@ -1193,7 +1214,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         myBaseAdapter.removeItems(unreadOtherOrderedArticles);
         myBaseAdapter.addItemsAll(unreadOtherOrderedArticles);
 
-        magazineDashboardHelper.getDashboardArticlesForDailyService(this, yoService, preferenceEndPoint, readIdsList, unreadArticleIds);
+        magazineDashboardHelper.getDashboardArticlesForDailyService(this, yoService, preferenceEndPoint, readIdsList, unreadArticleIds, swipeRefreshContainer);
 
     }
 
@@ -1275,30 +1296,47 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         totalOtherUnreadArticles.addAll(followedUnreadTopicArticles1);
         totalOtherUnreadArticles.addAll(randomUnreadTopicArticles1);
 
-        int positionToAdd = 10;
+        int positionToAdd = 0;
+
+        if(currentFlippedPosition > 0) {
+            positionToAdd = 10;
+        } else {
+            positionToAdd = 0;
+        }
 
         if (!followedTopicArticles.isEmpty()) {
             if (totalOtherUnreadArticles.size() > positionToAdd) {
-                totalOtherUnreadArticles.addAll(positionToAdd, followedTopicArticles);
+                if(positionToAdd == 0) {
+                    totalOtherUnreadArticles.addAll(positionToAdd, followedTopicArticles);
+                } else {
+                    totalOtherUnreadArticles.addAll(currentFlippedPosition + positionToAdd, followedTopicArticles);
+                }
             } else {
                 if (totalOtherUnreadArticles.size() > 0) {
                     totalOtherUnreadArticles.addAll(totalOtherUnreadArticles.size() - 1, followedTopicArticles);
                 }
             }
         } else {
-            if (totalOtherUnreadArticles.size() > positionToAdd) {
+           /* if (totalOtherUnreadArticles.size() > positionToAdd) {
                 totalOtherUnreadArticles.addAll(positionToAdd, randomTopicArticles);
             } else {
                 if (totalOtherUnreadArticles.size() > 0) {
                     totalOtherUnreadArticles.addAll(totalOtherUnreadArticles.size() - 1, randomTopicArticles);
                 }
+            }*/
+            if (totalOtherUnreadArticles.size() > 0) {
+                totalOtherUnreadArticles.addAll(totalOtherUnreadArticles.size() - 1, randomTopicArticles);
             }
         }
 
         articlesList.removeAll(totalOtherUnreadArticles);
         myBaseAdapter.removeItems(totalOtherUnreadArticles);
-        myBaseAdapter.addItemsAll(totalOtherUnreadArticles);
+        myBaseAdapter.removeItems(articlesList);
+        myBaseAdapter.clear();
+        myBaseAdapter.addItems(totalOtherUnreadArticles);
+        myBaseAdapter.notifyDataSetChanged();
 
+        handleMoreDashboardResponse(totalOtherUnreadArticles, false, true);
         deleteExtraArticlesFromCache();
     }
 
@@ -1450,7 +1488,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     }
 
     private void refreshedArticles() {
-        List<String> cachedReadList = getReadArticleIds();
+        Log.d("FlipArticlesFragment", "Calling pull to refresh to load articles refreshedArticles");
+        callDailyArticlesService(swipeRefreshContainer);
+        /*List<String> cachedReadList = getReadArticleIds();
         List<Articles> allArticles = myBaseAdapter.getAllItems();
         if (allArticles != null) {
             List<String> allArticlesIds = new ArrayList<>();
@@ -1462,7 +1502,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             List<String> mCachedReadList = cachedReadList != null ? cachedReadList : new ArrayList<String>();
 
             magazineDashboardHelper.getMoreDashboardArticles(this, yoService, preferenceEndPoint, mCachedReadList, unreadArticleIds, swipeRefreshContainer);
-        }
+        }*/
     }
 
     @Override
