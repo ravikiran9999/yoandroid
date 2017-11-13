@@ -12,6 +12,7 @@ public class Constants {
     public static final String OPPONENT_NAME = "opponentName";
     public static final String OPPONENT_ID = "opponentId";
     public static final String CHAT_ROOM_ID = "chatRoomId";
+    public static final String FIREBASE_OPPONENT_USER_ID = "firebaseOpponentUserId";
     public static final String CHAT_FORWARD = "forward";
     public static final String CHAT_SHARE = "share";
 

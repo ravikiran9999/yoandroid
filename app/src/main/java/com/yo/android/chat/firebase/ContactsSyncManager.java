@@ -9,7 +9,9 @@ import android.os.AsyncTask;
 import android.os.RemoteException;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.api.YoApi;
@@ -291,6 +293,7 @@ public class ContactsSyncManager {
         yoService.getContacts(access).enqueue(new Callback<List<Contact>>() {
             @Override
             public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
+                Log.d(TAG, new Gson().toJson(response));
                 setContacts(response.body());
                 if (callback != null) {
                     callback.onResponse(call, response);

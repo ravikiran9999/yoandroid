@@ -168,39 +168,46 @@ public class NewCreditAccountFragment extends BaseFragment {
 
     private void showActivePackageDenomination(List<PackageDenomination> packageDenominationList) {
         String pCurrencySymbol = packageDenominationList.get(0).getCurrencySymbol();
-        //if (packageDenominationList.get(0) != null && packageDenominationList.get(0).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
         buyFirstPackage.setAlpha(1);
         buyFirstPackage.setClickable(true);
-        //}
         buyFirstPackage.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), pCurrencySymbol, packageDenominationList.get(0).getPackage()));
 
-        //if (packageDenominationList.get(1) != null && packageDenominationList.get(1).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
         buySecondPackage.setAlpha(1);
         buySecondPackage.setClickable(true);
-        //}
         buySecondPackage.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), pCurrencySymbol, packageDenominationList.get(1).getPackage()));
 
-        //if (packageDenominationList.get(2) != null && packageDenominationList.get(2).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
         buyThirdPackage.setAlpha(1);
         buyThirdPackage.setClickable(true);
-        //}
         buyThirdPackage.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), pCurrencySymbol, packageDenominationList.get(2).getPackage()));
     }
 
 
     @OnClick(R.id.give_first)
     public void giveFirst() {
-        transferBalance(tvFirst.getText().toString());
+        if (transferBalanceDenominationList.get(0) != null && transferBalanceDenominationList.get(0).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
+            transferBalance(tvFirst.getText().toString());
+        } else {
+            showErrorMessage(R.string.transfer_balance_error_message);
+        }
+
     }
 
     @OnClick(R.id.give_second)
     public void giveSecond() {
-        transferBalance(tvSecond.getText().toString());
+        if (transferBalanceDenominationList.get(1) != null && transferBalanceDenominationList.get(1).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
+            transferBalance(tvSecond.getText().toString());
+        } else {
+            showErrorMessage(R.string.transfer_balance_error_message);
+        }
     }
 
     @OnClick(R.id.give_third)
     public void giveThird() {
-        transferBalance(tvThird.getText().toString());
+        if (transferBalanceDenominationList.get(2) != null && transferBalanceDenominationList.get(2).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
+            transferBalance(tvThird.getText().toString());
+        } else {
+            showErrorMessage(R.string.transfer_balance_error_message);
+        }
     }
 
     @OnClick(R.id.add_more_amount)
@@ -211,17 +218,17 @@ public class NewCreditAccountFragment extends BaseFragment {
     // Need to implement buy package
     @OnClick(R.id.buy_first_package)
     public void buyFivePackage() {
-        showAlertDialog("", getResources().getString(R.string.offers_error_message));
+        showErrorMessage(R.string.offers_error_message);
     }
 
     @OnClick(R.id.buy_second_package)
     public void buyTenPackage() {
-        showAlertDialog("", getResources().getString(R.string.offers_error_message));
+        showErrorMessage(R.string.offers_error_message);
     }
 
     @OnClick(R.id.buy_third_package)
     public void buyTwentyPackage() {
-        showAlertDialog("", getResources().getString(R.string.offers_error_message));
+        showErrorMessage(R.string.offers_error_message);
     }
 
     @OnClick(R.id.add_balance_from_voucher)
@@ -492,8 +499,6 @@ public class NewCreditAccountFragment extends BaseFragment {
         giveFour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*double selectedValue = mBalanceHelper.removeCurrencyCode(giveFour.getText().toString());
-                editText.setText(String.valueOf(selectedValue));*/
                 String selectedValue = mBalanceHelper.removeCurrencyCodeString(giveFour.getText().toString());
                 editText.setText(String.valueOf(selectedValue));
             }
@@ -502,8 +507,6 @@ public class NewCreditAccountFragment extends BaseFragment {
         giveFive.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //double selectedValue = mBalanceHelper.removeCurrencyCode(giveFive.getText().toString());
-                //editText.setText(String.valueOf(selectedValue));
                 String selectedValue = mBalanceHelper.removeCurrencyCodeString(giveFive.getText().toString());
                 editText.setText(selectedValue);
             }
@@ -520,15 +523,21 @@ public class NewCreditAccountFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 if (editText.getText() != null) {
-                    alert.dismiss();
+
                     String enteredAmount = editText.getText().toString();
+
                     if (!TextUtils.isEmpty(enteredAmount) && !enteredAmount.contains(currencySymbol)) {
-                        enteredAmount = String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, enteredAmount);
+                        if(!isGreaterThanHundred(enteredAmount)) {
+                            enteredAmount = String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, enteredAmount);
+                            alert.dismiss();
+                            transferBalance(enteredAmount);
+                        } else {
+                            mToastFactory.newToast(getResources().getString(R.string.more_than_hundred_error), Toast.LENGTH_LONG);
+                        }
+
                     } else {
                         mToastFactory.newToast(getResources().getString(R.string.correct_denomination), Toast.LENGTH_LONG);
                     }
-                    transferBalance(enteredAmount);
-
                 }
             }
         });
@@ -576,4 +585,14 @@ public class NewCreditAccountFragment extends BaseFragment {
             }
         });
     }
+
+    private boolean isGreaterThanHundred(String enteredAmount) {
+        double doubleValue = Double.parseDouble(enteredAmount);
+        return doubleValue > 200;
+    }
+
+    private void showErrorMessage(int errorMessage) {
+        showAlertDialog("", getResources().getString(errorMessage));
+    }
+
 }

@@ -177,7 +177,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         groupMembersHashMap = new HashMap<>();
         mLog.e(TAG, "Firebase token reading from pref " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
 
-        authReference = fireBaseHelper.authWithCustomToken(this, preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
+        authReference = fireBaseHelper.authWithCustomToken(this, preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN), null);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 
         membersList = (NonScrollListView) findViewById(R.id.members);

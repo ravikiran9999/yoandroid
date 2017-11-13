@@ -88,6 +88,7 @@ android {
             buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"yowltuser\""
+            buildConfigField "String", "RELEASE_USER_TYPE_END", "\"D\""
             buildConfigField "String", "BASE_URL", "\"http://34.225.28.188/\""
             buildConfigField "String", "CLIENT_ID", "\"385e29bdabe89c20ec32cae501b556554a8ece1605142b58ab6966cfee0635be\""
             buildConfigField "String", "CLIENT_SECRET", "\"5262628e450e5e356561753f712196d678acc0a994058935bc2dcbc351aa2fee\""

@@ -10,12 +10,17 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.ValueRange;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.orion.android.common.util.ResourcesHelper;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
@@ -232,5 +237,38 @@ public class BaseActivity extends ParentActivity {
             alexBrushRegular = Typeface.createFromAsset(getAssets(), TypefacePath.ALEX_BRUSH_REGULAR);
         }
         return alexBrushRegular;
+    }
+
+    private void initialiseOnlinePresence(DatabaseReference databaseReference, String userId) {
+        final DatabaseReference onlineRef = databaseReference.child(".info/connected");
+        final DatabaseReference currentUserRef = databaseReference.child("/presence/" + userId);
+        onlineRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(final DataSnapshot dataSnapshot) {
+                Log.d(TAG, "DataSnapshot:" + dataSnapshot);
+                if (dataSnapshot.getValue(Boolean.class)){
+                    currentUserRef.onDisconnect().removeValue();
+                    currentUserRef.setValue(true);
+                }
+            }
+
+            @Override
+            public void onCancelled(final DatabaseError databaseError) {
+                Log.d(TAG, "DatabaseError:" + databaseError);
+            }
+        });
+        final DatabaseReference onlineViewersCountRef = databaseReference.child("/presence");
+        onlineViewersCountRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(final DataSnapshot dataSnapshot) {
+                Log.d(TAG, "DataSnapshot:" + dataSnapshot);
+                //onlineViewerCountTextView.setText(String.valueOf(dataSnapshot.getChildrenCount()));
+            }
+
+            @Override
+            public void onCancelled(final DatabaseError databaseError) {
+                Log.d(TAG, "DatabaseError:" + databaseError);
+            }
+        });
     }
 }

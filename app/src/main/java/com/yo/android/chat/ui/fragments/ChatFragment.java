@@ -310,7 +310,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private void isRoomsExists(final SwipeRefreshLayout swipeRefreshContainer) {
         try {
-            Firebase authReference = fireBaseHelper.authWithCustomToken(activity, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+            Firebase authReference = fireBaseHelper.authWithCustomToken(activity, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN), null);
             String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
             if (!firebaseUserId.isEmpty()) {
                 authReference.child(Constants.USERS).child(firebaseUserId).addChildEventListener(new ChildEventListener() {
@@ -349,7 +349,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         try {
             refreshProgress(swipeRefreshContainer);
             if (isAdded() && activity != null) {
-                Firebase authReference = fireBaseHelper.authWithCustomToken(activity, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+                Firebase authReference = fireBaseHelper.authWithCustomToken(activity, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN), null);
                 String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
                 if (!firebaseUserId.isEmpty()) {
                     authReference.child(Constants.USERS).child(firebaseUserId).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -386,7 +386,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     private void getAllRooms(final SwipeRefreshLayout allRoomsRefreshContainer, final boolean added) {
-        Firebase authReference = fireBaseHelper.authWithCustomToken(activity, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+        Firebase authReference = fireBaseHelper.authWithCustomToken(activity, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN), null);
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -628,11 +628,11 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private Room getMembersProfile(final DataSnapshot dataSnapshot) {
 
-        final Firebase authReference = fireBaseHelper.authWithCustomToken(activity, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+        final Firebase authReference = fireBaseHelper.authWithCustomToken(activity, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN), null);
         final String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
         final RoomInfo roomInfo = dataSnapshot.child(Constants.ROOM_INFO).getValue(RoomInfo.class);
         if (roomInfo.getName() != null && roomInfo.getName().isEmpty()) {
-            for (DataSnapshot snapshot : dataSnapshot.child(Constants.MEMBERS).getChildren()) {
+            for (final DataSnapshot snapshot : dataSnapshot.child(Constants.MEMBERS).getChildren()) {
                 if (!firebaseUserId.equalsIgnoreCase(snapshot.getKey())) {
                     authReference.child(Constants.USERS).child(snapshot.getKey()).child(Constants.PROFILE).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -648,6 +648,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                                     //room.setFullName(room.getPhoneNumber());
                                     mPRoom.setFullName(mPRoom.getMobileNumber()); // phone number with country code
                                 }
+                                mPRoom.setFirebaseUserId(snapshot.getKey());
                                 tempRoom = null;
                                 tempRoom = room;
                                 //arrayOfUsers.add(room);

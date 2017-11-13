@@ -135,7 +135,7 @@ public class Helper {
         });
     }
 
-    public static void displayIndexTransferBalance(Activity context, final ListView indexLayout, final List<FindPeople> contactList, final ListView listview) {
+    public static void displayIndexTransferBalance(Activity context, final ListView indexLayout, final List<Contact> contactList, final ListView listview) {
         final LinkedHashMap mapIndex = getIndexListTransferBalance(contactList);
         final List<String> indexList = new ArrayList<String>(mapIndex.keySet());
         AlphabetAdapter adapter = new AlphabetAdapter(context, indexList);
@@ -178,11 +178,11 @@ public class Helper {
         return mapIndex;
     }
 
-    public static LinkedHashMap getIndexListTransferBalance(List<FindPeople> list) {
+    public static LinkedHashMap getIndexListTransferBalance(List<Contact> list) {
         LinkedHashMap mapIndex = new LinkedHashMap<String, Integer>();
         int i = -1;
-        for (FindPeople contact : list) {
-            String fruit = contact.getFirst_name();
+        for (Contact contact : list) {
+            String fruit = contact.getName();
             if (fruit != null && fruit.length() >= 1) {
                 String index = fruit.substring(0, 1).toUpperCase();
                 // Pattern p = Pattern.compile("^[a-zA-Z]");
