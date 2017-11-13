@@ -17,4 +17,6 @@ public interface YoAppObserver {
     abstract void notifyCallMediaState(YoCall call);
 
     abstract void notifyBuddyState(YoBuddy buddy);
+
+    abstract void notifyCallTsxState(YoCall call);
 }

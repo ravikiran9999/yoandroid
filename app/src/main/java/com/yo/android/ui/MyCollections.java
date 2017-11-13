@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
+import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.adapters.MyCollectionsAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Collections;
@@ -292,8 +293,8 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
     private void deleteTopic() {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         List<Collections> collections = myCollectionsAdapter.getSelectedItems();
-        List<String> topicIds = new ArrayList<String>();
-        List<String> magazineIds = new ArrayList<>();
+        final List<String> topicIds = new ArrayList<String>();
+        final List<String> magazineIds = new ArrayList<>();
         for (int i = 0; i < collections.size(); i++) {
             if ("Tag".equals(collections.get(i).getType())) {
                 topicIds.add(collections.get(i).getId());
@@ -329,6 +330,12 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                                 followedTopicsIdsList.add(collectionsList.get(i).getId());
                             }
                             preferenceEndPoint.saveStringPreference("Constants.MAGAZINE_TAGS", TextUtils.join(",", followedTopicsIdsList));
+
+                            if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
+                                for(int i=0; i < topicIds.size(); i++) {
+                                    MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(topicIds.get(i), Constants.FOLLOW_TOPIC_EVENT);
+                                }
+                            }
 
                         }
 
@@ -374,6 +381,12 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                                 followedTopicsIdsList.add(collectionsList.get(i).getId());
                             }
                             preferenceEndPoint.saveStringPreference("Constants.MAGAZINE_TAGS", TextUtils.join(",", followedTopicsIdsList));
+
+                            if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
+                                for(int i=0; i < magazineIds.size(); i++) {
+                                    MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(magazineIds.get(i), Constants.FOLLOW_TOPIC_EVENT);
+                                }
+                            }
 
                         }
 

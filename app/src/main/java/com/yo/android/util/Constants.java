@@ -215,4 +215,5 @@ public class Constants {
 
     //Magazine
     public static final String MAGAZINE_TAGS = "magazine_tags";
+    public static final int SUGGESTIONS_PAGE_FREQUENCY = 25;
 }
