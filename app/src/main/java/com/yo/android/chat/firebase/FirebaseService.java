@@ -131,7 +131,7 @@ public class FirebaseService extends InjectedService {
     }
 
     private void getAllRooms() {
-        authReference = fireBaseHelper.authWithCustomToken(this, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+        authReference = fireBaseHelper.authWithCustomToken(this, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN), null);
         mChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -169,7 +169,7 @@ public class FirebaseService extends InjectedService {
 
     public void getChatMessageList(String roomId) {
         try {
-            authReference = fireBaseHelper.authWithCustomToken(context, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+            authReference = fireBaseHelper.authWithCustomToken(context, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN), null);
             Firebase chatRoomReference = authReference.child(Constants.ROOMS).child(roomId).child(Constants.CHATS);
 
             childEventListener = new ChildEventListener() {

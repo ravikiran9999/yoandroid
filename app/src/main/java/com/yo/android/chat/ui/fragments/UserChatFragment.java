@@ -115,6 +115,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private String sipAccountUserName;
     private String opponentName;
     private String opponentId;
+    private String opponentFirebaseUserId;
     private static File mFileTemp;
     private static final int ADD_IMAGE_CAPTURE = 1;
     private static final int ADD_SELECT_PICTURE = 2;
@@ -165,6 +166,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Inject
     YoApi.YoService yoService;
 
+    public interface UpdateStatus {
+        void updateUserStatus(boolean value);
+    }
+
+    private UpdateStatus mUpdateStatus;
+
     public UserChatFragment() {
         // Required empty public constructor
     }
@@ -177,6 +184,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         opponentNumber = bundle.getString(Constants.OPPONENT_PHONE_NUMBER);
         sipAccountUserName = opponentNumber;
         opponentId = bundle.getString(Constants.OPPONENT_ID);
+        opponentFirebaseUserId = bundle.getString(Constants.FIREBASE_OPPONENT_USER_ID);
         opponentImg = bundle.getString(Constants.OPPONENT_CONTACT_IMAGE);
         opponentName = bundle.getString(Constants.OPPONENT_NAME);
         mobileNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
@@ -186,11 +194,25 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
         share = bundle.getParcelable(Constants.CHAT_SHARE);
         mLog.e(TAG, "Firebase token reading from pref " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
-        authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
+        authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN), null);
+
         chatMessageArray = new ArrayList<>();
         setHasOptionsMenu(true);
 
+        checkFirebaseUserStatus(authReference, opponentFirebaseUserId, mUpdateStatus);
+        //checkFirebaseUserStatus(authReference, opponentFirebaseUserId);
+
+        //mUpdateStatus.updateUserStatus(userStatus);
+        /*String firebaseUserId = preferenceEndPoint.getStringPreference(Constants.FIREBASE_USER_ID);
+        initialiseOnlinePresence(authReference, firebaseUserId);*/
+
         alarmManager();
+    }
+
+    @Override
+    public void onAttach(Activity activity){
+        super.onAttach(activity);
+        mUpdateStatus =(UpdateStatus)getActivity();
     }
 
     @Override
@@ -199,6 +221,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_chat, container, false);
         ButterKnife.bind(this, view);
+
         roomType = getArguments().getString(Constants.TYPE);
         listView.setDivider(null);
         listView.setDividerHeight(0);
@@ -423,7 +446,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                             }
                         }
                         AppContactsActivity.start(getActivity(), chatMessageArrayList);
-                        mode.finish();
+                        //mode.finish();
                         break;
 
                     default:
@@ -640,13 +663,15 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 @Override
                 public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                     if ((firebaseError != null) && (firebaseError.getCode() == -3)) {
-                        authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
+                        authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN), null);
                         Activity activity = getActivity();
                         if (retryMessageCount <= 3) {
                             sendChatMessage(chatMessage);
                             retryMessageCount++;
 
                         } else if (activity != null) {
+                            String firebaseToken = preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN);
+                            String firebaseUserId = preferenceEndPoint.getStringPreference(Constants.FIREBASE_USER_ID);
                             Log.i(TAG, "firebaseToken :: " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
                             Log.i(TAG, "firebase User Id :: " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_USER_ID));
 

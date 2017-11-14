@@ -327,7 +327,12 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
                             }
                         }
                     } else {
-                        mToastFactory.showToast("Please enter valid phone number.");
+                        if(response.code() == 500) {
+                            mToastFactory.showToast(R.string.internal_server_error);
+                        } else {
+                            mToastFactory.showToast("Please enter valid phone number.");
+                        }
+
                     }
                 } catch (Exception e) {
 

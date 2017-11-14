@@ -23,6 +23,9 @@ public class Room implements Parcelable {
     private String lastChat;
     private boolean isImages;
     private String timeStamp;
+    private String presence;
+    private String firebaseUserId;
+
     //For sorting
     private long groupCreationTime;
     private long time;
@@ -142,6 +145,22 @@ public class Room implements Parcelable {
         this.phoneNumber = phoneNumber;
     }
 
+    public String getPresence() {
+        return presence;
+    }
+
+    public void setPresence(String presence) {
+        this.presence = presence;
+    }
+
+    public String getFirebaseUserId() {
+        return firebaseUserId;
+    }
+
+    public void setFirebaseUserId(String firebaseUserId) {
+        this.firebaseUserId = firebaseUserId;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -161,6 +180,8 @@ public class Room implements Parcelable {
         dest.writeString(phoneNumber);
         dest.writeString(created_at);
         dest.writeLong(time);
+        dest.writeString(presence);
+        dest.writeString(firebaseUserId);
     }
 
     public String getYouserId() {
@@ -185,6 +206,8 @@ public class Room implements Parcelable {
         this.phoneNumber = in.readString();
         this.created_at = in.readString();
         this.time = in.readLong();
+        this.presence = in.readString();
+        this.firebaseUserId = in.readString();
     }
 
     public static final Parcelable.Creator<Room> CREATOR = new Parcelable.Creator<Room>() {

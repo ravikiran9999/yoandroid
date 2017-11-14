@@ -17,6 +17,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.BuildConfig;
+import com.yo.android.api.ApiCallback;
 import com.yo.android.chat.firebase.FireBaseAuthToken;
 import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.model.ChatMessage;
@@ -41,6 +42,7 @@ public class FireBaseHelper {
     private Context mContext;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private int firebaseLoginAttempt;
 
     @Inject
     MyServiceConnection myServiceConnection;
@@ -55,6 +57,7 @@ public class FireBaseHelper {
     public FireBaseHelper() {
         firebaseAuth = FirebaseAuth.getInstance();
         //authStateListener();
+
     }
 
     public ChatMessage getLastMessage(String roomId) {
@@ -71,11 +74,14 @@ public class FireBaseHelper {
         }
     }
 
-    public Firebase authWithCustomToken(final Context context, final String authToken) {
+    public Firebase authWithCustomToken(final Context context, final String authToken, ApiCallback<Firebase> firebaseApiCallback) {
         mContext = context;
         //Url from Firebase dashboard
 
         AuthData authData = ref.getAuth();
+        if(firebaseApiCallback != null) {
+            firebaseApiCallback.onResult(ref);
+        }
         if (authData == null && !TextUtils.isEmpty(authToken)) {
             ref.authWithCustomToken(authToken, new Firebase.AuthResultHandler() {
                 @Override
@@ -83,14 +89,14 @@ public class FireBaseHelper {
                     if (authData != null) {
                         Log.i(TAG, "Login Succeeded!");
                         String newAuthToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
-                        authWithCustomToken(context, newAuthToken);
+                        authWithCustomToken(context, newAuthToken, null);
                     } else {
 
                         FireBaseAuthToken.getInstance(context).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
                             @Override
                             public void onSuccess() {
                                 String newAuthToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
-                                authWithCustomToken(context, newAuthToken);
+                                authWithCustomToken(context, newAuthToken, null);
                             }
 
                             @Override
@@ -104,7 +110,7 @@ public class FireBaseHelper {
 
                 @Override
                 public void onAuthenticationError(FirebaseError firebaseError) {
-                    Log.e(TAG, "Login Failed! Auth token expired" + firebaseError.getMessage());
+                    Log.e(TAG, "Login Failed! Auth token expired : " + firebaseError.getMessage());
                     unauth();
                     loginPrefs.removePreference(Constants.FIREBASE_TOKEN);
 
@@ -112,9 +118,13 @@ public class FireBaseHelper {
                         @Override
                         public void onSuccess() {
                             Log.e(TAG, "Login Failed! Auth token expired  and generated new token");
-
+                            Log.d(TAG, String.valueOf(++firebaseLoginAttempt));
                             String newAuthToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
-                            authWithCustomToken(context, newAuthToken);
+                            Log.d(TAG, "newAuthToken :" + newAuthToken);
+                            if(firebaseLoginAttempt <= 3) {
+                                authWithCustomToken(context, newAuthToken, null);
+                            }
+
                         }
 
                         @Override

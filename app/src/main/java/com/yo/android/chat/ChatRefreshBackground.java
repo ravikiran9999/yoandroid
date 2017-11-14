@@ -53,7 +53,7 @@ public class ChatRefreshBackground {
 
     public void doRefresh(final Context context, final String roomId) {
         Injector.obtain(context.getApplicationContext()).inject(this);
-        Firebase authReference = fireBaseHelper.authWithCustomToken(context, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+        Firebase authReference = fireBaseHelper.authWithCustomToken(context, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN), null);
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

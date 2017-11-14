@@ -13,12 +13,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.R;
 import com.yo.android.di.Injector;
 import com.yo.android.ui.BottomTabsActivity;
+import com.yo.android.util.Constants;
 import com.yo.android.util.ProgressDialogFactory;
 import com.yo.android.vox.BalanceHelper;
 
@@ -29,6 +34,7 @@ import javax.inject.Named;
  * A simple {@link Fragment} subclass.
  */
 public class BaseFragment extends Fragment {
+    public static final String TAG = BaseFragment.class.getSimpleName();
 
     @Inject
     @Named("login")
@@ -43,6 +49,8 @@ public class BaseFragment extends Fragment {
     protected BalanceHelper mBalanceHelper;
 
     protected Dialog mProgressDialog;
+
+    boolean chatUserStatus = false;
 
     public BaseFragment() {
         // Required empty public constructor
@@ -103,5 +111,63 @@ public class BaseFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         dismissProgressDialog();
+    }
+
+    /*public void initialiseOnlinePresence(DatabaseReference databaseReference, String userId) {
+        final DatabaseReference onlineRef = databaseReference.child(".info/connected");
+        final DatabaseReference currentUserRef = databaseReference.child("/presence/" + userId);
+        onlineRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(final DataSnapshot dataSnapshot) {
+                android.util.Log.d(TAG, "DataSnapshot:" + dataSnapshot);
+                if (dataSnapshot.getValue(Boolean.class)){
+                    currentUserRef.onDisconnect().removeValue();
+                    currentUserRef.setValue(true);
+                }
+            }
+
+            @Override
+            public void onCancelled(final DatabaseError databaseError) {
+                android.util.Log.d(TAG, "DatabaseError:" + databaseError);
+            }
+        });
+        final DatabaseReference onlineViewersCountRef = databaseReference.child("/presence");
+        onlineViewersCountRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(final DataSnapshot dataSnapshot) {
+                android.util.Log.d(TAG, "DataSnapshot:" + dataSnapshot);
+                //onlineViewerCountTextView.setText(String.valueOf(dataSnapshot.getChildrenCount()));
+            }
+
+            @Override
+            public void onCancelled(final DatabaseError databaseError) {
+                android.util.Log.d(TAG, "DatabaseError:" + databaseError);
+            }
+        });
+    }*/
+
+    public void checkFirebaseUserStatus(Firebase databaseReference, String opponentFirebaseUserId, final UserChatFragment.UpdateStatus updateStatus) {
+
+        final Firebase onlineStatusRef = databaseReference.child(Constants.USERS +"/"+ opponentFirebaseUserId +"/"+ Constants.PROFILE + "/presence");
+        onlineStatusRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(final DataSnapshot dataSnapshot) {
+                android.util.Log.d(TAG, "Online status DataSnapshot:" + dataSnapshot);
+                //onlineViewerCountTextView.setText(String.valueOf(dataSnapshot.getChildrenCount()));
+                if(dataSnapshot.getValue() != null) {
+                    chatUserStatus = (Boolean) dataSnapshot.getValue();
+                } else {
+                    chatUserStatus = false;
+                }
+                updateStatus.updateUserStatus(chatUserStatus);
+            }
+
+            @Override
+            public void onCancelled(final FirebaseError databaseError) {
+                android.util.Log.d(TAG, "DatabaseError:" + databaseError);
+                updateStatus.updateUserStatus(false);
+            }
+        });
+
     }
 }

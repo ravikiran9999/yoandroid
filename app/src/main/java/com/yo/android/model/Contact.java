@@ -15,6 +15,7 @@ public class Contact implements Parcelable {
     private String firebaseRoomId;
     private String nexgeUserName;
     private String countryCode;
+    private String firebaseUserId;
 
 
     public String getCountryCode() {
@@ -64,6 +65,7 @@ public class Contact implements Parcelable {
         this.yoAppUser = in.readInt() == 0;
         this.nexgeUserName = in.readString();
         this.countryCode = in.readString();
+        this.firebaseUserId = in.readString();
     }
 
     public String getId() {
@@ -122,6 +124,14 @@ public class Contact implements Parcelable {
         this.firebaseRoomId = firebaseRoomId;
     }
 
+    public String getFirebaseUserId() {
+        return firebaseUserId;
+    }
+
+    public void setFirebaseUserId(String firebaseUserId) {
+        this.firebaseUserId = firebaseUserId;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -137,5 +147,6 @@ public class Contact implements Parcelable {
         dest.writeInt(yoAppUser ? 0 : 1);
         dest.writeString(nexgeUserName);
         dest.writeString(countryCode);
+        dest.writeString(firebaseUserId);
     }
 }
