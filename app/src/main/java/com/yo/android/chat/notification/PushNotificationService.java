@@ -16,13 +16,18 @@ import android.text.TextUtils;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.gson.Gson;
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.chat.ChatRefreshBackground;
+import com.yo.android.chat.ImageLoader;
+import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.notification.helper.NotificationCache;
+import com.yo.android.chat.notification.localnotificationsbuilder.GeneratePictureStyleNotification;
 import com.yo.android.chat.notification.localnotificationsbuilder.Notifications;
+import com.yo.android.chat.notification.pojo.NotificationAction;
 import com.yo.android.chat.notification.pojo.NotificationBuilderObject;
 import com.yo.android.chat.notification.pojo.UserData;
 import com.yo.android.chat.ui.ChatActivity;
@@ -38,6 +43,7 @@ import com.yo.dialer.YoSipService;
 import com.yo.dialer.googlesheet.UploadCallDetails;
 import com.yo.dialer.googlesheet.UploadModel;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -67,7 +73,18 @@ public class PushNotificationService extends FirebaseMessagingService {
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
+    @Inject
+    ContactsSyncManager mContactsSyncManager;
+
     private static final int SIX = 6;
+
+    private static final int STYLE_TEXT = 1;
+    private static final int STYLE_INBOX = 2;
+    private static final int STYLE_PICTURE = 3;
+    private static final int STYLE_TEXT_WITH_ACTION = 4;
+
+    private List<UserData> notificationList = new ArrayList<>();
+
 
     @Override
     public void onCreate() {
@@ -81,6 +98,7 @@ public class PushNotificationService extends FirebaseMessagingService {
 
         final Map data = remoteMessage.getData();
 
+
         mLog.i(TAG, "From: %s", remoteMessage.getFrom());
         mLog.i(TAG, "onMessageReceived: title- %s and data- %s", data.get("title"), data.get("message"));
         //title- Group zxzxzxzx has been created. and data- Group zxzxzxzx has been created with users 917207535681,918897524475,919490570720,918008407207
@@ -93,7 +111,11 @@ public class PushNotificationService extends FirebaseMessagingService {
             EventBus.getDefault().post(Constants.BALANCE_TRANSFER_NOTIFICATION_ACTION);
         } else if (data.get("tag").equals("POPUP")) {
             PopupHelper.handlePop(preferenceEndPoint, data);
-        } else if (data.get("tag").equals("Chat")) {
+        } else if(data.get("tag").equals("Chat") && data.get("title").equals("Chat message stored")) {
+            String chatMessageString = data.get("chat_message").toString();
+            ChatMessage chatMessage = new Gson().fromJson(chatMessageString, ChatMessage.class);
+            newPushNotification(chatMessage.getRoomId(), chatMessage);
+        }else if (data.get("tag").equals("Chat")) {
             //update UI , if chat is opened.
             ChatRefreshBackground.getInstance().doRefresh(getApplicationContext(), data.get("firebase_room_id").toString());
             String voxUser = BuildConfig.RELEASE_USER_TYPE + data.get("admin_number") + BuildConfig.RELEASE_USER_TYPE_END;
@@ -217,5 +239,137 @@ public class PushNotificationService extends FirebaseMessagingService {
         notificationData.setNotificationLargeIconDrawable(R.mipmap.ic_launcher);
         notificationData.setNotificationInfo("3");
         return notificationData;
+    }
+
+    private void newPushNotification(final String roomId, final ChatMessage chatMessage) {
+        if (notificationList != null && notificationList.size() == 0 && chatMessage.getImagePath() != null) {
+            ImageLoader.updateImage(getApplicationContext(), chatMessage, Constants.YOIMAGES, new ImageLoader.ImageDownloadListener() {
+
+                @Override
+                public void onDownlaoded(File file) {
+                    if (file != null) {
+                        chatMessage.setImagePath(file.getAbsolutePath());
+                        sendTrayNotifications(STYLE_PICTURE, roomId, chatMessage);
+                    }
+                }
+            });
+        } else {
+            sendTrayNotifications(STYLE_INBOX, roomId, chatMessage);
+        }
+    }
+
+    /*private void playNotificationSound() {
+        try {
+            if (notification == null) {
+                notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
+            }
+            if (ringtone != null && !ringtone.isPlaying()) {
+                ringtone.play();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }*/
+
+    private void sendTrayNotifications(int mode, String roomId, ChatMessage chatMessage) {
+        playNotificationSound();
+        Notifications notification = new Notifications();
+        String title = chatMessage.getSenderID();
+        String voxUsername = chatMessage.getVoxUserName();
+
+        Intent notificationIntent = new Intent(this, ChatActivity.class);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        notificationIntent.putExtra(Constants.CHAT_ROOM_ID, roomId);
+        notificationIntent.putExtra(Constants.VOX_USER_NAME, voxUsername);
+        notificationIntent.putExtra(Constants.TYPE, Constants.YO_NOTIFICATION);
+        notificationIntent.putExtra(Constants.OPPONENT_ID, chatMessage.getYouserId());
+        if (!TextUtils.isEmpty(chatMessage.getRoomName())) {
+            notificationIntent.putExtra(Constants.OPPONENT_PHONE_NUMBER, chatMessage.getRoomName());
+            notificationIntent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, chatMessage.getRoomImage());
+        }
+        switch (mode) {
+            case STYLE_TEXT:
+                NotificationBuilderObject notificationTextData = prepareNotificationData(chatMessage);
+                notification.buildBigTextStyleNotifications(this, notificationTextData, notificationIntent);
+                break;
+            case STYLE_INBOX:
+                NotificationBuilderObject notificationsInboxData = prepareNotificationData(chatMessage);
+                UserData data = new UserData();
+                data.setMessageId(chatMessage.getMsgID());
+                if (chatMessage.getType().equalsIgnoreCase(Constants.TEXT)) {
+                    data.setDescription(chatMessage.getMessage());
+                } else if (chatMessage.getType().equalsIgnoreCase(Constants.IMAGE)) {
+                    data.setDescription(Constants.PHOTO);
+                }
+                if (chatMessage.getRoomName() != null) {
+                    data.setSenderName(chatMessage.getRoomName());
+                } else {
+                    String nameFromNumber = mContactsSyncManager.getContactNameByPhoneNumber(chatMessage.getSenderID());
+                    data.setSenderName(nameFromNumber);
+                }
+
+                if (!notificationList.contains(data)) {
+                    notificationList.add(0, data);//always insert new notification on top
+                }
+
+                notification.buildInboxStyleNotifications(this, notificationIntent, notificationsInboxData, notificationList, SIX, false, true);
+                break;
+            case STYLE_PICTURE:
+                NotificationBuilderObject notificationPictureInfo = prepareNotificationData(chatMessage);
+                UserData pictureData = new UserData();
+                pictureData.setMessageId(chatMessage.getMsgID());
+                pictureData.setDescription(Constants.PHOTO);
+                pictureData.setSenderName(chatMessage.getSenderID());
+                if (!notificationList.contains(pictureData)) {
+                    notificationList.add(0, pictureData);//always insert new notification on top
+                }
+                new GeneratePictureStyleNotification(this, notificationIntent, notificationPictureInfo, notificationList).execute();
+                break;
+            case STYLE_TEXT_WITH_ACTION:
+                NotificationBuilderObject notificationTextActionData = prepareNotificationData(chatMessage);
+                addingActionToNotification(notificationTextActionData);
+                notification.buildBigTextStyleNotifications(this, notificationTextActionData, notificationIntent);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @NonNull
+    private NotificationBuilderObject prepareNotificationData(ChatMessage chatMessage) {
+        NotificationBuilderObject notificationData = new NotificationBuilderObject();
+        notificationData.setNotificationTitle(chatMessage.getSenderID());
+        notificationData.setNotificationSmallIcon(getNotificationIcon());
+        if (chatMessage.getType().equalsIgnoreCase(Constants.IMAGE)) {
+            notificationData.setNotificationText(Constants.PHOTO);
+        } else {
+            notificationData.setNotificationText(chatMessage.getMessage());
+        }
+        notificationData.setNotificationLargeIconDrawable(R.mipmap.ic_launcher);
+        notificationData.setNotificationInfo("3");
+        notificationData.setNotificationLargeiconUrl(chatMessage.getImagePath());
+        notificationData.setNotificationLargeText("Hello Every one ....Welcome to Notifications Demo..we are very glade to meet you here.Android Developers ");
+        return notificationData;
+    }
+
+    private void addingActionToNotification(NotificationBuilderObject notificationData) {
+        List<NotificationAction> actions = new ArrayList<NotificationAction>();
+        NotificationAction action = new NotificationAction();
+        action.setActionIcon(android.R.drawable.sym_action_call);
+        action.setActionTitle("Yes");
+        action.setActionType(com.yo.android.chat.notification.helper.Constants.YES_ACTION);
+        NotificationAction actionNo = new NotificationAction();
+        actionNo.setActionIcon(android.R.drawable.sym_action_email);
+        actionNo.setActionTitle("No");
+        actionNo.setActionType(com.yo.android.chat.notification.helper.Constants.NO_ACTION);
+        NotificationAction actionMaybe = new NotificationAction();
+        actionMaybe.setActionIcon(android.R.drawable.sym_action_chat);
+        actionMaybe.setActionTitle("May Be");
+        actionMaybe.setActionType(com.yo.android.chat.notification.helper.Constants.MAYBE_ACTION);
+        actions.add(action);
+        actions.add(actionNo);
+        actions.add(actionMaybe);
+        notificationData.setActions(actions);
     }
 }

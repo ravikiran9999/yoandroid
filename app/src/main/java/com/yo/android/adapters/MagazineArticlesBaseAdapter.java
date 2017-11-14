@@ -619,7 +619,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         if (holder.articlePhoto != null) {
             final ImageView photoView = holder.articlePhoto;
 
-            photoView.setImageResource(R.drawable.img_placeholder);
+            photoView.setImageResource(R.drawable.magazine_backdrop);
             if (data.getImage_filename() != null) {
                 if (!((BaseActivity) context).hasDestroyed()) {
                     //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
@@ -630,7 +630,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     Glide.with(context)
                             .load(data.getImage_filename())
                             .asBitmap()
-                            .placeholder(R.drawable.img_placeholder)
+                            .placeholder(R.drawable.magazine_backdrop)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .dontAnimate()
                             .into(new SimpleTarget<Bitmap>() {
@@ -642,7 +642,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                         Glide.with(context)
                                                 .load(data.getImage_filename())
                                                 .override(bmp.getWidth(), bmp.getHeight())
-                                                .placeholder(R.drawable.img_placeholder)
+                                                .placeholder(R.drawable.magazine_backdrop)
                                                 .crossFade()
                                                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                                                 .dontAnimate()
@@ -670,7 +670,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             });
                 }
             } else {
-                photoView.setImageResource(R.drawable.img_placeholder);
+                photoView.setImageResource(R.drawable.magazine_backdrop);
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {
@@ -1336,14 +1336,14 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         if (holder.articlePhotoTop != null) {
             final ImageView photoView = holder.articlePhotoTop;
-            photoView.setImageResource(R.drawable.img_placeholder);
+            photoView.setImageResource(R.drawable.magazine_backdrop);
             if (data.getImage_filename() != null) {
                 if (!((BaseActivity) context).hasDestroyed()) {
                     //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
                     Glide.with(context)
                             .load(data.getImage_filename())
                             .asBitmap()
-                            .placeholder(R.drawable.img_placeholder)
+                            .placeholder(R.drawable.magazine_backdrop)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .dontAnimate()
                             .into(new SimpleTarget<Bitmap>() {
@@ -1355,7 +1355,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                         Glide.with(context)
                                                 .load(data.getImage_filename())
                                                 .override(bmp.getWidth(), bmp.getHeight())
-                                                .placeholder(R.drawable.img_placeholder)
+                                                .placeholder(R.drawable.magazine_backdrop)
                                                 .crossFade()
                                                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                                                 .dontAnimate()
@@ -1365,7 +1365,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             });
                 }
             } else {
-                photoView.setImageResource(R.drawable.img_placeholder);
+                photoView.setImageResource(R.drawable.magazine_backdrop);
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {
@@ -1634,14 +1634,14 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         if (holder.articlePhotoLeft != null) {
             final ImageView photoView = holder.articlePhotoLeft;
             photoView.setVisibility(View.VISIBLE);
-            photoView.setImageResource(R.drawable.img_placeholder);
+            photoView.setImageResource(R.drawable.magazine_backdrop);
             if (data.getImage_filename() != null) {
                 if (!((BaseActivity) context).hasDestroyed()) {
                     //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
                     Glide.with(context)
                             .load(data.getImage_filename())
                             .asBitmap()
-                            .placeholder(R.drawable.img_placeholder)
+                            .placeholder(R.drawable.magazine_backdrop)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .dontAnimate()
                             .into(new SimpleTarget<Bitmap>() {
@@ -1653,7 +1653,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                         Glide.with(context)
                                                 .load(data.getImage_filename())
                                                 .override(bmp.getWidth(), bmp.getHeight())
-                                                .placeholder(R.drawable.img_placeholder)
+                                                .placeholder(R.drawable.magazine_backdrop)
                                                 .crossFade()
                                                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                                                 .dontAnimate()
@@ -1663,7 +1663,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             });
                 }
             } else {
-                photoView.setImageResource(R.drawable.img_placeholder);
+                photoView.setImageResource(R.drawable.magazine_backdrop);
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {
@@ -1946,14 +1946,14 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         if (holder.articlePhotoRight != null) {
             final ImageView photoView = holder.articlePhotoRight;
             photoView.setVisibility(View.VISIBLE);
-            photoView.setImageResource(R.drawable.img_placeholder);
+            photoView.setImageResource(R.drawable.magazine_backdrop);
             if (data.getImage_filename() != null) {
                 if (!((BaseActivity) context).hasDestroyed()) {
                     //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
                     Glide.with(context)
                             .load(data.getImage_filename())
                             .asBitmap()
-                            .placeholder(R.drawable.img_placeholder)
+                            .placeholder(R.drawable.magazine_backdrop)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .dontAnimate()
                             .into(new SimpleTarget<Bitmap>() {
@@ -1965,7 +1965,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                         Glide.with(context)
                                                 .load(data.getImage_filename())
                                                 .override(bmp.getWidth(), bmp.getHeight())
-                                                .placeholder(R.drawable.img_placeholder)
+                                                .placeholder(R.drawable.magazine_backdrop)
                                                 .crossFade()
                                                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                                                 .dontAnimate()
@@ -1975,7 +1975,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             });
                 }
             } else {
-                photoView.setImageResource(R.drawable.img_placeholder);
+                photoView.setImageResource(R.drawable.magazine_backdrop);
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {

@@ -76,7 +76,7 @@ public class OthersMagazinesAdapter extends BaseAdapter {
 
                 Glide.with(mContext)
                         .load(ownMagazineList.get(position).getImage())
-                        .placeholder(R.drawable.img_placeholder)
+                        .placeholder(R.drawable.magazine_backdrop)
                         .fitCenter()
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -92,7 +92,7 @@ public class OthersMagazinesAdapter extends BaseAdapter {
                             .into(imageView);
                 } else {
                     Glide.with(mContext)
-                            .load(R.drawable.img_placeholder)
+                            .load(R.drawable.magazine_backdrop)
                             .fitCenter()
                             .crossFade()
                             .diskCacheStrategy(DiskCacheStrategy.ALL)

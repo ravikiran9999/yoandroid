@@ -3,6 +3,7 @@ package com.yo.android.di;
 import android.content.Context;
 
 import com.yo.android.chat.ChatRefreshBackground;
+import com.yo.android.usecase.ChatNotificationUsecase;
 import com.yo.android.usecase.DenominationsUsecase;
 import com.yo.android.usecase.PackageDenominationsUsecase;
 import com.yo.android.usecase.WebserviceUsecase;
@@ -247,7 +248,8 @@ import dagger.Provides;
                 //usecases
                 WebserviceUsecase.class,
                 DenominationsUsecase.class,
-                PackageDenominationsUsecase.class
+                PackageDenominationsUsecase.class,
+                ChatNotificationUsecase.class,
         },
         includes = {
                 AppModule.class,

@@ -342,14 +342,14 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
 
             final ImageView photoView = holder.articlePhoto;
 
-            photoView.setImageResource(R.drawable.img_placeholder);
+            photoView.setImageResource(R.drawable.magazine_backdrop);
 
             if (data.getImage_filename() != null) {
                 //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
                 Glide.with(context)
                         .load(data.getImage_filename())
                         .asBitmap()
-                        .placeholder(R.drawable.img_placeholder)
+                        .placeholder(R.drawable.magazine_backdrop)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate()
                         .into(new SimpleTarget<Bitmap>() {
@@ -361,7 +361,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                     Glide.with(context)
                                             .load(data.getImage_filename())
                                             .override(bmp.getWidth(), bmp.getHeight())
-                                            .placeholder(R.drawable.img_placeholder)
+                                            .placeholder(R.drawable.magazine_backdrop)
                                             .crossFade()
                                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                                             .dontAnimate()
@@ -370,7 +370,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                             }
                         });
             } else {
-                photoView.setImageResource(R.drawable.img_placeholder);
+                photoView.setImageResource(R.drawable.magazine_backdrop);
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {
