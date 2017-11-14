@@ -113,51 +113,23 @@ public class BaseFragment extends Fragment {
         dismissProgressDialog();
     }
 
-    /*public void initialiseOnlinePresence(DatabaseReference databaseReference, String userId) {
-        final DatabaseReference onlineRef = databaseReference.child(".info/connected");
-        final DatabaseReference currentUserRef = databaseReference.child("/presence/" + userId);
-        onlineRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(final DataSnapshot dataSnapshot) {
-                android.util.Log.d(TAG, "DataSnapshot:" + dataSnapshot);
-                if (dataSnapshot.getValue(Boolean.class)){
-                    currentUserRef.onDisconnect().removeValue();
-                    currentUserRef.setValue(true);
-                }
-            }
-
-            @Override
-            public void onCancelled(final DatabaseError databaseError) {
-                android.util.Log.d(TAG, "DatabaseError:" + databaseError);
-            }
-        });
-        final DatabaseReference onlineViewersCountRef = databaseReference.child("/presence");
-        onlineViewersCountRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(final DataSnapshot dataSnapshot) {
-                android.util.Log.d(TAG, "DataSnapshot:" + dataSnapshot);
-                //onlineViewerCountTextView.setText(String.valueOf(dataSnapshot.getChildrenCount()));
-            }
-
-            @Override
-            public void onCancelled(final DatabaseError databaseError) {
-                android.util.Log.d(TAG, "DatabaseError:" + databaseError);
-            }
-        });
-    }*/
-
     public void checkFirebaseUserStatus(Firebase databaseReference, String opponentFirebaseUserId, final UserChatFragment.UpdateStatus updateStatus) {
 
-        final Firebase onlineStatusRef = databaseReference.child(Constants.USERS +"/"+ opponentFirebaseUserId +"/"+ Constants.PROFILE + "/presence");
+        final Firebase onlineStatusRef = databaseReference.child(Constants.USERS + "/" + opponentFirebaseUserId + "/" + Constants.PROFILE + "/presence");
         onlineStatusRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot) {
-                android.util.Log.d(TAG, "Online status DataSnapshot:" + dataSnapshot);
-                //onlineViewerCountTextView.setText(String.valueOf(dataSnapshot.getChildrenCount()));
-                if(dataSnapshot.getValue() != null) {
-                    chatUserStatus = (Boolean) dataSnapshot.getValue();
-                } else {
-                    chatUserStatus = false;
+                try {
+
+                    if (dataSnapshot.getValue() != null) {
+                        chatUserStatus = (Boolean) dataSnapshot.getValue();
+                    } else {
+                        chatUserStatus = false;
+                    }
+                } catch (Exception e) {
+                    if (e instanceof ClassCastException) {
+                        chatUserStatus = Boolean.valueOf((String) dataSnapshot.getValue());
+                    }
                 }
                 updateStatus.updateUserStatus(chatUserStatus);
             }

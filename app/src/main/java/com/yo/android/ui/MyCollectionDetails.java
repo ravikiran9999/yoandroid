@@ -454,13 +454,13 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
             final ImageView photoView = holder.articlePhoto;
 
-            photoView.setImageResource(R.drawable.img_placeholder);
+            photoView.setImageResource(R.drawable.magazine_backdrop);
             if (data.getImage_filename() != null) {
                 //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
                 Glide.with(context)
                         .load(data.getImage_filename())
                         .asBitmap()
-                        .placeholder(R.drawable.img_placeholder)
+                        .placeholder(R.drawable.magazine_backdrop)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate()
                         .into(new SimpleTarget<Bitmap>() {
@@ -472,7 +472,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                                     Glide.with(context)
                                             .load(data.getImage_filename())
                                             .override(bmp.getWidth(), bmp.getHeight())
-                                            .placeholder(R.drawable.img_placeholder)
+                                            .placeholder(R.drawable.magazine_backdrop)
                                             .crossFade()
                                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                                             .dontAnimate()
@@ -481,7 +481,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                             }
                         });
             } else {
-                photoView.setImageResource(R.drawable.img_placeholder);
+                photoView.setImageResource(R.drawable.magazine_backdrop);
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {

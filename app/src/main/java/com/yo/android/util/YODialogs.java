@@ -115,7 +115,7 @@ public class YODialogs {
                 tvDialogImage.setVisibility(View.VISIBLE);
                 Glide.with(activity)
                         .load(imageUrl)
-                        .placeholder(R.drawable.img_placeholder)
+                        .placeholder(R.drawable.magazine_backdrop)
                         .centerCrop()
                         //Image size will be reduced 50%
                         .thumbnail(0.5f)

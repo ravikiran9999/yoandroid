@@ -186,7 +186,7 @@ public class FirebaseService extends InjectedService {
                         String[] strings = cn.getShortClassName().split(Pattern.quote("."));
                         int i = strings.length - 1;
                         if (!userId.equalsIgnoreCase(chatMessage.getSenderID()) && chatMessage.getDelivered() == 0 && loginPrefs.getBooleanPreference(Constants.NOTIFICATION_ALERTS) && (!strings[i].equalsIgnoreCase("ChatActivity"))) {
-                            newPushNotification(chatMessage.getRoomId(), chatMessage);
+                            //newPushNotification(chatMessage.getRoomId(), chatMessage);
                         }
 
                     } catch (Exception e) {

@@ -68,6 +68,30 @@ public class ChatMessage implements Parcelable {
         // Default constructor required for calls to DataSnapshot.getValue(ChatMessage.class)
     }
 
+    public ChatMessage(int msgID, String message, String senderID, int status, String imagePath, long time, int delivered, int sent, long deliveredTime, String stickeyHeader, String type, String roomId, boolean selected, String imageUrl, String nexgeUserName, String youserId, String chatProfileUserName, String roomName, String roomImage, String messageKey, Map<String, Object> timeStampMap, long serverTimeStampReceived) {
+        this.msgID = msgID;
+        this.message = message;
+        this.senderID = senderID;
+        this.status = status;
+        this.imagePath = imagePath;
+        this.time = time;
+        this.delivered = delivered;
+        this.sent = sent;
+        this.deliveredTime = deliveredTime;
+        this.stickeyHeader = stickeyHeader;
+        this.type = type;
+        this.roomId = roomId;
+        this.selected = selected;
+        this.imageUrl = imageUrl;
+        this.nexgeUserName = nexgeUserName;
+        this.youserId = youserId;
+        this.chatProfileUserName = chatProfileUserName;
+        this.roomName = roomName;
+        this.roomImage = roomImage;
+        this.messageKey = messageKey;
+        this.timeStampMap = timeStampMap;
+        this.serverTimeStampReceived = serverTimeStampReceived;
+    }
 
     private ChatMessage(Parcel in) {
         this.msgID = in.readInt();

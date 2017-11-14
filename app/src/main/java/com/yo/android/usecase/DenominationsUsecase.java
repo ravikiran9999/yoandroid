@@ -21,7 +21,7 @@ import retrofit2.Response;
 
 public class DenominationsUsecase {
 
-    private static final String noWifiError = "Please check your wifi connection";
+    private static final String noWifiError = "Please check your internet connection";
 
     @Inject
     YoApi.YoService yoService;

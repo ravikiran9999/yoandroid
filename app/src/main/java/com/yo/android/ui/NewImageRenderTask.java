@@ -55,7 +55,7 @@ public  class NewImageRenderTask extends AsyncTask<Void, Void, Bitmap> {
                 /*Glide.with(mContext)
                         .load(byteArray)
                         .override(screenWidth, screenHeight)
-                        .placeholder(R.drawable.img_placeholder)
+                        .placeholder()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate()
                         .into(articleImageView);*/
@@ -68,7 +68,7 @@ public  class NewImageRenderTask extends AsyncTask<Void, Void, Bitmap> {
                 Glide.with(mContext)
                         .load(imageLink)
                         .override(bmp.getWidth(), bmp.getHeight())
-                        .placeholder(R.drawable.img_placeholder)
+                        .placeholder(R.drawable.magazine_backdrop)
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.RESULT)
                         .dontAnimate()
@@ -76,7 +76,7 @@ public  class NewImageRenderTask extends AsyncTask<Void, Void, Bitmap> {
             }
 
         } else {
-            articleImageView.setImageResource(R.drawable.img_placeholder);
+            articleImageView.setImageResource(R.drawable.magazine_backdrop);
         }
     }
 
