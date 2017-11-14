@@ -46,7 +46,6 @@ public class FetchNewArticlesService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("FetchNewArticlesService", "FetchNewArticlesService Started");
-        preferenceEndPoint.saveBooleanPreference(Constants.IS_SERVICE_RUNNING, true);
         preferenceEndPoint.saveBooleanPreference(Constants.IS_SERVICE_RUNNING, false);
         preferenceEndPoint.saveBooleanPreference(Constants.IS_ARTICLES_POSTED, false);
         preferenceEndPoint.saveBooleanPreference(Constants.STARTING_SERVICE, true);
