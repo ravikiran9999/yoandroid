@@ -1,20 +1,31 @@
 package com.yo.android.util;
 
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.R;
+import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.di.Injector;
+import com.yo.android.ui.BottomTabsActivity;
 
+import java.text.DateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import static com.yo.android.chat.notification.localnotificationsbuilder.Notifications.GROUP_NOTIFICATION_ID;
 
 /**
  * This service is used to fetch the articles from the server once a day
@@ -23,6 +34,7 @@ public class FetchNewArticlesService extends Service {
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
+
     public FetchNewArticlesService() {
     }
 
@@ -35,8 +47,46 @@ public class FetchNewArticlesService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("FetchNewArticlesService", "FetchNewArticlesService Started");
         preferenceEndPoint.saveBooleanPreference(Constants.IS_SERVICE_RUNNING, true);
-        de.greenrobot.event.EventBus.getDefault().post(Constants.START_FETCHING_ARTICLES_ACTION);
+        preferenceEndPoint.saveBooleanPreference(Constants.IS_SERVICE_RUNNING, false);
+        preferenceEndPoint.saveBooleanPreference(Constants.IS_ARTICLES_POSTED, false);
+        preferenceEndPoint.saveBooleanPreference(Constants.STARTING_SERVICE, true);
+        int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
+        int currentMin = Calendar.getInstance().get(Calendar.MINUTE); //Current hour
+        int currentSec = Calendar.getInstance().get(Calendar.SECOND); //Current hour
+        if (currentHour == 0 && currentMin == 0 && currentSec == 0) {
+            showTrayNotification();
+            preferenceEndPoint.saveBooleanPreference(Constants.IS_SERVICE_RUNNING, true);
+            de.greenrobot.event.EventBus.getDefault().post(Constants.START_FETCHING_ARTICLES_ACTION);
+        }
         return START_STICKY;
+    }
+
+    private void showTrayNotification() {
+
+        Intent intent = new Intent(getApplicationContext(), BottomTabsActivity.class);
+
+        PendingIntent notificationPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setSmallIcon(R.drawable.ic_yo_notification)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_yo_notification))
+                .setColor(getResources().getColor(R.color.colorPrimary))
+                .setContentTitle("Fetching magazine started")
+                .setContentIntent(notificationPendingIntent)
+                .setContentText(getCurrentTime())
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setStyle(new NotificationCompat.BigTextStyle())
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setPriority(Notification.PRIORITY_HIGH | Notification.PRIORITY_MAX);
+        mNotificationManager.notify(GROUP_NOTIFICATION_ID, builder.build());
+    }
+
+    private String getCurrentTime() {
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        return currentDateTimeString;
     }
 
     @Override

@@ -162,6 +162,14 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
             holder = new ViewHolder();
 
+            holder.topLayout = UI.
+                    findViewById(layout, R.id.rl_left);
+
+            holder.middleLayout = UI.
+                    findViewById(layout, R.id.ll_bottom_layout);
+            holder.bottomLayout = UI.
+                    findViewById(layout, R.id.ll_article_info);
+
             holder.articleTitle = UI.
                     findViewById(layout, R.id.tv_article_title);
 
@@ -274,14 +282,29 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 holder.articleShortDesc
                         .setText(Html.fromHtml(data.getSummary()) + "\n");
                 Log.d("BaseAdapter", "The text size is " + holder.articleShortDesc.getTextSize());
-                final TextView shortDesc = holder.articleShortDesc;
+                final TextView textView = holder.articleShortDesc;
                 ViewTreeObserver vto = holder.articleShortDesc.getViewTreeObserver();
-                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                textView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                    @Override
+                    public void onLayoutChange(View v, int left, int top, int right, int bottom,
+                                               int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                        textView.removeOnLayoutChangeListener(this);
+                        float lineHeight = textView.getLineHeight();
+                        int maxLines = (int) (textView.getHeight() / lineHeight);
+                        if (textView.getLineCount() != maxLines) {
+                            textView.setLines(maxLines);
+                            textView.setEllipsize(TextUtils.TruncateAt.END);
+                            // Re-assign text to ensure ellipsize is performed correctly.
+                            textView.setText(Html.fromHtml(data.getSummary()));
+                        }
+                    }
+                });
+                /*vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
                         Log.d("BaseAdapter", "The short desc line count is " + shortDesc.getLineCount());
                         //calculateHeight(shortDesc);
-                        /*final Layout layout = shortDesc.getLayout();
+                        *//*final Layout layout = shortDesc.getLayout();
                         String contentToBeWrite = "";
                         int start = 0;
 
@@ -299,15 +322,15 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             start = end + 1;
                             Log.d("BaseAdapter", "contentToBeWrite " + contentToBeWrite);
                         }
-                        shortDesc.setText(contentToBeWrite);*/
+                        shortDesc.setText(contentToBeWrite);*//*
 
                         //shortDesc.setMaxLines(lastVisibleLineNumber);
 
-                        /*if(lastVisibleLineNumber != 0 && shortDesc.getLineCount()>lastVisibleLineNumber){
+                        *//*if(lastVisibleLineNumber != 0 && shortDesc.getLineCount()>lastVisibleLineNumber){
                             shortDesc.setLines(lastVisibleLineNumber);
-                        }*/
+                        }*//*
                     }
-                });
+                });*/
                 //doEllipsize(holder.articleShortDesc);
             }
         }
@@ -874,7 +897,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         /*int start = shortDesc.getLayout().getLineStart(lastVisibleLineNumber - 1); //start position
         int end = shortDesc.getLayout().getLineEnd(lastVisibleLineNumber - 1); //last visible position*/
 
-        String displayedText = shortDesc.getText().toString().substring(0, layout.getLineEnd(lastVisibleLineNumber-1));
+        String displayedText = shortDesc.getText().toString().substring(0, layout.getLineEnd(lastVisibleLineNumber - 1));
         Log.d("BaseAdapter", "The displayedText is " + displayedText);
         shortDesc.setText(displayedText + "..." + "\n");
     }
@@ -2349,6 +2372,11 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         private ImageView fullImageMagazineAdd;
 
         private ImageView fullImageMagazineShare;
+
+        private RelativeLayout topLayout;
+        private LinearLayout middleLayout; //like, add and share
+        private LinearLayout bottomLayout;
+
     }
 
     /**
@@ -2524,10 +2552,14 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 int firstVisibleLineNumber = layout.getLineForVertical(scrollY);
                 int lastVisibleLineNumber = layout.getLineForVertical(scrollY + height);
 
-                if (tv.getLineCount() > lastVisibleLineNumber) {
+                for (int i = 0; i < lastVisibleLineNumber - 1; i++) {
+                    int lineEnd = layout.getLineEnd(i);
+
+                }
+                /*if (tv.getLineCount() > lastVisibleLineNumber) {
                     tv.setMaxLines(lastVisibleLineNumber);
                     tv.setEllipsize(TextUtils.TruncateAt.END);
-                }
+                }*/
 
             }
         });

@@ -85,10 +85,12 @@ import com.yo.restartapp.YOExceptionHandler;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -165,7 +167,8 @@ public class BottomTabsActivity extends BaseActivity {
         context = this;
         activity = this;
         mContext = getApplicationContext();
-
+        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+        Log.i(TAG, "cURRENT TIME " + currentDateTimeString);
         // TODO: Test
         Intent service = new Intent(this, com.yo.dialer.YoSipService.class);
         service.setAction(CallExtras.REGISTER);
@@ -347,22 +350,13 @@ public class BottomTabsActivity extends BaseActivity {
             }
         });
 
-        /*if (!preferenceEndPoint.getBooleanPreference(Constants.IS_SERVICE_RUNNING))
-
-        {
-            int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
-            if (currentHour == 0) {
-                startServiceToFetchNewArticles();
-            }
-        }*/
-
-        // if (!preferenceEndPoint.getBooleanPreference(Constants.IS_SERVICE_RUNNING)) {
+        if (!preferenceEndPoint.getBooleanPreference(Constants.IS_SERVICE_RUNNING)) {
             int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
             int currentMin = Calendar.getInstance().get(Calendar.MINUTE); //Current hour
             int currentSec = Calendar.getInstance().get(Calendar.SECOND); //Current hour
             startServiceToFetchNewArticles(currentHour * 60 * 60 + currentMin * 60 + currentSec);
+        }
 
-       // }
 
         // firebase service
 
