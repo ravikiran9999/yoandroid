@@ -112,7 +112,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     private MagazineDashboardHelper magazineDashboardHelper;
     private String followedTopicId;
     private static int articleCountThreshold = 2000;
-    private boolean isFetchArticlesPosted;
+    //private boolean isFetchArticlesPosted;
 
     @SuppressLint("ValidFragment")
     public MagazineFlipArticlesFragment(MagazineTopicsSelectionFragment fragment) {
@@ -513,7 +513,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         if (Constants.OTHERS_MAGAZINE_ACTION.equals(action) || Constants.TOPIC_NOTIFICATION_ACTION.equals(action) || Constants.TOPIC_FOLLOWING_ACTION.equals(action)) {
             updateArticlesAfterFollowTopic(followedTopicId);
         } else if (Constants.START_FETCHING_ARTICLES_ACTION.equals(action)) {
-            isFetchArticlesPosted = true;
+            //isFetchArticlesPosted = true;
+            preferenceEndPoint.saveBooleanPreference(Constants.IS_ARTICLES_POSTED, true);
             callDailyArticlesService(null);
         } else if (Constants.RENEWAL.equalsIgnoreCase(action)) {
             loadArticles(null, true);
@@ -681,7 +682,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                             }
                         }*/
                     }
-                    if(preferenceEndPoint.getBooleanPreference(Constants.IS_SERVICE_RUNNING) && !isFetchArticlesPosted) {
+                    if(preferenceEndPoint.getBooleanPreference(Constants.IS_SERVICE_RUNNING) && !preferenceEndPoint.getBooleanPreference(Constants.IS_ARTICLES_POSTED)) {
                         callDailyArticlesService(null);
                     }
                 } else {
