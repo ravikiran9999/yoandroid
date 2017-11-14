@@ -46,7 +46,6 @@ public class FetchNewArticlesService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("FetchNewArticlesService", "FetchNewArticlesService Started");
-        preferenceEndPoint.saveBooleanPreference(Constants.IS_SERVICE_RUNNING, true);
         preferenceEndPoint.saveBooleanPreference(Constants.IS_SERVICE_RUNNING, false);
         preferenceEndPoint.saveBooleanPreference(Constants.IS_ARTICLES_POSTED, false);
         preferenceEndPoint.saveBooleanPreference(Constants.STARTING_SERVICE, true);
@@ -106,7 +105,7 @@ public class FetchNewArticlesService extends Service {
 
         Log.d("FetchNewArticlesService", "onTaskRemoved()");
 
-        Calendar cal = Calendar.getInstance();
+        /*Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
@@ -116,7 +115,24 @@ public class FetchNewArticlesService extends Service {
                 0);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
-                Constants.FETCHING_NEW_ARTICLES_FREQUENCY, pintent);
+                Constants.FETCHING_NEW_ARTICLES_FREQUENCY, pintent);*/
+
+        int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
+        int currentMin = Calendar.getInstance().get(Calendar.MINUTE); //Current hour
+        int currentSec = Calendar.getInstance().get(Calendar.SECOND); //Current hour
+        int currentTimeInSec = currentHour * 60 * 60 + currentMin * 60 + currentSec;
+        // Start service using AlarmManager
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Intent intent = new Intent(getApplicationContext(), FetchNewArticlesService.class);
+        PendingIntent pintent = PendingIntent.getService(this, 1014, intent,
+                0);
+        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarm.setRepeating(AlarmManager.RTC_WAKEUP, (((24 * 60 * 60) - currentTimeInSec) * 1000),
+                AlarmManager.INTERVAL_DAY, pintent);
     }
 
 }
