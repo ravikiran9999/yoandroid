@@ -18,7 +18,7 @@ public class AppContactsActivity extends BaseActivity {
     public static void start(Activity activity, ArrayList<ChatMessage> message) {
         Intent intent = createIntent(activity, message);
         activity.startActivity(intent);
-        activity.finish();
+        //activity.finish();
     }
 
     private static Intent createIntent(Activity activity, ArrayList<ChatMessage> forward) {

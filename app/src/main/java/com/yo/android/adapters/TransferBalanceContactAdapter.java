@@ -12,6 +12,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
 import com.yo.android.helpers.RegisteredContactsViewHolder;
 import com.yo.android.helpers.Settings;
+import com.yo.android.model.Contact;
 import com.yo.android.model.FindPeople;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
@@ -22,7 +23,7 @@ import java.util.regex.Pattern;
 /**
  * Created by creatives on 10/3/2016.
  */
-public class TransferBalanceContactAdapter extends AbstractBaseAdapter<FindPeople, RegisteredContactsViewHolder> {
+public class TransferBalanceContactAdapter extends AbstractBaseAdapter<Contact, RegisteredContactsViewHolder> {
 
     private Context context;
     private String userId;
@@ -49,26 +50,27 @@ public class TransferBalanceContactAdapter extends AbstractBaseAdapter<FindPeopl
     }
 
     @Override
-    public void bindView(final int position, RegisteredContactsViewHolder holder, final FindPeople item) {
+    public void bindView(final int position, RegisteredContactsViewHolder holder, final Contact item) {
 
-            holder.getContactNumber().setText(item.getFirst_name() + " " + item.getLast_name());
-            holder.getContactNumber().setVisibility(View.VISIBLE);
-        if (item.getPhone_no() != null) {
-            item.setPhone_no(item.getPhone_no().trim());
-        }
+        holder.getContactNumber().setText(item.getName());
+        holder.getContactNumber().setVisibility(View.VISIBLE);
+        /*if (item.getPhoneNo() != null) {
+            //item.setPhone_no(item.getPhone_no().trim());
+        }*/
 
-        if ((item.getFirst_name() != null) && (!item.getFirst_name().replaceAll("\\s+", "").equalsIgnoreCase(item.getPhone_no()))) {
-            holder.getContactMail().setText(item.getPhone_no());
+        if ((item.getName() != null) && (!item.getName().replaceAll("\\s+", "").equalsIgnoreCase(item.getPhoneNo()))) {
+            //holder.getContactMail().setText(item.getPhoneNo());
+            holder.getContactMail().setText(phoneNumberWithCountryCodeFormat(item));
             holder.getContactMail().setVisibility(View.VISIBLE);
 
         } else {
             holder.getContactMail().setVisibility(View.GONE);
         }
 
-        if (!TextUtils.isEmpty(item.getAvatar())) {
+        if (!TextUtils.isEmpty(item.getImage())) {
 
             Glide.with(mContext)
-                    .load(item.getAvatar())
+                    .load(item.getImage())
                     .fitCenter()
                     .placeholder(R.drawable.dynamic_profile)
                     .crossFade()
@@ -76,8 +78,8 @@ public class TransferBalanceContactAdapter extends AbstractBaseAdapter<FindPeopl
                     .error(R.drawable.dynamic_profile)
                     .into(holder.getContactPic());
         } else if (Settings.isTitlePicEnabled) {
-            if (item.getFirst_name() != null && item.getFirst_name().length() >= 1) {
-                String title = String.valueOf(item.getFirst_name().charAt(0)).toUpperCase();
+            if (!TextUtils.isEmpty(item.getName()) && item.getName().length() >= 1) {
+                String title = String.valueOf(item.getName().charAt(0)).toUpperCase();
                 Pattern p = Pattern.compile("^[a-zA-Z]");
                 Matcher m = p.matcher(title);
                 boolean b = m.matches();
@@ -120,18 +122,26 @@ public class TransferBalanceContactAdapter extends AbstractBaseAdapter<FindPeopl
     }
 
     @Override
-    protected boolean hasData(FindPeople findPeople, String key) {
-        if (findPeople.getFirst_name() != null && findPeople.getLast_name() != null && findPeople.getPhone_no() != null) {
-            if (containsValue(findPeople.getFirst_name().toLowerCase(), key)
-                    || containsValue(findPeople.getLast_name().toLowerCase(), key)
-                    || containsValue(findPeople.getPhone_no().toLowerCase(), key)) {
+    protected boolean hasData(Contact contact, String key) {
+        if (contact.getName() != null && contact.getName() != null && contact.getPhoneNo() != null) {
+            if (containsValue(contact.getName().toLowerCase(), key)
+                    || containsValue(contact.getName().toLowerCase(), key)
+                    || containsValue(contact.getPhoneNo().toLowerCase(), key)) {
                 return true;
             }
         }
-        return super.hasData(findPeople, key);
+        return super.hasData(contact, key);
     }
 
     private boolean containsValue(String str, String key) {
         return str != null && str.toLowerCase().contains(key);
+    }
+
+    private String phoneNumberWithCountryCodeFormat(Contact mContact) {
+        if (mContact != null && !TextUtils.isEmpty(mContact.getCountryCode()) && !TextUtils.isEmpty(mContact.getPhoneNo())) {
+            return context.getString(R.string.phone_number_with_code_plus, mContact.getCountryCode(), mContact.getPhoneNo());
+        }
+
+        return mContact != null ? mContact.getPhoneNo() : null;
     }
 }

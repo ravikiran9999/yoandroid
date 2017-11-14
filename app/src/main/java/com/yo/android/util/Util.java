@@ -13,7 +13,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
@@ -28,8 +27,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.text.Html;
 import android.text.TextUtils;
-import android.text.format.DateFormat;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -48,9 +45,6 @@ import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.orion.android.common.preferences.PreferenceEndPoint;
-import com.orion.android.common.util.ConnectivityHelper;
-import com.orion.android.common.util.ToastFactory;
-import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
 import com.yo.android.chat.notification.localnotificationsbuilder.Notifications;
@@ -58,17 +52,12 @@ import com.yo.android.chat.notification.pojo.NotificationBuilderObject;
 import com.yo.android.chat.notification.pojo.UserData;
 import com.yo.android.model.Articles;
 import com.yo.android.model.UserProfileInfo;
-import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
-import com.yo.android.pjsip.StatusCodes;
 import com.yo.android.ui.BottomTabsActivity;
-import com.yo.android.ui.CountryListActivity;
 import com.yo.android.ui.FindPeopleActivity;
 import com.yo.android.ui.FollowersActivity;
 import com.yo.android.ui.FollowingsActivity;
-import com.yo.android.ui.fragments.DialerFragment;
-import com.yo.android.vox.BalanceHelper;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -85,18 +74,11 @@ import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.greenrobot.event.EventBus;
 import retrofit2.Response;
 
 /**
@@ -418,12 +400,10 @@ public class Util {
     public static void prepareTransferBalanceContactsSearch(final Activity activity, final Menu menu, final AbstractBaseAdapter adapter, final TextView noData, final ListView listView, final LinearLayout llNoPeople) {
         final SearchManager searchManager =
                 (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
-        MenuItem searchMenuItem;
         SearchView searchView;
-        searchMenuItem = menu.findItem(R.id.menu_search);
-        searchView =
-                (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Enter atleast 3 characters...." + "</font>"));
+        MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+        searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Enter atleast 4 characters...." + "</font>"));
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(activity.getComponentName()));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -477,6 +457,17 @@ public class Util {
         });
     }
 
+    /**
+     * Search in Chats, Contacts, Dialer
+     *
+     * @param activity
+     * @param menu
+     * @param adapter
+     * @param roomType
+     * @param noSearchResult
+     * @param noContactsFound
+     * @return
+     */
     public static SearchView prepareContactsSearch(final Activity activity, final Menu menu, final AbstractBaseAdapter adapter, final String roomType, final TextView noSearchResult, final TextView noContactsFound) {
 
         final SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
@@ -1038,4 +1029,21 @@ public class Util {
         return (netInfo != null && netInfo.isConnected());
     }
 
+    public static void hideSideIndex(MenuItem menuItem, final ListView listView) {
+        // Hide right side alphabets when search is opened.
+        MenuItemCompat.setOnActionExpandListener(menuItem, new MenuItemCompat.OnActionExpandListener() {
+
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                listView.setVisibility(View.GONE);
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                listView.setVisibility(View.VISIBLE);
+                return true;
+            }
+        });
+    }
 }

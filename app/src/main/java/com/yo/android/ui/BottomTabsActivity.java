@@ -350,13 +350,13 @@ public class BottomTabsActivity extends BaseActivity {
             }
         });
 
-        // if (!preferenceEndPoint.getBooleanPreference(Constants.IS_SERVICE_RUNNING)) {
-        int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
-        int currentMin = Calendar.getInstance().get(Calendar.MINUTE); //Current hour
-        int currentSec = Calendar.getInstance().get(Calendar.SECOND); //Current hour
-        startServiceToFetchNewArticles(currentHour * 60 * 60 + currentMin * 60 + currentSec);
+        if (!preferenceEndPoint.getBooleanPreference(Constants.IS_SERVICE_RUNNING)) {
+            int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
+            int currentMin = Calendar.getInstance().get(Calendar.MINUTE); //Current hour
+            int currentSec = Calendar.getInstance().get(Calendar.SECOND); //Current hour
+            startServiceToFetchNewArticles(currentHour * 60 * 60 + currentMin * 60 + currentSec);
+        }
 
-        // }
 
         // firebase service
 

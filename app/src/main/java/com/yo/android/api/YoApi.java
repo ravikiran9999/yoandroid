@@ -292,7 +292,8 @@ public class YoApi {
         Call<Response> balanceTransferAPI(@Field("access_token") String access_token, @Field("phone_no") String receiver_id, @Field("credit") String credit);
 
         @GET("api/user/receiver_search.json")
-        Call<List<FindPeople>> searchInBalanceTransferContacts(@Query("access_token") String access_token, @Query("search_item") String search_item, @Query("page") int page, @Query("limit") int limit);
+        //Call<List<FindPeople>> searchInBalanceTransferContacts(@Query("access_token") String access_token, @Query("search_item") String search_item, @Query("page") int page, @Query("limit") int limit);
+        Call<List<Contact>> searchInBalanceTransferContacts(@Query("access_token") String access_token, @Query("search_item") String search_item);
 
         @GET("api/user/{id}.json")
         Call<FindPeople> getUserInfoFromId(@Path("id") String id, @Query("access_token") String access_token);

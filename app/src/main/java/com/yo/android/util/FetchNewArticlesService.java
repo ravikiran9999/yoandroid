@@ -47,8 +47,17 @@ public class FetchNewArticlesService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("FetchNewArticlesService", "FetchNewArticlesService Started");
         preferenceEndPoint.saveBooleanPreference(Constants.IS_SERVICE_RUNNING, true);
-        showTrayNotification();
-        de.greenrobot.event.EventBus.getDefault().post(Constants.START_FETCHING_ARTICLES_ACTION);
+        preferenceEndPoint.saveBooleanPreference(Constants.IS_SERVICE_RUNNING, false);
+        preferenceEndPoint.saveBooleanPreference(Constants.IS_ARTICLES_POSTED, false);
+        preferenceEndPoint.saveBooleanPreference(Constants.STARTING_SERVICE, true);
+        int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
+        int currentMin = Calendar.getInstance().get(Calendar.MINUTE); //Current hour
+        int currentSec = Calendar.getInstance().get(Calendar.SECOND); //Current hour
+        if (currentHour == 0 && currentMin == 0 && currentSec == 0) {
+            showTrayNotification();
+            preferenceEndPoint.saveBooleanPreference(Constants.IS_SERVICE_RUNNING, true);
+            de.greenrobot.event.EventBus.getDefault().post(Constants.START_FETCHING_ARTICLES_ACTION);
+        }
         return START_STICKY;
     }
 

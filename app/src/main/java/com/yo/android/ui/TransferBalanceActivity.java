@@ -9,10 +9,8 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -21,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
 import com.yo.android.helpers.Settings;
+import com.yo.android.model.Contact;
 import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -49,7 +48,6 @@ public class TransferBalanceActivity extends BaseActivity {
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
     private String name;
     private String phoneNo;
-    String profilePic;
 
 
     @Bind(R.id.et_enter_phone)
@@ -58,18 +56,6 @@ public class TransferBalanceActivity extends BaseActivity {
     TextView tvBalance;
     @Bind(R.id.transfer_amount)
     TextView tvTransferAmount;
-
-
-    /*@Bind(R.id.contact_view)
-    RelativeLayout contactNumberView;*/
-
-    /*@Bind(R.id.tv_phone_number)
-    TextView tvPhoneNumber;*/
-    /*@Bind(R.id.tv_contact_email)
-    TextView tvContactMail;
-    @Bind(R.id.imv_contact_pic)
-    CircleImageView imvProfilePic;*/
-
 
     @Inject
     protected BalanceHelper mBalanceHelper;
@@ -135,58 +121,6 @@ public class TransferBalanceActivity extends BaseActivity {
 
 
     }
-
-    /*private void userSelectedFromContacts() {
-
-        name = getIntent().getStringExtra(Constants.USER_NAME);
-        phoneNo = getIntent().getStringExtra(Constants.PHONE_NUMBER);
-        profilePic = getIntent().getStringExtra("profilePic");
-        String id = getIntent().getStringExtra("id");
-
-        if (!TextUtils.isEmpty(name)) {
-            tvPhoneNumber.setText(name);
-            tvPhoneNumber.setVisibility(View.VISIBLE);
-        } else {
-            tvPhoneNumber.setVisibility(View.GONE);
-        }
-        tvPhoneNumber.setText(name);
-
-        if ((name != null) && (!name.replaceAll("\\s+", "").equalsIgnoreCase(phoneNo))) {
-            tvContactMail.setText(phoneNo);
-            tvContactMail.setVisibility(View.VISIBLE);
-
-        } else {
-            tvContactMail.setVisibility(View.GONE);
-        }
-        TextDrawable.IBuilder mDrawableBuilder = TextDrawable.builder().round();
-
-        if (!TextUtils.isEmpty(profilePic)) {
-
-            Glide.with(this)
-                    .load(profilePic)
-                    .fitCenter()
-                    .placeholder(R.drawable.dynamic_profile)
-                    .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .error(R.drawable.dynamic_profile)
-                    .into(imvProfilePic);
-        } else if (Settings.isTitlePicEnabled) {
-            if (name != null && name.length() >= 1) {
-                String title1 = String.valueOf(name.charAt(0)).toUpperCase();
-                Pattern p = Pattern.compile("^[a-zA-Z]");
-                Matcher m = p.matcher(title1);
-                boolean b = m.matches();
-                if (b) {
-                    Drawable drawable = mDrawableBuilder.build(title1, mColorGenerator.getRandomColor());
-                    imvProfilePic.setImageDrawable(drawable);
-                } else {
-                    loadAvatarImage(imvProfilePic);
-                }
-            }
-        } else {
-            loadAvatarImage(imvProfilePic);
-        }
-    }*/
 
     @OnClick(R.id.btn_transfer)
     public void balanceTransfer() {
@@ -486,8 +420,8 @@ public class TransferBalanceActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 33 && resultCode == Activity.RESULT_OK) {
-            String selectedContactToTransfer = data.getStringExtra(Constants.SELECTED_CONTACT_TO_TRANSFER);
-            enteredPhoneNumber.setText(selectedContactToTransfer);
+            Contact selectedContactToTransfer = data.getParcelableExtra(Constants.SELECTED_CONTACT_TO_TRANSFER);
+            enteredPhoneNumber.setText(selectedContactToTransfer.getPhoneNo());
         }
     }
 

@@ -85,6 +85,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
             YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER,
             YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME,
             YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_COUNTRY_CODE,
+            YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_FIREBASE_USER_ID,
     };
 
     // Constants representing column positions from PROJECTION.
@@ -97,6 +98,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final int COLUMN_YO_USER = 6;
     public static final int COLUMN_VOX_USERNAME = 7;
     public static final int COLUMN_COUNTRY_CODE = 8;
+    public static final int COLUMN_FIREBASE_USER_ID = 9;
 
     private List<Contact> contacts;
 
@@ -230,6 +232,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
         boolean yoAppUser;
         String voxUserName;
         String countryCode;
+        String firebaseUserId;
 
         while (c.moveToNext()) {
             syncResult.stats.numEntries++;
@@ -239,6 +242,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
             phone = c.getString(COLUMN_PHONE);
             image = c.getString(COLUMN_IMAGE);
             roomId = c.getString(COLUMN_FIREBASE_ROOM_ID);
+            firebaseUserId = c.getString(COLUMN_FIREBASE_USER_ID);
             yoAppUser = c.getInt(COLUMN_YO_USER) != 0;
             voxUserName = c.getString(COLUMN_VOX_USERNAME);
             countryCode = c.getString(COLUMN_COUNTRY_CODE);
@@ -252,6 +256,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
                 if ((match.yoappuser != yoAppUser) ||
                         (match.phone != null && !match.phone.equals(phone)) ||
                         (match.firebaseRoomId != null && !match.firebaseRoomId.equals(roomId)) ||
+                        (match.firebaseUserId != null && !match.firebaseUserId.equals(firebaseUserId)) ||
                         (roomId != null && !roomId.equals(match.firebaseRoomId)) ||
                         (match.name != null && !match.name.equals(name)) ||
                         (match.image != null && !match.image.equals(image)) ||
@@ -264,6 +269,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
                             .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_NAME, match.name)
                             .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE, match.image)
                             .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_FIREBASE_ROOM_ID, match.firebaseRoomId)
+                            .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_FIREBASE_USER_ID, match.firebaseUserId)
                             .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER, match.yoappuser)
                             .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME, match.voxUserName)
                             .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_COUNTRY_CODE, match.countryCode)
@@ -290,6 +296,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
                     .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_PHONE_NUMBER, e.phone)
                     .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IMAGE, e.image)
                     .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_FIREBASE_ROOM_ID, e.firebaseRoomId)
+                    .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_FIREBASE_USER_ID, e.firebaseUserId)
                     .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER, e.yoappuser)
                     .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME, e.voxUserName)
                     .withValue(YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_COUNTRY_CODE, e.countryCode)
@@ -309,7 +316,7 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
         List<Entry> list = new ArrayList<>();
         for (Contact contact : contacts) {
             Entry entry = new Entry(contact.getId(),
-                    contact.getName(), contact.getPhoneNo(), contact.getImage(), contact.getFirebaseRoomId(), contact.isYoAppUser(), contact.getNexgieUserName(), contact.getCountryCode());
+                    contact.getName(), contact.getPhoneNo(), contact.getImage(), contact.getFirebaseRoomId(), contact.isYoAppUser(), contact.getFirebaseUserId(), contact.getNexgieUserName(), contact.getCountryCode());
             list.add(entry);
         }
         return list;
@@ -327,18 +334,21 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
         public final String image;
         public final boolean yoappuser;
         public final String firebaseRoomId;
+        public final String firebaseUserId;
         public final String voxUserName;
         public final String countryCode;
 
-        Entry(String id, String name, String phone, String image, String firebaseRoomId, boolean yoappuser, String voxUserName, String countryCode) {
+        Entry(String id, String name, String phone, String image, String firebaseRoomId, boolean yoappuser, String firebaseUserId, String voxUserName, String countryCode) {
             this.entryId = id;
             this.name = name;
             this.phone = phone;
             this.image = image;
             this.yoappuser = yoappuser;
             this.firebaseRoomId = firebaseRoomId;
+            this.firebaseUserId = firebaseUserId;
             this.voxUserName = voxUserName;
             this.countryCode = countryCode;
+
         }
     }
 

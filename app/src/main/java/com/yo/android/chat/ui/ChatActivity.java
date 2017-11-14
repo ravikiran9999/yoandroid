@@ -50,7 +50,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ChatActivity extends BaseActivity implements View.OnClickListener {
+public class ChatActivity extends BaseActivity implements View.OnClickListener, UserChatFragment.UpdateStatus {
 
     private final String TAG = ChatActivity.this.getClass().getSimpleName();
     private String opponent;
@@ -69,6 +69,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
 
 
     private TextView customTitle;
+    private TextView chatUserStatus;
 
     @Inject
     ContactsSyncManager mContactsSyncManager;
@@ -148,7 +149,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
             }
 
             args.putString(Constants.OPPONENT_ID, room.getYouserId());
-
+            args.putString(Constants.FIREBASE_OPPONENT_USER_ID, room.getFirebaseUserId());
             callUserChat(args, userChatFragment);
         } else if (getIntent().getStringExtra(Constants.TYPE).equalsIgnoreCase(Constants.CONTACT)) {
             final Contact contact = getIntent().getParcelableExtra(Constants.CONTACT);
@@ -194,7 +195,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
                     String contactId = contact.getId() == null ? mContact.getId() : contact.getId();
                     String firebaseRoomId = contact.getFirebaseRoomId() == null ? mContact.getFirebaseRoomId() : contact.getFirebaseRoomId();
                     args.putString(Constants.OPPONENT_ID, contactId);
-                    //args.putString(Constants.CHAT_ROOM_ID, contact.getFirebaseRoomId());
+                    args.putString(Constants.FIREBASE_OPPONENT_USER_ID, contact.getFirebaseUserId());
                     args.putString(Constants.CHAT_ROOM_ID, firebaseRoomId);
                     args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
                     //args.putParcelable(Constants.CONTACT, contact);
@@ -242,9 +243,10 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             getSupportActionBar().setDisplayShowCustomEnabled(true);
 
-            View customView = getLayoutInflater().inflate(R.layout.custom_title, null);
+            View customView = getLayoutInflater().inflate(R.layout.custom_chat_title, null);
             LinearLayout titleView = ButterKnife.findById(customView, R.id.title_view);
             customTitle = ButterKnife.findById(customView, R.id.tv_phone_number);
+            chatUserStatus = ButterKnife.findById(customView, R.id.tv_user_status);
             final ImageView imageView = ButterKnife.findById(customView, R.id.imv_contact_pic);
 
             if (mContact != null) {
@@ -439,4 +441,18 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener {
         customTitle.setText(groupSubject.getUpdatedSubject());
     }
 
+    @Override
+    public void updateUserStatus(final boolean value) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (value) {
+                    chatUserStatus.setText("online");
+                } else {
+                    chatUserStatus.setVisibility(View.GONE);
+                }
+            }
+        });
+
+    }
 }

@@ -12,6 +12,7 @@ public class Constants {
     public static final String OPPONENT_NAME = "opponentName";
     public static final String OPPONENT_ID = "opponentId";
     public static final String CHAT_ROOM_ID = "chatRoomId";
+    public static final String FIREBASE_OPPONENT_USER_ID = "firebaseOpponentUserId";
     public static final String CHAT_FORWARD = "forward";
     public static final String CHAT_SHARE = "share";
 
@@ -181,6 +182,8 @@ public class Constants {
 
     public static final int FETCHING_NEW_ARTICLES_FREQUENCY = 24 * 60 * 60 * 1000;
     public static final String IS_SERVICE_RUNNING = "is_service_running";
+    public static final String IS_ARTICLES_POSTED = "is_articles_posted";
+    public static final String STARTING_SERVICE = "starting_service";
 
     public static final String FAILED = "FAILED";
     public static final String BALANCE = "Balance";

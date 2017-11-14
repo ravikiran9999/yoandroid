@@ -63,6 +63,8 @@ public class YoAppContactContract {
 
         public static final String COLUMN_NAME_FIREBASE_ROOM_ID = "firebase_room_id";
 
+        public static final String COLUMN_NAME_FIREBASE_USER_ID = "firebase_room_id";
+
         public static final String COLUMN_NAME_VOX_USER_NAME = "vox_user_name";
 
         public static final String COLUMN_NAME_COUNTRY_CODE = "country_code";
