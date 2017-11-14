@@ -49,7 +49,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                 Glide.with(mContext)
                         .load(item.getImage())
                         .asBitmap()
-                        .placeholder(R.drawable.img_placeholder)
+                        .placeholder(R.drawable.magazine_backdrop)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate()
                         .into(new SimpleTarget<Bitmap>() {
@@ -61,7 +61,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                                     Glide.with(mContext)
                                             .load(item.getImage())
                                             .override(bmp.getWidth(), bmp.getHeight())
-                                            .placeholder(R.drawable.img_placeholder)
+                                            .placeholder(R.drawable.magazine_backdrop)
                                             .crossFade()
                                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                                             .dontAnimate()
@@ -81,7 +81,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                             .into(holder.getImageView());
                 } else {
                     Glide.with(mContext)
-                            .load(R.drawable.img_placeholder)
+                            .load(R.drawable.magazine_backdrop)
                             .fitCenter()
                             .crossFade()
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -104,7 +104,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                 Glide.with(mContext)
                         .load(item.getImage())
                         .asBitmap()
-                        .placeholder(R.drawable.img_placeholder)
+                        .placeholder(R.drawable.magazine_backdrop)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate()
                         .into(new SimpleTarget<Bitmap>() {
@@ -116,7 +116,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                                     Glide.with(mContext)
                                             .load(item.getImage())
                                             .override(bmp.getWidth(), bmp.getHeight())
-                                            .placeholder(R.drawable.img_placeholder)
+                                            .placeholder(R.drawable.magazine_backdrop)
                                             .crossFade()
                                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                                             .dontAnimate()
@@ -136,7 +136,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                             .into(holder.getImageView());
                 } else {
                     Glide.with(mContext)
-                            .load(R.drawable.img_placeholder)
+                            .load(R.drawable.magazine_backdrop)
                             .fitCenter()
                             .crossFade()
                             .diskCacheStrategy(DiskCacheStrategy.ALL)

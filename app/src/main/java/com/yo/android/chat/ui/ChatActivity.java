@@ -69,7 +69,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
 
 
     private TextView customTitle;
-    private TextView chatUserStatus;
+    public  TextView chatUserStatus;
 
     @Inject
     ContactsSyncManager mContactsSyncManager;
@@ -449,6 +449,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                 if (value) {
                     chatUserStatus.setText("online");
                 } else {
+                    chatUserStatus.setText("false");
                     chatUserStatus.setVisibility(View.GONE);
                 }
             }

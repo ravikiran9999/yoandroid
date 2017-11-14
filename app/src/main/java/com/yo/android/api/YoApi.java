@@ -3,6 +3,8 @@ package com.yo.android.api;
 import com.google.gson.JsonElement;
 import com.yo.android.model.Articles;
 import com.yo.android.model.Categories;
+import com.yo.android.model.ChatMessage;
+import com.yo.android.model.ChatNotificationResponse;
 import com.yo.android.model.Collections;
 import com.yo.android.model.Contact;
 import com.yo.android.model.FindPeople;
@@ -341,6 +343,9 @@ public class YoApi {
         @GET("api/packages.json")
         Call<List<PackageDenomination>> giftPackageDenominationApi(@Query("access_token") String access_token);
 
+        @FormUrlEncoded
+        @POST("api/rooms/store_message.json")
+        Call<ChatNotificationResponse> chatNotificationApi(@Field("access_token") String access_token, @Field("chat") String chatMessage);
     }
 
     public interface YoRefreshTokenService {

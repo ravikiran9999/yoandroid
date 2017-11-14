@@ -77,6 +77,7 @@ import com.yo.android.pjsip.SipHelper;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.UserProfileActivity;
+import com.yo.android.usecase.ChatNotificationUsecase;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 import com.yo.android.util.Util;
@@ -166,6 +167,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Inject
     YoApi.YoService yoService;
 
+    @Inject
+    ChatNotificationUsecase chatNotificationUsecase;
+
     public interface UpdateStatus {
         void updateUserStatus(boolean value);
     }
@@ -202,17 +206,14 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         checkFirebaseUserStatus(authReference, opponentFirebaseUserId, mUpdateStatus);
         //checkFirebaseUserStatus(authReference, opponentFirebaseUserId);
 
-        //mUpdateStatus.updateUserStatus(userStatus);
-        /*String firebaseUserId = preferenceEndPoint.getStringPreference(Constants.FIREBASE_USER_ID);
-        initialiseOnlinePresence(authReference, firebaseUserId);*/
 
         alarmManager();
     }
 
     @Override
-    public void onAttach(Activity activity){
+    public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mUpdateStatus =(UpdateStatus)getActivity();
+        mUpdateStatus = (UpdateStatus) getActivity();
     }
 
     @Override
@@ -662,16 +663,15 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
                 @Override
                 public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                    Activity activity = getActivity();
                     if ((firebaseError != null) && (firebaseError.getCode() == -3)) {
                         authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN), null);
-                        Activity activity = getActivity();
+
                         if (retryMessageCount <= 3) {
                             sendChatMessage(chatMessage);
                             retryMessageCount++;
 
                         } else if (activity != null) {
-                            String firebaseToken = preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN);
-                            String firebaseUserId = preferenceEndPoint.getStringPreference(Constants.FIREBASE_USER_ID);
                             Log.i(TAG, "firebaseToken :: " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
                             Log.i(TAG, "firebase User Id :: " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_USER_ID));
 
@@ -680,7 +680,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     } else {
                         chatMessage.setMessageKey(firebase.getKey());
                         chatMessage.setSent(1);
-
+                        if (activity instanceof ChatActivity && !((ChatActivity) activity).chatUserStatus.getText().equals("online")) {
+                            chatNotificationUsecase.pushChatMessage(chatMessage);
+                        }
                         Map<String, Object> hashtaghMap = new ObjectMapper().convertValue(chatMessage, Map.class);
                         roomChildReference.updateChildren(hashtaghMap);
                         userChatAdapter.notifyDataSetChanged();
@@ -1140,7 +1142,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private void setSmoothScrollPosition(UserChatAdapter chatAdapter, StickyListHeadersListView listView) {
         listView.setVerticalScrollBarEnabled(false);
         int count = chatAdapter.getCount() - 1;
-        Log.i(TAG, String.valueOf(count));
+        //Log.i(TAG, String.valueOf(count));
         listView.setSelection(count);
     }
 }

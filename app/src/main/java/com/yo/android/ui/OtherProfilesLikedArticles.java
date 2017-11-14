@@ -372,13 +372,13 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
 
             final ImageView photoView = holder.articlePhoto;
 
-            photoView.setImageResource(R.drawable.img_placeholder);
+            photoView.setImageResource(R.drawable.magazine_backdrop);
 
             if (data.getImage_filename() != null) {
                 Glide.with(context)
                         .load(data.getImage_filename())
                         .asBitmap()
-                        .placeholder(R.drawable.img_placeholder)
+                        .placeholder(R.drawable.magazine_backdrop)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate()
                         .into(new SimpleTarget<Bitmap>() {
@@ -390,7 +390,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                     Glide.with(context)
                                             .load(data.getImage_filename())
                                             .override(bmp.getWidth(), bmp.getHeight())
-                                            .placeholder(R.drawable.img_placeholder)
+                                            .placeholder(R.drawable.magazine_backdrop)
                                             .crossFade()
                                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                                             .dontAnimate()
@@ -399,7 +399,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                             }
                         });
             } else {
-                photoView.setImageResource(R.drawable.img_placeholder);
+                photoView.setImageResource(R.drawable.magazine_backdrop);
             }
 
             /*Log.d("OthersProfileLiked", "The photoView.getDrawable() is " + photoView.getDrawable());
