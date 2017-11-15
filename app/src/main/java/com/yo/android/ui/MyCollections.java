@@ -1,6 +1,5 @@
 package com.yo.android.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,7 +24,6 @@ import com.yo.android.api.YoApi;
 import com.yo.android.model.Collections;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
-import com.yo.android.util.YODialogs;
 import com.yo.android.video.InAppVideoActivity;
 
 import java.util.ArrayList;
@@ -53,13 +51,14 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
     @Bind(R.id.swipeContainer)
     protected SwipeRefreshLayout swipeRefreshContainer;
 
-    protected SearchView searchView;
     @Inject
     YoApi.YoService yoService;
 
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
+
+    protected SearchView searchView;
     MyCollectionsAdapter myCollectionsAdapter;
     private boolean contextualMenu;
 

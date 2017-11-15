@@ -97,7 +97,7 @@ public class PushNotificationService extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
 
         final Map data = remoteMessage.getData();
-
+        Object titleMessage = data.get("title");
 
         mLog.i(TAG, "From: %s", remoteMessage.getFrom());
         mLog.i(TAG, "onMessageReceived: title- %s and data- %s", data.get("title"), data.get("message"));
@@ -163,7 +163,11 @@ public class PushNotificationService extends FirebaseMessagingService {
                 EventBus.getDefault().post(new NotificationCount(i));
             }
         }
-        setBigStyleNotification(data.get("title").toString(), data.get("message").toString(), data.get("tag").toString(), data.get("id").toString());
+
+        // This is a work around
+        if(!titleMessage.equals("Chat message stored")) {
+            setBigStyleNotification(data.get("title").toString(), data.get("message").toString(), data.get("tag").toString(), data.get("id").toString());
+        }
     }
 
     private void sendChatGroupCreatedNotification(Map data, String message) {
