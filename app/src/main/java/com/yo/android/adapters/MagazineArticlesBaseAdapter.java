@@ -274,16 +274,56 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             holder.rlFullImageOptions.setVisibility(View.GONE);
             holder.articleTitle
                     .setText(AphidLog.format("%s", data.getTitle()));
+
+            final TextView textView = holder.articleTitle;
+
+            ViewTreeObserver vto = textView.getViewTreeObserver();
+            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                private int maxLines = -1;
+
+                @Override
+                public void onGlobalLayout() {
+                    Log.d("BaseAdapter", "First Title " + data.getTitle() + " max lines " + maxLines + " textView.getHeight() " + textView.getHeight() + " textView.getLineHeight() " + textView.getLineHeight());
+                    if (maxLines < 0 && textView.getHeight() > 0 && textView.getLineHeight() > 0) {
+                        int height = textView.getHeight();
+                        int lineHeight = textView.getLineHeight();
+                        maxLines = height / lineHeight;
+                        textView.setMaxLines(maxLines);
+                        textView.setEllipsize(TextUtils.TruncateAt.END);
+                        // Re-assign text to ensure ellipsize is performed correctly.
+                        textView.setText(AphidLog.format("%s", data.getTitle()));
+                    }
+                }
+            });
         }
 
         if (holder.articleShortDesc != null) {
             if (data.getSummary() != null && holder.articleShortDesc != null) {
                 holder.articleShortDesc.setMaxLines(1000);
                 holder.articleShortDesc
-                        .setText(Html.fromHtml(data.getSummary()) + "\n");
+                        .setText(Html.fromHtml(data.getSummary()));
                 Log.d("BaseAdapter", "The text size is " + holder.articleShortDesc.getTextSize());
                 final TextView textView = holder.articleShortDesc;
-                ViewTreeObserver vto = holder.articleShortDesc.getViewTreeObserver();
+
+                ViewTreeObserver vto = textView.getViewTreeObserver();
+                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    private int maxLines = -1;
+
+                    @Override
+                    public void onGlobalLayout() {
+                        if (maxLines < 0 && textView.getHeight() > 0 && textView.getLineHeight() > 0) {
+                            int height = textView.getHeight();
+                            int lineHeight = textView.getLineHeight();
+                            maxLines = height / lineHeight;
+                            textView.setMaxLines(maxLines);
+                            textView.setEllipsize(TextUtils.TruncateAt.END);
+                            // Re-assign text to ensure ellipsize is performed correctly.
+                            textView.setText(Html.fromHtml(data.getSummary()));
+                        }
+                    }
+                });
+
+/*                ViewTreeObserver vto = holder.articleShortDesc.getViewTreeObserver();
                 textView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                     @Override
                     public void onLayoutChange(View v, int left, int top, int right, int bottom,
@@ -298,7 +338,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             textView.setText(Html.fromHtml(data.getSummary()));
                         }
                     }
-                });
+                });*/
                 /*vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
@@ -650,6 +690,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     final TextView articleTitle = holder.articleTitle;
                     final ImageView blackMask = holder.blackMask;
                     final RelativeLayout rlFullImageOptions = holder.rlFullImageOptions;
+                    final TextView textView = holder.articleShortDesc;
+
                     Glide.with(context)
                             .load(data.getImage_filename())
                             .asBitmap()
@@ -686,7 +728,65 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                                 fullImageTitle.setText(articleTitle.getText().toString());
                                                 blackMask.setVisibility(View.VISIBLE);
                                                 rlFullImageOptions.setVisibility(View.VISIBLE);
+
                                             }
+                                        }
+
+                                        if(articleTitle != null) {
+                                            ViewTreeObserver vto1 = articleTitle.getViewTreeObserver();
+                                            vto1.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                                                private int maxLines = -1;
+
+                                                @Override
+                                                public void onGlobalLayout() {
+                                                    Log.d("BaseAdapter", "Second Title " + data.getTitle() + " max lines " + maxLines + " textView.getHeight() " + textView.getHeight() + " textView.getLineHeight() " + textView.getLineHeight());
+                                                    if (maxLines < 0 && articleTitle.getHeight() > 0 && articleTitle.getLineHeight() > 0) {
+                                                        Log.d("BaseAdapter", "Max lines inside if" + maxLines);
+                                                        int height = articleTitle.getHeight();
+                                                        int lineHeight = articleTitle.getLineHeight();
+                                                        maxLines = height / lineHeight;
+                                                        articleTitle.setMaxLines(maxLines);
+                                                        articleTitle.setEllipsize(TextUtils.TruncateAt.END);
+                                                        // Re-assign text to ensure ellipsize is performed correctly.
+                                                        articleTitle.setText(AphidLog.format("%s", data.getTitle()));
+                                                    } else if(maxLines == -1 && articleTitle.getHeight() > 0) {
+                                                        Log.d("BaseAdapter", "Max lines inside else if" + maxLines);
+                                                        articleTitle.setMaxLines(1);
+                                                        articleTitle.setEllipsize(TextUtils.TruncateAt.END);
+                                                        // Re-assign text to ensure ellipsize is performed correctly.
+                                                        articleTitle.setText(AphidLog.format("%s", data.getTitle()));
+                                                    } else if(maxLines == -1 && articleTitle.getHeight() == 0) {
+                                                        Log.d("BaseAdapter", "Full screen image after options cut or not shown");
+                                                        if (fullImageTitle != null && articleTitle != null && blackMask != null && rlFullImageOptions != null) {
+                                                            fullImageTitle.setVisibility(View.VISIBLE);
+                                                            fullImageTitle.setText(articleTitle.getText().toString());
+                                                            blackMask.setVisibility(View.VISIBLE);
+                                                            rlFullImageOptions.setVisibility(View.VISIBLE);
+
+                                                        }
+                                                    }
+                                                }
+                                            });
+                                        }
+
+                                        if(textView != null) {
+                                            ViewTreeObserver vto = textView.getViewTreeObserver();
+                                            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                                                private int maxLines = -1;
+
+                                                @Override
+                                                public void onGlobalLayout() {
+                                                    if (maxLines < 0 && textView.getHeight() > 0 && textView.getLineHeight() > 0) {
+                                                        int height = textView.getHeight();
+                                                        int lineHeight = textView.getLineHeight();
+                                                        maxLines = height / lineHeight;
+                                                        textView.setMaxLines(maxLines);
+                                                        textView.setEllipsize(TextUtils.TruncateAt.END);
+                                                        // Re-assign text to ensure ellipsize is performed correctly.
+                                                        textView.setText(Html.fromHtml(data.getSummary()));
+                                                    }
+                                                }
+                                            });
                                         }
                                     }
                                 }

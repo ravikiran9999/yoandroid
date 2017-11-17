@@ -20,6 +20,7 @@ import java.util.Calendar;
 
 public class StartServiceAtBootReceiver extends BroadcastReceiver {
     private static final String TAG = StartServiceAtBootReceiver.class.getSimpleName();
+    public static PendingIntent pintent;
 
     public void onReceive(Context context, Intent intent) {
         DialerLogs.messageE(TAG, "Service loaded at BOOT_COMPLETED");
@@ -49,7 +50,7 @@ public class StartServiceAtBootReceiver extends BroadcastReceiver {
             cal.set(Calendar.SECOND, 0);
             cal.set(Calendar.MILLISECOND, 0);
             Intent fetchArticlesintent = new Intent(context, FetchNewArticlesService.class);
-            PendingIntent pintent = PendingIntent.getService(context, 1014, fetchArticlesintent,
+            pintent = PendingIntent.getService(context, 1014, fetchArticlesintent,
                     0);
             AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             alarm.setRepeating(AlarmManager.RTC_WAKEUP, (((24 * 60 * 60) - currentTimeInSec) * 1000),

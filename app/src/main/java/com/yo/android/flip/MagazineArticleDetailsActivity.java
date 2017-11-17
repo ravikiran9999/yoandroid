@@ -72,9 +72,10 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
         WebView webview = (WebView) findViewById(R.id.webview);
         webview.getSettings().setJavaScriptEnabled(true);
         webview.getSettings().setAllowContentAccess(true);
-        webview.getSettings().setBuiltInZoomControls(false);
+        webview.getSettings().setBuiltInZoomControls(true);
         webview.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         webview.getSettings().setLoadWithOverviewMode(true);
+        webview.getSettings().setUseWideViewPort(true);
         webview.getSettings().setDomStorageEnabled(true);
 
         CheckBox magazineLike = (CheckBox) findViewById(R.id.cb_magazine_like);

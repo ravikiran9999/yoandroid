@@ -317,7 +317,13 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             tvProgressText.setVisibility(View.GONE);
 
             if (response.body() != null && !response.body().isEmpty()) {
-                myBaseAdapter.addItems(response.body());
+                List<Articles> totalArticlesWithSummary = new ArrayList<Articles>();
+                for(Articles articles : response.body()) {
+                    if(!"...".equalsIgnoreCase(articles.getSummary())) {
+                        totalArticlesWithSummary.add(articles);
+                    }
+                }
+                myBaseAdapter.addItems(totalArticlesWithSummary);
                 mLog.d("Magazines", "lastReadArticle" + lastReadArticle);
                 if (myBaseAdapter.getCount() > lastReadArticle) {
                     flipView.flipTo(lastReadArticle);
@@ -327,7 +333,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("cached_magazines"))) {
                         preferenceEndPoint.removePreference("cached_magazines");
                     }
-                    preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(response.body()));
+                    preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(totalArticlesWithSummary));
                 }
                 if (!isSearch) {
                     if (llNoArticles != null) {

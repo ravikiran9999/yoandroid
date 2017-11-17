@@ -34,6 +34,7 @@ public class FetchNewArticlesService extends Service {
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
+    public static PendingIntent pintent;
 
     public FetchNewArticlesService() {
     }
@@ -52,7 +53,7 @@ public class FetchNewArticlesService extends Service {
         int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
         int currentMin = Calendar.getInstance().get(Calendar.MINUTE); //Current hour
         int currentSec = Calendar.getInstance().get(Calendar.SECOND); //Current hour
-        if (currentHour == 0 && currentMin == 0 && currentSec == 0) {
+        if (currentHour == 1 && currentMin == 0 && currentSec == 0) {
             showTrayNotification();
             preferenceEndPoint.saveBooleanPreference(Constants.IS_SERVICE_RUNNING, true);
             de.greenrobot.event.EventBus.getDefault().post(Constants.START_FETCHING_ARTICLES_ACTION);
@@ -128,7 +129,7 @@ public class FetchNewArticlesService extends Service {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
         Intent intent = new Intent(getApplicationContext(), FetchNewArticlesService.class);
-        PendingIntent pintent = PendingIntent.getService(this, 1014, intent,
+        pintent = PendingIntent.getService(this, 1014, intent,
                 0);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarm.setRepeating(AlarmManager.RTC_WAKEUP, (((24 * 60 * 60) - currentTimeInSec) * 1000),
