@@ -1,6 +1,8 @@
 package com.yo.android.sectionheaders;
 
 import android.app.Activity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.widget.ListView;
 
 import com.cunoraz.tagview.Tag;
@@ -12,10 +14,7 @@ import com.yo.android.model.Categories;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by creatives on 12/20/2016.
- */
-public class CategorizedList {
+public class NewCategorizedList {
 
     /// <summary>
     /// The context.
@@ -24,18 +23,11 @@ public class CategorizedList {
     /// <summary>
     /// The list view.
     /// </summary>
-    private ListView listView;
+    private RecyclerView recyclerView;
     /// <summary>
     /// The section items with headers.
     /// </summary>
     private List<Section> sectionItemsWithHeaders;
-
-
-
-    /// <summary>
-    /// The category adapter.
-    /// </summary>
-    CategoryAdapter categoryAdapter;
 
     CategoriesAdapter categoriesAdapter;
 
@@ -50,9 +42,9 @@ public class CategorizedList {
     /// </summary>
     /// <param name="context">Context.</param>
     /// <param name="listView">List view.</param>
-    public CategorizedList(Activity context, ListView listView, ArrayList<Tag> initialTags, List<Categories> topicsList) {
+    public NewCategorizedList(Activity context, RecyclerView listView, ArrayList<Tag> initialTags, List<Categories> topicsList) {
         this.context = context;
-        this.listView = listView;
+        this.recyclerView = listView;
         sectionItemsWithHeaders = new ArrayList<Section>();
         this.initialTags = initialTags;
         this.topicsList = topicsList;
@@ -63,14 +55,14 @@ public class CategorizedList {
     /// </summary>
     /// <param name="sectionItems">Section items.</param>
     /// <param name="category">Category.</param>
-    public void CreateSectionItems(TagView sectionItems, String category) {
+    public void createSectionItems(TagView sectionItems, String category) {
         List<SectionItem> sectionItemsList = new ArrayList<SectionItem>();
 
         SectionItem sectionItem = new SectionItem();
         sectionItem.setCategoryItem(sectionItems);
         sectionItemsList.add(sectionItem);
 
-        SetItemsWithHeaders(sectionItemsList, category);
+        setItemsWithHeaders(sectionItemsList, category);
 
     }
 
@@ -79,7 +71,7 @@ public class CategorizedList {
     /// </summary>
     /// <param name="sectionItemsList">Section items list.</param>
     /// <param name="header">Header.</param>
-    void SetItemsWithHeaders(List<SectionItem> sectionItemsList, String header) {
+    private void setItemsWithHeaders(List<SectionItem> sectionItemsList, String header) {
         SectionItem sectionItem = new SectionItem();
         sectionItem.setCategory(header);
         Section section = new Section();
@@ -94,30 +86,19 @@ public class CategorizedList {
             sectionHeader.setSectionHeader(header);
             sectionItemsWithHeaders.add(sectionHeader);
         }
-
     }
 
-    /// <summary>
-    /// Loads the category adapter.
-    /// </summary>
-    /// <returns>The category adapter.</returns>
-    public void loadCategoryAdapter() {
-        categoryAdapter = new CategoryAdapter(context, sectionItemsWithHeaders);
-        listView.setAdapter(categoryAdapter);
-    }
-
-    /*public void loadCategoriesAdapter() {
+   /* public void loadCategoriesAdapter() {
         categoriesAdapter = new CategoriesAdapter(context);
         categoriesAdapter.setData(new ArrayList<Object>(sectionItemsWithHeaders));
-        listView.setAdapter(categoryAdapter);
+        categoriesAdapter.notifyDataSetChanged();
+        recyclerView.setAdapter(categoriesAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
     }*/
 
-    public CategoryAdapter getCategoryAdapter() {
-        return categoryAdapter;
+    public CategoriesAdapter getCategoriesAdapter() {
+        return categoriesAdapter;
     }
 
-    public void setAdapterToListView() {
-        listView.setAdapter(categoryAdapter);
-    }
 }

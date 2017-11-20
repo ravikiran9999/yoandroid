@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.usecase.WebserviceUsecase;
 import com.yo.android.api.ApiCallback;
@@ -50,7 +51,11 @@ public class SplashScreenActivity extends BaseActivity {
                 if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_PROFILE_SCREEN)) {
                     startActivity(new Intent(SplashScreenActivity.this, UpdateProfileActivity.class));
                 } else if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
-                    startActivity(new Intent(SplashScreenActivity.this, FollowMoreTopicsActivity.class));
+                    if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                        startActivity(new Intent(SplashScreenActivity.this, FollowMoreTopicsActivity.class));
+                    } else {
+                        startActivity(new Intent(SplashScreenActivity.this, NewFollowMoreTopicsActivity.class));
+                    }
                 } else {
                     startActivity(new Intent(SplashScreenActivity.this, BottomTabsActivity.class));
                 }

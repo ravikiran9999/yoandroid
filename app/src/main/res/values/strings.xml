@@ -278,6 +278,7 @@
     <string name="transfer_success">Transfer Successful</string>
     <string name="transfer_failure">Sorry, Your transaction failed</string>
     <string name="transfer_failure_reason">%1$s please try again</string>
+    <string name="transfer_failure_reason_val">%1$s </string>
     <string name="wallet">WALLET</string>
     <string name="processed">Processed</string>
     <string name="correct_denomination">Please correct the denomination</string>
@@ -285,7 +286,7 @@
     <string name="offers_error_message">Offers are not open today. Please recheck when Offers are on promotion</string>
     <string name="transfer_balance_error_message">Transfter balance is under maintenance, please check after some time</string>
     <string name="phone_number_with_code_plus">+%1$s%2$s</string>
-    <string name="more_than_hundred_error">You can\'t transfer more than 100 at a time.</string>
+    <string name="more_than_hundred_error">You can\'t transfer more than 200 at a time.</string>
 
 
     <string name="invalid_request">Invalid Request.</string>

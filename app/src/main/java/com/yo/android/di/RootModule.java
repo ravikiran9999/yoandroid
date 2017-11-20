@@ -3,6 +3,7 @@ package com.yo.android.di;
 import android.content.Context;
 
 import com.yo.android.chat.ChatRefreshBackground;
+import com.yo.android.ui.NewFollowMoreTopicsActivity;
 import com.yo.android.usecase.ChatNotificationUsecase;
 import com.yo.android.usecase.DenominationsUsecase;
 import com.yo.android.usecase.PackageDenominationsUsecase;
@@ -167,6 +168,7 @@ import dagger.Provides;
                 MoreSettingsActivity.class,
                 UserProfileActivity.class,
                 CountryCodeActivity.class,
+                NewFollowMoreTopicsActivity.class,
 
 
                 InviteActivity.class,

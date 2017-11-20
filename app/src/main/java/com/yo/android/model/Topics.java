@@ -7,6 +7,10 @@ public class Topics {
 
     private String id;
     private String name;
+    private String image;
+    private String videoUrl;
+    private boolean selected;
+
 
     public boolean isSelected() {
         return selected;
@@ -15,8 +19,6 @@ public class Topics {
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
-
-    private boolean selected;
 
     public String getId() {
         return id;
@@ -34,4 +36,19 @@ public class Topics {
         this.name = name;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getVideoUrl() {
+        return videoUrl;
+    }
+
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
+    }
 }

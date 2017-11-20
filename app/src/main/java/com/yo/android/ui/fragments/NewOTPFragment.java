@@ -38,6 +38,7 @@ import com.yo.android.model.Subscriber;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.FollowMoreTopicsActivity;
+import com.yo.android.ui.NewFollowMoreTopicsActivity;
 import com.yo.android.ui.NewOTPActivity;
 import com.yo.android.ui.UpdateProfileActivity;
 import com.yo.android.util.Constants;
@@ -374,11 +375,16 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     dismissProgressDialog();
+                    Intent intent;
                     preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_PROFILE_SCREEN, false);
                     preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, true);
                     preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
                     preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN_AND_VERIFIED, true);
-                    Intent intent = new Intent(getActivity(), FollowMoreTopicsActivity.class);
+                    if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                        intent = new Intent(getActivity(), FollowMoreTopicsActivity.class);
+                    } else {
+                        intent = new Intent(getActivity(), NewFollowMoreTopicsActivity.class);
+                    }
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.putExtra("From", "UpdateProfileActivity");
                     startActivity(intent);

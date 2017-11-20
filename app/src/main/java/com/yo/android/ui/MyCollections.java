@@ -17,6 +17,7 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.adapters.MyCollectionsAdapter;
@@ -190,7 +191,12 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
         } else {
             if (position == 0 && "Follow more topics".equalsIgnoreCase(collections.getName())) {
-                Intent intent = new Intent(MyCollections.this, FollowMoreTopicsActivity.class);
+                Intent intent;
+                if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                    intent = new Intent(MyCollections.this, FollowMoreTopicsActivity.class);
+                } else {
+                    intent = new Intent(MyCollections.this, NewFollowMoreTopicsActivity.class);
+                }
                 intent.putExtra("From", "MyCollections");
                 startActivityForResult(intent, 2);
             } else {

@@ -1,5 +1,6 @@
 package com.yo.android.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,7 +11,7 @@ public class Categories {
     private String id;
     private String name;
     private boolean language_specific;
-    private List<Topics> tags;
+    private ArrayList<Topics> tags;
 
     public String getId() {
         return id;
@@ -36,11 +37,11 @@ public class Categories {
         this.language_specific = language_specific;
     }
 
-    public List<Topics> getTags() {
+    public ArrayList<Topics> getTags() {
         return tags;
     }
 
-    public void setTags(List<Topics> tags) {
+    public void setTags(ArrayList<Topics> tags) {
         this.tags = tags;
     }
 }
