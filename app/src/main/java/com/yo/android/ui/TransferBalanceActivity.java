@@ -227,6 +227,10 @@ public class TransferBalanceActivity extends BaseActivity {
                                     showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
                                     CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, phoneNo, name, "Failed to transfer balance because of " + response.body().getData().toString());
                                     break;
+                                case 617:
+                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_failure), String.format(getString(R.string.transfer_failure_reason), response.body().getData().toString()), R.drawable.transaction_failed_icon, false);
+                                    CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, phoneNo, name, "Failed to transfer balance because of " + response.body().getData().toString());
+                                    break;
                                 default:
                                     if(response.body().getData() != null) {
                                         mToastFactory.showToast(response.body().getData().toString());

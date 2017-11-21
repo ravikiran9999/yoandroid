@@ -333,6 +333,9 @@ public class YoApi {
         @GET("api/categories.json")
         Call<List<Categories>> categoriesAPI(@Query("access_token") String access_token);
 
+        @GET("api/categories.json")
+        Call<List<Categories>> categoriesAPI(@Query("access_token") String access_token, @Query("is_for_tiles") boolean tiles);
+
         @FormUrlEncoded
         @POST("api/user/user_magzines_info.json")
         Call<Lock> lockAPI(@Field("access_token") String access_token);

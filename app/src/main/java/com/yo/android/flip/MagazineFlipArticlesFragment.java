@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.util.ConnectivityHelper;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.api.YoApi;
@@ -34,6 +35,7 @@ import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.helpers.MagazinePreferenceEndPoint;
 import com.yo.android.model.Articles;
 import com.yo.android.ui.FollowMoreTopicsActivity;
+import com.yo.android.ui.NewFollowMoreTopicsActivity;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.util.ArticlesComparator;
 import com.yo.android.util.Constants;
@@ -216,7 +218,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         followMoreTopics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), FollowMoreTopicsActivity.class);
+                Intent intent;
+                if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                    intent = new Intent(getActivity(), FollowMoreTopicsActivity.class);
+                } else {
+                    intent = new Intent(getActivity(), NewFollowMoreTopicsActivity.class);
+                }
                 intent.putExtra("From", "Magazines");
                 startActivity(intent);
             }

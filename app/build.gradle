@@ -95,6 +95,7 @@ android {
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://enhancement-94ccd.appspot.com\""
             buildConfigField "String", "FIREBASE_URL", "\"https://enhancement-94ccd.firebaseio.com\""
             buildConfigField "boolean", "NEW_YO_CREDIT_SCREEN", "true"
+            buildConfigField "boolean", "NEW_FOLLOW_MORE_TOPICS", "true"
             minSdkVersion 18
         }
 
