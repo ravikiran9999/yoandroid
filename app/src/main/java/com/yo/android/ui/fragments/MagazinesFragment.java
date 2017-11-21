@@ -263,7 +263,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
         prepareTopicsSearch(menu);
-        boolean renewalStatus = preferenceEndPoint.getBooleanPreference(Constants.RENEWAL, false);
+        boolean renewalStatus = preferenceEndPoint.getBooleanPreference(Constants.MAGAZINE_LOCK, false);
         switch (item.getItemId()) {
             case R.id.menu_move_to_first :
                 mMagazineFlipArticlesFragment.getLandingCachedArticles();

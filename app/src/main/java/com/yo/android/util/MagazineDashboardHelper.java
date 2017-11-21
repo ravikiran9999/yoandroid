@@ -355,7 +355,7 @@ public class MagazineDashboardHelper {
         if (totalArticles != null) {
             switch (errorCode) {
                 case 200:
-                    preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, true);
+                    preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, false);
                     if (magazineFlipArticlesFragment.getActivity() != null) {
                         removeReadIds(totalArticles, magazineFlipArticlesFragment.getActivity(), preferenceEndPoint);
                     }
@@ -442,7 +442,7 @@ public class MagazineDashboardHelper {
     }
 
     private void renewMagazines(@StringRes int message, Activity activity, int id, PreferenceEndPoint preferenceEndPoint, MagazineFlipArticlesFragment magazineFlipArticlesFragment, List<Articles> totalArticles, final List<Articles> unreadOtherFollowedArticles, List<Articles> followedArticlesList) {
-        preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, false);
+        preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, true);
         if (id != DASHBOARD_ARTICLES_DAILY_SERVICE) {
             YODialogs.renewMagazine(activity, magazineFlipArticlesFragment, message, preferenceEndPoint);
         }

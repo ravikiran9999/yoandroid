@@ -402,7 +402,7 @@
     <string name="app_call">APP CALL</string>
 
     <string name="auto_renewal">Enable auto-renewal</string>
-    <string name="renewal_message">Please renew to see magaziwnes </string>
+    <string name="renewal_message">Please renew to see magazines </string>
     <string name="renewal_error_message">Uh! something went wrong. Please try again </string>
     <string name="no_sufficient_bal_wallet">You don\'t have sufficient balance in wallet. Please add balance.</string>
     <string name="add">ADD</string>
