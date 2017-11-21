@@ -370,9 +370,10 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
+        // hide search icon
+        /*MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_search, menu);
-        prepareTagSearch(this, menu);
+        prepareTagSearch(this, menu);*/
         return super.onCreateOptionsMenu(menu);
     }
 
