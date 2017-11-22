@@ -974,7 +974,9 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 dismissProgressDialog();
                 if (response.body() != null && response.body().size() > 0) {
                     for (int i = 0; i < response.body().size(); i++) {
-                        articlesHashSet.add(response.body().get(i));
+                        if(!"...".equalsIgnoreCase(response.body().get(i).getSummary())) {
+                            articlesHashSet.add(response.body().get(i));
+                        }
                     }
                     articlesList = new ArrayList<Articles>(articlesHashSet);
                     articlesList.addAll(cachedArticlesList);
@@ -1056,7 +1058,9 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 dismissProgressDialog();
                 if (response.body().getArticlesList() != null && response.body().getArticlesList().size() > 0) {
                     for (int i = 0; i < response.body().getArticlesList().size(); i++) {
-                        articlesHashSet.add(response.body().getArticlesList().get(i));
+                        if(!"...".equalsIgnoreCase(response.body().getArticlesList().get(i).getSummary())) {
+                            articlesHashSet.add(response.body().getArticlesList().get(i));
+                        }
                     }
                     articlesList = new ArrayList<Articles>(articlesHashSet);
                     articlesList.addAll(cachedArticlesList);

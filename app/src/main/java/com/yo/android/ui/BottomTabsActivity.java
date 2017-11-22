@@ -174,7 +174,6 @@ public class BottomTabsActivity extends BaseActivity {
         service.setAction(CallExtras.REGISTER);
         startService(service);
 
-
         // Handle application crash
         Thread.setDefaultUncaughtExceptionHandler(new YOExceptionHandler(this));
         if (getIntent().getBooleanExtra("crash", false)) {
@@ -354,7 +353,7 @@ public class BottomTabsActivity extends BaseActivity {
             int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
             int currentMin = Calendar.getInstance().get(Calendar.MINUTE); //Current hour
             int currentSec = Calendar.getInstance().get(Calendar.SECOND); //Current hour
-            startServiceToFetchNewArticles(currentHour * 60 * 60 + currentMin * 60 + currentSec);
+            startServiceToFetchNewArticles((currentHour * 60 * 60) + (currentMin * 60) + currentSec);
         }
 
 
@@ -564,6 +563,10 @@ public class BottomTabsActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat mdformat = new SimpleDateFormat("yyyy / MM / dd ");
+        String savedDate = mdformat.format(calendar.getTime());
+        preferenceEndPoint.saveStringPreference(Constants.SAVED_TIME, savedDate);
         Fragment fragment = getFragment();
         boolean handle = fragment instanceof BaseFragment && ((BaseFragment) fragment).onBackPressHandle();
         if (handle) {
@@ -904,15 +907,28 @@ public class BottomTabsActivity extends BaseActivity {
     private void startServiceToFetchNewArticles(int currentTimeInSec) {
         // Start service using AlarmManager
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, 0);
+        /*cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);*/
+        long currenttime =  cal.getTimeInMillis();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 1);
+        calendar.set(Calendar.MINUTE, 0);
+        long settime = calendar.getTimeInMillis();
+
+        long differencetime = settime -  currenttime;
+        int dif=(int)differencetime/1000;
+
+        cal.set(Calendar.SECOND, calendar.get(Calendar.SECOND) + dif);
+
         Intent intent = new Intent(getAppContext(), FetchNewArticlesService.class);
         pintent = PendingIntent.getService(this, 1014, intent,
                 0);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarm.setRepeating(AlarmManager.RTC_WAKEUP, (((24 * 60 * 60) - currentTimeInSec) * 1000),
+        /*alarm.setRepeating(AlarmManager.RTC_WAKEUP, (((24 * 60 * 60) - currentTimeInSec) * 1000),
+                AlarmManager.INTERVAL_DAY, pintent);*/
+        alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, pintent);
     }
 

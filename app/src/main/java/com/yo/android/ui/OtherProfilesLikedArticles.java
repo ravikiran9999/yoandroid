@@ -141,7 +141,9 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                         if (noArticals != null) {
                             noArticals.setVisibility(View.GONE);
                         }
-                        articlesList.add(response.body().get(i));
+                        if(!"...".equalsIgnoreCase(response.body().get(i).getSummary())) {
+                            articlesList.add(response.body().get(i));
+                        }
                     }
                     myBaseAdapter.addItems(articlesList);
                 } else {

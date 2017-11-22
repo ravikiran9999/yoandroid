@@ -20,14 +20,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
+import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.ui.BaseActivity;
+import com.yo.android.util.YODialogs;
+import com.yo.android.vox.BalanceHelper;
 import com.yo.dialer.CallExtras;
 import com.yo.dialer.DialerHelper;
 import com.yo.dialer.DialerLogs;
 import com.yo.dialer.Dialogs;
+
+import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -88,6 +94,8 @@ class CallBaseActivity extends BaseActivity {
     private boolean isIncoming;
     protected View mInComingHeader;
     protected View mOutgoingCallHeader;
+    @Inject
+    protected BalanceHelper mBalanceHelper;
 
 
     public boolean isIncoming() {
@@ -200,13 +208,31 @@ class CallBaseActivity extends BaseActivity {
         }
     }
 
-    public void onEventMainThread(int type) {
-        if (type == CallExtras.StatusCode.YO_NORMAL_PHONE_INCOMING_CALL) {
-            sipBinder.getYOHandler().setHold(true);
-            CallControls.getCallControlsModel().setHoldOn(true);
-        } else if (type == CallExtras.StatusCode.YO_NORMAL_PHONE_INCOMING_CALL_DISCONNECTED) {
-            sipBinder.getYOHandler().setHold(false);
-            CallControls.getCallControlsModel().setHoldOn(false);
+    public void onEventMainThread(Object type) {
+        if (type instanceof Integer) {
+            if (type == Integer.valueOf(CallExtras.StatusCode.YO_NORMAL_PHONE_INCOMING_CALL)) {
+                sipBinder.getYOHandler().setHold(true);
+                CallControls.getCallControlsModel().setHoldOn(true);
+            } else if (type == Integer.valueOf(CallExtras.StatusCode.YO_NORMAL_PHONE_INCOMING_CALL_DISCONNECTED)) {
+                sipBinder.getYOHandler().setHold(false);
+                CallControls.getCallControlsModel().setHoldOn(false);
+            }
+        } else if (type instanceof OpponentDetails) {
+            DialerLogs.messageI(TAG, "Service not available or user not found so PSTN dialog");
+            OpponentDetails opponentDetails = (OpponentDetails) type;
+            if (opponentDetails != null && opponentDetails.getContact().getNexgieUserName() != null && opponentDetails.getContact().getNexgieUserName().contains(BuildConfig.RELEASE_USER_TYPE)) {
+                if (opponentDetails.getStatusCode() == CallExtras.StatusCode.YO_INV_STATE_CALLEE_NOT_ONLINE) {
+                    YODialogs.redirectToPSTN(EventBus.getDefault(), this, opponentDetails, preferenceEndPoint, mBalanceHelper, mToastFactory);
+                }
+            } else if (opponentDetails != null && opponentDetails.getVoxUserName() != null) {
+                //This case is phone number is not save in his device bu the callee is voxuser
+                opponentDetails.getContact().setNexgieUserName(opponentDetails.getVoxUserName());
+
+
+                if (opponentDetails.getStatusCode() == CallExtras.StatusCode.YO_INV_STATE_CALLEE_NOT_ONLINE) {
+                    YODialogs.redirectToPSTN(EventBus.getDefault(), this, opponentDetails, preferenceEndPoint, mBalanceHelper, mToastFactory);
+                }
+            }
         }
     }
 
@@ -275,7 +301,9 @@ class CallBaseActivity extends BaseActivity {
         if ("Forbidden".equals(reason)) {
             Dialogs.recharge(this);
         } else {
-            finish();
+            if(!"Service not available/User not online".equals(reason)) {
+                finish();
+            }
         }
     }
 

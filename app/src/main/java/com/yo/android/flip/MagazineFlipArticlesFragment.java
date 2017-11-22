@@ -44,8 +44,12 @@ import com.yo.android.util.YODialogs;
 
 import java.lang.reflect.Type;
 import java.net.UnknownHostException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
@@ -324,7 +328,13 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             tvProgressText.setVisibility(View.GONE);
 
             if (response.body() != null && !response.body().isEmpty()) {
-                myBaseAdapter.addItems(response.body());
+                List<Articles> totalArticlesWithSummary = new ArrayList<Articles>();
+                for(Articles articles : response.body()) {
+                    if(!"...".equalsIgnoreCase(articles.getSummary())) {
+                        totalArticlesWithSummary.add(articles);
+                    }
+                }
+                myBaseAdapter.addItems(totalArticlesWithSummary);
                 mLog.d("Magazines", "lastReadArticle" + lastReadArticle);
                 if (myBaseAdapter.getCount() > lastReadArticle) {
                     flipView.flipTo(lastReadArticle);
@@ -334,7 +344,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference("cached_magazines"))) {
                         preferenceEndPoint.removePreference("cached_magazines");
                     }
-                    preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(response.body()));
+                    preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(totalArticlesWithSummary));
                 }
                 if (!isSearch) {
                     if (llNoArticles != null) {
@@ -522,6 +532,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         } else if (Constants.START_FETCHING_ARTICLES_ACTION.equals(action)) {
             //isFetchArticlesPosted = true;
             preferenceEndPoint.saveBooleanPreference(Constants.IS_ARTICLES_POSTED, true);
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat mdformat = new SimpleDateFormat("yyyy / MM / dd ");
+            String savedDate = mdformat.format(calendar.getTime());
+            preferenceEndPoint.saveStringPreference(Constants.SAVED_TIME, savedDate);
             callDailyArticlesService(null);
         } else if (Constants.RENEWAL.equalsIgnoreCase(action)) {
             loadArticles(null, true);
@@ -689,7 +703,28 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                             }
                         }*/
                     }
+
+                    Calendar calendar = Calendar.getInstance();
+                    SimpleDateFormat mdformat = new SimpleDateFormat("yyyy / MM / dd ");
+                    String currentDateString = mdformat.format(calendar.getTime());
+                    String savedDateString = preferenceEndPoint.getStringPreference(Constants.SAVED_TIME);
+
+
+                    if(!TextUtils.isEmpty(savedDateString)) {
+                        try {
+                            Date currentDate = mdformat.parse(currentDateString);
+                            Date savedDate = mdformat.parse(savedDateString);
+                            if(currentDate.compareTo(savedDate) > 0) {
+                                preferenceEndPoint.saveBooleanPreference(Constants.IS_ARTICLES_POSTED, true);
+                                callDailyArticlesService(null);
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                     if(preferenceEndPoint.getBooleanPreference(Constants.IS_SERVICE_RUNNING) && !preferenceEndPoint.getBooleanPreference(Constants.IS_ARTICLES_POSTED)) {
+                        preferenceEndPoint.saveBooleanPreference(Constants.IS_ARTICLES_POSTED, true);
                         callDailyArticlesService(null);
                     }
                 } else {

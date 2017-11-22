@@ -122,7 +122,9 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                             if (noArticals != null) {
                                 noArticals.setVisibility(View.GONE);
                             }
-                            articlesList.add(response.body().getArticlesList().get(i));
+                                if(!"...".equalsIgnoreCase(response.body().getArticlesList().get(i).getSummary())) {
+                                    articlesList.add(response.body().getArticlesList().get(i));
+                                }
                         }
                         myBaseAdapter.addItems(articlesList);
                     } else {

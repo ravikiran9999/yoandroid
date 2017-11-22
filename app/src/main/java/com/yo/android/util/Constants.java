@@ -184,6 +184,7 @@ public class Constants {
     public static final String IS_SERVICE_RUNNING = "is_service_running";
     public static final String IS_ARTICLES_POSTED = "is_articles_posted";
     public static final String STARTING_SERVICE = "starting_service";
+    public static final String SAVED_TIME = "saved_time";
 
     public static final String FAILED = "FAILED";
     public static final String BALANCE = "Balance";

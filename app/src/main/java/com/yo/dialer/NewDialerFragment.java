@@ -336,7 +336,7 @@ public class NewDialerFragment extends BaseFragment implements SharedPreferences
             } /*else if (action.equals(Constants.BALANCE_RECHARGE_ACTION)) {
                 Dialogs.recharge(activity);
             }*/
-        } else if (action instanceof OpponentDetails) {
+        } /*else if (action instanceof OpponentDetails) {
             DialerLogs.messageI(TAG, "Service not available or user not found so PSTN dialog");
             OpponentDetails opponentDetails = (OpponentDetails) action;
             if (opponentDetails != null && opponentDetails.getContact().getNexgieUserName() != null && opponentDetails.getContact().getNexgieUserName().contains(BuildConfig.RELEASE_USER_TYPE)) {
@@ -352,7 +352,7 @@ public class NewDialerFragment extends BaseFragment implements SharedPreferences
                     YODialogs.redirectToPSTN(bus, getActivity(), opponentDetails, preferenceEndPoint, mBalanceHelper, mToastFactory);
                 }
             }
-        }
+        }*/
     }
 
     @Override

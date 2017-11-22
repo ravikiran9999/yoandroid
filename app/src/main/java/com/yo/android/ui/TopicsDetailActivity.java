@@ -108,7 +108,9 @@ public class TopicsDetailActivity extends BaseActivity {
                 dismissProgressDialog();
                 if (response.body() != null && response.body().size() > 0) {
                     for (int i = 0; i < response.body().size(); i++) {
-                        articlesList.add(response.body().get(i));
+                        if(!"...".equalsIgnoreCase(response.body().get(i).getSummary())) {
+                            articlesList.add(response.body().get(i));
+                        }
                     }
                     myBaseAdapter.addItems(articlesList);
                 } else {
