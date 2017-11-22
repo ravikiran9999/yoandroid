@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.yo.android.widgets.SquareItemLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_divider"
+    android:gravity="center"
+    android:layout_margin="@dimen/xxsmall_margin"
+    android:orientation="vertical"
+    android:id="@+id/sq_layout">
+
+    <ImageView
+        android:id="@+id/img_magazine"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
+
+    <TextView android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:ellipsize="end"
+        android:textColor="@android:color/holo_red_dark"/>
+
+    <ImageView android:id="@+id/imv_magazine_tick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_magazine_red_tick"
+        android:layout_gravity="right"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"/>
+
+</com.yo.android.widgets.SquareItemLinearLayout>

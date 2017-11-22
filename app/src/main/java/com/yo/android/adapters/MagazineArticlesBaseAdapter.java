@@ -40,6 +40,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ToastFactory;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
@@ -52,6 +53,7 @@ import com.yo.android.ui.BitmapScaler;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.DeviceDimensionsHelper;
 import com.yo.android.ui.FollowMoreTopicsActivity;
+import com.yo.android.ui.NewFollowMoreTopicsActivity;
 import com.yo.android.ui.NewImageRenderTask;
 import com.yo.android.ui.OtherProfilesLikedArticles;
 import com.yo.android.ui.TopicsDetailActivity;
@@ -819,7 +821,12 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             followMoreTopics.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, FollowMoreTopicsActivity.class);
+                    Intent intent;
+                    if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                        intent = new Intent(context, FollowMoreTopicsActivity.class);
+                    } else {
+                        intent = new Intent(context, NewFollowMoreTopicsActivity.class);
+                    }
                     intent.putExtra("From", "Magazines");
                     context.startActivity(intent);
                 }
@@ -976,7 +983,12 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             holder.tvFollowMoreTopics.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, FollowMoreTopicsActivity.class);
+                    Intent intent;
+                    if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                        intent = new Intent(context, FollowMoreTopicsActivity.class);
+                    } else {
+                        intent = new Intent(context, NewFollowMoreTopicsActivity.class);
+                    }
                     intent.putExtra("From", "Magazines");
                     context.startActivity(intent);
                 }
@@ -1556,7 +1568,12 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             followMoreTopics.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, FollowMoreTopicsActivity.class);
+                    Intent intent;
+                    if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                        intent = new Intent(context, FollowMoreTopicsActivity.class);
+                    } else {
+                        intent = new Intent(context, NewFollowMoreTopicsActivity.class);
+                    }
                     intent.putExtra("From", "Magazines");
                     context.startActivity(intent);
                 }

@@ -151,11 +151,11 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
         });
 
         if (item.isYoAppUser()) {
-            holder.getMessageView().setImageResource(R.drawable.ic_message);
-            holder.getCallView().setImageResource(R.drawable.yo_call_free);
+            holder.getMessageView().setImageResource(R.drawable.ic_new_chat);
+            holder.getCallView().setImageResource(R.drawable.yo_call_free_new_icon);
         } else {
             holder.getMessageView().setImageResource(R.drawable.ic_invitefriends);
-            holder.getCallView().setImageResource(R.drawable.ic_receiver);
+            holder.getCallView().setImageResource(R.drawable.ic_new_call);
         }
 
     }
