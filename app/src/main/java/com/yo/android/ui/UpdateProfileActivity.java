@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.orion.android.common.util.ToastFactory;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.helpers.Helper;
@@ -277,7 +278,12 @@ public class UpdateProfileActivity extends BaseActivity {
                     preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN_AND_VERIFIED, true);
                     preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
                     Util.saveUserDetails(response, preferenceEndPoint);
-                    Intent intent = new Intent(UpdateProfileActivity.this, FollowMoreTopicsActivity.class);
+                    Intent intent;
+                    if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                        intent = new Intent(UpdateProfileActivity.this, FollowMoreTopicsActivity.class);
+                    } else {
+                        intent = new Intent(UpdateProfileActivity.this, NewFollowMoreTopicsActivity.class);
+                    }
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.putExtra("From", "UpdateProfileActivity");
                     startActivity(intent);
@@ -285,7 +291,9 @@ public class UpdateProfileActivity extends BaseActivity {
                 } else {
                     if (response.code() == 422) {
                         toastFactory.showToast(getResources().getString(R.string.invalid_username));
-                    } else {
+                    } else if (response.code() == 500) {
+                        toastFactory.showToast(getResources().getString(R.string.internal_server_error));
+                    }else {
                         toastFactory.showToast(getResources().getString(R.string.profile_failed));
                     }
                 }

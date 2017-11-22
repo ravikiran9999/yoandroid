@@ -263,13 +263,13 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
         prepareTopicsSearch(menu);
-        boolean renewalStatus = preferenceEndPoint.getBooleanPreference(Constants.RENEWAL, false);
+        boolean renewalStatus = preferenceEndPoint.getBooleanPreference(Constants.MAGAZINE_LOCK, false);
         switch (item.getItemId()) {
             case R.id.menu_move_to_first :
                 mMagazineFlipArticlesFragment.getLandingCachedArticles();
                 break;
             case R.id.menu_create_magazines:
-                if (renewalStatus) {
+                if (!renewalStatus) {
                     Intent createMagazinesIntent = new Intent(getActivity(), CreateMagazineActivity.class);
                     startActivity(createMagazinesIntent);
                 } else {
@@ -277,7 +277,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 }
                 break;
             case R.id.menu_my_collections:
-                if (renewalStatus) {
+                if (!renewalStatus) {
                     Intent myCollectionsIntent = new Intent(getActivity(), MyCollections.class);
                     startActivity(myCollectionsIntent);
                 } else {
@@ -290,7 +290,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 startActivity(findPeopleIntent);
                 break;
             case R.id.menu_followers:
-                if (renewalStatus) {
+                if (!renewalStatus) {
                     Intent followersIntent = new Intent(getActivity(), FollowersActivity.class);
                     startActivity(followersIntent);
                 } else {
@@ -298,7 +298,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 }
                 break;
             case R.id.menu_wish_list:
-                if (renewalStatus) {
+                if (!renewalStatus) {
                     Intent wishListIntent = new Intent(getActivity(), WishListActivity.class);
                     startActivity(wishListIntent);
                 } else {
@@ -306,7 +306,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 }
                 break;
             case R.id.menu_followings:
-                if (renewalStatus) {
+                if (!renewalStatus) {
                     Intent followingstIntent = new Intent(getActivity(), FollowingsActivity.class);
                     startActivity(followingstIntent);
                 } else {

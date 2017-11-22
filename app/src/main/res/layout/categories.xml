@@ -25,8 +25,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="@dimen/medium_padding"
-            android:paddingTop="@dimen/medium_padding">
+            android:paddingBottom="@dimen/xxxxsmall_padding"
+            android:paddingTop="@dimen/xxxxsmall_padding">
 
 
             <TextView
@@ -38,7 +38,8 @@
                 android:layout_toLeftOf="@+id/checkbox"
                 android:layout_toStartOf="@+id/checkbox"
                 android:textColor="@color/colorPrimary"
-                android:textSize="18sp"
+                android:textSize="24sp"
+                android:textStyle="bold"
                 tools:text="English" />
 
             <CheckBox
