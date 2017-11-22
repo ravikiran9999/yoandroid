@@ -330,6 +330,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     private void makeCall(Intent intent) {
         if (!mHelper.isConnected()) {
+            SipHelper.isAlreadyStarted = false;
             mToastFactory.showToast(getResources().getString(R.string.connectivity_network_settings));
             return;
         }
