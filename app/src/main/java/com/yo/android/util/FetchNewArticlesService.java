@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.text.TextUtilsCompat;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -47,13 +49,16 @@ public class FetchNewArticlesService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("FetchNewArticlesService", "FetchNewArticlesService Started");
+        if(TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME))) {
+                 stopSelf();
+        }
         preferenceEndPoint.saveBooleanPreference(Constants.IS_SERVICE_RUNNING, false);
         preferenceEndPoint.saveBooleanPreference(Constants.IS_ARTICLES_POSTED, false);
         preferenceEndPoint.saveBooleanPreference(Constants.STARTING_SERVICE, true);
         int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
         int currentMin = Calendar.getInstance().get(Calendar.MINUTE); //Current hour
         int currentSec = Calendar.getInstance().get(Calendar.SECOND); //Current hour
-        if (currentHour == 1 && currentMin == 0 && currentSec == 0) {
+        if (currentHour == 1) {
             showTrayNotification();
             preferenceEndPoint.saveBooleanPreference(Constants.IS_SERVICE_RUNNING, true);
             de.greenrobot.event.EventBus.getDefault().post(Constants.START_FETCHING_ARTICLES_ACTION);
@@ -118,21 +123,30 @@ public class FetchNewArticlesService extends Service {
         alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
                 Constants.FETCHING_NEW_ARTICLES_FREQUENCY, pintent);*/
 
-        int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
-        int currentMin = Calendar.getInstance().get(Calendar.MINUTE); //Current hour
-        int currentSec = Calendar.getInstance().get(Calendar.SECOND); //Current hour
-        int currentTimeInSec = currentHour * 60 * 60 + currentMin * 60 + currentSec;
         // Start service using AlarmManager
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, 0);
+        /*cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);*/
+        long currenttime =  cal.getTimeInMillis();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 1);
+        calendar.set(Calendar.MINUTE, 0);
+        long settime = calendar.getTimeInMillis();
+
+        long differencetime = settime -  currenttime;
+        int dif=(int)differencetime/1000;
+
+        cal.set(Calendar.SECOND, calendar.get(Calendar.SECOND) + dif);
+
         Intent intent = new Intent(getApplicationContext(), FetchNewArticlesService.class);
         pintent = PendingIntent.getService(this, 1014, intent,
                 0);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarm.setRepeating(AlarmManager.RTC_WAKEUP, (((24 * 60 * 60) - currentTimeInSec) * 1000),
+        /*alarm.setRepeating(AlarmManager.RTC_WAKEUP, (((24 * 60 * 60) - currentTimeInSec) * 1000),
+                AlarmManager.INTERVAL_DAY, pintent);*/
+        alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, pintent);
     }
 

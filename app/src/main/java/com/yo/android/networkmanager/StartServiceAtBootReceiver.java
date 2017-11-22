@@ -39,21 +39,30 @@ public class StartServiceAtBootReceiver extends BroadcastReceiver {
             context.startService(service);
             Log.v(TAG, "Service loaded at start");
 
-            int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
-            int currentMin = Calendar.getInstance().get(Calendar.MINUTE); //Current hour
-            int currentSec = Calendar.getInstance().get(Calendar.SECOND); //Current hour
-            int currentTimeInSec = currentHour * 60 * 60 + currentMin * 60 + currentSec;
             // Start service using AlarmManager
             Calendar cal = Calendar.getInstance();
-            cal.set(Calendar.HOUR_OF_DAY, 0);
-            cal.set(Calendar.MINUTE, 0);
-            cal.set(Calendar.SECOND, 0);
-            cal.set(Calendar.MILLISECOND, 0);
-            Intent fetchArticlesintent = new Intent(context, FetchNewArticlesService.class);
-            pintent = PendingIntent.getService(context, 1014, fetchArticlesintent,
+        /*cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);*/
+            long currenttime =  cal.getTimeInMillis();
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, 1);
+            calendar.set(Calendar.MINUTE, 0);
+            long settime = calendar.getTimeInMillis();
+
+            long differencetime = settime -  currenttime;
+            int dif=(int)differencetime/1000;
+
+            cal.set(Calendar.SECOND, calendar.get(Calendar.SECOND) + dif);
+
+            Intent fetchArticlesIntent = new Intent(context, FetchNewArticlesService.class);
+            pintent = PendingIntent.getService(context, 1014, fetchArticlesIntent,
                     0);
             AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            alarm.setRepeating(AlarmManager.RTC_WAKEUP, (((24 * 60 * 60) - currentTimeInSec) * 1000),
+        /*alarm.setRepeating(AlarmManager.RTC_WAKEUP, (((24 * 60 * 60) - currentTimeInSec) * 1000),
+                AlarmManager.INTERVAL_DAY, pintent);*/
+            alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
                     AlarmManager.INTERVAL_DAY, pintent);
         }
     }

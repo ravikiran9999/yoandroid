@@ -49,6 +49,7 @@ import com.yo.android.helpers.PopupHelper;
 import com.yo.android.model.MoreData;
 import com.yo.android.model.Popup;
 import com.yo.android.model.UserProfileInfo;
+import com.yo.android.networkmanager.StartServiceAtBootReceiver;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.ui.AccountDetailsActivity;
@@ -411,16 +412,26 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                                     preferenceEndPoint.clearAll();
                                     MagazineFlipArticlesFragment.lastReadArticle = 0;
                                     //getActivity().stopService(new Intent(getActivity(), FetchNewArticlesService.class));
-                                    Intent serviceIntent = new Intent(BottomTabsActivity.getAppContext(), FetchNewArticlesService.class);
+                                    //Intent serviceIntent = new Intent(BottomTabsActivity.getAppContext(), FetchNewArticlesService.class);
                                     //PendingIntent sender = PendingIntent.getBroadcast(getActivity(), 1014, serviceIntent, 0);
-                                    AlarmManager alarmManager = (AlarmManager) BottomTabsActivity.getAppContext().getSystemService(Context.ALARM_SERVICE);
-                                    if (getActivity() != null) {
+                                    if(getActivity() != null) {
+                                        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+                                   /* if (getActivity() != null) {
                                         getActivity().stopService(serviceIntent);
-                                    }
-                                    try {
-                                        alarmManager.cancel(BottomTabsActivity.pintent);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
+                                    }*/
+                                        try {
+                                            if(BottomTabsActivity.pintent != null) {
+                                                alarmManager.cancel(BottomTabsActivity.pintent);
+                                            }
+                                            if(FetchNewArticlesService.pintent != null) {
+                                                alarmManager.cancel(FetchNewArticlesService.pintent);
+                                            }
+                                            if(StartServiceAtBootReceiver.pintent != null) {
+                                                alarmManager.cancel(StartServiceAtBootReceiver.pintent);
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
                                     }
                                     //stop firebase service
                                     //getActivity().stopService(new Intent(getActivity(), FirebaseService.class));
