@@ -698,7 +698,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             .load(data.getImage_filename())
                             .asBitmap()
                             .placeholder(R.drawable.magazine_backdrop)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            //.diskCacheStrategy(DiskCacheStrategy.ALL)
                             .dontAnimate()
                             .into(new SimpleTarget<Bitmap>() {
                                 @Override
