@@ -1,11 +1,13 @@
 package com.yo.android.util;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
@@ -45,6 +47,7 @@ import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
 import com.yo.android.chat.notification.localnotificationsbuilder.Notifications;
@@ -1045,5 +1048,24 @@ public class Util {
                 return true;
             }
         });
+    }
+
+    public static boolean isAppRunning(final Context context) {
+        String packageName = BuildConfig.APPLICATION_ID;
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        final List<ActivityManager.RunningAppProcessInfo> processInfos;
+        if (am != null) {
+            processInfos = am.getRunningAppProcesses();
+            if (processInfos != null)
+            {
+                for (final ActivityManager.RunningAppProcessInfo processInfo : processInfos) {
+                    if (processInfo.processName.equals(packageName)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 }

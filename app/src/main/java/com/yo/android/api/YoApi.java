@@ -349,6 +349,10 @@ public class YoApi {
         @FormUrlEncoded
         @POST("api/rooms/store_message.json")
         Call<ChatNotificationResponse> chatNotificationApi(@Field("access_token") String access_token, @Field("chat") String chatMessage);
+
+        @FormUrlEncoded
+        @POST("api/tags/random_tags.json")
+        Call<List<Categories>> randomTagsAPI(@Query("access_token") String access_token);
     }
 
     public interface YoRefreshTokenService {

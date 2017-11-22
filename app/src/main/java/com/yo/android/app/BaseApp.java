@@ -1,11 +1,16 @@
 package com.yo.android.app;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -123,6 +128,7 @@ public class BaseApp extends MultiDexApplication {
             @Override
             public void onResult(Firebase result) {
                 String firebaseUserId = preferenceEndPoint.getStringPreference(Constants.FIREBASE_USER_ID);
+
                 initialiseOnlinePresence(result, firebaseUserId);
             }
 
@@ -134,7 +140,7 @@ public class BaseApp extends MultiDexApplication {
 
     }
 
-    public void initialiseOnlinePresence(Firebase databaseReference, String userId) {
+    private void initialiseOnlinePresence(Firebase databaseReference, String userId) {
         try {
             final Firebase onlineRef = databaseReference.child(".info/connected");
             final Firebase currentUserRef = databaseReference.child(Constants.USERS + "/" + userId + "/" + Constants.PROFILE).child("presence");
@@ -164,5 +170,4 @@ public class BaseApp extends MultiDexApplication {
             Log.e(TAG, "Firebase error :" + e.getMessage());
         }
     }
-
 }

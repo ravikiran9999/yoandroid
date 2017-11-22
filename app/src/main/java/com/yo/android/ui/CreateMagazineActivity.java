@@ -3,8 +3,10 @@ package com.yo.android.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -34,7 +36,7 @@ import retrofit2.Response;
 /**
  * This activity is used to display the user's created magazines in a GridView
  */
-public class CreateMagazineActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class CreateMagazineActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, AbsListView.OnScrollListener {
 
     @Bind(R.id.swipeContainer)
     protected SwipeRefreshLayout swipeRefreshContainer;
@@ -247,5 +249,21 @@ public class CreateMagazineActivity extends BaseActivity implements SwipeRefresh
     @Override
     public void onRefresh() {
         createMagazine(swipeRefreshContainer);
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+        if(firstVisibleItem >= 2) {
+            swipeRefreshContainer.setEnabled(false);
+            swipeRefreshContainer.setRefreshing(false);
+        } else if(firstVisibleItem == 0) {
+            swipeRefreshContainer.setEnabled(true);
+        }
+
     }
 }

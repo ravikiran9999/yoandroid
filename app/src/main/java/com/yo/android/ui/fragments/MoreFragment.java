@@ -536,7 +536,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             String balance = mBalanceHelper.getCurrentBalance();
             //String currencySymbol = mBalanceHelper.getCurrencySymbol();
             if (balanceAdapter != null) {
-                balanceAdapter.getItem(0).setName(String.format("Yo Credit %s", balance));
+                balanceAdapter.getItem(0).setName(String.format(getString(R.string.your_yo_balance_without_line_break), balance));
                 balanceAdapter.notifyDataSetChanged();
             }
         } else if (key.equals(Constants.USER_NAME)) {

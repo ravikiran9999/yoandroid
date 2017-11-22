@@ -6,15 +6,18 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.BuildConfig;
@@ -43,7 +46,9 @@ import retrofit2.Response;
 /**
  * This activity is used to display the followed topics
  */
-public class MyCollections extends BaseActivity implements AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class MyCollections extends BaseActivity implements AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener, AbsListView.OnScrollListener {
+
+    public static final String TAG = MyCollections.class.getSimpleName();
 
     @Bind(R.id.create_magazines_gridview)
     protected GridView gridView;
@@ -62,6 +67,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
     protected SearchView searchView;
     MyCollectionsAdapter myCollectionsAdapter;
     private boolean contextualMenu;
+    private int initialVisiblePosition;
 
 
     @Override
@@ -81,15 +87,16 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
         myCollections(null);
 
-
+        initialVisiblePosition = gridView.getFirstVisiblePosition();
         swipeRefreshContainer.setOnRefreshListener(this);
         gridView.setOnItemLongClickListener(this);
         gridView.setOnItemClickListener(this);
+        gridView.setOnScrollListener(this);
     }
 
     public void myCollections(final SwipeRefreshLayout swipeRefreshContainer) {
         if (swipeRefreshContainer != null) {
-            swipeRefreshContainer.setRefreshing(false);
+            swipeRefreshContainer.setRefreshing(true);
         } else {
             showProgressDialog();
         }
@@ -506,5 +513,21 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
     @Override
     public void onRefresh() {
         myCollections(swipeRefreshContainer);
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+        if(firstVisibleItem >= 2) {
+            swipeRefreshContainer.setEnabled(false);
+            swipeRefreshContainer.setRefreshing(false);
+        } else if(firstVisibleItem == 0) {
+            swipeRefreshContainer.setEnabled(true);
+        }
+
     }
 }
