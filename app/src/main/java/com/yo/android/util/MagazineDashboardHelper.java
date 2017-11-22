@@ -70,7 +70,13 @@ public class MagazineDashboardHelper {
                     request = 1;
                     if (response.body() != null) {
                         List<Articles> totalArticles = getTotalArticles(response.body());
-                        showDialog(response.body().getCode(), DASHBOARD_ARTICLES, preferenceEndPoint, magazineFlipArticlesFragment, totalArticles, null, null);
+                        List<Articles> totalArticlesWithSummary = new ArrayList<Articles>();
+                        for(Articles articles : totalArticles) {
+                            if(!"...".equalsIgnoreCase(articles.getSummary())) {
+                              totalArticlesWithSummary.add(articles);
+                            }
+                        }
+                        showDialog(response.body().getCode(), DASHBOARD_ARTICLES, preferenceEndPoint, magazineFlipArticlesFragment, totalArticlesWithSummary, null, null);
 
                     } else {
                         magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
@@ -159,7 +165,13 @@ public class MagazineDashboardHelper {
 
                     if (response.body() != null) {
                         List<Articles> totalArticles = getTotalArticles(response.body());
-                        showDialog(response.body().getCode(), MORE_DASHBOARD_ARTICLES, preferenceEndPoint, magazineFlipArticlesFragment, totalArticles, null, null);
+                        List<Articles> totalArticlesWithSummary = new ArrayList<Articles>();
+                        for(Articles articles : totalArticles) {
+                            if(!"...".equalsIgnoreCase(articles.getSummary())) {
+                                totalArticlesWithSummary.add(articles);
+                            }
+                        }
+                        showDialog(response.body().getCode(), MORE_DASHBOARD_ARTICLES, preferenceEndPoint, magazineFlipArticlesFragment, totalArticlesWithSummary, null, null);
                     } else {
                         magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                         magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
@@ -229,7 +241,13 @@ public class MagazineDashboardHelper {
 
                     if (response.body() != null) {
                         List<Articles> totalArticles = getTotalArticles(response.body());
-                        showDialog(response.body().getCode(), DASHBOARD_ARTICLES_AFTER_FOLLOW, preferenceEndPoint, magazineFlipArticlesFragment, totalArticles, null, null);
+                        List<Articles> totalArticlesWithSummary = new ArrayList<Articles>();
+                        for(Articles articles : totalArticles) {
+                            if(!"...".equalsIgnoreCase(articles.getSummary())) {
+                                totalArticlesWithSummary.add(articles);
+                            }
+                        }
+                        showDialog(response.body().getCode(), DASHBOARD_ARTICLES_AFTER_FOLLOW, preferenceEndPoint, magazineFlipArticlesFragment, totalArticlesWithSummary, null, null);
                     } else {
                         magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                         magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
@@ -284,7 +302,13 @@ public class MagazineDashboardHelper {
 
                     if (response.body() != null) {
                         List<Articles> totalArticles = getTotalArticles(response.body());
-                        showDialog(response.body().getCode(), DASHBOARD_ARTICLES_DAILY_SERVICE, preferenceEndPoint, magazineFlipArticlesFragment, totalArticles, null, null);
+                        List<Articles> totalArticlesWithSummary = new ArrayList<Articles>();
+                        for(Articles articles : totalArticles) {
+                            if(!"...".equalsIgnoreCase(articles.getSummary())) {
+                                totalArticlesWithSummary.add(articles);
+                            }
+                        }
+                        showDialog(response.body().getCode(), DASHBOARD_ARTICLES_DAILY_SERVICE, preferenceEndPoint, magazineFlipArticlesFragment, totalArticlesWithSummary, null, null);
                     } else {
                         magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                         magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);

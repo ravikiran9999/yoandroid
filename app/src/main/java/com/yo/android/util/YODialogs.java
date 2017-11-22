@@ -261,7 +261,7 @@ public class YODialogs {
                         }
                     }
                     alertDialog.dismiss();
-                    //activity.finish();
+                    activity.finish();
                 }
             });
 
@@ -270,7 +270,7 @@ public class YODialogs {
                 public void onClick(View v) {
                     alertDialog.dismiss();
                     bus.post(DialerFragment.REFRESH_CALL_LOGS);
-                    //activity.finish();
+                    activity.finish();
                 }
             });
         }

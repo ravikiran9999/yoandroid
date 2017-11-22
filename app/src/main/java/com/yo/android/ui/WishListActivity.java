@@ -95,7 +95,9 @@ public class WishListActivity extends BaseActivity {
                             noArticals.setVisibility(View.GONE);
                             llNoWishlist.setVisibility(View.GONE);
                         }
-                        articlesList.add(response.body().get(i));
+                        if(!"...".equalsIgnoreCase(response.body().get(i).getSummary())) {
+                            articlesList.add(response.body().get(i));
+                        }
                     }
                     myBaseAdapter.addItems(articlesList);
                 } else {
