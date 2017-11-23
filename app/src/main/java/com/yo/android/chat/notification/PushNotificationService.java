@@ -38,6 +38,7 @@ import com.yo.android.model.NotificationCount;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.NotificationsActivity;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 import com.yo.dialer.DialerConfig;
 import com.yo.dialer.YoSipService;
 import com.yo.dialer.googlesheet.UploadCallDetails;
@@ -98,6 +99,7 @@ public class PushNotificationService extends FirebaseMessagingService {
 
         final Map data = remoteMessage.getData();
         Object titleMessage = data.get("title");
+        boolean showBigStyle = true;
 
         mLog.i(TAG, "From: %s", remoteMessage.getFrom());
         mLog.i(TAG, "onMessageReceived: title- %s and data- %s", data.get("title"), data.get("message"));
@@ -114,7 +116,10 @@ public class PushNotificationService extends FirebaseMessagingService {
         } else if(data.get("tag").equals("Chat") && data.get("title").equals("Chat message stored")) {
             String chatMessageString = data.get("chat_message").toString();
             ChatMessage chatMessage = new Gson().fromJson(chatMessageString, ChatMessage.class);
-            newPushNotification(chatMessage.getRoomId(), chatMessage);
+            if(!Util.isAppRunning(this)) {
+                showBigStyle = false;
+                newPushNotification(chatMessage.getRoomId(), chatMessage);
+            }
         }else if (data.get("tag").equals("Chat")) {
             //update UI , if chat is opened.
             ChatRefreshBackground.getInstance().doRefresh(getApplicationContext(), data.get("firebase_room_id").toString());
@@ -165,7 +170,7 @@ public class PushNotificationService extends FirebaseMessagingService {
         }
 
         // This is a work around
-        if(!titleMessage.equals("Chat message stored")) {
+        if(showBigStyle) {
             setBigStyleNotification(data.get("title").toString(), data.get("message").toString(), data.get("tag").toString(), data.get("id").toString());
         }
     }
