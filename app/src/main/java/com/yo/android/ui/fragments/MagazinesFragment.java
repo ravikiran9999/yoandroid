@@ -209,7 +209,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
      */
     private void callApiSearchTopics() {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-
+        Call<List<Topics>> call = yoService.tagsAPI(accessToken);
         yoService.tagsAPI(accessToken).enqueue(new Callback<List<Topics>>() {
             @Override
             public void onResponse(Call<List<Topics>> call, Response<List<Topics>> response) {
