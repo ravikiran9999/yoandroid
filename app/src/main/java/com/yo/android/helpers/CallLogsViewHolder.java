@@ -17,8 +17,8 @@ public class CallLogsViewHolder extends AbstractViewHolder {
     TextView opponentName;
     @Bind(R.id.header)
     TextView header;
-    @Bind(R.id.tv_time_stamp)
-    TextView timeStamp;
+/*    @Bind(R.id.tv_time_stamp)
+    TextView timeStamp;*/
     @Bind(R.id.tv_date_time)
     TextView dateTimeStamp;
     @Bind(R.id.iv_message_type)
@@ -95,9 +95,9 @@ public class CallLogsViewHolder extends AbstractViewHolder {
         return opponentName;
     }
 
-    public TextView getTimeStamp() {
+    /*public TextView getTimeStamp() {
         return timeStamp;
-    }
+    }*/
 
     public ImageView getCallIcon() {
         return callIcon;

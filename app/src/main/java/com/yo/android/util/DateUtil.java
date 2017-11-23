@@ -24,6 +24,7 @@ public class DateUtil {
     public final static String DATE_FORMAT2 = "MMM dd, yyyy hh:mm a";
     public final static String DATE_FORMAT1 = "yyyy-MM-dd HH:mm:ss";
     public final static String DATE_FORMAT8 = "MMM dd, yyyy";
+    public final static String DATE_FORMAT9 = "MMM dd yyyy";
 
 
 
