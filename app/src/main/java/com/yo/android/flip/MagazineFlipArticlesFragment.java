@@ -1196,7 +1196,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 for (int i = 0; i <= currentFlippedPosition; i++) {
                     if(myBaseAdapter.getItem(i) != null) {
                         String articleId = myBaseAdapter.getItem(i).getId();
-                        Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
+                        //Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
 
                         readIds.add(articleId);
                     }
@@ -1292,7 +1292,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             for (int i = 0; i <= currentFlippedPosition; i++) {
                 if (myBaseAdapter.getItem(i) != null) {
                     String articleId = myBaseAdapter.getItem(i).getId();
-                    Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
+                    //Log.d("FlipArticlesFragment", "Article Id is " + articleId + "currentFlippedPosition " + currentFlippedPosition + " Article Name is " + myBaseAdapter.getItem(currentFlippedPosition).getTitle() + " Articles size " + myBaseAdapter.getCount());
 
                     readIds.add(articleId);
                 }
@@ -1368,16 +1368,38 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 }
             }*/
             if (totalOtherUnreadArticles.size() > 0) {
-                totalOtherUnreadArticles.addAll(totalOtherUnreadArticles.size() - 1, randomTopicArticles);
+                if(followedUnreadTopicArticles1.isEmpty()) {
+                    if (totalOtherUnreadArticles.size() > positionToAdd) {
+                        if(positionToAdd == 0) {
+                            totalOtherUnreadArticles.addAll(positionToAdd, randomTopicArticles);
+                        } else {
+                            totalOtherUnreadArticles.addAll(currentFlippedPosition + positionToAdd, randomTopicArticles);
+                        }
+                    } else {
+                        if (totalOtherUnreadArticles.size() > 0) {
+                            totalOtherUnreadArticles.addAll(0, randomTopicArticles);
+                        }
+                    }
+                } else {
+                    totalOtherUnreadArticles.addAll(totalOtherUnreadArticles.size() - 1, randomTopicArticles);
+                }
+                //totalOtherUnreadArticles.addAll(totalOtherUnreadArticles.size() - 1, randomTopicArticles);
             }
         }
 
-        articlesList.removeAll(totalOtherUnreadArticles);
-        myBaseAdapter.removeItems(totalOtherUnreadArticles);
-        myBaseAdapter.removeItems(articlesList);
-        myBaseAdapter.clear();
-        myBaseAdapter.addItems(totalOtherUnreadArticles);
-        myBaseAdapter.notifyDataSetChanged();
+        if(currentFlippedPosition == 0) {
+            articlesList.removeAll(totalOtherUnreadArticles);
+            myBaseAdapter.removeItems(totalOtherUnreadArticles);
+            myBaseAdapter.removeItems(articlesList);
+            myBaseAdapter.clear();
+            myBaseAdapter.addItems(totalOtherUnreadArticles);
+            myBaseAdapter.notifyDataSetChanged();
+        } else {
+            articlesList.removeAll(totalOtherUnreadArticles);
+            myBaseAdapter.removeItems(totalOtherUnreadArticles);
+            myBaseAdapter.addItemsAll(totalOtherUnreadArticles);
+            myBaseAdapter.notifyDataSetChanged();
+        }
 
         handleMoreDashboardResponse(totalOtherUnreadArticles, false, true);
         deleteExtraArticlesFromCache();

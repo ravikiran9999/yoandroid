@@ -285,7 +285,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
                 @Override
                 public void onGlobalLayout() {
-                    Log.d("BaseAdapter", "First Title " + data.getTitle() + " max lines " + maxLines + " textView.getHeight() " + textView.getHeight() + " textView.getLineHeight() " + textView.getLineHeight());
+                    //Log.d("BaseAdapter", "First Title " + data.getTitle() + " max lines " + maxLines + " textView.getHeight() " + textView.getHeight() + " textView.getLineHeight() " + textView.getLineHeight());
                     if (maxLines < 0 && textView.getHeight() > 0 && textView.getLineHeight() > 0) {
                         int height = textView.getHeight();
                         int lineHeight = textView.getLineHeight();
@@ -304,7 +304,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 holder.articleShortDesc.setMaxLines(1000);
                 holder.articleShortDesc
                         .setText(Html.fromHtml(data.getSummary()));
-                Log.d("BaseAdapter", "The text size is " + holder.articleShortDesc.getTextSize());
+                //Log.d("BaseAdapter", "The text size is " + holder.articleShortDesc.getTextSize());
                 final TextView textView = holder.articleShortDesc;
 
                 ViewTreeObserver vto = textView.getViewTreeObserver();
@@ -715,13 +715,13 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                                 .dontAnimate()
                                                 .into(photoView);
                                         int screenHeight = DeviceDimensionsHelper.getDisplayHeight(context);
-                                        Log.d("BaseAdapter", "screenHeight " + screenHeight);
+                                        //Log.d("BaseAdapter", "screenHeight " + screenHeight);
                                        /*int spaceForImage = screenHeight - 120;
                                        Log.d("BaseAdapter", "spaceForImage" + spaceForImage);*/
-                                        Log.d("BaseAdapter", "bmp.getHeight()" + bmp.getHeight());
+                                        //Log.d("BaseAdapter", "bmp.getHeight()" + bmp.getHeight());
                                         int total = bmp.getHeight() + 120;
                                         //if(bmp.getHeight() >= spaceForImage-30) {
-                                        Log.d("BaseAdapter", "total" + total);
+                                        //Log.d("BaseAdapter", "total" + total);
                                         if (screenHeight - total <= 250) {
 
                                             Log.d("BaseAdapter", "Full screen image");
@@ -741,9 +741,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
                                                 @Override
                                                 public void onGlobalLayout() {
-                                                    Log.d("BaseAdapter", "Second Title " + data.getTitle() + " max lines " + maxLines + " textView.getHeight() " + textView.getHeight() + " textView.getLineHeight() " + textView.getLineHeight());
+                                                    //Log.d("BaseAdapter", "Second Title " + data.getTitle() + " max lines " + maxLines + " textView.getHeight() " + textView.getHeight() + " textView.getLineHeight() " + textView.getLineHeight());
                                                     if (maxLines < 0 && articleTitle.getHeight() > 0 && articleTitle.getLineHeight() > 0) {
-                                                        Log.d("BaseAdapter", "Max lines inside if" + maxLines);
+                                                        //Log.d("BaseAdapter", "Max lines inside if" + maxLines);
                                                         int height = articleTitle.getHeight();
                                                         int lineHeight = articleTitle.getLineHeight();
                                                         maxLines = height / lineHeight;
@@ -752,13 +752,13 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                                         // Re-assign text to ensure ellipsize is performed correctly.
                                                         articleTitle.setText(AphidLog.format("%s", data.getTitle()));
                                                     } else if(maxLines == -1 && articleTitle.getHeight() > 0) {
-                                                        Log.d("BaseAdapter", "Max lines inside else if" + maxLines);
+                                                        //Log.d("BaseAdapter", "Max lines inside else if" + maxLines);
                                                         articleTitle.setMaxLines(1);
                                                         articleTitle.setEllipsize(TextUtils.TruncateAt.END);
                                                         // Re-assign text to ensure ellipsize is performed correctly.
                                                         articleTitle.setText(AphidLog.format("%s", data.getTitle()));
                                                     } else if(maxLines == -1 && articleTitle.getHeight() == 0) {
-                                                        Log.d("BaseAdapter", "Full screen image after options cut or not shown");
+                                                       // Log.d("BaseAdapter", "Full screen image after options cut or not shown");
                                                         if (fullImageTitle != null && articleTitle != null && blackMask != null && rlFullImageOptions != null) {
                                                             fullImageTitle.setVisibility(View.VISIBLE);
                                                             fullImageTitle.setText(articleTitle.getText().toString());
