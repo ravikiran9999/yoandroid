@@ -308,6 +308,10 @@ public class BottomTabsActivity extends BaseActivity {
                     // End the timed event, when the user navigates away from Magazines tab
                     FlurryAgent.endTimedEvent("Magazines");
                     lastFragmentPosition = position;
+                    Calendar calendar = Calendar.getInstance();
+                    SimpleDateFormat mdformat = new SimpleDateFormat("yyyy / MM / dd ");
+                    String savedDate = mdformat.format(calendar.getTime());
+                    preferenceEndPoint.saveStringPreference(Constants.SAVED_TIME, savedDate);
                 } else if (lastFragmentPosition == 1) {
                     mLog.d(TAG, "Leaving Chats tab");
                     // End the timed event, when the user navigates away from Chats tab
