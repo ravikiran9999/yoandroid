@@ -343,12 +343,12 @@ public class TransferBalanceActivity extends BaseActivity {
                             String format = df.format(Double.valueOf(mBalanceHelper.getCurrentBalance()));
                             preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, format);
                             tvBalance.setText(String.format("%s%s", currencySymbol, format));
-                            double val = Double.parseDouble(format.trim());
+/*                            double val = Double.parseDouble(format.trim());
                             if (val <= 2) {
                                 mLog.w("TransferBalanceActivity", "Current balance is less than or equal to $2");
                                 Util.setBigStyleNotificationForBalance(TransferBalanceActivity.this, "Credit", "You are having insufficient balance in your account. Please add balance.", "Credit", "");
 
-                            }
+                            }*/
                         } catch (IllegalArgumentException e) {
                         }
                     }
