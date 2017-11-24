@@ -439,5 +439,6 @@
         <item quantity="other">Delete %1$s messages.</item>
     </plurals>
     <string name="delete_chat_without_network">Unable to delete, Please check your network connection.</string>
+    <string name="unable_to_fetch_new_articles">Unable to connect to fetch new articles, Please check your network connection.</string>
 
 </resources>
