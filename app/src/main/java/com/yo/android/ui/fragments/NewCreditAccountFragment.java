@@ -511,7 +511,7 @@ public class NewCreditAccountFragment extends BaseFragment {
                 editText.setText(selectedValue);
             }
         });
-        processed.setText(getResources().getString(R.string.processed));
+        processed.setText(getResources().getString(R.string.give));
 
 
         final AlertDialog alert = builder.create();

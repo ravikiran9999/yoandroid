@@ -306,9 +306,20 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
 
             }*/
 
-            if (selectedTopics != null && !selectedTopics.isEmpty()) {
-                followedTopicsIdsList.addAll(selectedTopics);
+            for(Object object : getCategoriesAdapter().getData()) {
+                if(object instanceof CategoriesAccordionSection) {
+                    for (Topics topics : ((CategoriesAccordionSection) object).getTags()) {
+                        if (topics.isSelected()) {
+                            followedTopicsIdsList.add(topics.getId());
+                        }
+
+                    }
+                }
             }
+
+            /*if (selectedTopics != null && !selectedTopics.isEmpty()) {
+                followedTopicsIdsList.addAll(selectedTopics);
+            }*/
 
             showProgressDialog();
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
