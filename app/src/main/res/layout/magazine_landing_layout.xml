@@ -151,7 +151,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="1"
                 android:background="@color/white"
-                android:scaleType="fitXY"
+                android:scaleType="centerCrop"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"/>
 
@@ -279,7 +279,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1"
                     android:background="@color/white"
-                    android:scaleType="fitXY"
+                    android:scaleType="centerCrop"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"></ImageView>
 

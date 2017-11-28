@@ -183,7 +183,9 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
             mSyncManager.setContacts(allContacts);
             loadAlphabetOrder(contactList);
             //To get newly added contacts - after loading from cache loading for new contacts.
-            syncContactsFromServer();
+            if(mHelper.isConnected()) {
+                syncContactsFromServer();
+            }
         }
     }
 
@@ -254,7 +256,7 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
             public void onFailure(Call<List<Contact>> call, Throwable t) {
                 dismissProgressDialog();
                 noSearchResult.setVisibility(View.VISIBLE);
-                llTabsLayout.setVisibility(View.GONE);
+                //llTabsLayout.setVisibility(View.GONE);
                 FragmentActivity activity = getActivity();
                 if (activity != null) {
                     noSearchResult.setText(activity.getResources().getString(R.string.connectivity_network_settings));
@@ -307,14 +309,16 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
                 getActivity().invalidateOptionsMenu();
                 if (btnAllContacts.getCurrentTextColor() == getResources().getColor(R.color.contacts_selected_red)) {
                     loadAlphabetOrder(allContacts);
+                    contactsListAdapter.updateItems(allContacts);
                 } else {
                     List<Contact> onlyYoUsers = filterYoContacts(allContacts);
                     updateYoUsers(onlyYoUsers);
+                    contactsListAdapter.updateItems(onlyYoUsers);
                 }
                 return true;
             }
         });
-        contactsListAdapter.updateItems(allContacts);
+        //contactsListAdapter.updateItems(allContacts);
         Util.prepareContactsSearch(getActivity(), menu, contactsListAdapter, Constants.CONT_FRAG, noSearchResult, null);
         searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
         if (item.getItemId() == R.id.invite) {

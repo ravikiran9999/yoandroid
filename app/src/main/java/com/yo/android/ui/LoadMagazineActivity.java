@@ -57,6 +57,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
     private String tag;
     private Button btnPost;
     private boolean isPostClicked;
+    private WebView webview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +72,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
 
         etUrl = (EditText) findViewById(R.id.et_enter_url);
         atvMagazineTag = (AutoCompleteTextView) findViewById(R.id.atv_enter_tag);
-        final WebView webview = (WebView) findViewById(R.id.webview);
+        webview = (WebView) findViewById(R.id.webview);
         webview.getSettings().setJavaScriptEnabled(true);
 
         btnPost = (Button) findViewById(R.id.imv_magazine_post);
@@ -98,7 +99,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
                 mToastFactory.showToast("Please enter a valid url");
-                btnPost.setVisibility(View.INVISIBLE);
+                //btnPost.setVisibility(View.INVISIBLE);
                 isInvalidUrl = true;
                 etUrl.post(new Runnable()
                 {
@@ -114,7 +115,8 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                 super.onPageFinished(view, url);
                 dismissProgressDialog();
                 if(!isInvalidUrl) {
-                    btnPost.setVisibility(View.VISIBLE);
+                    //btnPost.setVisibility(View.VISIBLE);
+                    btnPost.setText("Post");
                 }
             }
         });
@@ -122,69 +124,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
         atvMagazineTag.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE) || (actionId == EditorInfo.IME_ACTION_GO) || (actionId == EditorInfo.IME_ACTION_NEXT)) {
-                    url = etUrl.getText().toString();
-                    tag = atvMagazineTag.getText().toString();
-                    if (!TextUtils.isEmpty(url.trim())  && !TextUtils.isEmpty(tag.trim())) {
-
-                        isInvalidUrl = false;
-
-                        if (!url.contains("http://")) {
-                            if(!url.contains("https://")) {
-                                url = "http://" + url;
-                            }
-                            if (Patterns.WEB_URL.matcher(url).matches()) {
-                                webview.loadUrl(url);
-                            } else {
-                                Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
-                                mToastFactory.showToast("Please enter a valid url");
-                                btnPost.setVisibility(View.INVISIBLE);
-                                etUrl.post(new Runnable()
-                                {
-                                    public void run()
-                                    {
-                                        etUrl .requestFocus();
-                                    }
-                                });
-                            }
-                        } else {
-                            if (Patterns.WEB_URL.matcher(url).matches()) {
-                                webview.loadUrl(url);
-                            } else {
-                                Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
-                                mToastFactory.showToast("Please enter a valid url");
-                                btnPost.setVisibility(View.INVISIBLE);
-                                etUrl.post(new Runnable()
-                                {
-                                    public void run()
-                                    {
-                                        etUrl .requestFocus();
-                                    }
-                                });
-                            }
-                        }
-                    } else if(TextUtils.isEmpty(url.trim())) {
-                        Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
-                        mToastFactory.showToast("Please enter a url");
-                        btnPost.setVisibility(View.INVISIBLE);
-                        etUrl.post(new Runnable()
-                        {
-                            public void run()
-                            {
-                                etUrl .requestFocus();
-                            }
-                        });
-                    } else {
-                        Util.hideKeyboard(LoadMagazineActivity.this, atvMagazineTag);
-                        mToastFactory.showToast("Please enter a tag");
-                        btnPost.setVisibility(View.INVISIBLE);
-                        atvMagazineTag.post(new Runnable()
-                        {
-                            public void run()
-                            {
-                                atvMagazineTag .requestFocus();
-                            }
-                        });
-                    }
+                    loadOrPostUrl(webview);
                 }
                 return false;
             }
@@ -193,20 +133,51 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
         btnPost.setOnClickListener(this);
     }
 
-    @Override
-    public void onClick(View v) {
+    private void loadOrPostUrl(WebView webview) {
+        url = etUrl.getText().toString();
+        tag = atvMagazineTag.getText().toString();
+        if (!TextUtils.isEmpty(url.trim())  && !TextUtils.isEmpty(tag.trim())) {
 
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        if(!TextUtils.isEmpty(url.trim()) && !TextUtils.isEmpty(tag.trim())) {
-            if (magazineId != null) {
-                addStoryToExistingMagazine(accessToken);
+            isInvalidUrl = false;
+
+            if (!url.contains("http://")) {
+                if(!url.contains("https://")) {
+                    url = "http://" + url;
+                }
+                if (Patterns.WEB_URL.matcher(url).matches()) {
+                    webview.loadUrl(url);
+                } else {
+                    Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
+                    mToastFactory.showToast("Please enter a valid url");
+                    //btnPost.setVisibility(View.INVISIBLE);
+                    etUrl.post(new Runnable()
+                    {
+                        public void run()
+                        {
+                            etUrl .requestFocus();
+                        }
+                    });
+                }
             } else {
-                createMagazineWithStory(accessToken);
+                if (Patterns.WEB_URL.matcher(url).matches()) {
+                    webview.loadUrl(url);
+                } else {
+                    Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
+                    mToastFactory.showToast("Please enter a valid url");
+                    //btnPost.setVisibility(View.INVISIBLE);
+                    etUrl.post(new Runnable()
+                    {
+                        public void run()
+                        {
+                            etUrl .requestFocus();
+                        }
+                    });
+                }
             }
         } else if(TextUtils.isEmpty(url.trim())) {
             Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
             mToastFactory.showToast("Please enter a url");
-            btnPost.setVisibility(View.INVISIBLE);
+            //btnPost.setVisibility(View.INVISIBLE);
             etUrl.post(new Runnable()
             {
                 public void run()
@@ -217,7 +188,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
         } else {
             Util.hideKeyboard(LoadMagazineActivity.this, atvMagazineTag);
             mToastFactory.showToast("Please enter a tag");
-            btnPost.setVisibility(View.INVISIBLE);
+            //btnPost.setVisibility(View.INVISIBLE);
             atvMagazineTag.post(new Runnable()
             {
                 public void run()
@@ -225,6 +196,42 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                     atvMagazineTag .requestFocus();
                 }
             });
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        if(((Button)v).getText().equals("Load")) {
+            loadOrPostUrl(webview);
+        } else {
+
+            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            if (!TextUtils.isEmpty(url.trim()) && !TextUtils.isEmpty(tag.trim())) {
+                if (magazineId != null) {
+                    addStoryToExistingMagazine(accessToken);
+                } else {
+                    createMagazineWithStory(accessToken);
+                }
+            } else if (TextUtils.isEmpty(url.trim())) {
+                Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
+                mToastFactory.showToast("Please enter a url");
+                //btnPost.setVisibility(View.INVISIBLE);
+                etUrl.post(new Runnable() {
+                    public void run() {
+                        etUrl.requestFocus();
+                    }
+                });
+            } else {
+                Util.hideKeyboard(LoadMagazineActivity.this, atvMagazineTag);
+                mToastFactory.showToast("Please enter a tag");
+                //btnPost.setVisibility(View.INVISIBLE);
+                atvMagazineTag.post(new Runnable() {
+                    public void run() {
+                        atvMagazineTag.requestFocus();
+                    }
+                });
+            }
         }
     }
 
