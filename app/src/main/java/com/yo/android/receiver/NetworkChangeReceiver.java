@@ -19,6 +19,6 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         int status = NetworkUtil.getConnectivityStatusString(context);
-        //tabsHeaderActivity.showNetworkStatus(status);
+        tabsHeaderActivity.showNetworkStatus(status);
     }
 }

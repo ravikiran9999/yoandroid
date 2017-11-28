@@ -75,8 +75,8 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
     private TabsPagerAdapter adapter;
     private Menu menu;
 
-    @Bind(R.id.network_status_view)
-    ImageView networkView;
+    /*@Bind(R.id.network_status_view)
+    ImageView networkView;*/
 
     @Inject
     BalanceHelper mBalanceHelper;
@@ -96,6 +96,7 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
             balanceText = (TextView) findViewById(R.id.your_available_amount);
 
             balanceText.setText(spannableString());
+
         }
         ButterKnife.bind(this);
         updateCalled = 0;
@@ -362,21 +363,12 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
     }
 
     public void showNetworkStatus(int status) {
-        Toast.makeText(this, " " + status, Toast.LENGTH_SHORT)
-                .show();
-        if(status == 1) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                networkView.setImageDrawable(getDrawable(R.drawable.small_green_circle));
-            } else {
-                networkView.setImageDrawable(getResources().getDrawable(R.drawable.small_green_circle));
-            }
+        if (status == 1) {
+            balanceText.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.small_green_circle);
         } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                networkView.setImageDrawable(getDrawable(R.drawable.small_red_circle));
-            } else {
-                networkView.setImageDrawable(getResources().getDrawable(R.drawable.small_red_circle));
-            }
+            balanceText.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.small_red_circle);
         }
+        balanceText.setPadding(0, 0, 0, 5);
     }
 
 }

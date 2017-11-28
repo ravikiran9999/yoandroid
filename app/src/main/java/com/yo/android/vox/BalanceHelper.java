@@ -489,8 +489,9 @@ public class BalanceHelper {
     }
 
     public String currencySymbolLookup(String value) {
+        mLog.i(TAG, value);
         String amount = removeCurrencyCodeString(value);
-        if(value.contains("INR")) {
+        if(value.contains("INR") || value.contains("₨")) {
             return "₹ " + amount;
         } else {
             return "$ " + amount;
