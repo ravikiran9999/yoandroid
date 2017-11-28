@@ -38,9 +38,7 @@ public abstract class YoExpandableRecyclerAdapter extends YoRecyclerViewAdapter 
 
         if (expandableItem.getChild() instanceof ArrayList) {
             ArrayList childList = (ArrayList) expandableItem.getChild();
-            /*for (int i = 0; i < childList.size(); i++) {
-                data.add(indexOfParent + 1 + i, childList.get(i));
-            }*/
+
             mData.add(indexOfParent + 1, childList);
             notifyItemChanged(indexOfParent);
             //notifyItemRangeInserted(indexOfParent + 1, childList.size());
@@ -59,9 +57,7 @@ public abstract class YoExpandableRecyclerAdapter extends YoRecyclerViewAdapter 
 
         if (expandableItem.getChild() instanceof ArrayList) {
             ArrayList childList = (ArrayList) expandableItem.getChild();
-            /*for (Object item : childList) {
-                data.remove(item);
-            }*/
+
             mData.remove(childList);
             notifyItemChanged(indexOfParent);
             notifyItemRangeRemoved(indexOfParent + 1, childList.size());

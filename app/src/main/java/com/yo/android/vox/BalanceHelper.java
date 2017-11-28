@@ -487,4 +487,13 @@ public class BalanceHelper {
     public String removeCurrencyCodeString(String amountWithDenomination) {
         return amountWithDenomination.replaceAll("[^\\d.]", "");
     }
+
+    public String currencySymbolLookup(String value) {
+        String amount = removeCurrencyCodeString(value);
+        if(value.contains("INR")) {
+            return "₹ " + amount;
+        } else {
+            return "$ " + amount;
+        }
+    }
 }

@@ -65,6 +65,11 @@
                     android:gravity="center"
                     android:text="@string/your_yo_balance"
                     android:textColor="@color/black" />
+                <ImageView
+                    android:id="@+id/network_status_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:src="@drawable/small_red_circle" />
             </FrameLayout>
 
 

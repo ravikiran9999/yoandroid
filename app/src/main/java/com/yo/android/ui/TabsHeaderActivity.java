@@ -2,11 +2,13 @@ package com.yo.android.ui;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
@@ -23,6 +25,7 @@ import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +37,7 @@ import com.yo.android.adapters.TabsPagerAdapter;
 import com.yo.android.chat.notification.helper.NotificationCache;
 import com.yo.android.helpers.PopupHelper;
 import com.yo.android.model.Popup;
+import com.yo.android.receiver.NetworkChangeReceiver;
 import com.yo.android.typeface.CustomTypefaceSpan;
 import com.yo.android.ui.fragments.CreditAccountFragment;
 import com.yo.android.ui.fragments.NewCreditAccountFragment;
@@ -51,6 +55,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 
 import static com.yo.android.flip.MagazineFlipArticlesFragment.updateCalled;
@@ -69,10 +75,15 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
     private TabsPagerAdapter adapter;
     private Menu menu;
 
+    @Bind(R.id.network_status_view)
+    ImageView networkView;
+
     @Inject
     BalanceHelper mBalanceHelper;
 
     TextView balanceText;
+
+    NetworkChangeReceiver networkChangeReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,9 +97,10 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
 
             balanceText.setText(spannableString());
         }
+        ButterKnife.bind(this);
         updateCalled = 0;
         final Toolbar toolbar = (Toolbar) findViewById(R.id.htab_toolbar);
-        TextView titleView = (TextView)findViewById(R.id.title);
+        TextView titleView = (TextView) findViewById(R.id.title);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             if (getIntent().hasExtra(Constants.OPEN_ADD_BALANCE)) {
@@ -172,6 +184,8 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         }
 
         EventBus.getDefault().register(this);
+        networkChangeReceiver = new NetworkChangeReceiver(this);
+        registerBroadCastReceiver();
     }
 
 
@@ -231,7 +245,9 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unregisterBroadcastReceiver();
         preferenceEndPoint.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+
     }
 
     @Override
@@ -302,13 +318,14 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
     private SpannableStringBuilder spannableString() {
         Typeface alexBrushRegular = getAlexBrushRegular();
         TypefaceSpan alexBrushRegularSpan = new CustomTypefaceSpan("", alexBrushRegular);
-        String yoBalanceString = String.format(getString(R.string.your_yo_balance), mBalanceHelper.getCurrentBalance());
+        String amount = mBalanceHelper.getCurrentBalance();
+        String yoBalanceString = String.format(getString(R.string.your_yo_balance), mBalanceHelper.currencySymbolLookup(amount));
         final SpannableStringBuilder text = new SpannableStringBuilder(yoBalanceString);
         // Span to make text bold
         final StyleSpan bss = new StyleSpan(android.graphics.Typeface.BOLD);
 
         text.setSpan(alexBrushRegularSpan, 6, 9, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        text.setSpan(new RelativeSizeSpan(2f), 6,9, 0); // set size
+        text.setSpan(new RelativeSizeSpan(2f), 6, 9, 0); // set size
         text.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorPrimary)), 17, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         // make them also bold
         text.setSpan(bss, 17, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
@@ -325,11 +342,41 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         //final StyleSpan bss = new StyleSpan(android.graphics.Typeface.BOLD);
 
         text.setSpan(alexBrushRegularSpan, 0, 3, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        text.setSpan(new RelativeSizeSpan(2f), 0,3, 0); // set size
+        text.setSpan(new RelativeSizeSpan(2f), 0, 3, 0); // set size
         //text.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorPrimary)), 17, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         // make them also bold
         //text.setSpan(bss, 17, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
 
         return text;
     }
+
+    private void registerBroadCastReceiver() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        intentFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+        this.registerReceiver(networkChangeReceiver, new IntentFilter(intentFilter));
+    }
+
+    public void unregisterBroadcastReceiver() {
+        this.unregisterReceiver(networkChangeReceiver);
+    }
+
+    public void showNetworkStatus(int status) {
+        Toast.makeText(this, " " + status, Toast.LENGTH_SHORT)
+                .show();
+        if(status == 1) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                networkView.setImageDrawable(getDrawable(R.drawable.small_green_circle));
+            } else {
+                networkView.setImageDrawable(getResources().getDrawable(R.drawable.small_green_circle));
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                networkView.setImageDrawable(getDrawable(R.drawable.small_red_circle));
+            } else {
+                networkView.setImageDrawable(getResources().getDrawable(R.drawable.small_red_circle));
+            }
+        }
+    }
+
 }

@@ -2,6 +2,7 @@ package com.yo.android.helpers;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,8 +21,8 @@ public class SubCategoryItemViewHolder extends YoViewHolder {
     ImageView tile;
     @Bind(R.id.tv_title)
     TextView subCategoryItem;
-    @Bind(R.id.imv_magazine_tick)
-    ImageView tickView;
+    @Bind(R.id.checkbox)
+    CheckBox checkBox;
 
     private Context mContext;
 
@@ -39,9 +40,9 @@ public class SubCategoryItemViewHolder extends YoViewHolder {
 
         if (item.isSelected()) {
             //Show tick
-            tickView.setVisibility(View.VISIBLE);
+            checkBox.setChecked(true);
         } else {
-            tickView.setVisibility(View.GONE);
+            checkBox.setChecked(false);
         }
     }
 

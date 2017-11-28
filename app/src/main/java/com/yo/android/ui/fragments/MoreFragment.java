@@ -324,7 +324,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         String balance = mBalanceHelper.getCurrentBalance();
         String currencySymbol = mBalanceHelper.getCurrencySymbol();
         //menuDataList.add(new MoreData(String.format(getString(R.string.yocredit), currencySymbolDollarNoSpace, balance), true));
-        menuDataList.add(new MoreData(String.format(getString(R.string.your_yo_balance_without_line_break), balance), true, null));
+        menuDataList.add(new MoreData(String.format(getString(R.string.your_yo_balance_without_line_break), mBalanceHelper.currencySymbolLookup(balance)), true, null));
         menuDataList.add(new MoreData(getString(R.string.accountdetails), true, null));
         menuDataList.add(new MoreData(getString(R.string.invitefriends), true, null));
         menuDataList.add(new MoreData(getString(R.string.morenotifications), true, null));
@@ -547,7 +547,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             String balance = mBalanceHelper.getCurrentBalance();
             //String currencySymbol = mBalanceHelper.getCurrencySymbol();
             if (balanceAdapter != null) {
-                balanceAdapter.getItem(0).setName(String.format(getString(R.string.your_yo_balance_without_line_break), balance));
+                balanceAdapter.getItem(0).setName(String.format(getString(R.string.your_yo_balance_without_line_break), mBalanceHelper.currencySymbolLookup(balance)));
                 balanceAdapter.notifyDataSetChanged();
             }
         } else if (key.equals(Constants.USER_NAME)) {
