@@ -61,6 +61,7 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
     protected DateFormat dateFormat1 = new SimpleDateFormat(DateUtil.DATE_FORMAT9);
     protected DateFormat dateFormat2 = new SimpleDateFormat("hh:mm a");
     private SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    protected SimpleDateFormat formatterNewDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public CallLogsAdapter(Context context, PreferenceEndPoint prefs, ContactsSyncManager contactsSyncManager) {
         super(context);
@@ -309,12 +310,14 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
         String mDate = null;
         try {
             if (mTime != null) {
-                String day = dateFormat2.format(formatterDate.parse(mTime));
+                //String day = dateFormat2.format(formatterDate.parse(mTime));
+                String day = dateFormat2.format(formatterNewDate.parse(mTime));
                 String currentDate = DateUtil.getChatListTimeFormat(convertDateFormatLong(mTime));
                 if (currentDate.equalsIgnoreCase(Constants.TODAY) || currentDate.equalsIgnoreCase(Constants.YESTERDAY)) {
                     mDate = currentDate.concat(",").concat(" " + day);
                 } else {
-                    mDate = dateFormat1.format(formatterDate.parse(mTime)).concat(",").concat(" " + day);
+                    //mDate = dateFormat1.format(formatterDate.parse(mTime)).concat(",").concat(" " + day);
+                    mDate = dateFormat1.format(formatterNewDate.parse(mTime)).concat(",").concat(" " + day);
                 }
             } else {
                 return mDate;
