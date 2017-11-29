@@ -74,8 +74,8 @@ public class CreateMagazineActivity extends BaseActivity implements SwipeRefresh
 
         createMagazinesAdapter = new CreateMagazinesAdapter(CreateMagazineActivity.this);
         gridView.setAdapter(createMagazinesAdapter);
-        boolean renewalStatus = preferenceEndPoint.getBooleanPreference(Constants.RENEWAL, false);
-        if(renewalStatus) {
+        boolean renewalStatus = preferenceEndPoint.getBooleanPreference(Constants.MAGAZINE_LOCK, false);
+        if(!renewalStatus) {
             createMagazine(null);
         }
 

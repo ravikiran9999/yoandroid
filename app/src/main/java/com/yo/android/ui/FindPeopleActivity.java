@@ -426,8 +426,8 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        boolean renewalStatus = preferenceEndPoint.getBooleanPreference(Constants.RENEWAL, false);
-        if (renewalStatus) {
+        boolean renewalStatus = preferenceEndPoint.getBooleanPreference(Constants.MAGAZINE_LOCK, false);
+        if (!renewalStatus) {
             pos = position;
             if (findPeopleAdapter.getCount() > position) {
                 FindPeople item = findPeopleAdapter.getItem(position);
