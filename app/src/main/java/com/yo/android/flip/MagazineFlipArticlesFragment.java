@@ -499,7 +499,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
         currentFlippedPosition = position;
 
-        if (MagazineDashboardHelper.currentReadArticles != 0 || currentFlippedPosition == MagazineDashboardHelper.request * 100) {
+        //if (MagazineDashboardHelper.currentReadArticles != 0 || currentFlippedPosition == MagazineDashboardHelper.request * 100) {
+        if (MagazineDashboardHelper.currentReadArticles != 0 || currentFlippedPosition % 100 == 0) {
             getReadArticleIds();
             String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
             if (getActivity() != null) {
@@ -534,12 +535,16 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             updateArticlesAfterFollowTopic(followedTopicId);
         } else if (Constants.START_FETCHING_ARTICLES_ACTION.equals(action)) {
             //isFetchArticlesPosted = true;
-            preferenceEndPoint.saveBooleanPreference(Constants.IS_ARTICLES_POSTED, true);
-            Calendar calendar = Calendar.getInstance();
-            SimpleDateFormat mdformat = new SimpleDateFormat("yyyy / MM / dd ");
-            String savedDate = mdformat.format(calendar.getTime());
-            preferenceEndPoint.saveStringPreference(Constants.SAVED_TIME, savedDate);
-            callDailyArticlesService(null);
+            if (mHelper.isConnected()) {
+                preferenceEndPoint.saveBooleanPreference(Constants.IS_ARTICLES_POSTED, true);
+                Calendar calendar = Calendar.getInstance();
+                SimpleDateFormat mdformat = new SimpleDateFormat("yyyy / MM / dd ");
+                String savedDate = mdformat.format(calendar.getTime());
+                preferenceEndPoint.saveStringPreference(Constants.SAVED_TIME, savedDate);
+                callDailyArticlesService(null);
+            } else {
+                Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.unable_to_fetch_new_articles), Toast.LENGTH_LONG).show();
+            }
         } else if (Constants.RENEWAL.equalsIgnoreCase(action)) {
             loadArticles(null, true);
         }
@@ -707,28 +712,32 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                         }*/
                     }
 
-                    Calendar calendar = Calendar.getInstance();
-                    SimpleDateFormat mdformat = new SimpleDateFormat("yyyy / MM / dd ");
-                    String currentDateString = mdformat.format(calendar.getTime());
-                    String savedDateString = preferenceEndPoint.getStringPreference(Constants.SAVED_TIME);
+                    if (mHelper.isConnected()) {
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat mdformat = new SimpleDateFormat("yyyy / MM / dd ");
+                        String currentDateString = mdformat.format(calendar.getTime());
+                        String savedDateString = preferenceEndPoint.getStringPreference(Constants.SAVED_TIME);
 
 
-                    if(!TextUtils.isEmpty(savedDateString)) {
-                        try {
-                            Date currentDate = mdformat.parse(currentDateString);
-                            Date savedDate = mdformat.parse(savedDateString);
-                            if(currentDate.compareTo(savedDate) > 0) {
-                                preferenceEndPoint.saveBooleanPreference(Constants.IS_ARTICLES_POSTED, true);
-                                callDailyArticlesService(null);
+                        if (!TextUtils.isEmpty(savedDateString)) {
+                            try {
+                                Date currentDate = mdformat.parse(currentDateString);
+                                Date savedDate = mdformat.parse(savedDateString);
+                                if (currentDate.compareTo(savedDate) > 0) {
+                                    preferenceEndPoint.saveBooleanPreference(Constants.IS_ARTICLES_POSTED, true);
+                                    callDailyArticlesService(null);
+                                }
+                            } catch (ParseException e) {
+                                e.printStackTrace();
                             }
-                        } catch (ParseException e) {
-                            e.printStackTrace();
                         }
-                    }
 
-                    if(preferenceEndPoint.getBooleanPreference(Constants.IS_SERVICE_RUNNING) && !preferenceEndPoint.getBooleanPreference(Constants.IS_ARTICLES_POSTED)) {
-                        preferenceEndPoint.saveBooleanPreference(Constants.IS_ARTICLES_POSTED, true);
-                        callDailyArticlesService(null);
+                        if (preferenceEndPoint.getBooleanPreference(Constants.IS_SERVICE_RUNNING) && !preferenceEndPoint.getBooleanPreference(Constants.IS_ARTICLES_POSTED)) {
+                            preferenceEndPoint.saveBooleanPreference(Constants.IS_ARTICLES_POSTED, true);
+                            callDailyArticlesService(null);
+                        }
+                    } else {
+                        Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.unable_to_fetch_new_articles), Toast.LENGTH_LONG).show();
                     }
                 } else {
                     flipContainer.setVisibility(View.GONE);
@@ -1557,7 +1566,14 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     private void refreshedArticles() {
         Log.d("FlipArticlesFragment", "Calling pull to refresh to load articles refreshedArticles");
-        callDailyArticlesService(swipeRefreshContainer);
+        if (mHelper.isConnected()) {
+            callDailyArticlesService(swipeRefreshContainer);
+        } else {
+            refreshing = false;
+            swipeRefreshContainer.setEnabled(false);
+            swipeRefreshContainer.setRefreshing(false);
+            //Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.unable_to_fetch_new_articles), Toast.LENGTH_LONG).show();
+        }
         /*List<String> cachedReadList = getReadArticleIds();
         List<Articles> allArticles = myBaseAdapter.getAllItems();
         if (allArticles != null) {

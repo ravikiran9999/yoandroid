@@ -61,7 +61,8 @@
         android:padding="30dp"
         android:text="@string/no_result_found"
         android:textColor="@color/black"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:layout_marginTop="10dp"/>
 
     <ProgressBar
         android:id="@+id/progress"

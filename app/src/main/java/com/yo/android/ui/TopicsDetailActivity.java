@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -195,6 +196,18 @@ public class TopicsDetailActivity extends BaseActivity {
 
                 holder.tvTopicName = UI.findViewById(layout, R.id.imv_magazine_topic);
 
+                holder.fullImageTitle = UI.findViewById(layout, R.id.tv_full_image_title_top);
+
+                holder.blackMask = UI.findViewById(layout, R.id.imv_black_mask);
+
+                holder.rlFullImageOptions = UI.findViewById(layout, R.id.rl_full_image_options);
+
+                holder.fullImageMagazineLike = UI.findViewById(layout, R.id.cb_full_image_magazine_like_top);
+
+                holder.fullImageMagazineAdd = UI.findViewById(layout, R.id.imv_full_image_magazine_add_top);
+
+                holder.fullImageMagazineShare = UI.findViewById(layout, R.id.imv_full_image_magazine_share_top);
+
                 layout.setTag(holder);
             } else {
                 holder = (ViewHolder) layout.getTag();
@@ -206,12 +219,61 @@ public class TopicsDetailActivity extends BaseActivity {
             }
             holder.magazineLike.setTag(position);
 
-            holder.articleTitle
-                    .setText(AphidLog.format("%s", data.getTitle()));
+            if (holder.articleTitle != null) {
+                holder.fullImageTitle.setVisibility(View.GONE);
+                holder.blackMask.setVisibility(View.GONE);
+                holder.rlFullImageOptions.setVisibility(View.GONE);
+                holder.articleTitle
+                        .setText(AphidLog.format("%s", data.getTitle()));
 
-            if (data.getSummary() != null) {
-                holder.articleShortDesc
-                        .setText(Html.fromHtml(data.getSummary()));
+                final TextView textView = holder.articleTitle;
+
+                ViewTreeObserver vto = textView.getViewTreeObserver();
+                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    private int maxLines = -1;
+
+                    @Override
+                    public void onGlobalLayout() {
+                        //Log.d("BaseAdapter", "First Title " + data.getTitle() + " max lines " + maxLines + " textView.getHeight() " + textView.getHeight() + " textView.getLineHeight() " + textView.getLineHeight());
+                        if (maxLines < 0 && textView.getHeight() > 0 && textView.getLineHeight() > 0) {
+                            int height = textView.getHeight();
+                            int lineHeight = textView.getLineHeight();
+                            maxLines = height / lineHeight;
+                            textView.setMaxLines(maxLines);
+                            textView.setEllipsize(TextUtils.TruncateAt.END);
+                            // Re-assign text to ensure ellipsize is performed correctly.
+                            textView.setText(AphidLog.format("%s", data.getTitle()));
+                        }
+                    }
+                });
+            }
+
+            if (holder.articleShortDesc != null) {
+                if (data.getSummary() != null && holder.articleShortDesc != null) {
+                    holder.articleShortDesc.setMaxLines(1000);
+                    holder.articleShortDesc
+                            .setText(Html.fromHtml(data.getSummary()));
+                    //Log.d("BaseAdapter", "The text size is " + holder.articleShortDesc.getTextSize());
+                    final TextView textView = holder.articleShortDesc;
+
+                    ViewTreeObserver vto = textView.getViewTreeObserver();
+                    vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                        private int maxLines = -1;
+
+                        @Override
+                        public void onGlobalLayout() {
+                            if (maxLines < 0 && textView.getHeight() > 0 && textView.getLineHeight() > 0) {
+                                int height = textView.getHeight();
+                                int lineHeight = textView.getLineHeight();
+                                maxLines = height / lineHeight;
+                                textView.setMaxLines(maxLines);
+                                textView.setEllipsize(TextUtils.TruncateAt.END);
+                                // Re-assign text to ensure ellipsize is performed correctly.
+                                textView.setText(Html.fromHtml(data.getSummary()));
+                            }
+                        }
+                    });
+                }
             }
 
             holder.magazineLike.setOnCheckedChangeListener(null);
@@ -225,6 +287,88 @@ public class TopicsDetailActivity extends BaseActivity {
             holder.magazineLike.setChecked(Boolean.valueOf(data.getLiked()));
 
             holder.magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                    if (isChecked) {
+                        showProgressDialog();
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                dismissProgressDialog();
+                                data.setIsChecked(true);
+                                data.setLiked("true");
+                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
+                                }
+                                if (MagazineArticlesBaseAdapter.mListener != null) {
+                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
+                                }
+                                if (!((BaseActivity) context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
+                                mToastFactory.showToast("You have liked the article " + data.getTitle());
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                dismissProgressDialog();
+                                Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
+                                data.setIsChecked(false);
+                                data.setLiked("false");
+                                if (!((BaseActivity) context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
+                            }
+                        });
+                    } else {
+                        showProgressDialog();
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                dismissProgressDialog();
+                                data.setIsChecked(false);
+                                data.setLiked("false");
+                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
+                                }
+                                if (MagazineArticlesBaseAdapter.mListener != null) {
+                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
+                                }
+                                if (!((BaseActivity) context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
+                                mToastFactory.showToast("You have unliked the article " + data.getTitle());
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                dismissProgressDialog();
+                                Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
+                                data.setIsChecked(true);
+                                data.setLiked("true");
+                                if (!((BaseActivity) context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+
+            holder.fullImageMagazineLike.setOnCheckedChangeListener(null);
+            if (Boolean.valueOf(data.getLiked())) {
+                data.setIsChecked(true);
+            } else {
+                data.setIsChecked(false);
+            }
+
+            holder.fullImageMagazineLike.setText("");
+            holder.fullImageMagazineLike.setChecked(Boolean.valueOf(data.getLiked()));
+
+            holder.fullImageMagazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
@@ -320,6 +464,11 @@ public class TopicsDetailActivity extends BaseActivity {
 
             if (data.getImage_filename() != null) {
                 //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
+                final TextView fullImageTitle = holder.fullImageTitle;
+                final TextView articleTitle = holder.articleTitle;
+                final ImageView blackMask = holder.blackMask;
+                final RelativeLayout rlFullImageOptions = holder.rlFullImageOptions;
+                final TextView textView1 = holder.articleShortDesc;
                 Glide.with(context)
                         .load(data.getImage_filename())
                         .asBitmap()
@@ -340,6 +489,83 @@ public class TopicsDetailActivity extends BaseActivity {
                                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                                             .dontAnimate()
                                             .into(photoView);
+
+                                    int screenHeight = DeviceDimensionsHelper.getDisplayHeight(context);
+                                    //Log.d("BaseAdapter", "screenHeight " + screenHeight);
+                                       /*int spaceForImage = screenHeight - 120;
+                                       Log.d("BaseAdapter", "spaceForImage" + spaceForImage);*/
+                                    //Log.d("BaseAdapter", "bmp.getHeight()" + bmp.getHeight());
+                                    int total = bmp.getHeight() + 50;
+                                    //if(bmp.getHeight() >= spaceForImage-30) {
+                                    //Log.d("BaseAdapter", "total" + total);
+                                    if (screenHeight - total <= 200) {
+
+                                        Log.d("BaseAdapter", "Full screen image");
+                                        if (fullImageTitle != null && articleTitle != null && blackMask != null && rlFullImageOptions != null) {
+                                            fullImageTitle.setVisibility(View.VISIBLE);
+                                            fullImageTitle.setText(articleTitle.getText().toString());
+                                            blackMask.setVisibility(View.VISIBLE);
+                                            rlFullImageOptions.setVisibility(View.VISIBLE);
+
+                                        }
+                                    }
+
+                                    if(articleTitle != null) {
+                                        ViewTreeObserver vto1 = articleTitle.getViewTreeObserver();
+                                        vto1.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                                            private int maxLines = -1;
+
+                                            @Override
+                                            public void onGlobalLayout() {
+                                                //Log.d("BaseAdapter", "Second Title " + data.getTitle() + " max lines " + maxLines + " textView.getHeight() " + textView.getHeight() + " textView.getLineHeight() " + textView.getLineHeight());
+                                                if (maxLines < 0 && articleTitle.getHeight() > 0 && articleTitle.getLineHeight() > 0) {
+                                                    //Log.d("BaseAdapter", "Max lines inside if" + maxLines);
+                                                    int height = articleTitle.getHeight();
+                                                    int lineHeight = articleTitle.getLineHeight();
+                                                    maxLines = height / lineHeight;
+                                                    articleTitle.setMaxLines(maxLines);
+                                                    articleTitle.setEllipsize(TextUtils.TruncateAt.END);
+                                                    // Re-assign text to ensure ellipsize is performed correctly.
+                                                    articleTitle.setText(AphidLog.format("%s", data.getTitle()));
+                                                } else if(maxLines == -1 && articleTitle.getHeight() > 0) {
+                                                    //Log.d("BaseAdapter", "Max lines inside else if" + maxLines);
+                                                    articleTitle.setMaxLines(1);
+                                                    articleTitle.setEllipsize(TextUtils.TruncateAt.END);
+                                                    // Re-assign text to ensure ellipsize is performed correctly.
+                                                    articleTitle.setText(AphidLog.format("%s", data.getTitle()));
+                                                } else if(maxLines == -1 && articleTitle.getHeight() == 0) {
+                                                    // Log.d("BaseAdapter", "Full screen image after options cut or not shown");
+                                                    if (fullImageTitle != null && articleTitle != null && blackMask != null && rlFullImageOptions != null) {
+                                                        fullImageTitle.setVisibility(View.VISIBLE);
+                                                        fullImageTitle.setText(articleTitle.getText().toString());
+                                                        blackMask.setVisibility(View.VISIBLE);
+                                                        rlFullImageOptions.setVisibility(View.VISIBLE);
+
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
+
+                                    if(textView1 != null) {
+                                        ViewTreeObserver vto = textView1.getViewTreeObserver();
+                                        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                                            private int maxLines = -1;
+
+                                            @Override
+                                            public void onGlobalLayout() {
+                                                if (maxLines < 0 && textView1.getHeight() > 0 && textView1.getLineHeight() > 0) {
+                                                    int height = textView1.getHeight();
+                                                    int lineHeight = textView1.getLineHeight();
+                                                    maxLines = height / lineHeight;
+                                                    textView1.setMaxLines(maxLines);
+                                                    textView1.setEllipsize(TextUtils.TruncateAt.END);
+                                                    // Re-assign text to ensure ellipsize is performed correctly.
+                                                    textView1.setText(Html.fromHtml(data.getSummary()));
+                                                }
+                                            }
+                                        });
+                                    }
                                 }
                             }
                         });
@@ -434,6 +660,30 @@ public class TopicsDetailActivity extends BaseActivity {
                         });
                     } else {
                         showUnFollowConfirmationDialog(data, finalHolder);
+                    }
+                }
+            });
+
+            ImageView add1 = holder.fullImageMagazineAdd;
+            add1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Intent intent = new Intent(TopicsDetailActivity.this, CreateMagazineActivity.class);
+                    intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
+                    startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
+                }
+            });
+
+            ImageView share1 = holder.fullImageMagazineShare;
+            share1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (data.getImage_filename() != null) {
+                        new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
+                    } else {
+                        String summary = Html.fromHtml(data.getSummary()).toString();
+                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, null);
                     }
                 }
             });
@@ -589,6 +839,18 @@ public class TopicsDetailActivity extends BaseActivity {
         private Button articleFollow;
 
         private TextView tvTopicName;
+
+        private TextView fullImageTitle;
+
+        private ImageView blackMask;
+
+        private RelativeLayout rlFullImageOptions;
+
+        private CheckBox fullImageMagazineLike;
+
+        private ImageView fullImageMagazineAdd;
+
+        private ImageView fullImageMagazineShare;
     }
 
     @Override

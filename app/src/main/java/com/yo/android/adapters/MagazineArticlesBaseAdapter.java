@@ -705,6 +705,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     final ImageView blackMask = holder.blackMask;
                     final RelativeLayout rlFullImageOptions = holder.rlFullImageOptions;
                     final TextView textView = holder.articleShortDesc;
+                    /*if("597695a01645e9120c620243".equals(data.getId())) {
+                        data.setImage_filename("http://yowatsup.com/newfilename.jpg");
+                    }*/
 
                     Glide.with(context)
                             .load(data.getImage_filename())

@@ -42,6 +42,61 @@
             android:layout_alignParentBottom="true"
             android:visibility="gone"/>
 
+        <ImageView android:id="@+id/imv_black_mask"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/image_blankmask"
+            android:scaleType="fitXY"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/tv_full_image_title_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:layout_marginRight="10dp"
+            android:text="Article 1"
+            android:visibility="gone"/>
+
+        <RelativeLayout android:id="@+id/rl_full_image_options"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:visibility="gone"
+            android:layout_below="@+id/tv_full_image_title_top">
+
+            <CheckBox
+                android:id="@+id/cb_full_image_magazine_like_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="10dp"
+                android:button="@drawable/magazine_like_white_selector" />
+
+            <ImageView
+                android:id="@+id/imv_full_image_magazine_add_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_toRightOf="@+id/cb_full_image_magazine_like_top"
+                android:src="@drawable/ic_add_white" />
+
+            <ImageView
+                android:id="@+id/imv_full_image_magazine_share_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_toRightOf="@+id/imv_full_image_magazine_add_top"
+                android:src="@drawable/ic_magazine_share_white" />
+
+        </RelativeLayout>
+
         <TextView
             android:id="@+id/imv_magazine_topic"
             android:layout_width="wrap_content"
@@ -64,10 +119,11 @@
 
     <LinearLayout android:id="@+id/ll_article_info"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_below="@+id/rl_top"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginBottom="5dp">
 
         <TextView
             android:id="@+id/tv_article_title"
@@ -75,7 +131,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:textColor="@android:color/black"
-            android:textSize="16sp"
+            android:textSize="@dimen/article_title_textsize"
             android:textStyle="bold" />android:text="Article 1"
 
         <TextView
@@ -87,7 +143,7 @@
             android:ellipsize="end"
             android:lineSpacingMultiplier="1.2"
             android:maxLines="5"
-            android:textSize="12sp" />android:text="This is the first magazine article content. This
+            android:textSize="@dimen/article_textsize" />android:text="This is the first magazine article content. This
         is a dummy content."
 
         <LinearLayout
