@@ -135,20 +135,20 @@ public class NewCreditAccountFragment extends BaseFragment {
         preferenceEndPoint.saveStringPreference(Constants.CURRENCY_SYMBOL, currencySymbol);
         if (transferBalanceDenominationList.get(0) != null && transferBalanceDenominationList.get(0).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
             tvFirst.setVisibility(View.VISIBLE);
-            tvFirst.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, transferBalanceDenominationList.get(0).getDenomination()));
+            tvFirst.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), mBalanceHelper.currencySymbolLookup(currencySymbol), transferBalanceDenominationList.get(0).getDenomination()));
             giveFirst.setAlpha(1);
             giveFirst.setClickable(true);
         }
 
         if (transferBalanceDenominationList.get(1) != null && transferBalanceDenominationList.get(1).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
-            tvSecond.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, transferBalanceDenominationList.get(1).getDenomination()));
+            tvSecond.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), mBalanceHelper.currencySymbolLookup(currencySymbol), transferBalanceDenominationList.get(1).getDenomination()));
             tvSecond.setVisibility(View.VISIBLE);
             giveSecond.setAlpha(1);
             giveSecond.setClickable(true);
         }
 
         if (transferBalanceDenominationList.get(2) != null && transferBalanceDenominationList.get(2).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
-            tvThird.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, transferBalanceDenominationList.get(2).getDenomination()));
+            tvThird.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), mBalanceHelper.currencySymbolLookup(currencySymbol), transferBalanceDenominationList.get(2).getDenomination()));
             tvThird.setVisibility(View.VISIBLE);
             giveThird.setAlpha(1);
             giveThird.setClickable(true);
@@ -168,6 +168,7 @@ public class NewCreditAccountFragment extends BaseFragment {
 
     private void showActivePackageDenomination(List<PackageDenomination> packageDenominationList) {
         String pCurrencySymbol = packageDenominationList.get(0).getCurrencySymbol();
+        pCurrencySymbol = mBalanceHelper.currencySymbolLookup(pCurrencySymbol);
         buyFirstPackage.setAlpha(1);
         buyFirstPackage.setClickable(true);
         buyFirstPackage.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), pCurrencySymbol, packageDenominationList.get(0).getPackage()));
@@ -474,7 +475,8 @@ public class NewCreditAccountFragment extends BaseFragment {
         builder.setView(view);
 
         TextView textView = (TextView) view.findViewById(R.id.current_balance);
-        textView.setText(getCurrentAvailableBalance());
+        //textView.setText(getCurrentAvailableBalance());
+        textView.setText(mBalanceHelper.currencySymbolLookup(mBalanceHelper.getCurrentBalance()));
 
         Button processed = (Button) view.findViewById(R.id.processed_btn);
         Button cancel = (Button) view.findViewById(R.id.cancel);
@@ -484,14 +486,14 @@ public class NewCreditAccountFragment extends BaseFragment {
 
         if (transferBalanceDenominationList.get(3) != null && transferBalanceDenominationList.get(3).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
             giveFour.setVisibility(View.VISIBLE);
-            giveFour.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, transferBalanceDenominationList.get(3).getDenomination()));
+            giveFour.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), mBalanceHelper.currencySymbolLookup(currencySymbol), transferBalanceDenominationList.get(3).getDenomination()));
             giveFour.setAlpha(1);
             giveFour.setClickable(true);
         }
 
         if (transferBalanceDenominationList.get(4) != null && transferBalanceDenominationList.get(4).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
             giveFive.setVisibility(View.VISIBLE);
-            giveFive.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, transferBalanceDenominationList.get(4).getDenomination()));
+            giveFive.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), mBalanceHelper.currencySymbolLookup(currencySymbol), transferBalanceDenominationList.get(4).getDenomination()));
             giveFive.setAlpha(1);
             giveFive.setClickable(true);
         }
@@ -511,7 +513,7 @@ public class NewCreditAccountFragment extends BaseFragment {
                 editText.setText(selectedValue);
             }
         });
-        processed.setText(getResources().getString(R.string.processed));
+        processed.setText(getResources().getString(R.string.give));
 
 
         final AlertDialog alert = builder.create();
@@ -528,7 +530,7 @@ public class NewCreditAccountFragment extends BaseFragment {
 
                     if (!TextUtils.isEmpty(enteredAmount) && !enteredAmount.contains(currencySymbol)) {
                         if(!isGreaterThanHundred(enteredAmount)) {
-                            enteredAmount = String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, enteredAmount);
+                            enteredAmount = String.format(getResources().getString(R.string.currency_code_with_denomination), mBalanceHelper.currencySymbolLookup(currencySymbol), enteredAmount);
                             alert.dismiss();
                             transferBalance(enteredAmount);
                         } else {

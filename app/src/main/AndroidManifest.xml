@@ -449,7 +449,7 @@
         <activity
             android:name=".ui.NewFollowMoreTopicsActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
     </application>
 
 </manifest>

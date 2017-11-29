@@ -138,8 +138,8 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
         holder.getBtnFindPeopleFollow().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean renewalStatus = preferenceEndPoint.getBooleanPreference(Constants.RENEWAL, false);
-                if (renewalStatus) {
+                boolean renewalStatus = preferenceEndPoint.getBooleanPreference(Constants.MAGAZINE_LOCK, false);
+                if (!renewalStatus) {
                     if (!"true".equals(item.getIsFollowing())) {
                         ((BaseActivity) context).showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");

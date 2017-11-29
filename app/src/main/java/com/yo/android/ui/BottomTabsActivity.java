@@ -900,6 +900,7 @@ public class BottomTabsActivity extends BaseActivity {
         Intent intent = new Intent(getApplicationContext(), FirebaseService.class);
         startService(intent);
 
+        webserviceUsecase.appStatus(null);
 
         if (preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT) == 0) {
             notificationCount.setVisibility(View.GONE);

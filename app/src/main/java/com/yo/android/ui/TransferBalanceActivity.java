@@ -115,7 +115,7 @@ public class TransferBalanceActivity extends BaseActivity {
 
         }*/
         tvTransferAmount.setText(String.format(getString(R.string.transfer_amount), mTransferAmount));
-        tvBalance.setText(String.format(getString(R.string.your_yo_balance_without_line_break), balance));
+        tvBalance.setText(String.format(getString(R.string.your_yo_balance_without_line_break), mBalanceHelper.currencySymbolLookup(balance)));
 
         EventBus.getDefault().register(this);
 

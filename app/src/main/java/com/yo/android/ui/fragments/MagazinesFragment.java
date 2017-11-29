@@ -25,12 +25,14 @@ import com.flurry.android.FlurryAgent;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.FilterWithSpaceAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.helpers.PopupHelper;
+import com.yo.android.model.Categories;
 import com.yo.android.model.Popup;
 import com.yo.android.model.Topics;
 import com.yo.android.ui.BottomTabsActivity;
@@ -80,10 +82,12 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
 
+    public ArrayList<Categories> categoriesList;
+    public static ArrayList<Categories> newCategoriesList;
     private List<Topics> topicsList;
     private Menu menu;
     public static List<Topics> unSelectedTopics;
-    FilterWithSpaceAdapter<String> mAdapter;
+    FilterWithSpaceAdapter<Object> mAdapter;
     private boolean isAlreadyShown;
     List<String> topicsNames;
     private List<Topics> topicsNewList;
@@ -164,8 +168,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mAdapter = new FilterWithSpaceAdapter<String>(getActivity(),
-                R.layout.textviewitem, new ArrayList<String>());
+        mAdapter = new FilterWithSpaceAdapter<Object>(getActivity(),
+                R.layout.textviewitem, new ArrayList<Object>());
         if ((mMagazineFlipArticlesFragment = (MagazineFlipArticlesFragment) getChildFragmentManager().findFragmentById(R.id.bottom)) != null) {
             getChildFragmentManager()
                     .beginTransaction()
@@ -180,6 +184,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     .commit();
         }
 
+        categoriesList = new ArrayList<>();
+        newCategoriesList = new ArrayList<>();
         topicsList = new ArrayList<Topics>();
         unSelectedTopics = new ArrayList<>();
 
@@ -187,7 +193,12 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
             List<String> followedTopicsIdsList = getActivity().getIntent().getStringArrayListExtra("tagIds");
             addTopics(followedTopicsIdsList);
         } else {
-            callApiSearchTopics();
+            //callApiSearchTopics();
+            if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                callApiSearchTopics();
+            } else {
+                getRandomTopics();
+            }
         }
     }
 
@@ -209,7 +220,6 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
      */
     private void callApiSearchTopics() {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        Call<List<Topics>> call = yoService.tagsAPI(accessToken);
         yoService.tagsAPI(accessToken).enqueue(new Callback<List<Topics>>() {
             @Override
             public void onResponse(Call<List<Topics>> call, Response<List<Topics>> response) {
@@ -255,8 +265,67 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
         });
     }
 
+    private void getRandomTopics() {
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        yoService.randomTagsAPI(accessToken).enqueue(new Callback<List<Categories>>() {
+            @Override
+            public void onResponse(Call<List<Categories>> call, Response<List<Categories>> response) {
+                dismissProgressDialog();
+                if (getActivity() == null || response == null || response.body() == null) {
+                    return;
+                }
+                categoriesList.clear();
+                categoriesList.addAll(response.body());
+                //topicsNewList = topicsList;
+                /*if (TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.MAGAZINE_TAGS))) {
+                    List<String> followedTopicsIdsList = new ArrayList<String>();
+                    for (int k = 0; k < topicsList.size(); k++) {
+                        if (topicsList.get(k).isSelected()) {
+                            followedTopicsIdsList.add(String.valueOf(topicsList.get(k).getId()));
+                        }
+
+                    }
+                    preferenceEndPoint.saveStringPreference(Constants.MAGAZINE_TAGS, TextUtils.join(",", followedTopicsIdsList));
+                }*/
+
+                /*topicNamesList = new ArrayList<String>();
+                for (int i = 0; i < topicsList.size(); i++) {
+                    topicNamesList.add(topicsList.get(i).getName());
+                }
+                mAdapter.clear();
+                mAdapter.addAll(topicNamesList);
+                mAdapter.notifyDataSetChanged();
+                topicsNames = topicNamesList;
+                getActivity().invalidateOptionsMenu();
+                unSelectedTopics.clear();
+
+                for (int i = 0; i < categoriesList.size(); i++) {
+                    if (!topicsList.get(i).isSelected()) {
+                        unSelectedTopics.add(topicsList.get(i));
+                    }
+                }
+                */
+                newCategoriesList.addAll(categoriesList);
+
+                mAdapter.clear();
+                mAdapter.addAll(categoriesList);
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<List<Categories>> call, Throwable t) {
+                dismissProgressDialog();
+            }
+        });
+    }
+
     public void refreshSearch() {
-        callApiSearchTopics();
+        //callApiSearchTopics();
+        if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+            callApiSearchTopics();
+        } else {
+            getRandomTopics();
+        }
     }
 
     @Override
@@ -410,7 +479,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     if (mAdapter.getCount() > 0) {
 
                         Log.d("Search", "The selected item is " + mAdapter.getItem(0));
-                        String topicName = mAdapter.getItem(0);
+                        String topicName = (String) mAdapter.getItem(0);
                         searchTextView.setText(topicName);
                         searchTextView.setSelection(topicName.trim().length());
                         String topicId = "";
@@ -496,7 +565,12 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
     public void onEventMainThread(String action) {
         if (Constants.REFRESH_TOPICS_ACTION.equals(action)) {
-            callApiSearchTopics();
+            //callApiSearchTopics();
+            if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                callApiSearchTopics();
+            } else {
+                getRandomTopics();
+            }
         }
     }
 
@@ -577,7 +651,12 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
                     //TODO:Disalbe flag for Follow more
                     preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, false);
-                    callApiSearchTopics();
+                    //callApiSearchTopics();
+                    if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                        callApiSearchTopics();
+                    } else {
+                        getRandomTopics();
+                    }
                 }
                 preferenceEndPoint.saveStringPreference(Constants.MAGAZINE_TAGS, TextUtils.join(",", followedTopicsIdsList));
                 if (followedTopicsIdsList.isEmpty()) {

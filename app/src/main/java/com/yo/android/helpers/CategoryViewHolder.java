@@ -1,5 +1,7 @@
 package com.yo.android.helpers;
 
+import android.annotation.SuppressLint;
+import android.opengl.Visibility;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -36,6 +38,8 @@ public class CategoryViewHolder extends YoViewHolder {
         final CategoriesAccordionSection accordionSection = (CategoriesAccordionSection) data;
 
         title.setText(accordionSection.getName());
+        int myInt = accordionSection.isExpanded() ? View.VISIBLE : View.GONE;
+        checkBox.setVisibility(myInt);
         checkBox.setChecked(accordionSection.checkAllTopicsSelected());
         checkBox.setOnClickListener(new View.OnClickListener() {
             @Override

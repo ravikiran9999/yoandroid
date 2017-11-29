@@ -28,7 +28,7 @@ public class CategoriesAdapter extends YoExpandableRecyclerAdapter {
 
     @Override
     protected int layout(int position) {
-        Object item = data.get(position);
+        Object item = mData.get(position);
         if (item instanceof CategoriesAccordionSection) {
             return R.layout.categories;
         } else if (item instanceof ArrayList) {

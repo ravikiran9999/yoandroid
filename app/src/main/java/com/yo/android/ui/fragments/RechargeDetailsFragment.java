@@ -123,7 +123,7 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
         progress.setVisibility(View.GONE);
     }
 
-    private static class RechargeDetailsAdapter extends RecyclerView.Adapter<RechargeDetailsViewHolder> {
+    private class RechargeDetailsAdapter extends RecyclerView.Adapter<RechargeDetailsViewHolder> {
         private List<PaymentHistoryItem> mPaymentHistoryItemList;
         private Context mContext;
 
@@ -165,7 +165,8 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
                 holder.getTxtPulse().setTextColor(mContext.getResources().getColor(R.color.colorPrimary));
             } else {
                 //holder.getTxtPrice().setText(String.format("%s%s", item.getCurrencySymbol(), item.getConvertedAddedCredit()));
-                holder.getTxtPrice().setText(String.format("%s %s%s", item.getCurrencyCode(), item.getCurrencySymbol(), item.getConvertedAddedCredit()));
+                //holder.getTxtPrice().setText(String.format("%s %s%s", item.getCurrencyCode(), item.getCurrencySymbol(), item.getConvertedAddedCredit()));
+                holder.getTxtPrice().setText(String.format("%s %s", mBalanceHelper.currencySymbolLookup(item.getCurrencyCode()), item.getConvertedAddedCredit()));
                 holder.getTxtPulse().setTextColor(mContext.getResources().getColor(R.color.dial_green));
             }
             holder.getArrow().setOnClickListener(new View.OnClickListener() {

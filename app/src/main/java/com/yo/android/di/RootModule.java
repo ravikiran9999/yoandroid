@@ -2,11 +2,15 @@ package com.yo.android.di;
 
 import android.content.Context;
 
+import com.yo.android.adapters.MagazineArticlesBaseAdapter;
+import com.yo.android.adapters.NewSuggestionsAdapter;
 import com.yo.android.chat.ChatRefreshBackground;
 import com.yo.android.ui.NewFollowMoreTopicsActivity;
+import com.yo.android.usecase.AddTopicsUsecase;
 import com.yo.android.usecase.ChatNotificationUsecase;
 import com.yo.android.usecase.DenominationsUsecase;
 import com.yo.android.usecase.PackageDenominationsUsecase;
+import com.yo.android.usecase.RandomTopicsUsecase;
 import com.yo.android.usecase.WebserviceUsecase;
 import com.yo.android.adapters.ChatRoomListAdapter;
 import com.yo.android.adapters.CountryCodeListAdapter;
@@ -188,6 +192,9 @@ import dagger.Provides;
                 OutgoingCallActivity.class,
                 InAppVideoActivity.class,
                 YouTubeFailureRecoveryActivity.class,
+                PhoneBookActivity.class,
+                PhoneChatActivity.class,
+                CallLogDetailsActivity.class,
 
                 //Fragments
                 ContactsFragment.class,
@@ -225,19 +232,21 @@ import dagger.Provides;
                 ChatRoomListAdapter.class,
                 FindPeopleAdapter.class,
                 SuggestionsAdapter.class,
-                FirebaseService.class,
+                UserChatAdapter.class,
                 YoContactsSyncAdapter.class,
+                NewSuggestionsAdapter.class,
+
+
+                FirebaseService.class,
                 YoSipService.class,
                 ReCreateService.class,
                 DialPadView.class,
-                PhoneBookActivity.class,
-                PhoneChatActivity.class,
-                CallLogDetailsActivity.class,
+
                 FireBaseAuthToken.class,
                 NewDailerActivity.class,
                 NewContactsFragment.class,
                 MainImageCropActivity.class,
-                UserChatAdapter.class,
+
                 Util.class,
                 FetchNewArticlesService.class,
                 CountryCodeListAdapter.class,
@@ -247,11 +256,14 @@ import dagger.Provides;
                 YoSipServiceHandler.class,
                 DialerHelper.class,
                 ChatRefreshBackground.class,
+
                 //usecases
                 WebserviceUsecase.class,
                 DenominationsUsecase.class,
                 PackageDenominationsUsecase.class,
                 ChatNotificationUsecase.class,
+                AddTopicsUsecase.class,
+                RandomTopicsUsecase.class,
         },
         includes = {
                 AppModule.class,

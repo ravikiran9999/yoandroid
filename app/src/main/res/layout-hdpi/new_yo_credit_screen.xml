@@ -44,6 +44,7 @@
                         android:textSize="18sp"
                         tools:text="@string/yo_credit" />
                 </android.support.v7.widget.Toolbar>
+
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -58,16 +59,19 @@
                         android:fitsSystemWindows="true"
                         android:scaleType="centerCrop" />
 
-                    <TextView
-                        android:id="@+id/your_available_amount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center|bottom"
-                        android:layout_marginBottom="30dp"
-                        android:background="@drawable/white_circle"
-                        android:gravity="center"
-                        android:text="@string/your_yo_balance"
-                        android:textColor="@color/black" />
+                        <TextView
+                            android:id="@+id/your_available_amount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="30dp"
+                            android:background="@drawable/white_circle"
+                            android:layout_gravity="center|bottom"
+                            android:gravity="center"
+                            android:text="@string/your_yo_balance"
+                            android:textColor="@color/black"
+                            android:paddingBottom="10dp"
+                            />
+
                 </FrameLayout>
             </RelativeLayout>
 
