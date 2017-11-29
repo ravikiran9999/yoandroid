@@ -1,6 +1,7 @@
 package com.yo.android.api;
 
 import com.google.gson.JsonElement;
+import com.yo.android.model.Alerts;
 import com.yo.android.model.Articles;
 import com.yo.android.model.Categories;
 import com.yo.android.model.ChatMessage;
@@ -352,7 +353,10 @@ public class YoApi {
 
         @FormUrlEncoded
         @POST("api/tags/random_tags.json")
-        Call<List<Categories>> randomTagsAPI(@Query("access_token") String access_token);
+        Call<List<Categories>> randomTagsAPI(@Field("access_token") String access_token);
+
+        @GET("api/user/generate_alerts.json")
+        Call<Alerts> sendAlerts(@Query("access_token") String access_token, @Query("title") String title, @Query("message") String reason, @Query("status") String status);
     }
 
     public interface YoRefreshTokenService {

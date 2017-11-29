@@ -48,9 +48,14 @@ public class CallStateHandler {
                     EventBus.getDefault().post(details);
                 } else {
                     DialerLogs.messageI(TAG, yoSipService.phoneNumber + "Call is already PSTN CALL so just dropping the call.");
+
+                    //Call alert api
                 }
             } else if (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_NEXGE_SERVER_DOWN)
                     || info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_REQUEST_TIMEOUT)) {
+
+                // Call alert api
+
                 yoSipService.getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_DISCONNECTED);
                 yoSipService.callDisconnected(YO_NEXGE_SERVER_DOWN, "Connect refused/Request Timeout", "This may be Nexge server down." + info.getCallIdString());
             } else if (info.getLastReason().equalsIgnoreCase(CallExtras.StatusReason.YO_BUSY_HERE)) {

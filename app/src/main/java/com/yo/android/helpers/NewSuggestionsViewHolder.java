@@ -1,38 +1,70 @@
 package com.yo.android.helpers;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractViewHolder;
+import com.yo.android.adapters.YoViewHolder;
+import com.yo.android.model.Categories;
 
-/**
- * Created by creatives on 9/6/2016.
- */
-public class NewSuggestionsViewHolder extends AbstractViewHolder {
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
-    private Button btnTopics;
-    private Button btnFollow;
+public class NewSuggestionsViewHolder extends YoViewHolder {
 
-    public NewSuggestionsViewHolder(View view) {
+    @Bind(R.id.img_magazine)
+    ImageView imageView;
+    @Bind(R.id.tv_title)
+    TextView topic_textView;
+    @Bind(R.id.checkbox)
+    CheckBox checkBox;
+
+    private Context mContext;
+
+    public NewSuggestionsViewHolder(Context context, View view) {
         super(view);
-        btnTopics = (Button) view.findViewById(R.id.btn_topics);
-        btnFollow = (Button) view.findViewById(R.id.imv_magazine_follow);
+        ButterKnife.bind(this, view);
+        mContext = context;
     }
 
-    public Button getBtnTopics() {
-        return btnTopics;
+    public CheckBox getCheckBox() {
+        return checkBox;
     }
 
-    public void setBtnTopics(Button btnTopics) {
-        this.btnTopics = btnTopics;
+    public void setCheckBox(CheckBox checkBox) {
+        this.checkBox = checkBox;
     }
 
-    public Button getBtnFollow() {
-        return btnFollow;
+    @Override
+    public void bindData(Object data) {
+        Categories categories = (Categories) data;
+        //btnTopics.setText(categories.getTags().get(0).getName());
+        topic_textView.setText(categories.getTags().get(0).getName());
+        loadImage(categories.getTags().get(0).getImage());
+
+        if (categories.getTags().get(0).isSelected()) {
+            //Show tick
+            checkBox.setChecked(true);
+        } else {
+            checkBox.setChecked(false);
+        }
     }
 
-    public void setBtnFollow(Button btnFollow) {
-        this.btnFollow = btnFollow;
+    private void loadImage(String imageUrl) {
+        Glide.with(mContext)
+                .load(imageUrl)
+                //.override(bmp.getWidth(), bmp.getHeight())
+                .placeholder(R.drawable.magazine_backdrop)
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .dontAnimate()
+                .into(imageView);
     }
 }

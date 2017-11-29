@@ -5,28 +5,32 @@
     android:background="@android:color/white"
     android:orientation="vertical">
 
-    <TextView android:id="@+id/tv_you_might"
+    <TextView
+        android:id="@+id/tv_you_might"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
         android:text="@string/you_might_follow_topics"
         android:textColor="@android:color/black"
         android:textSize="20sp" />
 
-    <ListView
-        android:id="@+id/lv_suggestions"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_suggestions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:divider="@android:color/transparent"
+        android:layout_above="@+id/tv_follow_more_topics"
         android:layout_below="@+id/tv_you_might"
-        android:layout_above="@+id/tv_follow_more_topics"/>
+        android:divider="@android:color/transparent"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" />
 
     <TextView
         android:id="@+id/tv_follow_more_topics"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
@@ -34,7 +38,21 @@
         android:drawableRight="@drawable/ic_right_arrow"
         android:text="Follow More Topics"
         android:textColor="@android:color/black"
-        android:textSize="20sp"
-        android:layout_alignParentBottom="true"/>
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/btn_done"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="center"
+        android:layout_marginBottom="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/holo_blue_dark"
+        android:text="Done"
+        android:textColor="@android:color/white" />
 
 </RelativeLayout>

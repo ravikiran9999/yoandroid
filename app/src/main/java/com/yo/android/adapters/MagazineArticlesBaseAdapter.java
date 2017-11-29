@@ -6,11 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Layout;
-import android.text.SpannableString;
 import android.text.TextUtils;
-import android.transition.Transition;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,22 +31,21 @@ import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
+import com.yo.android.api.ApiCallback;
 import com.yo.android.api.YoApi;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.helpers.MagazinePreferenceEndPoint;
 import com.yo.android.model.Articles;
+import com.yo.android.model.Categories;
 import com.yo.android.model.Topics;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.BitmapScaler;
@@ -54,10 +53,10 @@ import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.DeviceDimensionsHelper;
 import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.NewFollowMoreTopicsActivity;
-import com.yo.android.ui.NewImageRenderTask;
 import com.yo.android.ui.OtherProfilesLikedArticles;
 import com.yo.android.ui.TopicsDetailActivity;
 import com.yo.android.ui.fragments.MagazinesFragment;
+import com.yo.android.usecase.AddTopicsUsecase;
 import com.yo.android.util.AutoReflectTopicsFollowActionsListener;
 import com.yo.android.util.AutoReflectWishListActionsListener;
 import com.yo.android.util.Constants;
@@ -75,6 +74,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 
+import javax.inject.Inject;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -83,7 +84,7 @@ import retrofit2.Response;
 /**
  * The adapter for the Magazine landing screen articles
  */
-public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoReflectWishListActionsListener, MagazineOtherPeopleReflectListener, AutoReflectTopicsFollowActionsListener {
+public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoReflectWishListActionsListener, MagazineOtherPeopleReflectListener, AutoReflectTopicsFollowActionsListener, NewSuggestionsAdapter.TopicSelectionListener {
 
     private Context context;
     private LayoutInflater inflater;
@@ -102,12 +103,15 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     private List<Articles> allArticles;
     private MagazineFlipArticlesFragment magazineFlipArticlesFragment;
     private List<Articles> getAllArticles;
+    private NewSuggestionsAdapter newSuggestionsAdapter;
+    AddTopicsUsecase mAddTopicsUsecase;
 
     private static AutoReflectWishListActionsListener reflectListenerTemp;
 
+
     public MagazineArticlesBaseAdapter(Context context,
                                        PreferenceEndPoint preferenceEndPoint,
-                                       YoApi.YoService yoService, ToastFactory mToastFactory, MagazineFlipArticlesFragment magazineFlipArticlesFragment) {
+                                       YoApi.YoService yoService, ToastFactory mToastFactory, MagazineFlipArticlesFragment magazineFlipArticlesFragment, AddTopicsUsecase addTopicsUsecase) {
         inflater = LayoutInflater.from(context);
         this.context = context;
         mListener = this;
@@ -121,6 +125,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         this.magazineFlipArticlesFragment = magazineFlipArticlesFragment;
         reflectTopicsFollowActionsListener = this;
         reflectListenerTemp = this;
+        mAddTopicsUsecase = addTopicsUsecase;
     }
 
     public static void initListener() {
@@ -156,7 +161,11 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 layout = inflater.inflate(R.layout.magazine_landing_layout, null);
             } else if (type == 2) {
                 // Inflate the layout with suggestions page
-                layout = inflater.inflate(R.layout.landing_suggestions_page, null);
+                if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                    layout = inflater.inflate(R.layout.landing_suggestions_page, null);
+                } else {
+                    layout = inflater.inflate(R.layout.new_landing_suggestions_page, null);
+                }
             } else {
                 // Inflate the layout with single article
                 layout = inflater.inflate(R.layout.magazine_flip_layout, null);
@@ -228,8 +237,12 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             holder.articleFollowRight = UI.findViewById(layout, R.id.imv_magazine_follow_right);
 
             //holder.lvSuggestions = UI.findViewById(layout, R.id.lv_suggestions);
-            holder.lvSuggestions = (ListView) layout.findViewById(R.id.lv_suggestions);
-
+            if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                holder.lvSuggestions = (ListView) layout.findViewById(R.id.lv_suggestions);
+            } else {
+                holder.rvSuggestions = (RecyclerView) layout.findViewById(R.id.rv_suggestions);
+                holder.doneButton = (Button) layout.findViewById(R.id.btn_done);
+            }
             holder.tvFollowMoreTopics = UI.findViewById(layout, R.id.tv_follow_more_topics);
 
             holder.tvTopicName = UI.findViewById(layout, R.id.imv_magazine_topic);
@@ -285,7 +298,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
                 @Override
                 public void onGlobalLayout() {
-                    //Log.d("BaseAdapter", "First Title " + data.getTitle() + " max lines " + maxLines + " textView.getHeight() " + textView.getHeight() + " textView.getLineHeight() " + textView.getLineHeight());
                     if (maxLines < 0 && textView.getHeight() > 0 && textView.getLineHeight() > 0) {
                         int height = textView.getHeight();
                         int lineHeight = textView.getLineHeight();
@@ -698,7 +710,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             .load(data.getImage_filename())
                             .asBitmap()
                             .placeholder(R.drawable.magazine_backdrop)
-                            //.diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .dontAnimate()
                             .into(new SimpleTarget<Bitmap>() {
                                 @Override
@@ -734,14 +746,13 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                             }
                                         }
 
-                                        if(articleTitle != null) {
+                                        if (articleTitle != null) {
                                             ViewTreeObserver vto1 = articleTitle.getViewTreeObserver();
                                             vto1.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                                                 private int maxLines = -1;
 
                                                 @Override
                                                 public void onGlobalLayout() {
-                                                    //Log.d("BaseAdapter", "Second Title " + data.getTitle() + " max lines " + maxLines + " textView.getHeight() " + textView.getHeight() + " textView.getLineHeight() " + textView.getLineHeight());
                                                     if (maxLines < 0 && articleTitle.getHeight() > 0 && articleTitle.getLineHeight() > 0) {
                                                         //Log.d("BaseAdapter", "Max lines inside if" + maxLines);
                                                         int height = articleTitle.getHeight();
@@ -751,14 +762,14 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                                         articleTitle.setEllipsize(TextUtils.TruncateAt.END);
                                                         // Re-assign text to ensure ellipsize is performed correctly.
                                                         articleTitle.setText(AphidLog.format("%s", data.getTitle()));
-                                                    } else if(maxLines == -1 && articleTitle.getHeight() > 0) {
+                                                    } else if (maxLines == -1 && articleTitle.getHeight() > 0) {
                                                         //Log.d("BaseAdapter", "Max lines inside else if" + maxLines);
                                                         articleTitle.setMaxLines(1);
                                                         articleTitle.setEllipsize(TextUtils.TruncateAt.END);
                                                         // Re-assign text to ensure ellipsize is performed correctly.
                                                         articleTitle.setText(AphidLog.format("%s", data.getTitle()));
-                                                    } else if(maxLines == -1 && articleTitle.getHeight() == 0) {
-                                                       // Log.d("BaseAdapter", "Full screen image after options cut or not shown");
+                                                    } else if (maxLines == -1 && articleTitle.getHeight() == 0) {
+                                                        // Log.d("BaseAdapter", "Full screen image after options cut or not shown");
                                                         if (fullImageTitle != null && articleTitle != null && blackMask != null && rlFullImageOptions != null) {
                                                             fullImageTitle.setVisibility(View.VISIBLE);
                                                             fullImageTitle.setText(articleTitle.getText().toString());
@@ -771,7 +782,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                             });
                                         }
 
-                                        if(textView != null) {
+                                        if (textView != null) {
                                             ViewTreeObserver vto = textView.getViewTreeObserver();
                                             vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                                                 private int maxLines = -1;
@@ -822,7 +833,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 @Override
                 public void onClick(View v) {
                     Intent intent;
-                    if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                    if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                         intent = new Intent(context, FollowMoreTopicsActivity.class);
                     } else {
                         intent = new Intent(context, NewFollowMoreTopicsActivity.class);
@@ -960,37 +971,73 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         } else {
             populateEmptyRightArticle(holder);
         }
-
-        if (allArticles.size() >= 4 && MagazinesFragment.unSelectedTopics.size() > 0) {
-            if (holder.lvSuggestions != null) {
-                SuggestionsAdapter suggestionsAdapter = new SuggestionsAdapter(context, magazineFlipArticlesFragment);
-                holder.lvSuggestions.setAdapter(suggestionsAdapter);
-                int n = 5;
-                if (MagazinesFragment.unSelectedTopics.size() >= n) {
-                    List<Topics> subList = new ArrayList<>(MagazinesFragment.unSelectedTopics.subList(0, n));
-                    suggestionsAdapter.addItems(subList);
-                } else {
-                    int count = MagazinesFragment.unSelectedTopics.size();
-                    if (count > 0) {
-                        List<Topics> subList = new ArrayList<>(MagazinesFragment.unSelectedTopics.subList(0, count));
+        if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+            if (allArticles.size() >= 4 && MagazinesFragment.unSelectedTopics.size() > 0) {
+                if (holder.lvSuggestions != null) {
+                    SuggestionsAdapter suggestionsAdapter = new SuggestionsAdapter(context, magazineFlipArticlesFragment);
+                    holder.lvSuggestions.setAdapter(suggestionsAdapter);
+                    int n = 5;
+                    if (MagazinesFragment.unSelectedTopics.size() >= n) {
+                        List<Topics> subList = new ArrayList<>(MagazinesFragment.unSelectedTopics.subList(0, n));
                         suggestionsAdapter.addItems(subList);
+                    } else {
+                        int count = MagazinesFragment.unSelectedTopics.size();
+                        if (count > 0) {
+                            List<Topics> subList = new ArrayList<>(MagazinesFragment.unSelectedTopics.subList(0, count));
+                            suggestionsAdapter.addItems(subList);
+                        }
                     }
                 }
             }
-        }
+        } else {
 
+            if (allArticles.size() >= 4 && MagazinesFragment.newCategoriesList.size() > 0) {
+                if (holder.rvSuggestions != null) {
+                    newSuggestionsAdapter = new NewSuggestionsAdapter(context, magazineFlipArticlesFragment, MagazinesFragment.newCategoriesList);
+
+                    //int n = 5;
+                    /*if (MagazinesFragment.unSelectedTopics.size() >= n) {
+                        List<Topics> subList = new ArrayList<>(MagazinesFragment.unSelectedTopics.subList(0, n));
+                        suggestionsAdapter.addItems(subList);
+                    } else {
+                        int count = MagazinesFragment.unSelectedTopics.size();
+                        if (count > 0) {
+                            List<Topics> subList = new ArrayList<>(MagazinesFragment.unSelectedTopics.subList(0, count));
+                            suggestionsAdapter.addItems(subList);
+                        }
+                    }*/
+
+                    //newSuggestionsAdapter.setData(new ArrayList<Object>(MagazinesFragment.newCategoriesList));
+                    newSuggestionsAdapter.notifyDataSetChanged();
+                    newSuggestionsAdapter.setTopicsItemListener(this);
+                    holder.rvSuggestions.setAdapter(newSuggestionsAdapter);
+                    holder.rvSuggestions.setNestedScrollingEnabled(false);
+                    holder.rvSuggestions.setLayoutManager(new GridLayoutManager(context, 2));
+
+                }
+            }
+        }
         if (holder.tvFollowMoreTopics != null) {
             holder.tvFollowMoreTopics.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent;
-                    if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                    if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                         intent = new Intent(context, FollowMoreTopicsActivity.class);
                     } else {
                         intent = new Intent(context, NewFollowMoreTopicsActivity.class);
                     }
                     intent.putExtra("From", "Magazines");
                     context.startActivity(intent);
+                }
+            });
+        }
+
+        if (holder.doneButton != null) {
+            holder.doneButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    selectedTopics();
                 }
             });
         }
@@ -1569,7 +1616,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 @Override
                 public void onClick(View v) {
                     Intent intent;
-                    if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                    if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                         intent = new Intent(context, FollowMoreTopicsActivity.class);
                     } else {
                         intent = new Intent(context, NewFollowMoreTopicsActivity.class);
@@ -2464,6 +2511,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         private ListView lvSuggestions;
 
+        private RecyclerView rvSuggestions;
+
         private TextView tvFollowMoreTopics;
 
         private TextView tvTopicName;
@@ -2489,6 +2538,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         private ImageView fullImageMagazineAdd;
 
         private ImageView fullImageMagazineShare;
+
+        private Button doneButton;
 
         private RelativeLayout topLayout;
         private LinearLayout middleLayout; //like, add and share
@@ -2680,5 +2731,45 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
             }
         });
+    }
+
+    @Override
+    public void onItemSelected(Topics topics) {
+        if (!topics.isSelected()) {
+            topics.setSelected(true);
+        } else {
+            topics.setSelected(false);
+        }
+        newSuggestionsAdapter.notifyDataSetChanged();
+    }
+
+    private void selectedTopics() {
+        ((BaseActivity) context).showProgressDialog();
+        List<String> followedTopicsIdsList = new ArrayList();
+        for (Categories categories : newSuggestionsAdapter.getmData()) {
+            for (Topics topics : categories.getTags()) {
+                if (topics.isSelected()) {
+                    followedTopicsIdsList.add(topics.getId());
+                }
+
+            }
+        }
+
+        if (followedTopicsIdsList.size() > 0) {
+            mAddTopicsUsecase.addTopics(followedTopicsIdsList, new ApiCallback<List<Categories>>() {
+                @Override
+                public void onResult(List<Categories> result) {
+                    newSuggestionsAdapter.getmData().clear();
+                    newSuggestionsAdapter.setmData(new ArrayList<Categories>(result));
+                    newSuggestionsAdapter.notifyDataSetChanged();
+                    ((BaseActivity) context).dismissProgressDialog();
+                }
+
+                @Override
+                public void onFailure(String message) {
+
+                }
+            });
+        }
     }
 }

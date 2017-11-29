@@ -37,6 +37,7 @@ import com.yo.android.model.Articles;
 import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.NewFollowMoreTopicsActivity;
 import com.yo.android.ui.fragments.MagazinesFragment;
+import com.yo.android.usecase.AddTopicsUsecase;
 import com.yo.android.util.ArticlesComparator;
 import com.yo.android.util.Constants;
 import com.yo.android.util.MagazineDashboardHelper;
@@ -101,6 +102,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     @Inject
     YoApi.YoService yoService;
     @Inject
+    AddTopicsUsecase addTopicsUsecase;
+    @Inject
     ConnectivityHelper mHelper;
 
     public static int suggestionsPosition = 0;
@@ -143,7 +146,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         View view = inflater.inflate(R.layout.magazine_flip_fragment, container, false);
         ButterKnife.bind(this, view);
 
-        myBaseAdapter = new MagazineArticlesBaseAdapter(getActivity(), preferenceEndPoint, yoService, mToastFactory, this);
+        myBaseAdapter = new MagazineArticlesBaseAdapter(getActivity(), preferenceEndPoint, yoService, mToastFactory, this, addTopicsUsecase);
         flipView.setAdapter(myBaseAdapter);
         flipView.setOnFlipListener(this);
         flipView.setOnOverFlipListener(this);
