@@ -42,9 +42,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by Ramesh on 25/7/16.
- */
 public class SpendDetailsFragment extends BaseFragment implements Callback<ResponseBody> {
 
     private static final String PSTN = "PSTN";
@@ -166,7 +163,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
     }
 
 
-    public static class SpentDetailsAdapter extends RecyclerView.Adapter<SpendDetailsViewHolder> {
+    public class SpentDetailsAdapter extends RecyclerView.Adapter<SpendDetailsViewHolder> {
         private List<SubscribersList> mSubscribersList;
         private Context mContext;
 
@@ -259,7 +256,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
                 }*/
             }
             //holder.getTxtPrice().setText("US $ " + item.getCallcost());
-            holder.getTxtPrice().setText(item.getCallcost());
+            holder.getTxtPrice().setText(mBalanceHelper.currencySymbolLookup(item.getCallcost()));
             holder.getTxtReason().setText(item.getCalltype());
         }
 

@@ -232,7 +232,7 @@ public class NewDailerActivity extends BaseActivity {
             if (mBalanceHelper.getCurrentBalance() != null) {
                 //txtBalance.setText(String.format("%s %s", mBalanceHelper.getCurrencySymbol(), mBalanceHelper.getCurrentBalance()));
                 //txtBalance.setText(String.format("%s %s", currencySymbolDollar, mBalanceHelper.getCurrentBalance()));
-                txtBalance.setText(String.format("%s", mBalanceHelper.getCurrentBalance()));
+                txtBalance.setText(String.format("%s", mBalanceHelper.currencySymbolLookup(mBalanceHelper.getCurrentBalance())));
             } else {
                 txtBalance.setVisibility(View.GONE);
             }
@@ -464,7 +464,7 @@ public class NewDailerActivity extends BaseActivity {
                 countryName.setText(cName);
             }
             preferenceEndPoint.saveStringPreference(Constants.CALL_RATE, cRate + "/" + pulse);
-            txtCallRate.setText(cRate + "/" + pulse);
+            txtCallRate.setText(mBalanceHelper.currencySymbolLookup(cRate) + "/" + pulse);
             if (TextUtils.isEmpty(dialPadView.getDigits().getText().toString())) {
                 //TODO: Need to improve the logic
                 String str = dialPadView.getDigits().getText().toString();
