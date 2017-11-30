@@ -114,6 +114,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:textColor="@android:color/black"
             android:textSize="@dimen/article_title_textsize"
             android:textStyle="bold" />android:text="Article 1"
@@ -123,10 +124,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
             android:ellipsize="end"
             android:lineSpacingMultiplier="1.2"
-            android:maxLines="5"
             android:textSize="@dimen/article_textsize" />android:text="This is the first magazine article content. This
         is a dummy content."
 
