@@ -30,13 +30,10 @@ public class RandomTopicsUsecase {
         yoService.randomTagsAPI(accessToken).enqueue(new Callback<List<Categories>>() {
             @Override
             public void onResponse(Call<List<Categories>> call, Response<List<Categories>> response) {
-                //dismissProgressDialog();
                 if (response == null || response.body() == null) {
                     return;
                 }
                 randomCategories.onResult(response.body());
-                //categoriesList.clear();
-                //categoriesList.addAll(response.body());
             }
 
             @Override

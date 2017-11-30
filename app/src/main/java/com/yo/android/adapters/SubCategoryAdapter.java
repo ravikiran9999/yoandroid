@@ -40,7 +40,7 @@ public class SubCategoryAdapter extends RecyclerView.Adapter<YoViewHolder> {
     public void onBindViewHolder(YoViewHolder holder, int position) {
         final SubCategoryItemViewHolder subCategoryItemViewHolder = (SubCategoryItemViewHolder) holder;
         subCategoryItemViewHolder.bindData(mData.get(position));
-        subCategoryItemViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+        subCategoryItemViewHolder.getCheckBox().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int position = subCategoryItemViewHolder.getAdapterPosition();

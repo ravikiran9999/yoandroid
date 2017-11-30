@@ -32,6 +32,10 @@ public class SubCategoryItemViewHolder extends YoViewHolder {
         mContext = context;
     }
 
+    public CheckBox getCheckBox() {
+        return checkBox;
+    }
+
     @Override
     public void bindData(Object data) {
         Topics item = (Topics) data;

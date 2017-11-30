@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
@@ -55,10 +56,10 @@ public class NewSuggestionsAdapter extends RecyclerView.Adapter<YoViewHolder> {
     public void onBindViewHolder(YoViewHolder holder, int position) {
         final NewSuggestionsViewHolder subCategoryItemViewHolder = (NewSuggestionsViewHolder) holder;
         subCategoryItemViewHolder.bindData(mData.get(position));
-        subCategoryItemViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+        subCategoryItemViewHolder.getCheckBox().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int position = subCategoryItemViewHolder.getAdapterPosition();
+                int position = subCategoryItemViewHolder.getLayoutPosition();
                 if (position < 0) {
                     return;
                 }
@@ -67,6 +68,7 @@ public class NewSuggestionsAdapter extends RecyclerView.Adapter<YoViewHolder> {
                     topicSelectionListener.onItemSelected(item);
                 }
             }
+
         });
     }
 
