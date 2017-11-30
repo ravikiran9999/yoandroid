@@ -38,14 +38,9 @@ public class NewSuggestionsViewHolder extends YoViewHolder {
         return checkBox;
     }
 
-    public void setCheckBox(CheckBox checkBox) {
-        this.checkBox = checkBox;
-    }
-
     @Override
     public void bindData(Object data) {
         Categories categories = (Categories) data;
-        //btnTopics.setText(categories.getTags().get(0).getName());
         topic_textView.setText(categories.getTags().get(0).getName());
         loadImage(categories.getTags().get(0).getImage());
 
