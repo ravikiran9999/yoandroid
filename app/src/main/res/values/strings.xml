@@ -120,6 +120,7 @@
     <string name="enter_mobile_number_started">Enter your mobile number to get started!</string>
     <string name="no_call_history">No call logs history available</string>
     <string name="no_history">No %s history available.</string>
+    <string name="network_error">Please check your network connection</string>
 
     <!--Menu options-->
     <string name="message">Message</string>
