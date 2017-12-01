@@ -87,7 +87,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     private List<Topics> topicsList;
     private Menu menu;
     public static List<Topics> unSelectedTopics;
-    FilterWithSpaceAdapter<Object> mAdapter;
+    FilterWithSpaceAdapter<String> mAdapter;
     private boolean isAlreadyShown;
     List<String> topicsNames;
     private List<Topics> topicsNewList;
@@ -168,8 +168,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mAdapter = new FilterWithSpaceAdapter<Object>(getActivity(),
-                R.layout.textviewitem, new ArrayList<Object>());
+        mAdapter = new FilterWithSpaceAdapter<String>(getActivity(),
+                R.layout.textviewitem, new ArrayList<String>());
         if ((mMagazineFlipArticlesFragment = (MagazineFlipArticlesFragment) getChildFragmentManager().findFragmentById(R.id.bottom)) != null) {
             getChildFragmentManager()
                     .beginTransaction()
@@ -197,6 +197,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
             if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                 callApiSearchTopics();
             } else {
+                callApiSearchTopics();
                 getRandomTopics();
             }
         }
@@ -307,9 +308,9 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 */
                 newCategoriesList.addAll(categoriesList);
 
-                mAdapter.clear();
+/*                mAdapter.clear();
                 mAdapter.addAll(categoriesList);
-                mAdapter.notifyDataSetChanged();
+                mAdapter.notifyDataSetChanged();*/
             }
 
             @Override
@@ -324,6 +325,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
         if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
             callApiSearchTopics();
         } else {
+            callApiSearchTopics();
             getRandomTopics();
         }
     }
@@ -569,6 +571,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
             if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                 callApiSearchTopics();
             } else {
+                callApiSearchTopics();
                 getRandomTopics();
             }
         }
@@ -655,6 +658,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                         callApiSearchTopics();
                     } else {
+                        callApiSearchTopics();
                         getRandomTopics();
                     }
                 }
