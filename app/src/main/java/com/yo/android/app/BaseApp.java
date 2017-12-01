@@ -42,6 +42,9 @@ public class BaseApp extends MultiDexApplication {
     private static BaseApp baseAppInstance;
     protected String userAgent;
 
+    // Production
+    private static final String FLURRY_API_KEY = "GRYKGBSF2C3XWJRVCXGP";
+
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
@@ -114,7 +117,7 @@ public class BaseApp extends MultiDexApplication {
                 //.withLogEnabled(true)
                 .withLogLevel(Log.VERBOSE)
                 .withListener(flurryAgentListener)
-                .build(this, Constants.FLURRY_API_KEY);
+                .build(this, FLURRY_API_KEY);
     }
 
     @Override

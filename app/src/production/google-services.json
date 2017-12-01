@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "629755863232",
+    "firebase_url": "https://yowatsup-release.firebaseio.com",
+    "project_id": "yowatsup-release",
+    "storage_bucket": "yowatsup-release.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:629755863232:android:5e9fd7bb07b64c8d",
+        "android_client_info": {
+          "package_name": "com.yowatsup.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "629755863232-62kp14a946jst8ic4g53us1c5q9njggg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIxCZ74FmsGacvaH91EiEtIm4TDk02ER8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

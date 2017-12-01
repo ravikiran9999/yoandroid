@@ -118,7 +118,11 @@ public class SplashScreenActivity extends BaseActivity {
                 if (enableProfileScreen) {
                     startActivity(new Intent(SplashScreenActivity.this, UpdateProfileActivity.class));
                 } else if (enableFollowTopicsScreen) {
-                    startActivity(new Intent(SplashScreenActivity.this, FollowMoreTopicsActivity.class));
+                    if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                        startActivity(new Intent(SplashScreenActivity.this, FollowMoreTopicsActivity.class));
+                    } else {
+                        startActivity(new Intent(SplashScreenActivity.this, NewFollowMoreTopicsActivity.class));
+                    }
                 } else {
                     startActivity(new Intent(SplashScreenActivity.this, BottomTabsActivity.class));
                 }

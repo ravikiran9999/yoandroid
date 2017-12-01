@@ -150,11 +150,17 @@ public class BaseActivity extends ParentActivity {
      */
 
     public static void getDataFromApi(Sheets sheets, UploadModel model, String type) throws IOException {
-        final String spreadsheetId = "1OIkQq2O3en-x0ChsIAy2DX0YPS6n9sMzFQr_-xVy1Qs";
+        // Stage
+        //final String spreadsheetId = "1OIkQq2O3en-x0ChsIAy2DX0YPS6n9sMzFQr_-xVy1Qs";
+
+        //Production
+        final String spreadsheetId = "1qgUuEqHNiKbIHq-yTlLNnHpBx9sCb7YLueJoxVEnLiA";
+
         List<List<Object>> values = new ArrayList<>();
         String range = " ";
         if (type.equals("Calls")) {
-            range = "17.4.5.0!A:L";
+            range = "1.0 Call Logs!A:L";
+            //range = "17.4.5.0!A:L";
             DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
             if (TextUtils.isEmpty(model.getCallee().trim())) {
                 model.setCallee("Unknow..");

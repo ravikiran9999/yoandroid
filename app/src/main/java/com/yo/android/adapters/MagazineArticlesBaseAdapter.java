@@ -996,7 +996,14 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
             if (allArticles.size() >= 4 && MagazinesFragment.newCategoriesList.size() > 0) {
                 if (holder.rvSuggestions != null) {
-                    newSuggestionsAdapter = new NewSuggestionsAdapter(context, magazineFlipArticlesFragment, MagazinesFragment.newCategoriesList);
+                    ArrayList<Categories> addFourCategoriesList = new ArrayList<>();
+                    for(Categories categories : MagazinesFragment.newCategoriesList) {
+                        if(addFourCategoriesList.size()<= 4) {
+                            addFourCategoriesList.add(categories);
+                        }
+                    }
+                    //newSuggestionsAdapter = new NewSuggestionsAdapter(context, magazineFlipArticlesFragment, MagazinesFragment.newCategoriesList);
+                    newSuggestionsAdapter = new NewSuggestionsAdapter(context, magazineFlipArticlesFragment, addFourCategoriesList);
 
                     //int n = 5;
                     /*if (MagazinesFragment.unSelectedTopics.size() >= n) {

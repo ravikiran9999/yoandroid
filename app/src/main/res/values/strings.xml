@@ -120,6 +120,7 @@
     <string name="enter_mobile_number_started">Enter your mobile number to get started!</string>
     <string name="no_call_history">No call logs history available</string>
     <string name="no_history">No %s history available.</string>
+    <string name="network_error">Please check your network connection</string>
 
     <!--Menu options-->
     <string name="message">Message</string>
@@ -230,8 +231,8 @@
     <string name="contacts">Contacts</string>
     <string name="dialer">Dialer</string>
     <string name="magazines">Magazines</string>
-    <string name="terms_and_conditions">Privacy policy</string>
-    <string name="tc"><u>Privacy policy</u></string>
+    <string name="terms_and_conditions">Terms and conditions</string>
+    <string name="tc"><u>Terms and conditions</u></string>
     <string name="add_balance_from_google_play">Add balance from Google Play</string>
     <string name="add_balance_from_voucher">Add balance from Voucher</string>
 
