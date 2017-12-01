@@ -503,7 +503,7 @@ public class WishListActivity extends BaseActivity {
                                     int total = bmp.getHeight() + 50;
                                     //if(bmp.getHeight() >= spaceForImage-30) {
                                     //Log.d("BaseAdapter", "total" + total);
-                                    if (screenHeight - total <= 200) {
+                                    if (screenHeight - total <= 250) {
 
                                         Log.d("BaseAdapter", "Full screen image");
                                         if (fullImageTitle != null && articleTitle != null && blackMask != null && rlFullImageOptions != null) {
@@ -513,6 +513,15 @@ public class WishListActivity extends BaseActivity {
                                             rlFullImageOptions.setVisibility(View.VISIBLE);
 
                                         }
+                                    } else {
+                                        fullImageTitle.setVisibility(View.GONE);
+                                        blackMask.setVisibility(View.GONE);
+                                        rlFullImageOptions.setVisibility(View.GONE);
+                                        articleTitle
+                                                .setText(AphidLog.format("%s", data.getTitle()));
+                                        textView1.setMaxLines(1000);
+                                        textView1
+                                                .setText(Html.fromHtml(data.getSummary()));
                                     }
 
                                     if(articleTitle != null) {
