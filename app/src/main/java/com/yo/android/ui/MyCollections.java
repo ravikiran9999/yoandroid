@@ -315,6 +315,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
             }
         }
         if (topicIds.size() > 0) {
+            showProgressDialog();
             yoService.removeTopicsAPI(accessToken, topicIds).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -322,6 +323,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                     yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
                         @Override
                         public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
+                            dismissProgressDialog();
                             dismissContextualMenu();
                             invalidateOptionsMenu();
                             final List<Collections> collectionsList = new ArrayList<Collections>();
@@ -354,6 +356,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                         @Override
                         public void onFailure(Call<List<Collections>> call, Throwable t) {
                             // do nothing
+                            dismissProgressDialog();
                         }
                     });
                 }
@@ -361,11 +364,13 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     // do nothing
+                    dismissProgressDialog();
                 }
             });
         }
 
         if (magazineIds.size() > 0) {
+            showProgressDialog();
             yoService.removeMagazinesAPI(accessToken, magazineIds).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -373,6 +378,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                     yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
                         @Override
                         public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
+                            dismissProgressDialog();
                             dismissContextualMenu();
                             invalidateOptionsMenu();
                             final List<Collections> collectionsList = new ArrayList<Collections>();
@@ -405,6 +411,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                         @Override
                         public void onFailure(Call<List<Collections>> call, Throwable t) {
                             // do nothing
+                            dismissProgressDialog();
                         }
                     });
                 }
@@ -412,6 +419,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     // do nothing
+                    dismissProgressDialog();
                 }
             });
         }
