@@ -295,4 +295,28 @@ public class CallHelper {
             }
         }
     }
+
+    public static void uploadToGoogleSheetMessageSentFail(PreferenceEndPoint preferenceEndPoint, String phoneNumber, String name, String comments) {
+        if (DialerConfig.UPLOAD_REPORTS_GOOGLE_SHEET) {
+            try {
+                UploadModel model = new UploadModel(preferenceEndPoint);
+                model.setCaller(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
+                model.setCallee(phoneNumber);
+                model.setToName(name);
+
+                model.setComments(comments);
+
+                Calendar c = Calendar.getInstance();
+                String formattedDate = YoSipService.df.format(c.getTime());
+                model.setDate(formattedDate);
+                Date d = new Date();
+                String currentDateTimeString = YoSipService.sdf.format(d);
+                model.setTime(currentDateTimeString);
+
+                UploadCallDetails.postDataFromApi(model, "BalanceFailures");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

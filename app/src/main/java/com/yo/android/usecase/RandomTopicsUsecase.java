@@ -18,6 +18,8 @@ import retrofit2.Response;
 public class RandomTopicsUsecase {
 
     public static final String TAG = AddTopicsUsecase.class.getSimpleName();
+    private static final String NO_TOPICS_AVAILABLE = "No topics are available for selection";
+
     @Inject
     YoApi.YoService yoService;
 
@@ -33,12 +35,16 @@ public class RandomTopicsUsecase {
                 if (response == null || response.body() == null) {
                     return;
                 }
-                randomCategories.onResult(response.body());
+                if(response.body().size() > 0 ) {
+                    randomCategories.onResult(response.body());
+                } else {
+                    randomCategories.onFailure(NO_TOPICS_AVAILABLE);
+                }
             }
 
             @Override
             public void onFailure(Call<List<Categories>> call, Throwable t) {
-
+              randomCategories.onFailure(NO_TOPICS_AVAILABLE);
             }
         });
     }

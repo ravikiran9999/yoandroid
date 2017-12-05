@@ -77,7 +77,7 @@ public class SuggestionsAdapter extends AbstractBaseAdapter<Topics, SuggestionsV
                     }
                 }
                 followedTopicsIdsList.add(String.valueOf(item.getId()));
-                yoService.addTopicsAPI(accessToken, followedTopicsIdsList).enqueue(new Callback<ResponseBody>() {
+                yoService.addTopicsAPI(accessToken, followedTopicsIdsList,"").enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         holder.getBtnFollow().setText("Following");

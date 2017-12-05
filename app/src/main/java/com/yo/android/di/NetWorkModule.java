@@ -62,12 +62,16 @@ public class NetWorkModule {
     }
 
     private <T> T buildAdapter(String baseUrl, Class<T> clazz, OkHttpClient.Builder builder, ConnectivityHelper connectivityHelper) {
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        if(BuildConfig.DEBUG) {
+            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            builder.addInterceptor(interceptor);
+        }
 
         //
         OkHttpClient defaultHttpClient = builder
-                .addInterceptor(interceptor)
+                //.addInterceptor(interceptor)
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
@@ -77,6 +81,7 @@ public class NetWorkModule {
 //                .addInterceptor(new OfflineResponseInterceptor(connectivityHelper))
 //                .addNetworkInterceptor(new RewriteResponseInterceptor())
                 .build();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .client(defaultHttpClient)
                 .baseUrl(baseUrl)

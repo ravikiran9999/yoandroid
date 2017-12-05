@@ -325,7 +325,7 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
 
             showProgressDialog();
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
-            yoService.addTopicsAPI(accessToken, followedTopicsIdsList).enqueue(new Callback<ResponseBody>() {
+            yoService.addTopicsAPI(accessToken, followedTopicsIdsList, "").enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     dismissProgressDialog();

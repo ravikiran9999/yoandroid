@@ -900,7 +900,7 @@ public class TopicsDetailActivity extends BaseActivity {
                         }
                     }
                     followedTopicsIdsList.add(String.valueOf(topic.getTopicId()));
-                    yoService.addTopicsAPI(accessToken, followedTopicsIdsList).enqueue(new Callback<ResponseBody>() {
+                    yoService.addTopicsAPI(accessToken, followedTopicsIdsList,"").enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             dismissProgressDialog();

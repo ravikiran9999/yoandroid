@@ -41,14 +41,16 @@ public class NewSuggestionsViewHolder extends YoViewHolder {
     @Override
     public void bindData(Object data) {
         Categories categories = (Categories) data;
-        topic_textView.setText(categories.getTags().get(0).getName());
-        loadImage(categories.getTags().get(0).getImage());
+        if (categories != null && categories.getTags() != null && categories.getTags().size() > 0 && categories.getTags().get(0) != null) {
+            topic_textView.setText(categories.getTags().get(0).getName());
+            loadImage(categories.getTags().get(0).getImage());
 
-        if (categories.getTags().get(0).isSelected()) {
-            //Show tick
-            checkBox.setChecked(true);
-        } else {
-            checkBox.setChecked(false);
+            if (categories.getTags().get(0).isSelected()) {
+                //Show tick
+                checkBox.setChecked(true);
+            } else {
+                checkBox.setChecked(false);
+            }
         }
     }
 

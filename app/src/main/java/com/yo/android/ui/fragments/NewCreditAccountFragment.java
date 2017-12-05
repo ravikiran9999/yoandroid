@@ -32,6 +32,7 @@ import com.yo.android.usecase.PackageDenominationsUsecase;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
+import com.yo.dialer.CallHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -346,22 +347,26 @@ public class NewCreditAccountFragment extends BaseFragment {
                                                         @Override
                                                         public void onFailure(Call<ResponseBody> call, Throwable t) {
                                                             closeActivityAddBalance(Activity.RESULT_CANCELED, null);
+                                                            CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, "", "", "Failed to load balance");
                                                         }
                                                     });
                                                     break;
                                                 case 600:
                                                     Util.hideKeyboard(getActivity(), voucherNumberEdit);
                                                     mToastFactory.showToast(response.body().getData().toString());
+                                                    CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, "", "", "Failed to recharge voucher because of " + response.body().getData().toString());
                                                     closeActivityAddBalance(Activity.RESULT_CANCELED, null);
                                                     break;
                                                 case 706:
                                                 case 708:
                                                     Util.hideKeyboard(getActivity(), voucherNumberEdit);
                                                     mToastFactory.showToast(response.body().getData().toString());
+                                                    CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, "", "", "Failed to recharge voucher because of " + response.body().getData().toString());
                                                     closeActivityAddBalance(Activity.RESULT_CANCELED, null);
                                                     break;
                                                 default:
                                                     showMessage(R.string.invalid_voucher);
+                                                    CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, "", "", getResources().getString(R.string.invalid_voucher));
                                                     break;
                                             }
                                         } catch (ClassCastException e) {
