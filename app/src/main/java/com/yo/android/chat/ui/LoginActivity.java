@@ -123,7 +123,6 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
                 if (user != null) {
                     mLog.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
-                    // mLog.d(TAG, "onAuthStateChanged:signed_out");
                     firebaseAuth.signOut();
                     if (mAuthListener != null) {
                         mAuth.removeAuthStateListener(mAuthListener);

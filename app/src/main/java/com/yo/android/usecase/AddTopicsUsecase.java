@@ -37,7 +37,7 @@ public class AddTopicsUsecase {
 
     public void addTopics(List<String> followedTopicsIdsList, final ApiCallback<List<Categories>> categoriesCallback) {
         String accessToken = loginPrefs.getStringPreference("access_token");
-        Call<ResponseBody> call = yoService.addTopicsAPI(accessToken, followedTopicsIdsList);
+        Call<ResponseBody> call = yoService.addTopicsAPI(accessToken, followedTopicsIdsList, "random_topics");
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -52,7 +52,7 @@ public class AddTopicsUsecase {
 
                         @Override
                         public void onFailure(String message) {
-
+                            categoriesCallback.onFailure(message);
                         }
                     });
                 } else {
@@ -62,7 +62,9 @@ public class AddTopicsUsecase {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                t.printStackTrace();
+                if(t != null) {
+                    categoriesCallback.onFailure(t.getMessage());
+                }
             }
         });
     }
@@ -72,9 +74,9 @@ public class AddTopicsUsecase {
             JSONObject jsonObjectError = new JSONObject(response.errorBody().string());
             int code = jsonObjectError.getInt("code");
             if (code == 400) {
-                Log.e(TAG, "chatErrorMessage : " + jsonObjectError.getString("data"));
+                Log.e(TAG, "AddTopicsUsecaseErrorMessage : " + jsonObjectError.getString("data"));
             } else if (code == 500) {
-                Log.e(TAG, "chatErrorMessage : " + jsonObjectError.getString("data"));
+                Log.e(TAG, "AddTopicsUsecaseErrorMessage : " + jsonObjectError.getString("data"));
             }
 
         } catch (JSONException e) {

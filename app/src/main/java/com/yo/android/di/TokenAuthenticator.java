@@ -55,7 +55,7 @@ public class TokenAuthenticator implements Authenticator {
             boolean sessionExpire = preferenceEndPoint.getBooleanPreference(Constants.SESSION_EXPIRE, false);
             if (System.currentTimeMillis() - tokenSuccessTime < 120000) {
                 String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
-                mLog.e("AccessToken Call ", accessToken);
+                //mLog.e("AccessToken Call ", accessToken);
                 mLog.e("HttpUrl Calls", response.request().url().toString());
                 if (response.request().url().toString().contains(accessToken)) {
                     return response.request();
@@ -75,9 +75,9 @@ public class TokenAuthenticator implements Authenticator {
                     preferenceEndPoint.saveBooleanPreference(Constants.SESSION_EXPIRE, true);
                     //Reset
                     tokenExpireCount = 0;
-                    mLog.e("TokenAuthenticator", "Refreshtoken - " + refreshToken);
-                    mLog.e("TokenAuthenticator", "access token - " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN));
-                    mLog.e("TokenAuthenticator", "Final TokenExpireCount -" + tokenExpireCount);
+                    //mLog.e("TokenAuthenticator", "Refreshtoken - " + refreshToken);
+                    //mLog.e("TokenAuthenticator", "access token - " + preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN));
+                    //mLog.e("TokenAuthenticator", "Final TokenExpireCount -" + tokenExpireCount);
                     preferenceEndPoint.clearAll();
                     Intent intent = new Intent(mContext, LoginActivity.class);
                     //To Stop calls when logout
@@ -112,9 +112,9 @@ public class TokenAuthenticator implements Authenticator {
 
                         preferenceEndPoint.saveStringPreference(YoApi.REFRESH_TOKEN, refreshToken);
                         preferenceEndPoint.saveStringPreference(YoApi.ACCESS_TOKEN, responseBody.getAccessToken());
-                        mLog.e("AccessToken", responseBody.getAccessToken());
+                        //mLog.e("AccessToken", responseBody.getAccessToken());
                         HttpUrl httpUrl = response.request().url().newBuilder().addQueryParameter(YoApi.ACCESS_TOKEN, responseBody.getAccessToken()).build();
-                        mLog.e("HttpUrl ", httpUrl.toString());
+                        //mLog.e("HttpUrl ", httpUrl.toString());
                         tokenSuccessTime = System.currentTimeMillis();
                         tokenExpireCount = 0;
                         // Add new httpurl to rejected request and retry it

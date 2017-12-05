@@ -81,6 +81,7 @@ import com.yo.android.usecase.ChatNotificationUsecase;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 import com.yo.android.util.Util;
+import com.yo.dialer.CallHelper;
 import com.yo.dialer.Dialogs;
 
 import java.io.File;
@@ -666,15 +667,16 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     Activity activity = getActivity();
                     if ((firebaseError != null) && (firebaseError.getCode() == -3)) {
                         authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN), null);
-
+                        CallHelper.uploadToGoogleSheet(preferenceEndPoint, "", roomChildReference.toString());
                         if (retryMessageCount <= 3) {
                             sendChatMessage(chatMessage);
                             retryMessageCount++;
 
                         } else if (activity != null) {
-                            Log.i(TAG, "firebaseToken :: " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
-                            Log.i(TAG, "firebase User Id :: " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_USER_ID));
-
+                            if(BuildConfig.DEBUG) {
+                                Log.i(TAG, "firebaseToken :: " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
+                                Log.i(TAG, "firebase User Id :: " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_USER_ID));
+                            }
                             Toast.makeText(activity, "Message not sent", Toast.LENGTH_SHORT).show();
                         }
                     } else {

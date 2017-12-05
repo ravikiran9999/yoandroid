@@ -115,7 +115,7 @@ public class YoApi {
 
         @FormUrlEncoded
         @POST("/api/tags/add_tags.json")
-        Call<ResponseBody> addTopicsAPI(@Field("access_token") String access_token, @Field("tag_ids[]") List<String> tag_ids);
+        Call<ResponseBody> addTopicsAPI(@Field("access_token") String access_token, @Field("tag_ids[]") List<String> tag_ids, @Field("req_type") String req_type);
 
         @GET("api/magzines.json")
         Call<List<OwnMagazine>> getMagazinesAPI(@Query("access_token") String access_token);

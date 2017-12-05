@@ -154,6 +154,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         View layout = convertView;
+
         int type = getItemViewType(position);
         if (layout == null) {
             if (type == 0) {
@@ -242,6 +243,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             } else {
                 holder.rvSuggestions = (RecyclerView) layout.findViewById(R.id.rv_suggestions);
                 holder.doneButton = (Button) layout.findViewById(R.id.btn_done);
+                holder.noSuggestionsTextView = (TextView) layout.findViewById(R.id.no_suggestions);
             }
             holder.tvFollowMoreTopics = UI.findViewById(layout, R.id.tv_follow_more_topics);
 
@@ -997,32 +999,28 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             if (allArticles.size() >= 4 && MagazinesFragment.newCategoriesList.size() > 0) {
                 if (holder.rvSuggestions != null) {
                     ArrayList<Categories> addFourCategoriesList = new ArrayList<>();
-                    for(Categories categories : MagazinesFragment.newCategoriesList) {
-                        if(addFourCategoriesList.size()<= 4) {
-                            addFourCategoriesList.add(categories);
+                    for (Categories categories : MagazinesFragment.newCategoriesList) {
+                        if (addFourCategoriesList.size() <= 4 && categories.getTags() != null && categories.getTags().size() > 0) {
+                            if (!categories.getTags().get(0).isSelected()) {
+                                addFourCategoriesList.add(categories);
+                            }
                         }
                     }
-                    //newSuggestionsAdapter = new NewSuggestionsAdapter(context, magazineFlipArticlesFragment, MagazinesFragment.newCategoriesList);
-                    newSuggestionsAdapter = new NewSuggestionsAdapter(context, magazineFlipArticlesFragment, addFourCategoriesList);
 
-                    //int n = 5;
-                    /*if (MagazinesFragment.unSelectedTopics.size() >= n) {
-                        List<Topics> subList = new ArrayList<>(MagazinesFragment.unSelectedTopics.subList(0, n));
-                        suggestionsAdapter.addItems(subList);
+                    if (addFourCategoriesList != null && addFourCategoriesList.size() > 0) {
+
+                        newSuggestionsAdapter = new NewSuggestionsAdapter(context, magazineFlipArticlesFragment, addFourCategoriesList);
+                        newSuggestionsAdapter.notifyDataSetChanged();
+                        newSuggestionsAdapter.setTopicsItemListener(this);
+                        holder.rvSuggestions.setAdapter(newSuggestionsAdapter);
+                        holder.rvSuggestions.setNestedScrollingEnabled(false);
+                        holder.rvSuggestions.setLayoutManager(new GridLayoutManager(context, 2));
+                        holder.rvSuggestions.setVisibility(View.VISIBLE);
+                        holder.noSuggestionsTextView.setVisibility(View.GONE);
                     } else {
-                        int count = MagazinesFragment.unSelectedTopics.size();
-                        if (count > 0) {
-                            List<Topics> subList = new ArrayList<>(MagazinesFragment.unSelectedTopics.subList(0, count));
-                            suggestionsAdapter.addItems(subList);
-                        }
-                    }*/
-
-                    //newSuggestionsAdapter.setData(new ArrayList<Object>(MagazinesFragment.newCategoriesList));
-                    newSuggestionsAdapter.notifyDataSetChanged();
-                    newSuggestionsAdapter.setTopicsItemListener(this);
-                    holder.rvSuggestions.setAdapter(newSuggestionsAdapter);
-                    holder.rvSuggestions.setNestedScrollingEnabled(false);
-                    holder.rvSuggestions.setLayoutManager(new GridLayoutManager(context, 2));
+                        holder.noSuggestionsTextView.setVisibility(View.VISIBLE);
+                        holder.noSuggestionsTextView.setText(context.getString(R.string.no_topics_available));
+                    }
 
                 }
             }
@@ -1042,12 +1040,13 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 }
             });
         }
-
+        final RecyclerView mRVSuggestions = holder.rvSuggestions;
+        final TextView noSuggestions = holder.noSuggestionsTextView;
         if (holder.doneButton != null) {
             holder.doneButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    selectedTopics();
+                    selectedTopics(mRVSuggestions, noSuggestions);
                 }
             });
         }
@@ -2523,6 +2522,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         private RecyclerView rvSuggestions;
 
+        private TextView noSuggestionsTextView;
+
         private TextView tvFollowMoreTopics;
 
         private TextView tvTopicName;
@@ -2550,6 +2551,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         private ImageView fullImageMagazineShare;
 
         private Button doneButton;
+
 
         private RelativeLayout topLayout;
         private LinearLayout middleLayout; //like, add and share
@@ -2753,7 +2755,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         newSuggestionsAdapter.notifyDataSetChanged();
     }
 
-    private void selectedTopics() {
+    private void selectedTopics(final RecyclerView mRecyclerView, final TextView mNoSuggestions) {
         ((BaseActivity) context).showProgressDialog();
         List<String> followedTopicsIdsList = new ArrayList();
         for (Categories categories : newSuggestionsAdapter.getmData()) {
@@ -2777,7 +2779,13 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
                 @Override
                 public void onFailure(String message) {
-
+                    ((BaseActivity) context).dismissProgressDialog();
+                    if (mRecyclerView != null && mNoSuggestions != null) {
+                        newSuggestionsAdapter.getmData().clear();
+                        mRecyclerView.setVisibility(View.GONE);
+                        mNoSuggestions.setVisibility(View.VISIBLE);
+                        mNoSuggestions.setText(message);
+                    }
                 }
             });
         }

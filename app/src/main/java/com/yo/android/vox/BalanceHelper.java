@@ -93,7 +93,7 @@ public class BalanceHelper {
                         }
                         /*String subscriberId = jsonObject.getString("Subscriber");
                         prefs.saveStringPreference(Constants.SUBSCRIBER_ID, subscriberId);*/
-                        mLog.i(TAG, "loadBalance: balance -  %s", balance);
+                        //mLog.i(TAG, "loadBalance: balance -  %s", balance);
                         if (callback != null) {
                             callback.onResponse(call, response);
                         }
