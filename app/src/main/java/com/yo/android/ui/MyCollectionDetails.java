@@ -1041,6 +1041,8 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
+                                    dismissProgressDialog();
+
                                     if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
                                         MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(topicId, Constants.FOLLOW_TOPIC_EVENT);
                                     }
@@ -1053,6 +1055,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    dismissProgressDialog();
                                     menuItem.setIcon(R.drawable.ic_mycollections_tick);
                                 }
                             });

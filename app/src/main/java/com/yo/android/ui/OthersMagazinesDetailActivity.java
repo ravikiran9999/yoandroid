@@ -122,6 +122,11 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                             }
                         }
                         myBaseAdapter.addItems(articlesList);
+                    } else {
+                        flipContainer.setVisibility(View.GONE);
+                        if (noArticals != null) {
+                            noArticals.setVisibility(View.VISIBLE);
+                        }
                     }
                 } else {
                     if (response.code() == 404) {

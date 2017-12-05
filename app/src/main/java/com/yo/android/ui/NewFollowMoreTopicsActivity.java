@@ -306,13 +306,15 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
 
             }*/
 
-            for(Object object : getCategoriesAdapter().getData()) {
-                if(object instanceof CategoriesAccordionSection) {
-                    for (Topics topics : ((CategoriesAccordionSection) object).getTags()) {
-                        if (topics.isSelected()) {
-                            followedTopicsIdsList.add(topics.getId());
-                        }
+            if(mHelper != null && mHelper.isConnected()) {
+                for (Object object : getCategoriesAdapter().getData()) {
+                    if (object instanceof CategoriesAccordionSection) {
+                        for (Topics topics : ((CategoriesAccordionSection) object).getTags()) {
+                            if (topics.isSelected()) {
+                                followedTopicsIdsList.add(topics.getId());
+                            }
 
+                        }
                     }
                 }
             }

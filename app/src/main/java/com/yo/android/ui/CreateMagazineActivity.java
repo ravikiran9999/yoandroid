@@ -53,6 +53,9 @@ public class CreateMagazineActivity extends BaseActivity implements SwipeRefresh
 
     CreateMagazinesAdapter createMagazinesAdapter;
     private String addArticleMagazineId = null;
+    @Bind(R.id.network_failure)
+    protected TextView networkFailureText;
+    public boolean isNetworkFailure;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +141,8 @@ public class CreateMagazineActivity extends BaseActivity implements SwipeRefresh
                 } else {
                     dismissProgressDialog();
                 }
+                networkFailureText.setVisibility(View.GONE);
+                gridView.setVisibility(View.VISIBLE);
                 List<OwnMagazine> ownMagazineList;
                 ownMagazineList = new ArrayList<OwnMagazine>();
                 OwnMagazine ownMagazine = new OwnMagazine();
@@ -152,6 +157,7 @@ public class CreateMagazineActivity extends BaseActivity implements SwipeRefresh
                     ownMagazineList.add(response.body().get(i));
                 }
                 createMagazinesAdapter.addItems(ownMagazineList);
+                isNetworkFailure = false;
 
             }
 
@@ -162,6 +168,9 @@ public class CreateMagazineActivity extends BaseActivity implements SwipeRefresh
                 } else {
                     dismissProgressDialog();
                 }
+                networkFailureText.setVisibility(View.VISIBLE);
+                gridView.setVisibility(View.GONE);
+                isNetworkFailure = true;
             }
         });
     }
@@ -242,7 +251,7 @@ public class CreateMagazineActivity extends BaseActivity implements SwipeRefresh
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
-        Util.prepareSearch(this, menu, createMagazinesAdapter, noSearchResults, null, gridView);
+        Util.prepareSearch(this, menu, createMagazinesAdapter, noSearchResults, null, gridView, networkFailureText);
         return super.onCreateOptionsMenu(menu);
     }
 

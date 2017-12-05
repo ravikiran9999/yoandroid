@@ -58,9 +58,11 @@ import com.yo.android.model.UserProfileInfo;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.ui.BottomTabsActivity;
+import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.FindPeopleActivity;
 import com.yo.android.ui.FollowersActivity;
 import com.yo.android.ui.FollowingsActivity;
+import com.yo.android.ui.MyCollections;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -230,7 +232,7 @@ public class Util {
         return (index == length - 1) ? str : str.substring(0, index + 1);
     }
 
-    public static void prepareSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter, final TextView noData, final ListView listView, final GridView gridView) {
+    public static void prepareSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter, final TextView noData, final ListView listView, final GridView gridView , final TextView networkFailureText) {
         final SearchManager searchManager =
                 (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         MenuItem searchMenuItem;
@@ -261,14 +263,34 @@ public class Util {
                     if (list != null && noData != null && activity != null) {
                         boolean isListEmpty = list.isEmpty();
                         if (isListEmpty) {
-                            noData.setVisibility(View.VISIBLE);
-                            if (listView != null) {
-                                listView.setVisibility(View.GONE);
+                            if ((activity instanceof MyCollections && TextUtils.isEmpty(newText) && ((MyCollections) activity).isNetworkFailure) || (activity instanceof MyCollections && TextUtils.isEmpty(newText) && ((MyCollections) activity).isNetworkFailure)) {
+                                noData.setVisibility(View.GONE);
+                                networkFailureText.setVisibility(View.VISIBLE);
+                                if (listView != null) {
+                                    listView.setVisibility(View.GONE);
+                                }
+                                if (gridView != null) {
+                                    gridView.setVisibility(View.GONE);
+                                }
+                            } else if ((activity instanceof CreateMagazineActivity && TextUtils.isEmpty(newText) && ((CreateMagazineActivity) activity).isNetworkFailure) || (activity instanceof CreateMagazineActivity && TextUtils.isEmpty(newText) && ((CreateMagazineActivity) activity).isNetworkFailure)) {
+                                noData.setVisibility(View.GONE);
+                                networkFailureText.setVisibility(View.VISIBLE);
+                                if (listView != null) {
+                                    listView.setVisibility(View.GONE);
+                                }
+                                if (gridView != null) {
+                                    gridView.setVisibility(View.GONE);
+                                }
+                            } else {
+                                noData.setVisibility(View.VISIBLE);
+                                if (listView != null) {
+                                    listView.setVisibility(View.GONE);
+                                }
+                                if (gridView != null) {
+                                    gridView.setVisibility(View.GONE);
+                                }
+                                noData.setText(activity.getResources().getString(R.string.no_result_found));
                             }
-                            if (gridView != null) {
-                                gridView.setVisibility(View.GONE);
-                            }
-                            noData.setText(activity.getResources().getString(R.string.no_result_found));
                         } else {
                             if (listView != null) {
                                 listView.setVisibility(View.VISIBLE);

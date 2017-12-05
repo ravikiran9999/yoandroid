@@ -103,7 +103,7 @@ public class CountryCodeActivity extends ParentActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
-        Util.prepareSearch(this, menu,countryAdapter, noSearchResultsTxtVw,countryList,null);
+        Util.prepareSearch(this, menu,countryAdapter, noSearchResultsTxtVw,countryList,null, null);
         return super.onCreateOptionsMenu(menu);
     }
 

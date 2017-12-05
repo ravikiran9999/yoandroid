@@ -31,6 +31,16 @@
             android:textColor="@color/black"
             android:visibility="gone" />
 
+        <TextView
+            android:id="@+id/network_failure"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="30dp"
+            android:text="@string/connectivity_network_settings"
+            android:visibility="gone"
+            android:textColor="@color/black"/>
+
     </LinearLayout>
 </android.support.v4.widget.SwipeRefreshLayout>
 
