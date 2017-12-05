@@ -92,6 +92,8 @@ public class OtherProfilesFollowers extends BaseFragment {
             @Override
             public void onFailure(Call<List<FindPeople>> call, Throwable t) {
                 dismissProgressDialog();
+                noData.setVisibility(View.VISIBLE);
+                lvFindPeople.setVisibility(View.GONE);
             }
         });
     }

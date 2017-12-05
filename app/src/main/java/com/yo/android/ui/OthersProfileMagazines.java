@@ -75,6 +75,8 @@ public class OthersProfileMagazines extends BaseFragment {
             @Override
             public void onFailure(Call<List<OwnMagazine>> call, Throwable t) {
                 dismissProgressDialog();
+                gridView.setVisibility(View.GONE);
+                noData.setVisibility(View.VISIBLE);
             }
         });
 

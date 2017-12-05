@@ -59,7 +59,7 @@ public class FetchNewArticlesService extends Service {
         int currentMin = Calendar.getInstance().get(Calendar.MINUTE); //Current hour
         int currentSec = Calendar.getInstance().get(Calendar.SECOND); //Current hour
         if (currentHour == 1) {
-            showTrayNotification();
+            //showTrayNotification();
             preferenceEndPoint.saveBooleanPreference(Constants.IS_SERVICE_RUNNING, true);
             de.greenrobot.event.EventBus.getDefault().post(Constants.START_FETCHING_ARTICLES_ACTION);
         }

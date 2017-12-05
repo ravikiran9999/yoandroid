@@ -486,13 +486,15 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             swipeRefreshContainer.setRefreshing(false);
         }
 
-        if(position > 0 && position % Constants.SUGGESTIONS_PAGE_FREQUENCY == 0) {
-            if (myBaseAdapter.getCount() > 0) {
-                try {
-                    suggestionsPosition = position + 5;
-                    myBaseAdapter.getAllItems().add(suggestionsPosition, new Articles());
-                } catch (Exception e) {
-                    e.printStackTrace();
+        if(!isSearch) {
+            if (position > 0 && position % Constants.SUGGESTIONS_PAGE_FREQUENCY == 0) {
+                if (myBaseAdapter.getCount() > 0) {
+                    try {
+                        suggestionsPosition = position + 5;
+                        myBaseAdapter.getAllItems().add(suggestionsPosition, new Articles());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -500,7 +502,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         currentFlippedPosition = position;
 
         //if (MagazineDashboardHelper.currentReadArticles != 0 || currentFlippedPosition == MagazineDashboardHelper.request * 100) {
-        if (MagazineDashboardHelper.currentReadArticles != 0 || currentFlippedPosition % 100 == 0) {
+        if ((MagazineDashboardHelper.currentReadArticles != 0 || currentFlippedPosition % 100 == 0) && !isSearch) {
             getReadArticleIds();
             String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
             if (getActivity() != null) {
@@ -1566,7 +1568,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     private void refreshedArticles() {
         Log.d("FlipArticlesFragment", "Calling pull to refresh to load articles refreshedArticles");
-        if (mHelper.isConnected()) {
+        if (mHelper.isConnected() && !isSearch) {
             callDailyArticlesService(swipeRefreshContainer);
         } else {
             refreshing = false;

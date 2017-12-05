@@ -1360,7 +1360,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     public int getItemViewType(int position) {
         if (position == 0 && !magazineFlipArticlesFragment.isSearch) {
             return 0;
-        } else if (position == MagazineFlipArticlesFragment.suggestionsPosition) {
+        } else if (position == MagazineFlipArticlesFragment.suggestionsPosition && !magazineFlipArticlesFragment.isSearch) {
             return 2;
         } else if (magazineFlipArticlesFragment.isSearch) {
             return 1;

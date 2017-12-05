@@ -68,6 +68,9 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
     MyCollectionsAdapter myCollectionsAdapter;
     private boolean contextualMenu;
     private int initialVisiblePosition;
+    @Bind(R.id.network_failure)
+    protected TextView networkFailureText;
+    public boolean isNetworkFailure;
 
 
     @Override
@@ -111,6 +114,8 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 } else {
                     dismissProgressDialog();
                 }
+                networkFailureText.setVisibility(View.GONE);
+                gridView.setVisibility(View.VISIBLE);
                 final List<Collections> collectionsList = new ArrayList<Collections>();
                 Collections collections = new Collections();
                 collections.setName("Follow more topics");
@@ -122,6 +127,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 collectionsList.addAll(response.body());
                 myCollectionsAdapter.addItems(collectionsList);
                 gridView.setAdapter(myCollectionsAdapter);
+                isNetworkFailure = false;
 
             }
 
@@ -132,6 +138,9 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 } else {
                     dismissProgressDialog();
                 }
+                networkFailureText.setVisibility(View.VISIBLE);
+                gridView.setVisibility(View.GONE);
+                isNetworkFailure = true;
             }
         });
     }
@@ -237,7 +246,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
             menu.findItem(R.id.menu_search).setVisible(true);
         }
 
-        Util.prepareSearch(this, menu, myCollectionsAdapter, noSearchFound, null, gridView);
+        Util.prepareSearch(this, menu, myCollectionsAdapter, noSearchFound, null, gridView , networkFailureText);
         searchView =
                 (SearchView) menu.findItem(R.id.menu_search).getActionView();
         return super.onPrepareOptionsMenu(menu);

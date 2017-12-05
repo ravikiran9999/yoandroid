@@ -149,7 +149,7 @@ public class DialerActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_dialer, menu);
-        Util.prepareSearch(this, menu, null, noResultsFound, null, null);
+        Util.prepareSearch(this, menu, null, noResultsFound, null, null, null);
         return super.onCreateOptionsMenu(menu);
     }
 
