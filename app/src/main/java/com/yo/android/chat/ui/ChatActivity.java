@@ -448,8 +448,9 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
             public void run() {
                 if (value) {
                     chatUserStatus.setText("online");
+                    chatUserStatus.setVisibility(View.VISIBLE);
                 } else {
-                    chatUserStatus.setText("false");
+                    chatUserStatus.setText("offline");
                     chatUserStatus.setVisibility(View.GONE);
                 }
             }

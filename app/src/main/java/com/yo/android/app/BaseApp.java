@@ -27,6 +27,9 @@ import com.yo.android.di.RootModule;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -82,8 +85,8 @@ public class BaseApp extends MultiDexApplication {
         StrictMode.setVmPolicy(builder.build());
         builder.detectFileUriExposure();
 
-        firebaseUserStatus();
     }
+
 
     public static BaseApp get() {
         return baseAppInstance;
@@ -124,53 +127,5 @@ public class BaseApp extends MultiDexApplication {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
-    }
-
-    private void firebaseUserStatus() {
-        fireBaseHelper.authWithCustomToken(getApplicationContext(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN), new ApiCallback<Firebase>() {
-            @Override
-            public void onResult(Firebase result) {
-                String firebaseUserId = preferenceEndPoint.getStringPreference(Constants.FIREBASE_USER_ID);
-
-                initialiseOnlinePresence(result, firebaseUserId);
-            }
-
-            @Override
-            public void onFailure(String message) {
-                android.util.Log.d(TAG, message);
-            }
-        });
-
-    }
-
-    private void initialiseOnlinePresence(Firebase databaseReference, String userId) {
-        try {
-            final Firebase onlineRef = databaseReference.child(".info/connected");
-            final Firebase currentUserRef = databaseReference.child(Constants.USERS + "/" + userId + "/" + Constants.PROFILE).child("presence");
-            onlineRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(final DataSnapshot dataSnapshot) {
-                    android.util.Log.d(TAG, "DataSnapshot:" + dataSnapshot);
-                    if (dataSnapshot.getValue(Boolean.class)) {
-                        currentUserRef.onDisconnect().removeValue();
-                        currentUserRef.setValue(dataSnapshot.getValue(), 1, new Firebase.CompletionListener() {
-                            @Override
-                            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                                if(firebaseError != null) {
-                                    android.util.Log.d(TAG, firebaseError.getDetails());
-                                }
-                            }
-                        });
-                    }
-                }
-
-                @Override
-                public void onCancelled(final FirebaseError databaseError) {
-                    android.util.Log.d(TAG, "DatabaseError:" + databaseError);
-                }
-            });
-        } catch (FirebaseException e) {
-            Log.e(TAG, "Firebase error :" + e.getMessage());
-        }
     }
 }

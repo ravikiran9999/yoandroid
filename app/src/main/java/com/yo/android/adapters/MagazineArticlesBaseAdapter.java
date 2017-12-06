@@ -2756,7 +2756,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     }
 
     private void selectedTopics(final RecyclerView mRecyclerView, final TextView mNoSuggestions) {
-        ((BaseActivity) context).showProgressDialog();
+
         List<String> followedTopicsIdsList = new ArrayList();
         for (Categories categories : newSuggestionsAdapter.getmData()) {
             for (Topics topics : categories.getTags()) {
@@ -2768,6 +2768,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         }
 
         if (followedTopicsIdsList.size() > 0) {
+            ((BaseActivity) context).showProgressDialog();
             mAddTopicsUsecase.addTopics(followedTopicsIdsList, new ApiCallback<List<Categories>>() {
                 @Override
                 public void onResult(List<Categories> result) {
@@ -2788,6 +2789,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     }
                 }
             });
+        } else {
+            mToastFactory.newToast(context.getString(R.string.no_topics_selected), Toast.LENGTH_SHORT);
         }
     }
 }

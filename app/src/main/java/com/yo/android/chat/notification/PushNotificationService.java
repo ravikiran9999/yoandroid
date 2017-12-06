@@ -115,7 +115,7 @@ public class PushNotificationService extends FirebaseMessagingService {
         } else if(data.get("tag").equals("Chat") && data.get("title").equals("Chat message stored")) {
             String chatMessageString = data.get("chat_message").toString();
             ChatMessage chatMessage = new Gson().fromJson(chatMessageString, ChatMessage.class);
-            if(!Util.isAppRunning(this)) {
+            if(!Util.appRunningStatus(this) ) {
                 newPushNotification(chatMessage.getRoomId(), chatMessage);
             }
         }else if (data.get("tag").equals("Chat")) {

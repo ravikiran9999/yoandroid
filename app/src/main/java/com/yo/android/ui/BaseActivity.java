@@ -12,7 +12,11 @@ import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.FirebaseException;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.services.sheets.v4.Sheets;
@@ -23,11 +27,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.orion.android.common.util.ResourcesHelper;
 import com.yo.android.R;
+import com.yo.android.api.ApiCallback;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.ui.ParentActivity;
 import com.yo.android.di.AwsLogsCallBack;
 import com.yo.android.typeface.TypefacePath;
+import com.yo.android.util.Constants;
+import com.yo.android.util.FireBaseHelper;
 import com.yo.android.vox.VoxFactory;
 import com.yo.dialer.CallExtras;
 import com.yo.dialer.DialerLogs;
@@ -38,6 +45,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -62,6 +71,10 @@ public class BaseActivity extends ParentActivity {
 
     @Inject
     FirebaseJobDispatcher firebaseJobDispatcher;
+
+    @Inject
+    FireBaseHelper fireBaseHelper;
+
     private boolean enableBack;
 
     private boolean isDestroyed;
@@ -70,6 +83,7 @@ public class BaseActivity extends ParentActivity {
 
     private static Activity activity;
     private Typeface alexBrushRegular;
+    Timer myTimer;
 
     @Override
 
@@ -81,6 +95,15 @@ public class BaseActivity extends ParentActivity {
         /*Intent intent = new Intent(this, FirebaseService.class);
         startService(intent);*/
         //firebaseJobDispatcher();
+        //Toast.makeText(this, TAG + "create", Toast.LENGTH_SHORT).show();
+        myTimer = new Timer();
+        myTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                firebaseUserStatus();
+            }
+
+        }, 0, 500);
     }
 
     protected void enableBack() {
@@ -97,6 +120,14 @@ public class BaseActivity extends ParentActivity {
         isDestroyed = true;
     }
 
+    @Override
+    public void finish() {
+        //Toast.makeText(this, TAG + "finish", Toast.LENGTH_SHORT).show();
+        if (myTimer != null) {
+            myTimer.cancel();
+        }
+        super.finish();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -245,36 +276,53 @@ public class BaseActivity extends ParentActivity {
         return alexBrushRegular;
     }
 
-    private void initialiseOnlinePresence(DatabaseReference databaseReference, String userId) {
-        final DatabaseReference onlineRef = databaseReference.child(".info/connected");
-        final DatabaseReference currentUserRef = databaseReference.child("/presence/" + userId);
-        onlineRef.addValueEventListener(new ValueEventListener() {
+    private void firebaseUserStatus() {
+        fireBaseHelper.authWithCustomToken(getApplicationContext(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN), new ApiCallback<Firebase>() {
             @Override
-            public void onDataChange(final DataSnapshot dataSnapshot) {
-                Log.d(TAG, "DataSnapshot:" + dataSnapshot);
-                if (dataSnapshot.getValue(Boolean.class)){
-                    currentUserRef.onDisconnect().removeValue();
-                    currentUserRef.setValue(true);
+            public void onResult(Firebase result) {
+                String firebaseUserId = preferenceEndPoint.getStringPreference(Constants.FIREBASE_USER_ID);
+
+                initialiseOnlinePresence(result, firebaseUserId);
+            }
+
+            @Override
+            public void onFailure(String message) {
+                android.util.Log.d(TAG, message);
+            }
+        });
+
+    }
+
+    private void initialiseOnlinePresence(Firebase databaseReference, String userId) {
+        try {
+            final Firebase onlineRef = databaseReference.child(".info/connected");
+            final Firebase currentUserRef = databaseReference.child(Constants.USERS + "/" + userId + "/" + Constants.PROFILE).child("presence");
+            onlineRef.addValueEventListener(new com.firebase.client.ValueEventListener() {
+                @Override
+                public void onDataChange(final com.firebase.client.DataSnapshot dataSnapshot) {
+                    //android.util.Log.d(TAG, "DataSnapshot value :" + dataSnapshot.getValue(Boolean.class));
+                    if (dataSnapshot.getValue(Boolean.class)) {
+                        currentUserRef.onDisconnect().removeValue();
+                        currentUserRef.setValue(dataSnapshot.getValue(), 1, new Firebase.CompletionListener() {
+                            @Override
+                            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                                if (firebaseError != null) {
+                                    android.util.Log.d(TAG, firebaseError.getDetails());
+                                }
+                            }
+                        });
+                    } else {
+                        currentUserRef.setValue(false);
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(final DatabaseError databaseError) {
-                Log.d(TAG, "DatabaseError:" + databaseError);
-            }
-        });
-        final DatabaseReference onlineViewersCountRef = databaseReference.child("/presence");
-        onlineViewersCountRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(final DataSnapshot dataSnapshot) {
-                Log.d(TAG, "DataSnapshot:" + dataSnapshot);
-                //onlineViewerCountTextView.setText(String.valueOf(dataSnapshot.getChildrenCount()));
-            }
-
-            @Override
-            public void onCancelled(final DatabaseError databaseError) {
-                Log.d(TAG, "DatabaseError:" + databaseError);
-            }
-        });
+                @Override
+                public void onCancelled(final FirebaseError databaseError) {
+                    android.util.Log.d(TAG, "DatabaseError:" + databaseError);
+                }
+            });
+        } catch (FirebaseException e) {
+            Log.e(TAG, "Firebase error :" + e.getMessage());
+        }
     }
 }
