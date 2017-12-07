@@ -18,6 +18,7 @@ public abstract class YoRecyclerViewAdapter extends RecyclerView.Adapter<YoViewH
     protected ArrayList<Object> mData;
 
     protected abstract int layout(final int position);
+
     protected abstract @NonNull
     YoViewHolder viewHolder(final @LayoutRes int layout, final @NonNull View view);
 
@@ -39,8 +40,13 @@ public abstract class YoRecyclerViewAdapter extends RecyclerView.Adapter<YoViewH
     }
 
     @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
     public int getItemCount() {
-        return mData == null? 0 : mData.size();
+        return mData == null ? 0 : mData.size();
     }
 
     public ArrayList<Object> getData() {

@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.google.gson.Gson;
 import com.yo.android.R;
 import com.yo.android.api.YOUserInfo;
 import com.yo.android.chat.firebase.ContactsSyncManager;
@@ -38,6 +39,8 @@ import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -179,6 +182,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                                 callUserChat(args, userChatFragment);
                             } else {
                                 mToastFactory.showToast(R.string.chat_room_id_error);
+                                String message = new Gson().toJson(args);
+                                appLogglyUsecase.sendAlertsToLoggly(Constants.CHAT_MODULE, message, Constants.CRITICAL, 808);
                             }
                             //callUserChat(args, userChatFragment);
                         }
@@ -203,6 +208,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                         callUserChat(args, userChatFragment);
                     } else {
                         mToastFactory.showToast(R.string.chat_room_id_error);
+                        String message = new Gson().toJson(args);
+                        appLogglyUsecase.sendAlertsToLoggly(Constants.CHAT_MODULE, message, Constants.CRITICAL, 808);
                     }
                 }
             }
@@ -222,6 +229,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                 args.putString(Constants.CHAT_ROOM_ID, chatRoomId);
             } else {
                 Log.i(TAG, getString(R.string.chat_room_id_error));
+                String message = new Gson().toJson(args);
+                appLogglyUsecase.sendAlertsToLoggly(Constants.CHAT_MODULE, message, Constants.CRITICAL, 808);
             }
 
             if (getIntent().hasExtra(Constants.OPPONENT_PHONE_NUMBER)) {
@@ -234,6 +243,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                 callUserChat(args, userChatFragment);
             } else {
                 mToastFactory.showToast(R.string.chat_room_id_error);
+                String message = new Gson().toJson(args);
+                appLogglyUsecase.sendAlertsToLoggly(Constants.CHAT_MODULE, message, Constants.CRITICAL, 808);
             }
         }
 

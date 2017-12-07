@@ -45,6 +45,8 @@ public class BaseApp extends MultiDexApplication {
     private static BaseApp baseAppInstance;
     protected String userAgent;
 
+    public static boolean appRunning;
+
     // Production
     private static final String FLURRY_API_KEY = "GRYKGBSF2C3XWJRVCXGP";
 
@@ -128,4 +130,5 @@ public class BaseApp extends MultiDexApplication {
         super.attachBaseContext(base);
         MultiDex.install(this);
     }
+
 }

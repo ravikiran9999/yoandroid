@@ -92,9 +92,9 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
 
         try {
             if (item.getValue().get(0).getAppOrPstn() == CallLog.Calls.APP_TO_APP_CALL) {
-                holder.getCallIcon().setImageResource(R.drawable.yo_call_free);
+                holder.getCallIcon().setImageResource(R.drawable.yo_call_free_new_icon);
             } else {
-                holder.getCallIcon().setImageResource(R.drawable.ic_receiver);
+                holder.getCallIcon().setImageResource(R.drawable.ic_new_call);
             }
         } catch (Exception e) {
 

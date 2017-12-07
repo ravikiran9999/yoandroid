@@ -106,6 +106,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.yo.android.app.BaseApp.appRunning;
 import static com.yo.dialer.googlesheet.UploadCallDetails.SCOPES;
 
 /**
@@ -168,6 +169,9 @@ public class BottomTabsActivity extends BaseActivity {
         activity = this;
         mContext = getApplicationContext();
         String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+
+        appRunning = true;
+
         Log.i(TAG, "cURRENT TIME " + currentDateTimeString);
         // TODO: Test
         Intent service = new Intent(this, com.yo.dialer.YoSipService.class);
@@ -896,6 +900,8 @@ public class BottomTabsActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        //Check app running status
+        appRunning = true;
 
         Intent intent = new Intent(getApplicationContext(), FirebaseService.class);
         startService(intent);
@@ -907,6 +913,7 @@ public class BottomTabsActivity extends BaseActivity {
         } else if (preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT) > 0) {
             update(preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT));
         }
+
     }
 
     private void startServiceToFetchNewArticles(int currentTimeInSec) {
@@ -948,5 +955,6 @@ public class BottomTabsActivity extends BaseActivity {
             unbindService(connection);
         }
         EventBus.getDefault().unregister(this);
+        appRunning = false;
     }
 }

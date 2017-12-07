@@ -313,7 +313,7 @@ public class CallHelper {
                 String currentDateTimeString = YoSipService.sdf.format(d);
                 model.setTime(currentDateTimeString);
 
-                UploadCallDetails.postDataFromApi(model, "BalanceFailures");
+                UploadCallDetails.postDataFromApi(model, "Chat");
             } catch (IOException e) {
                 e.printStackTrace();
             }

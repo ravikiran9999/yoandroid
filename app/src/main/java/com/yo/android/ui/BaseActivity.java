@@ -33,6 +33,7 @@ import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.chat.ui.ParentActivity;
 import com.yo.android.di.AwsLogsCallBack;
 import com.yo.android.typeface.TypefacePath;
+import com.yo.android.usecase.AppLogglyUsecase;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 import com.yo.android.vox.VoxFactory;
@@ -49,6 +50,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.inject.Inject;
+
+import static com.yo.android.app.BaseApp.appRunning;
 
 /**
  * Created by ramesh on 12/3/16.
@@ -74,6 +77,9 @@ public class BaseActivity extends ParentActivity {
 
     @Inject
     FireBaseHelper fireBaseHelper;
+
+    @Inject
+    protected AppLogglyUsecase appLogglyUsecase;
 
     private boolean enableBack;
 
@@ -325,4 +331,10 @@ public class BaseActivity extends ParentActivity {
             Log.e(TAG, "Firebase error :" + e.getMessage());
         }
     }
+
+   /* @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+        appRunning = false;
+    }*/
 }

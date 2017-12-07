@@ -78,6 +78,7 @@ import com.yo.android.pjsip.SipHelper;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.UserProfileActivity;
+import com.yo.android.usecase.AppLogglyUsecase;
 import com.yo.android.usecase.ChatNotificationUsecase;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
@@ -171,6 +172,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Inject
     ChatNotificationUsecase chatNotificationUsecase;
+
+    @Inject
+    AppLogglyUsecase appLogglyUsecase;
 
     Handler handler = new Handler();
     Runnable runnable = new Runnable() {
@@ -682,7 +686,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     Activity activity = getActivity();
                     if ((firebaseError != null) && (firebaseError.getCode() == -3)) {
                         authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN), null);
-                        CallHelper.uploadToGoogleSheet(preferenceEndPoint, "", roomChildReference.toString());
+                        CallHelper.uploadToGoogleSheetMessageSentFail(preferenceEndPoint, "", "", roomChildReference.toString());
+                        appLogglyUsecase.sendAlertsToLoggly(Constants.CHAT_MODULE, roomChildReference.toString(), Constants.CRITICAL, 804);
+
                         if (retryMessageCount <= 3) {
                             sendChatMessage(chatMessage);
                             retryMessageCount++;

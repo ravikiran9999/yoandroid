@@ -144,8 +144,8 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        btnAllContacts.setTextColor(getResources().getColor(R.color.contacts_selected_red));
-        btnYoContacts.setTextColor(getResources().getColor(R.color.contacts_unselected_red));
+        btnAllContacts.setBackgroundResource(R.drawable.red_button);
+        btnYoContacts.setBackgroundResource(R.drawable.red_button_light);
 
         contactsListAdapter = new ContactsListAdapter(getActivity().getApplicationContext(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         listView.setAdapter(contactsListAdapter);
@@ -154,8 +154,8 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
         btnAllContacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                btnAllContacts.setTextColor(getResources().getColor(R.color.contacts_selected_red));
-                btnYoContacts.setTextColor(getResources().getColor(R.color.contacts_unselected_red));
+                btnAllContacts.setBackgroundResource(R.drawable.red_button);
+                btnYoContacts.setBackgroundResource(R.drawable.red_button_light);
                 loadAlphabetOrder(allContacts);
             }
         });
@@ -163,8 +163,8 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
         btnYoContacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                btnYoContacts.setTextColor(getResources().getColor(R.color.contacts_selected_red));
-                btnAllContacts.setTextColor(getResources().getColor(R.color.contacts_unselected_red));
+                btnYoContacts.setBackgroundResource(R.drawable.red_button);
+                btnAllContacts.setBackgroundResource(R.drawable.red_button_light);
                 List<Contact> onlyYoUsers = filterYoContacts(allContacts);
                 updateYoUsers(onlyYoUsers);
             }
@@ -184,7 +184,7 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
             mSyncManager.setContacts(allContacts);
             loadAlphabetOrder(contactList);
             //To get newly added contacts - after loading from cache loading for new contacts.
-            if(mHelper.isConnected()) {
+            if (mHelper.isConnected()) {
                 syncContactsFromServer();
             }
         }

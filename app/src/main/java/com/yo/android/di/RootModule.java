@@ -7,6 +7,7 @@ import com.yo.android.adapters.NewSuggestionsAdapter;
 import com.yo.android.chat.ChatRefreshBackground;
 import com.yo.android.ui.NewFollowMoreTopicsActivity;
 import com.yo.android.usecase.AddTopicsUsecase;
+import com.yo.android.usecase.AppLogglyUsecase;
 import com.yo.android.usecase.ChatNotificationUsecase;
 import com.yo.android.usecase.DenominationsUsecase;
 import com.yo.android.usecase.PackageDenominationsUsecase;
@@ -264,6 +265,7 @@ import dagger.Provides;
                 ChatNotificationUsecase.class,
                 AddTopicsUsecase.class,
                 RandomTopicsUsecase.class,
+                AppLogglyUsecase.class
         },
         includes = {
                 AppModule.class,
