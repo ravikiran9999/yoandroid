@@ -10,27 +10,26 @@ import java.util.ArrayList;
 public abstract class YoExpandableRecyclerAdapter extends YoRecyclerViewAdapter {
 
     public void onBindViewHolder(final YoViewHolder holder, int position) {
-            holder.bindData(mData.get(position));
+        holder.bindData(mData.get(position));
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int adapterPosition = holder.getAdapterPosition();
+                if (adapterPosition < 0) {
+                    return;
+                }
 
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int adapterPosition = holder.getAdapterPosition();
-                    if (adapterPosition < 0) {
-                        return;
-                    }
-
-                    Object item = mData.get(adapterPosition);
-                    if (item instanceof ExpandableItem) {
-                        ExpandableItem expandableItem = (ExpandableItem) item;
-                        if (!expandableItem.isExpanded()) {
-                            expandParent(expandableItem);
-                        } else {
-                            collapseParent(expandableItem);
-                        }
+                Object item = mData.get(adapterPosition);
+                if (item instanceof ExpandableItem) {
+                    ExpandableItem expandableItem = (ExpandableItem) item;
+                    if (!expandableItem.isExpanded()) {
+                        expandParent(expandableItem);
+                    } else {
+                        collapseParent(expandableItem);
                     }
                 }
-            });
+            }
+        });
     }
 
     public void expandParent(ExpandableItem expandableItem) {
@@ -41,12 +40,10 @@ public abstract class YoExpandableRecyclerAdapter extends YoRecyclerViewAdapter 
 
             mData.add(indexOfParent + 1, childList);
             notifyItemChanged(indexOfParent);
-            //notifyItemRangeInserted(indexOfParent + 1, childList.size());
             notifyItemRangeInserted(indexOfParent + 1, 1);
-        }
-        else {
-            mData.add(indexOfParent + 1, expandableItem.getChild());
-            //notifyItemChanged(indexOfParent);
+        } else {
+            //mData.add(indexOfParent + 1, expandableItem.getChild());
+            notifyItemChanged(indexOfParent);
         }
 
         expandableItem.setExpanded(true);
@@ -60,9 +57,9 @@ public abstract class YoExpandableRecyclerAdapter extends YoRecyclerViewAdapter 
 
             mData.remove(childList);
             notifyItemChanged(indexOfParent);
-            notifyItemRangeRemoved(indexOfParent + 1, childList.size());
-        }
-        else {
+            //notifyItemRangeRemoved(indexOfParent + 1, childList.size());
+            notifyItemRangeRemoved(indexOfParent + 1, 1);
+        } else {
             int indexOfChild = mData.indexOf(expandableItem.getChild());
             mData.remove(indexOfChild);
             notifyItemChanged(indexOfParent);

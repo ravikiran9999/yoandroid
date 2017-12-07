@@ -23,6 +23,7 @@ import com.orion.android.common.util.ToastFactory;
 import com.yo.android.R;
 import com.yo.android.di.Injector;
 import com.yo.android.ui.BottomTabsActivity;
+import com.yo.android.usecase.AppLogglyUsecase;
 import com.yo.android.util.Constants;
 import com.yo.android.util.ProgressDialogFactory;
 import com.yo.android.vox.BalanceHelper;
@@ -47,6 +48,8 @@ public class BaseFragment extends Fragment {
     protected Log mLog;
     @Inject
     protected BalanceHelper mBalanceHelper;
+    @Inject
+    protected AppLogglyUsecase appLogglyUsecase;
 
     protected Dialog mProgressDialog;
 

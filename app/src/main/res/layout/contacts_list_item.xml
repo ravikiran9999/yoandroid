@@ -85,7 +85,7 @@
                 android:layout_toLeftOf="@+id/iv_contact_type"
                 android:layout_toStartOf="@+id/iv_contact_type"
                 android:padding="5dp"
-                android:src="@drawable/ic_message" />
+                android:src="@drawable/ic_new_chat" />
 
             <ImageView
                 android:id="@+id/iv_contact_type"
@@ -98,7 +98,7 @@
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="5dp"
                 android:padding="5dp"
-                android:src="@drawable/ic_receiver" />
+                android:src="@drawable/ic_new_call" />
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>

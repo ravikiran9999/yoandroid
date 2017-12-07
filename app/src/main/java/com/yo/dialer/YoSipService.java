@@ -16,6 +16,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -36,6 +37,7 @@ import com.yo.android.pjsip.MediaManager;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.ui.BottomTabsActivity;
+import com.yo.android.usecase.AppLogglyUsecase;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
@@ -134,6 +136,9 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     @Inject
     BalanceHelper mBalanceHelper;
+
+    @Inject
+    AppLogglyUsecase appLogglyUsecase;
 
     //Media Manager to handle audio related events.
     private MediaManager mediaManager;
@@ -610,6 +615,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     public void callDisconnected(String code, String reason, String comment) {
         if (getYoCurrentCall() == null && reason.equalsIgnoreCase("Registration request timeout")) {
             uploadGoogleSheet(code, reason, comment, 0, null);
+            appLogglyUsecase.sendAlertsToLoggly(comment, reason, Constants.CRITICAL, 809);
         } else {
             SipHelper.isAlreadyStarted = false;
             setCurrentCallToNull();
@@ -621,6 +627,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             }
             long callduration = storeCallLog(phoneNumber, callType, callStarted);
             uploadGoogleSheet(code, reason, comment, callduration, null);
+            appLogglyUsecase.sendAlertsToLoggly(comment, reason, Constants.CRITICAL, 809);
             Util.cancelNotification(this, callNotificationId);
             if (sipServiceHandler != null) {
                 sipServiceHandler.callDisconnected(reason);

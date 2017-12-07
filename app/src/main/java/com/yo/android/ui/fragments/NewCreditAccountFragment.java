@@ -214,7 +214,12 @@ public class NewCreditAccountFragment extends BaseFragment {
 
     @OnClick(R.id.add_more_amount)
     public void addMoreAmount() {
-        showBalanceDialog();
+        if(Util.isOnline(getActivity())) {
+            showBalanceDialog();
+        } else {
+            showAlertDialog("", getResources().getString(R.string.network_error));
+        }
+
     }
 
     // Need to implement buy package
@@ -536,7 +541,7 @@ public class NewCreditAccountFragment extends BaseFragment {
 
                     String enteredAmount = editText.getText().toString();
 
-                    if (!TextUtils.isEmpty(enteredAmount) && !enteredAmount.contains(currencySymbol)) {
+                    if (!TextUtils.isEmpty(enteredAmount) && currencySymbol != null && !enteredAmount.contains(currencySymbol)) {
                         if (!isGreaterThanHundred(enteredAmount)) {
                             enteredAmount = String.format(getResources().getString(R.string.currency_code_with_denomination), mBalanceHelper.currencySymbolLookup(currencySymbol), enteredAmount);
                             alert.dismiss();
@@ -573,13 +578,8 @@ public class NewCreditAccountFragment extends BaseFragment {
         builder.setView(view);
 
         Button okBtn = (Button) view.findViewById(R.id.yes_btn);
-        //TextView tvTitle = (TextView) view.findViewById(R.id.dialog_title);
         TextView tvDesc = (TextView) view.findViewById(R.id.dialog_content);
 
-        /*tvTitle.setText(titleMsg);
-        tvTitle.setVisibility(View.VISIBLE);
-        tvTitle.setCompoundDrawablesWithIntrinsicBounds(drawable, 0, 0, 0);
-        tvTitle.setCompoundDrawablePadding(5);*/
         tvDesc.setText(contentMsg);
         okBtn.setText(R.string.ok);
 

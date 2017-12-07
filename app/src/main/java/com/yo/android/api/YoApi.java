@@ -356,7 +356,7 @@ public class YoApi {
         Call<List<Categories>> randomTagsAPI(@Field("access_token") String access_token);
 
         @GET("api/user/generate_alerts.json")
-        Call<Alerts> sendAlerts(@Query("access_token") String access_token, @Query("title") String title, @Query("message") String reason, @Query("status") String status);
+        Call<Alerts> sendAlerts(@Query("access_token") String access_token, @Query("title") String title, @Query("message") String reason, @Query("status") String status, @Query("status_code") int code);
     }
 
     public interface YoRefreshTokenService {

@@ -2,6 +2,7 @@ package com.yo.android.helpers;
 
 import android.annotation.SuppressLint;
 import android.opengl.Visibility;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -37,22 +38,25 @@ public class CategoryViewHolder extends YoViewHolder {
     public void bindData(Object data) {
         final CategoriesAccordionSection accordionSection = (CategoriesAccordionSection) data;
 
-        title.setText(accordionSection.getName());
-        int myInt = accordionSection.isExpanded() ? View.VISIBLE : View.GONE;
-        checkBox.setVisibility(myInt);
-        checkBox.setChecked(accordionSection.checkAllTopicsSelected());
-        checkBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CheckBox cb = (CheckBox) v;
-                if (cb.isChecked()) {
-                    accordionSection.checkAllTopics(mSelectedTopics);
-                } else {
-                    accordionSection.unCheckAllTopics(mSelectedTopics);
+        if(!TextUtils.isEmpty(accordionSection.getName())) {
+            title.setText(accordionSection.getName());
+            int myInt = accordionSection.isExpanded() ? View.VISIBLE : View.GONE;
+            checkBox.setVisibility(myInt);
+            checkBox.setChecked(accordionSection.checkAllTopicsSelected());
+            checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CheckBox cb = (CheckBox) v;
+                    if (cb.isChecked()) {
+                        accordionSection.checkAllTopics(mSelectedTopics);
+                    } else {
+                        accordionSection.unCheckAllTopics(mSelectedTopics);
+                    }
+                    categoriesAdapter.subCategoryAdapter();
                 }
-                categoriesAdapter.subCategoryAdapter();
-            }
-        });
-
+            });
+        } else {
+            title.setText("");
+        }
     }
 }

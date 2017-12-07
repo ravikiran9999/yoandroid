@@ -221,4 +221,14 @@ public class Constants {
     //Magazine
     public static final String MAGAZINE_TAGS = "magazine_tags";
     public static final int SUGGESTIONS_PAGE_FREQUENCY = 25;
+
+    //Loggle
+    public static final String CHAT_MODULE = "Chat";
+    public static final String DIALER_MODULE = "Dialer";
+    public static final String MAGAZINE_MODULE = "Magazine";
+    public static final String WALLET_MODULE = "Wallet";
+
+    //Status
+    public static final String CRITICAL = "Critical";
+    public static final String WARNING = "Warning";
 }

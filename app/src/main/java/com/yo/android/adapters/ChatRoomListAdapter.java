@@ -78,6 +78,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
                         .dontAnimate()
                         .into(holder.getChatRoomPic());
             } else if (item.getFullName() != null && item.getFullName().length() >= 1 && !TextUtils.isDigitsOnly(item.getFullName())) {
+                Glide.clear(holder.getChatRoomPic());
                 if (Settings.isTitlePicEnabled) {
                     if (item.getFullName() != null && item.getFullName().length() >= 1) {
                         Drawable drawable = Util.showFirstLetter(mContext, item.getFullName());
