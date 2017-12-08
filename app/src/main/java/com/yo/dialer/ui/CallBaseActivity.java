@@ -341,6 +341,12 @@ class CallBaseActivity extends BaseActivity {
 
     protected void changeToAcceptedCallUI() {
         DialerLogs.messageI(TAG, "YO====changeToAcceptedCallUI====");
+        //to increase the volume
+        am.adjustVolume(AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND);
+       /* am.setStreamVolume(
+                AudioManager.STREAM_VOICE_CALL,
+                am.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL),
+                0);*/
         //try {
         if (isIncoming) {
             if (mInComingHeader != null) {

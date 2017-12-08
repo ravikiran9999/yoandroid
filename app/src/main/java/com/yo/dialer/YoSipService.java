@@ -609,9 +609,13 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     public void callDisconnected(String code, String reason, String comment) {
         if (getYoCurrentCall() == null && reason.equalsIgnoreCase("Registration request timeout")) {
-            uploadGoogleSheet(code, reason, comment, 0, null);
+            uploadGoogleSheet(code, reason, comment, 0, null, "");
         } else {
             SipHelper.isAlreadyStarted = false;
+            String calleeEndedDumpString = "";
+            if(yoCurrentCall != null) {
+                calleeEndedDumpString = CallHelper.storeDump(yoCurrentCall);
+            }
             setCurrentCallToNull();
             //If the call is rejected should stop rigntone
             stopDefaultRingtone();
@@ -620,7 +624,13 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 mBalanceHelper.checkBalance(null);
             }
             long callduration = storeCallLog(phoneNumber, callType, callStarted);
-            uploadGoogleSheet(code, reason, comment, callduration, null);
+            String dumpStringToUpload = "";
+            if(!TextUtils.isEmpty(CallHelper.dumpString)) {
+                dumpStringToUpload = CallHelper.dumpString;
+            } else {
+                dumpStringToUpload = calleeEndedDumpString;
+            }
+            uploadGoogleSheet(code, reason, comment, callduration, null, dumpStringToUpload);
             Util.cancelNotification(this, callNotificationId);
             if (sipServiceHandler != null) {
                 sipServiceHandler.callDisconnected(reason);
@@ -631,7 +641,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         }
     }
 
-    public void uploadGoogleSheet(String code, String reason, String comment, long callduration, String missedCallNumber) {
+    public void uploadGoogleSheet(String code, String reason, String comment, long callduration, String missedCallNumber, String dumpStringToUpload) {
         if (DialerConfig.UPLOAD_REPORTS_GOOGLE_SHEET) {
             try {
                 PreferenceEndPoint preferenceEndPoint = getPreferenceEndPoint();
@@ -660,6 +670,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 model.setStatusCode(code);
                 model.setStatusReason(reason);
                 model.setComments(comment);
+                model.setNotificationDetails(dumpStringToUpload);
 
                 Calendar c = Calendar.getInstance();
                 String formattedDate = YoSipService.df.format(c.getTime());
@@ -732,7 +743,9 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
         try {
             mAudioManager.setSpeakerphoneOn(false);
-            mRingTone = MediaPlayer.create(this, R.raw.calling);
+            if(mRingTone == null) {
+                mRingTone = MediaPlayer.create(this, R.raw.calling);
+            }
             mRingTone.setVolume(volume, volume);
             mRingTone.setLooping(true);
             mAudioManager.setMode(AudioManager.RINGER_MODE_SILENT);
@@ -805,9 +818,12 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             try {
                 mRingTone.reset();
                 mRingTone.release();
+
             } catch (Exception ignored) {
                 ignored.printStackTrace();
             }
+            mRingTone = null;
+
         }
 
     }

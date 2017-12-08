@@ -36,6 +36,7 @@ import java.util.Date;
 
 public class CallHelper {
     private static final String TAG = CallHelper.class.getSimpleName();
+    public static String dumpString;
 
     public static YoCall makeCall(YoSipService sipService, YoAccount yoAccount, Intent intent) {
         if (intent != null) {
@@ -110,7 +111,7 @@ public class CallHelper {
         param.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
         try {
             if (yoCurrentCall != null) {
-                storeDump(yoCurrentCall);
+                dumpString = storeDump(yoCurrentCall);
                 yoCurrentCall.hangup(param);
                 YoSipService.setYoCurrentCall(null);
             } else {
@@ -122,14 +123,17 @@ public class CallHelper {
         }
     }
 
-    public static void storeDump(YoCall yoCurrentCall) {
+    public static String storeDump(YoCall yoCurrentCall) {
+        String dumpString = "";
         try {
-            String dumpString = yoCurrentCall.dump(true, "");
+            dumpString = yoCurrentCall.dump(true, "");
             DialerLogs.messageI(TAG, "The call disconnected dump string is====" + dumpString);
             appendLog(dumpString);
         } catch (Exception e) {
             DialerLogs.messageE(TAG, "While Store DUMP call====" + e.getMessage());
         }
+
+        return dumpString;
     }
 
     public static void appendLog(String text) {

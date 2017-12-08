@@ -166,7 +166,7 @@ public class BaseActivity extends ParentActivity {
                 model.setCallee("Unknow..");
             }
             values = Arrays.asList(
-                    Arrays.asList((Object) model.getName(), (Object) model.getCaller(), model.getCallee(), model.getCallMode(), model.getStatusCode(), model.getStatusReason(), model.getDuration(), model.getCallType(), model.getDate(), model.getTime(), model.getComments(), model.getCurrentBalance()
+                    Arrays.asList((Object) model.getName(), (Object) model.getCaller(), model.getCallee(), model.getCallMode(), model.getStatusCode(), model.getStatusReason(), model.getDuration(), model.getCallType(), model.getDate(), model.getTime(), model.getComments(), model.getCurrentBalance(), model.getNotificationDetails()
                     )
             );
         } else if (type.equals("Notifications")) {
