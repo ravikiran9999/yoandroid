@@ -59,6 +59,7 @@ import javax.inject.Named;
 
 import de.greenrobot.event.EventBus;
 
+import static com.yo.android.app.BaseApp.appRunning;
 import static com.yo.android.chat.notification.localnotificationsbuilder.Notifications.GROUP_NOTIFICATION_ID;
 
 /**
@@ -115,9 +116,12 @@ public class PushNotificationService extends FirebaseMessagingService {
         } else if(data.get("tag").equals("Chat") && data.get("title").equals("Chat message stored")) {
             String chatMessageString = data.get("chat_message").toString();
             ChatMessage chatMessage = new Gson().fromJson(chatMessageString, ChatMessage.class);
-            if(!Util.isAppRunning(this)) {
+            mLog.i(TAG, "appRunning : " + appRunning);
+            //if(!Util.appRunningStatus(this) ) {
+            if(!appRunning) {
                 newPushNotification(chatMessage.getRoomId(), chatMessage);
             }
+            //}
         }else if (data.get("tag").equals("Chat")) {
             //update UI , if chat is opened.
             ChatRefreshBackground.getInstance().doRefresh(getApplicationContext(), data.get("firebase_room_id").toString());
@@ -159,7 +163,7 @@ public class PushNotificationService extends FirebaseMessagingService {
 
 
         if (preferenceEndPoint.getBooleanPreference(Constants.IS_IN_APP)) {
-            if (!data.get("tag").equals("POPUP")) {
+            if (!data.get("tag").equals("POPUP") && !data.get("title").equals("Chat message stored")) {
                 int i = preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT);
                 i = ++i;
                 preferenceEndPoint.saveIntPreference(Constants.NOTIFICATION_COUNT, i);

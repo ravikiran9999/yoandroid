@@ -100,6 +100,7 @@ public class AppContactsListAdapter extends AbstractBaseAdapter<Contact, AppRegi
                             .into(holder.getContactPic());
                 } else {
                     if (item.getName() != null && item.getName().length() >= 1 && !TextUtils.isDigitsOnly(item.getName())) {
+                        Glide.clear(holder.getContactPic());
                         if (Settings.isTitlePicEnabled) {
                             if (item.getName() != null && item.getName().length() >= 1) {
                                 String title = String.valueOf(item.getName().charAt(0)).toUpperCase();

@@ -57,6 +57,7 @@ import com.yo.android.model.Articles;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.photo.TextDrawable;
 import com.yo.android.photo.util.ColorGenerator;
+import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.FindPeopleActivity;
@@ -232,7 +233,7 @@ public class Util {
         return (index == length - 1) ? str : str.substring(0, index + 1);
     }
 
-    public static void prepareSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter, final TextView noData, final ListView listView, final GridView gridView , final TextView networkFailureText) {
+    public static void prepareSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter, final TextView noData, final ListView listView, final GridView gridView, final TextView networkFailureText) {
         final SearchManager searchManager =
                 (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         MenuItem searchMenuItem;
@@ -1078,14 +1079,25 @@ public class Util {
         final List<ActivityManager.RunningAppProcessInfo> processInfos;
         if (am != null) {
             processInfos = am.getRunningAppProcesses();
-            if (processInfos != null)
-            {
+            if (processInfos != null) {
                 for (final ActivityManager.RunningAppProcessInfo processInfo : processInfos) {
                     if (processInfo.processName.equals(packageName)) {
                         return true;
                     }
                 }
             }
+        }
+
+        return false;
+    }
+
+    public static boolean appRunningStatus(final Context context) {
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
+        String[] strings = cn.getShortClassName().split(Pattern.quote("."));
+        int i = strings.length - 1;
+        if (strings[i].equalsIgnoreCase("BaseActivity")) {
+            return true;
         }
 
         return false;

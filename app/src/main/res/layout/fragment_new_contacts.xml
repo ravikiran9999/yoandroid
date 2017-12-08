@@ -31,24 +31,20 @@
                 android:id="@+id/allContactsSection"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@color/white"
+                android:layout_margin="5dp"
                 android:text="@string/contacts_all"
-                android:textSize="@dimen/xsmall_textsize"
+                android:textColor="@color/white"
+                android:textSize="@dimen/large_textsize"
                 android:textStyle="bold" />
 
-            <!--</LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="0.5">-->
             <Button
                 android:id="@+id/yoContactsSection"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@color/white"
+                android:layout_margin="5dp"
                 android:text="@string/contacts_yo"
-                android:textSize="@dimen/xsmall_textsize"
+                android:textColor="@color/white"
+                android:textSize="@dimen/large_textsize"
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
@@ -57,12 +53,12 @@
         android:id="@+id/no_search_results"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:gravity="center_horizontal"
         android:padding="30dp"
         android:text="@string/no_result_found"
         android:textColor="@color/black"
-        android:visibility="gone"
-        android:layout_marginTop="10dp"/>
+        android:visibility="gone" />
 
     <ProgressBar
         android:id="@+id/progress"

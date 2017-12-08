@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -77,6 +78,7 @@ import com.yo.android.pjsip.SipHelper;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.ui.ShowPhotoActivity;
 import com.yo.android.ui.UserProfileActivity;
+import com.yo.android.usecase.AppLogglyUsecase;
 import com.yo.android.usecase.ChatNotificationUsecase;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
@@ -171,6 +173,18 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Inject
     ChatNotificationUsecase chatNotificationUsecase;
 
+    @Inject
+    AppLogglyUsecase appLogglyUsecase;
+
+    Handler handler = new Handler();
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            checkFirebaseUserStatus(authReference, opponentFirebaseUserId, mUpdateStatus);
+            handler.postDelayed(this, 200);
+        }
+    };
+
     public interface UpdateStatus {
         void updateUserStatus(boolean value);
     }
@@ -198,13 +212,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
         chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
         share = bundle.getParcelable(Constants.CHAT_SHARE);
-        mLog.e(TAG, "Firebase token reading from pref " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
+        //mLog.e(TAG, "Firebase token reading from pref " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
         authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN), null);
 
         chatMessageArray = new ArrayList<>();
         setHasOptionsMenu(true);
 
-        checkFirebaseUserStatus(authReference, opponentFirebaseUserId, mUpdateStatus);
+
         //checkFirebaseUserStatus(authReference, opponentFirebaseUserId);
 
 
@@ -296,7 +310,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         if ((childRoomId == null) && (chatForwards != null)) {
             //createRoom("Message", null);
         }
-
 
         return view;
     }
@@ -463,6 +476,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             }
         });
         getActivity().supportInvalidateOptionsMenu();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        handler.postDelayed(runnable, 500);
     }
 
     @Override
@@ -667,7 +686,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     Activity activity = getActivity();
                     if ((firebaseError != null) && (firebaseError.getCode() == -3)) {
                         authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN), null);
-                        CallHelper.uploadToGoogleSheet(preferenceEndPoint, "", roomChildReference.toString());
+                        CallHelper.uploadToGoogleSheetMessageSentFail(preferenceEndPoint, "", "", roomChildReference.toString());
+                        appLogglyUsecase.sendAlertsToLoggly(Constants.CHAT_MODULE, roomChildReference.toString(), Constants.CRITICAL, 804);
+
                         if (retryMessageCount <= 3) {
                             sendChatMessage(chatMessage);
                             retryMessageCount++;
@@ -682,6 +703,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     } else {
                         chatMessage.setMessageKey(firebase.getKey());
                         chatMessage.setSent(1);
+                        Log.i(TAG, ((ChatActivity) activity).chatUserStatus.getText().toString());
                         if (activity instanceof ChatActivity && !((ChatActivity) activity).chatUserStatus.getText().equals("online")) {
                             chatNotificationUsecase.pushChatMessage(chatMessage);
                         }
@@ -1146,5 +1168,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         int count = chatAdapter.getCount() - 1;
         //Log.i(TAG, String.valueOf(count));
         listView.setSelection(count);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        handler.removeCallbacksAndMessages(runnable);
     }
 }
