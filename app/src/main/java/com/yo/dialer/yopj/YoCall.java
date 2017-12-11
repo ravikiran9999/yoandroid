@@ -1,5 +1,7 @@
 package com.yo.dialer.yopj;
 
+import android.util.Log;
+
 import com.yo.dialer.DialerLogs;
 
 import org.pjsip.pjsua2.AudioMedia;
@@ -18,6 +20,8 @@ import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsip_tsx_state_e;
 import org.pjsip.pjsua2.pjsua2;
 import org.pjsip.pjsua2.pjsua_call_media_status;
+
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 /**
  * Created by root on 17/7/17.
@@ -81,6 +85,13 @@ public class YoCall extends Call {
                 // downcasted to AudioMedia
                 Media m = getMedia(i);
                 AudioMedia am = AudioMedia.typecastFromMedia(m);
+
+                try {
+                    am.adjustRxLevel((float) 1.5);
+                    am.adjustTxLevel((float) 1.5);
+                } catch (Exception exc) {
+                    Log.e(TAG, "Error while adjusting levels", exc);
+                }
 
                 // connect ports
                 try {

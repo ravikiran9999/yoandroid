@@ -93,6 +93,7 @@ public class YoApp {
         /* Media config */
         epConfig.getMedConfig().setQuality(4);
         epConfig.getMedConfig().setNoVad(true);
+        epConfig.getMedConfig().setEcTailLen(0);
 
 	/* Set ua config. */
         UaConfig ua_cfg = epConfig.getUaConfig();

@@ -1,4 +1,4 @@
-include ':app', ':flip', ':tagview', ':topsnackbar', ':pjsip2.7', ':yowatsuppjsip2.7'
+include ':app', ':flip', ':tagview', ':topsnackbar', ':yowatsuppjsip2.7'
 //':yocsipsimple'
 include ':emojilib'
 project(':yowatsuppjsip2.7').projectDir = new File('yopjsip2.7')
