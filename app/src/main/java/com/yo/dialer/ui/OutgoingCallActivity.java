@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -51,7 +52,7 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
         DialerLogs.messageI(TAG, "YO========Outgongcall call screen=====");
         DialerLogs.messageI(TAG, "YO==== Callee Number====" + callePhoneNumber);
         initViews();
-
+        initVolume();
         if (!TextUtils.isEmpty(callePhoneNumber) && callePhoneNumber.contains(BuildConfig.RELEASE_USER_TYPE)) {
             callePhoneNumber = DialerHelper.getInstance(this).parsePhoneNumber(callePhoneNumber);
         }
@@ -239,7 +240,17 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
         });
 
         // volume controller
-        AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        Util.initBar(seekBar, audioManager, AudioManager.STREAM_VOICE_CALL);
+        //AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        if (am != null) {
+            Util.initBar(seekBar, am, AudioManager.STREAM_VOICE_CALL);
+        }
+    }
+
+    private void initVolume() {
+        // volume controller
+        //AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        if (am != null) {
+            Util.initVolumeToSixty(am);
+        }
     }
 }

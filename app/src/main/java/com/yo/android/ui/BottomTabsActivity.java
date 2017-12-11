@@ -950,11 +950,13 @@ public class BottomTabsActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+
         if (sipBinder != null) {
             unbindService(connection);
         }
         EventBus.getDefault().unregister(this);
         appRunning = false;
+
+        super.onDestroy();
     }
 }

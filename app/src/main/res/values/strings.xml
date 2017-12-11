@@ -430,7 +430,7 @@
     <string name="buy">BUY</string>
     <string name="item_package_price">$5</string>
     <string name="contacts_all">ALL</string>
-    <string name="contacts_yo">YO</string>
+    <string name="contacts_yo">yo!</string>
 
     <!--error messages-->
     <string name="like_unlike_error_message">Something went wrong. Please try again</string>
