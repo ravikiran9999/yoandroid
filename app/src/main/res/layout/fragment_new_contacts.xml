@@ -29,22 +29,33 @@
 
             <Button
                 android:id="@+id/allContactsSection"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_margin="5dp"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="5dp"
+                android:layout_marginRight="2dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginTop="5dp"
                 android:text="@string/contacts_all"
                 android:textColor="@color/white"
-                android:textSize="@dimen/large_textsize"
+                android:textSize="@dimen/xsmall_textsize"
                 android:textStyle="bold" />
 
             <Button
                 android:id="@+id/yoContactsSection"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_margin="5dp"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginTop="5dp"
                 android:text="@string/contacts_yo"
+                android:textAllCaps="false"
                 android:textColor="@color/white"
-                android:textSize="@dimen/large_textsize"
+                android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>

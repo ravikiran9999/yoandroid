@@ -1034,6 +1034,11 @@ public class Util {
     }
 
     public static void initBar(SeekBar bar, final AudioManager audioManager, final int stream) {
+        int currentVolume = audioManager.getStreamVolume(stream);
+        Log.i("Volume", "currentVolume : " + currentVolume);
+        int maxVolume = audioManager.getStreamMaxVolume(stream);
+        Log.i("Volume", "maxVolume : " + maxVolume);
+
         bar.setMax(audioManager.getStreamMaxVolume(stream));
         bar.setProgress(audioManager.getStreamVolume(stream));
         bar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -1047,6 +1052,14 @@ public class Util {
             public void onStopTrackingTouch(SeekBar bar) {
             }
         });
+    }
+
+    public static void initVolumeToSixty(final AudioManager audioManager) {
+        int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL);
+        float percent = 0.6f;
+        final int sixtyVolume = (int) (maxVolume * percent);
+        audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, sixtyVolume, AudioManager.FLAG_PLAY_SOUND);
+        //bar.setProgress(currentVolume);
     }
 
     public static boolean isOnline(Context context) {

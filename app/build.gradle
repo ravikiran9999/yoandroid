@@ -10,7 +10,7 @@ android {
         }
         stageconfig {
             keyAlias 'yoappstage'
-            keyPassword '123456'
+            keyPassword 'yow@tsup'
             storeFile file('config/yo-app-stage.jks')
             storePassword '123456'
         }
