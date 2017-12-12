@@ -220,7 +220,7 @@ public class YoApp {
             try {
                 AudDevManager audDevManager = ep.audDevManager();
                 if (audDevManager != null) {
-                    audDevManager.setEcOptions(200, 3);
+                    audDevManager.setEcOptions(0, 0);
                 } else {
                     DialerLogs.messageE(TAG, "While setting Eco options to incoming call audDevManager is null.");
                 }
