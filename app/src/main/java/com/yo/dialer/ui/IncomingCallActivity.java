@@ -47,6 +47,7 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
 
         initViews();
         loadUserDetails();
+        initVolume();
         loadCallePhoneNumber(callePhoneNumberTxt, DialerHelper.getInstance(this).parsePhoneNumber(callePhoneNumber));
         tvCallStatus.setText(getResources().getString(R.string.incoming_call));
         //to show callee yo chat
@@ -216,8 +217,19 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
                 mSnackbar = null;
             }
         });
+
         // volume controller
-        AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        Util.initBar(seekBar, audioManager, AudioManager.STREAM_VOICE_CALL);
+        //AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        if(am != null) {
+            Util.initBar(seekBar, am, AudioManager.STREAM_VOICE_CALL);
+        }
+    }
+
+    private void initVolume() {
+        // volume controller
+        //AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        if(am != null) {
+            Util.initVolumeToSixty(am);
+        }
     }
 }

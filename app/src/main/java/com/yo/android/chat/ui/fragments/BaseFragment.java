@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -22,6 +23,7 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.R;
 import com.yo.android.di.Injector;
+import com.yo.android.typeface.TypefacePath;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.usecase.AppLogglyUsecase;
 import com.yo.android.util.Constants;
@@ -54,6 +56,8 @@ public class BaseFragment extends Fragment {
     protected Dialog mProgressDialog;
 
     boolean chatUserStatus = false;
+
+    private Typeface alexBrushRegular;
 
     public BaseFragment() {
         // Required empty public constructor
@@ -144,5 +148,12 @@ public class BaseFragment extends Fragment {
             }
         });
 
+    }
+
+    protected Typeface getAlexBrushRegular() {
+        if (alexBrushRegular == null) {
+            alexBrushRegular = Typeface.createFromAsset(getActivity().getAssets(), TypefacePath.ALEX_BRUSH_REGULAR);
+        }
+        return alexBrushRegular;
     }
 }

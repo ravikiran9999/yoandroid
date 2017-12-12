@@ -102,6 +102,7 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
                     .error(R.drawable.dynamic_profile)
                     .into(holder.getContactPic());
         } else if (Settings.isTitlePicEnabled) {
+            Glide.clear(holder.getContactPic());
             if (item.getName() != null && item.getName().length() >= 1) {
                 String title = String.valueOf(item.getName().charAt(0)).toUpperCase();
                 Pattern p = Pattern.compile("^[a-zA-Z]");

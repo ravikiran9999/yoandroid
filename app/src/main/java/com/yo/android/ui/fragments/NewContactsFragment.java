@@ -3,6 +3,7 @@ package com.yo.android.ui.fragments;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,7 +16,14 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.telephony.PhoneNumberUtils;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
+import android.text.style.TypefaceSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -45,6 +53,7 @@ import com.yo.android.model.Contact;
 import com.yo.android.model.Contacts;
 import com.yo.android.model.Popup;
 import com.yo.android.provider.YoAppContactContract;
+import com.yo.android.typeface.CustomTypefaceSpan;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
@@ -143,9 +152,11 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        Typeface alexBrushRegular = getAlexBrushRegular();
         btnAllContacts.setBackgroundResource(R.drawable.red_button);
         btnYoContacts.setBackgroundResource(R.drawable.red_button_light);
+        btnYoContacts.setTypeface(alexBrushRegular);
+
 
         contactsListAdapter = new ContactsListAdapter(getActivity().getApplicationContext(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         listView.setAdapter(contactsListAdapter);
@@ -572,5 +583,21 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
             String json = gson.toJson(jsonObjects);
             set(Constants.OFFLINE_ADDED_CONTACTS, json);
         }
+    }
+
+    private SpannableString spannableString(String textLabel) {
+        Typeface alexBrushRegular = getAlexBrushRegular();
+        TypefaceSpan alexBrushRegularSpan = new CustomTypefaceSpan("", alexBrushRegular);
+        final SpannableString text = new SpannableString(textLabel);
+        // Span to make text bold
+        //final StyleSpan bss = new StyleSpan(android.graphics.Typeface.BOLD);
+
+        text.setSpan(alexBrushRegularSpan, 0, textLabel.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        //text.setSpan(new RelativeSizeSpan(2f), 6, 9, 0); // set size
+        //text.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorPrimary)), 17, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        // make them also bold
+        //text.setSpan(bss, 17, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+
+        return text;
     }
 }

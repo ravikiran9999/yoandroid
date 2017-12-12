@@ -77,6 +77,7 @@ public class ProfileMembersAdapter extends AbstractBaseAdapter<GroupMembers, Pro
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(holder.getImageView());
             } else if (fullName != null && fullName.length() >= 1 && !TextUtils.isDigitsOnly(fullName)) {
+                Glide.clear(holder.getImageView());
                 if (Settings.isTitlePicEnabled) {
                     if (fullName.length() >= 1) {
                         String title = String.valueOf(fullName.charAt(0)).toUpperCase();
