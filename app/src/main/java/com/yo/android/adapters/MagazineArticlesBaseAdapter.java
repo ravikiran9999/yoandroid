@@ -2405,10 +2405,11 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             allArticles = getAllItems();
 
             for (Articles article : allArticles) {
-
-                if (topicId.equals(article.getTopicId())) {
-                    article.setTopicFollowing("false");
-                    followedTopicArticlesList.add(article);
+                if(article != null) {
+                    if (topicId.equals(article.getTopicId())) {
+                        article.setTopicFollowing("false");
+                        followedTopicArticlesList.add(article);
+                    }
                 }
             }
 
