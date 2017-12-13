@@ -93,6 +93,7 @@ public class YoApp {
         /* Media config */
         epConfig.getMedConfig().setQuality(4);
         epConfig.getMedConfig().setNoVad(true);
+        // It is for echo
         epConfig.getMedConfig().setEcTailLen(0);
 
 	/* Set ua config. */

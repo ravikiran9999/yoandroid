@@ -23,7 +23,7 @@ android {
     }
     // Enabling multidex support.
     defaultConfig {
-        applicationId "com.yowatsup.android"
+        applicationId "com.yowatsup"
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1
@@ -144,6 +144,10 @@ android {
     packagingOptions {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/LICENSE-FIREBASE.txt'
+    }
+
+    aaptOptions {
+        cruncherEnabled = false
     }
 }
 

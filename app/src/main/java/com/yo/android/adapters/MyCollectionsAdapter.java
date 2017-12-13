@@ -59,6 +59,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
 
         } else if (!TextUtils.isEmpty(item.getImage())) {
             //new NewImageRenderTask(mContext,item.getImage(),holder.getImageView()).execute();
+            Glide.clear(holder.getImageView());
             Glide.with(mContext)
                     .load(item.getImage())
                     .asBitmap()
@@ -83,6 +84,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
                         }
                     });
         } else {
+            Glide.clear(holder.getImageView());
             if(item.getArticlesCount() == 0) {
                 Glide.with(mContext)
                         .load(R.drawable.magazine_backdrop)

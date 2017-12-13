@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -16,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.BuildConfig;
@@ -37,6 +39,7 @@ import javax.inject.Inject;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,6 +49,8 @@ import retrofit2.Response;
  */
 public class UpdateProfileActivity extends BaseActivity {
     private static final String USER_NAME_REGX = "^[a-zA-Z0-9-_ ]*$";
+    private static final String TAG = UpdateProfileActivity.class.getSimpleName();
+
     private EditText username;
     private TextView mobileNum;
     private TextView addPhoto;
@@ -70,6 +75,7 @@ public class UpdateProfileActivity extends BaseActivity {
 
         setupToolbar();
         initializeViews();
+        updateDeviceToken();
         cameraIntent.setActivity(this);
 
         mobileNumberTxt = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
@@ -305,5 +311,28 @@ public class UpdateProfileActivity extends BaseActivity {
                 toastFactory.showToast(getResources().getString(R.string.profile_failed));
             }
         });
+    }
+
+    private void updateDeviceToken() {
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        if (!TextUtils.isEmpty(refreshedToken)) {
+            preferenceEndPoint.saveStringPreference(Constants.FCM_REFRESH_TOKEN, refreshedToken);
+        } else {
+            refreshedToken = preferenceEndPoint.getStringPreference(Constants.FCM_REFRESH_TOKEN);
+        }
+        if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
+            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            yoService.updateDeviceTokenAPI(accessToken, refreshedToken).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    Log.i(TAG, "FCM token updated successfully");
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.i(TAG, "FCM token failure : " + t.getMessage());
+                }
+            });
+        }
     }
 }

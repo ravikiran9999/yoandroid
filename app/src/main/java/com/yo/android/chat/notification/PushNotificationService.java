@@ -111,6 +111,11 @@ public class PushNotificationService extends FirebaseMessagingService {
             EventBus.getDefault().post(Constants.TOPIC_NOTIFICATION_ACTION);
         } else if (data.get("tag").equals("BalanceTransferred")) {
             EventBus.getDefault().post(Constants.BALANCE_TRANSFER_NOTIFICATION_ACTION);
+            final boolean isNewUser = preferenceEndPoint.getBooleanPreference("isNewUser");
+            if(isNewUser) {
+                preferenceEndPoint.saveBooleanPreference("isNewUser", false);
+                EventBus.getDefault().post(Constants.BALANCE_TRANSFER_NEW_USER);
+            }
         } else if (data.get("tag").equals("POPUP")) {
             PopupHelper.handlePop(preferenceEndPoint, data);
         } else if(data.get("tag").equals("Chat") && data.get("title").equals("Chat message stored")) {
