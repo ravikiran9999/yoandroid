@@ -94,10 +94,9 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         } else {
             setContentView(R.layout.new_yo_credit_screen);
             balanceText = (TextView) findViewById(R.id.your_available_amount);
-
             balanceText.setText(spannableString());
-
         }
+
         ButterKnife.bind(this);
         updateCalled = 0;
         final Toolbar toolbar = (Toolbar) findViewById(R.id.htab_toolbar);

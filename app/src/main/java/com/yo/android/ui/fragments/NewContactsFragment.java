@@ -10,19 +10,12 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.telephony.PhoneNumberUtils;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.RelativeSizeSpan;
-import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -50,7 +43,6 @@ import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.helpers.Helper;
 import com.yo.android.helpers.PopupHelper;
 import com.yo.android.model.Contact;
-import com.yo.android.model.Contacts;
 import com.yo.android.model.Popup;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.typeface.CustomTypefaceSpan;
@@ -153,8 +145,9 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Typeface alexBrushRegular = getAlexBrushRegular();
-        btnAllContacts.setBackgroundResource(R.drawable.red_button);
-        btnYoContacts.setBackgroundResource(R.drawable.red_button_light);
+        //btnAllContacts.setBackgroundResource(R.drawable.all);
+        //btnYoContacts.setBackgroundResource(R.drawable.yo);
+        btnYoContacts.setAlpha(0.5f);
         btnYoContacts.setTypeface(alexBrushRegular);
 
 
@@ -165,8 +158,10 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
         btnAllContacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                btnAllContacts.setBackgroundResource(R.drawable.red_button);
-                btnYoContacts.setBackgroundResource(R.drawable.red_button_light);
+                //btnAllContacts.setBackgroundResource(R.drawable.all);
+                btnAllContacts.setAlpha(1);
+                btnYoContacts.setAlpha(0.5f);
+
                 loadAlphabetOrder(allContacts);
             }
         });
@@ -174,8 +169,9 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
         btnYoContacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                btnYoContacts.setBackgroundResource(R.drawable.red_button);
-                btnAllContacts.setBackgroundResource(R.drawable.red_button_light);
+                //btnYoContacts.setBackgroundResource(R.drawable.yo);
+                btnAllContacts.setAlpha(0.5f);
+                btnYoContacts.setAlpha(1);
                 List<Contact> onlyYoUsers = filterYoContacts(allContacts);
                 updateYoUsers(onlyYoUsers);
             }

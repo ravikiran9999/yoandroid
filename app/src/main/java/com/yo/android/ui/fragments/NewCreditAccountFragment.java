@@ -105,6 +105,7 @@ public class NewCreditAccountFragment extends BaseFragment {
         inActivePackageDenomination();
         getTransferBalanceDenominations();
         getBuyPackageDenomination();
+        EventBus.getDefault().register(this);
     }
 
     private void showDenominationAVLoader() {
@@ -346,6 +347,7 @@ public class NewCreditAccountFragment extends BaseFragment {
                                                     mBalanceHelper.checkBalance(new Callback<ResponseBody>() {
                                                         @Override
                                                         public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                                                            preferenceEndPoint.saveBooleanPreference("isNewUser", false);
                                                             closeActivityAddBalance(Activity.RESULT_OK, null);
                                                         }
 
@@ -605,4 +607,24 @@ public class NewCreditAccountFragment extends BaseFragment {
         showAlertDialog("", getResources().getString(errorMessage));
     }
 
+    public void onEventMainThread(String action) {
+        if (Constants.BALANCE_TRANSFER_NEW_USER.equals(action)) {
+            checkBalance();
+        }
+    }
+
+    private void checkBalance() {
+        mBalanceHelper.checkBalance(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                closeActivityAddBalance(Activity.RESULT_OK, null);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                closeActivityAddBalance(Activity.RESULT_CANCELED, null);
+                CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, "", "", "Failed to load balance");
+            }
+        });
+    }
 }

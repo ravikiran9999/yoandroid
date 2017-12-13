@@ -144,6 +144,7 @@ public class Constants {
     public static String TOPIC_FOLLOWING_ACTION = "com.topic.detail.FOLLOW";
     public static String REFRESH_TOPICS_ACTION = "com.refresh.magazine.TOPICS";
     public static String BALANCE_TRANSFER_NOTIFICATION_ACTION = "com.notification.balance.TRANSFER";
+    public static String BALANCE_TRANSFER_NEW_USER = "balance_transfer_new_user";
     public static String STOP_FETCHING_ARTICLES_ACTION = "com.stop.articles.FETCH";
     public static String START_FETCHING_ARTICLES_ACTION = "com.start.articles.FETCH";
     public static String BALANCE_UPDATED_ACTION = "com.balance.BALANCEUPDATED";
