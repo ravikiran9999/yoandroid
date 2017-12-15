@@ -626,7 +626,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
             //If the call is rejected should stop rigntone
             stopDefaultRingtone();
             DialerLogs.messageE(TAG, "callDisconnected" + reason);
-            if (!phoneNumber.contains(BuildConfig.RELEASE_USER_TYPE)) {
+            if (!BuildConfig.RELEASE_USER_TYPE.contains(phoneNumber)) {
                 mBalanceHelper.checkBalance(null);
             }
             long callduration = storeCallLog(phoneNumber, callType, callStarted);
