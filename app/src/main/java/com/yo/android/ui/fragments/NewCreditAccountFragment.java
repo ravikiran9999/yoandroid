@@ -3,6 +3,7 @@ package com.yo.android.ui.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -88,6 +89,7 @@ public class NewCreditAccountFragment extends BaseFragment {
     EditText voucherNumberEdit;
     String currencySymbol;
     List<TransferBalanceDenomination> transferBalanceDenominationList;
+    Activity activity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -95,6 +97,16 @@ public class NewCreditAccountFragment extends BaseFragment {
         view = LayoutInflater.from(getActivity()).inflate(R.layout.new_yo_credit_details, container, false);
         ButterKnife.bind(this, view);
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof Activity) {
+            activity = (Activity) context;
+        }
+
     }
 
     @Override
@@ -126,9 +138,9 @@ public class NewCreditAccountFragment extends BaseFragment {
     }
 
     private void hideDenominationAVLoader() {
-        aviFirst.setVisibility(View.INVISIBLE);
-        aviSecond.setVisibility(View.INVISIBLE);
-        aviThird.setVisibility(View.INVISIBLE);
+        aviFirst.setVisibility(View.GONE);
+        aviSecond.setVisibility(View.GONE);
+        aviThird.setVisibility(View.GONE);
     }
 
     private void showDenominations() {
@@ -137,20 +149,20 @@ public class NewCreditAccountFragment extends BaseFragment {
         preferenceEndPoint.saveStringPreference(Constants.CURRENCY_SYMBOL, currencySymbol);
         if (transferBalanceDenominationList.get(0) != null && transferBalanceDenominationList.get(0).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
             tvFirst.setVisibility(View.VISIBLE);
-            tvFirst.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), mBalanceHelper.currencySymbolLookup(currencySymbol), transferBalanceDenominationList.get(0).getDenomination()));
+            tvFirst.setText(String.format(activity.getResources().getString(R.string.currency_code_with_denomination), mBalanceHelper.currencySymbolLookup(currencySymbol), transferBalanceDenominationList.get(0).getDenomination()));
             giveFirst.setAlpha(1);
             giveFirst.setClickable(true);
         }
 
         if (transferBalanceDenominationList.get(1) != null && transferBalanceDenominationList.get(1).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
-            tvSecond.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), mBalanceHelper.currencySymbolLookup(currencySymbol), transferBalanceDenominationList.get(1).getDenomination()));
+            tvSecond.setText(String.format(activity.getResources().getString(R.string.currency_code_with_denomination), mBalanceHelper.currencySymbolLookup(currencySymbol), transferBalanceDenominationList.get(1).getDenomination()));
             tvSecond.setVisibility(View.VISIBLE);
             giveSecond.setAlpha(1);
             giveSecond.setClickable(true);
         }
 
         if (transferBalanceDenominationList.get(2) != null && transferBalanceDenominationList.get(2).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
-            tvThird.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), mBalanceHelper.currencySymbolLookup(currencySymbol), transferBalanceDenominationList.get(2).getDenomination()));
+            tvThird.setText(String.format(activity.getResources().getString(R.string.currency_code_with_denomination), mBalanceHelper.currencySymbolLookup(currencySymbol), transferBalanceDenominationList.get(2).getDenomination()));
             tvThird.setVisibility(View.VISIBLE);
             giveThird.setAlpha(1);
             giveThird.setClickable(true);
@@ -171,17 +183,24 @@ public class NewCreditAccountFragment extends BaseFragment {
     private void showActivePackageDenomination(List<PackageDenomination> packageDenominationList) {
         String pCurrencySymbol = packageDenominationList.get(0).getCurrencySymbol();
         pCurrencySymbol = mBalanceHelper.currencySymbolLookup(pCurrencySymbol);
+
         buyFirstPackage.setAlpha(1);
         buyFirstPackage.setClickable(true);
-        buyFirstPackage.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), pCurrencySymbol, packageDenominationList.get(0).getPackage()));
+        if (packageDenominationList.get(0) != null) {
+            buyFirstPackage.setText(String.format(activity.getResources().getString(R.string.currency_code_with_denomination), pCurrencySymbol, packageDenominationList.get(0).getPackage()));
+        }
 
         buySecondPackage.setAlpha(1);
         buySecondPackage.setClickable(true);
-        buySecondPackage.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), pCurrencySymbol, packageDenominationList.get(1).getPackage()));
+        if (packageDenominationList.get(1) != null) {
+            buySecondPackage.setText(String.format(activity.getResources().getString(R.string.currency_code_with_denomination), pCurrencySymbol, packageDenominationList.get(1).getPackage()));
+        }
 
         buyThirdPackage.setAlpha(1);
         buyThirdPackage.setClickable(true);
-        buyThirdPackage.setText(String.format(getResources().getString(R.string.currency_code_with_denomination), pCurrencySymbol, packageDenominationList.get(2).getPackage()));
+        if (packageDenominationList.get(1) != null) {
+            buyThirdPackage.setText(String.format(activity.getResources().getString(R.string.currency_code_with_denomination), pCurrencySymbol, packageDenominationList.get(2).getPackage()));
+        }
     }
 
 
@@ -215,7 +234,7 @@ public class NewCreditAccountFragment extends BaseFragment {
 
     @OnClick(R.id.add_more_amount)
     public void addMoreAmount() {
-        if(Util.isOnline(getActivity())) {
+        if (Util.isOnline(getActivity())) {
             showBalanceDialog();
         } else {
             showAlertDialog("", getResources().getString(R.string.network_error));
@@ -246,7 +265,10 @@ public class NewCreditAccountFragment extends BaseFragment {
 
     public void transferBalance(String transferAmount) {
         if (YoSipService.currentCall != null && YoSipService.outgoingCallUri != null) {
-            mToastFactory.showToast(getActivity().getResources().getString(R.string.balance_transfer_not_allowed));
+            if (activity == null) {
+                activity = getActivity();
+            }
+            mToastFactory.showToast(activity.getResources().getString(R.string.balance_transfer_not_allowed));
         } else {
             String balance = mBalanceHelper.getCurrentBalance();
             navigateToTransferBalance(balance, transferAmount, true);
@@ -266,7 +288,7 @@ public class NewCreditAccountFragment extends BaseFragment {
 
             @Override
             public void onFailure(String message) {
-                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
                 hideDenominationAVLoader();
             }
         });
@@ -283,14 +305,14 @@ public class NewCreditAccountFragment extends BaseFragment {
 
             @Override
             public void onFailure(String message) {
-                //Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     public void showVoucherDialog() {
 
-        if (getActivity() != null) {
+        if (activity != null) {
 
             final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -311,8 +333,8 @@ public class NewCreditAccountFragment extends BaseFragment {
             } else if (phonNumber != null) {
                 namePhoneText.setText(phonNumber);
             } else {
-                if (getActivity() != null) {
-                    namePhoneText.setText(getActivity().getString(R.string.unknown));
+                if (activity != null) {
+                    namePhoneText.setText(activity.getString(R.string.unknown));
                 } else {
                     namePhoneText.setText("Unknown");
                 }
@@ -327,10 +349,10 @@ public class NewCreditAccountFragment extends BaseFragment {
             yesBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showProgressDialog();
                     String voucherNumber = voucherNumberEdit.getText().toString();
 
                     if (!TextUtils.isEmpty(voucherNumber.trim())) {
+                        showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.voucherRechargeAPI(accessToken, voucherNumber).enqueue(new Callback<com.yo.android.model.Response>() {
                             @Override
@@ -359,14 +381,14 @@ public class NewCreditAccountFragment extends BaseFragment {
                                                     });
                                                     break;
                                                 case 600:
-                                                    Util.hideKeyboard(getActivity(), voucherNumberEdit);
+                                                    Util.hideKeyboard(activity, voucherNumberEdit);
                                                     mToastFactory.showToast(response.body().getData().toString());
                                                     CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, "", "", "Failed to recharge voucher because of " + response.body().getData().toString());
                                                     closeActivityAddBalance(Activity.RESULT_CANCELED, null);
                                                     break;
                                                 case 706:
                                                 case 708:
-                                                    Util.hideKeyboard(getActivity(), voucherNumberEdit);
+                                                    Util.hideKeyboard(activity, voucherNumberEdit);
                                                     mToastFactory.showToast(response.body().getData().toString());
                                                     CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, "", "", "Failed to recharge voucher because of " + response.body().getData().toString());
                                                     closeActivityAddBalance(Activity.RESULT_CANCELED, null);
@@ -392,13 +414,13 @@ public class NewCreditAccountFragment extends BaseFragment {
                             @Override
                             public void onFailure(Call<com.yo.android.model.Response> call, Throwable t) {
                                 dismissProgressDialog();
-                                Util.hideKeyboard(getActivity(), voucherNumberEdit);
+                                Util.hideKeyboard(activity, voucherNumberEdit);
                                 mToastFactory.showToast(R.string.invalid_voucher);
 
                             }
                         });
                     } else {
-                        Util.hideKeyboard(getActivity(), voucherNumberEdit);
+                        Util.hideKeyboard(activity, voucherNumberEdit);
                         mToastFactory.showToast(getString(R.string.enter_vocher_number));
                     }
 
@@ -415,7 +437,7 @@ public class NewCreditAccountFragment extends BaseFragment {
     }
 
     private void showMessage(int resoureId) {
-        Util.hideKeyboard(getActivity(), voucherNumberEdit);
+        Util.hideKeyboard(activity, voucherNumberEdit);
         mToastFactory.showToast(resoureId);
         closeActivityAddBalance(Activity.RESULT_CANCELED, null);
     }
@@ -425,12 +447,18 @@ public class NewCreditAccountFragment extends BaseFragment {
             return;
         }
         if (getArguments() != null && getArguments().getBoolean(Constants.OPEN_ADD_BALANCE, false)) {
-            getActivity().setResult(resultCode);
-            getActivity().finish();
+            if (activity == null) {
+                activity = getActivity();
+            }
+            activity.setResult(resultCode);
+            activity.finish();
         }
         if (getArguments() != null && getArguments().getBoolean(Constants.RENEWAL, false)) {
-            getActivity().setResult(1001);
-            getActivity().finish();
+            if (activity == null) {
+                activity = getActivity();
+            }
+            activity.setResult(1001);
+            activity.finish();
             de.greenrobot.event.EventBus.getDefault().post(Constants.RENEWAL);
         }
     }
@@ -470,7 +498,7 @@ public class NewCreditAccountFragment extends BaseFragment {
 
     private void navigateToTransferBalance(String availableBalance, String transferAmount, boolean userType) {
 
-        Intent intent = new Intent(getActivity(), TransferBalanceActivity.class);
+        Intent intent = new Intent(activity, TransferBalanceActivity.class);
         intent.putExtra(Constants.CURRENT_BALANCE, availableBalance);
         intent.putExtra(Constants.USER_TYPE, userType);
         intent.putExtra(Constants.TRANSFER_AMOUNT, transferAmount);
@@ -626,5 +654,12 @@ public class NewCreditAccountFragment extends BaseFragment {
                 CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, "", "", "Failed to load balance");
             }
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        hideDenominationAVLoader();
+
     }
 }

@@ -773,6 +773,10 @@ public class BottomTabsActivity extends BaseActivity {
             menu = ((DialerFragment) getFragment()).getMenu();
         } else if (getFragment() instanceof MagazinesFragment) {
             menu = ((MagazinesFragment) getFragment()).getMenu();
+        } else {
+            if (menu != null) {
+                menu.clear();
+            }
         }
         return menu;
     }
@@ -959,4 +963,5 @@ public class BottomTabsActivity extends BaseActivity {
 
         super.onDestroy();
     }
+
 }

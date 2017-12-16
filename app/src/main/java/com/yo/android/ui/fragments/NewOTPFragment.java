@@ -1,7 +1,9 @@
 package com.yo.android.ui.fragments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Service;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -14,6 +16,7 @@ import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +33,7 @@ import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
+import com.yo.android.chat.firebase.FireBaseAuthToken;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.Articles;
@@ -100,6 +104,8 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
     private EditText mPinFifthDigitEditText;
     private EditText mPinSixthDigitEditText;
     private EditText mPinHiddenEditText;
+
+    Activity activity;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -179,6 +185,15 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if(context instanceof Activity) {
+            activity = (Activity)context;
+        }
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
@@ -233,6 +248,9 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
                     //contactsSyncManager.syncContacts();
                     count++;
                     storeTokens(response, phoneNumber, password);
+
+                    generateFirebaseToken();
+
                     //finishAndNavigateToHome();
                     addSubscriber(response.body().getAccessToken());
                 } else {
@@ -276,6 +294,20 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
             public void onFailure(Call<Subscriber> call, Throwable t) {
                 dismissProgressDialog();
                 mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));
+            }
+        });
+    }
+
+    private void generateFirebaseToken() {
+        FireBaseAuthToken.getInstance(activity).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
+            @Override
+            public void onSuccess() {
+                Log.i(TAG, "FirebaseAuthToken Created");
+            }
+
+            @Override
+            public void onFailed() {
+                Log.i(TAG, "Failed FirebaseAuthToken");
             }
         });
     }
@@ -381,9 +413,15 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
                     preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
                     preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN_AND_VERIFIED, true);
                     if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
-                        intent = new Intent(getActivity(), FollowMoreTopicsActivity.class);
+                        if(activity == null) {
+                            activity = getActivity();
+                        }
+                        intent = new Intent(activity, FollowMoreTopicsActivity.class);
                     } else {
-                        intent = new Intent(getActivity(), NewFollowMoreTopicsActivity.class);
+                        if(activity == null) {
+                            activity = getActivity();
+                        }
+                        intent = new Intent(activity, NewFollowMoreTopicsActivity.class);
                     }
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.putExtra("From", "UpdateProfileActivity");

@@ -90,6 +90,7 @@ public class BaseActivity extends ParentActivity {
     private static Activity activity;
     private Typeface alexBrushRegular;
     Timer myTimer;
+    String firebaseToken;
 
     @Override
 
@@ -98,18 +99,19 @@ public class BaseActivity extends ParentActivity {
 
         activity = this;
         mAwsLogsCallBack.onCalled(getBaseContext(), getIntent());
-        /*Intent intent = new Intent(this, FirebaseService.class);
-        startService(intent);*/
-        //firebaseJobDispatcher();
-        //Toast.makeText(this, TAG + "create", Toast.LENGTH_SHORT).show();
-        myTimer = new Timer();
-        myTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                firebaseUserStatus();
-            }
 
-        }, 0, 500);
+        firebaseToken = preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN);
+        if(!firebaseToken.equalsIgnoreCase("")) {
+            myTimer = new Timer();
+            myTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+
+                    firebaseUserStatus(firebaseToken);
+                }
+
+            }, 0, 1000);
+        }
     }
 
     protected void enableBack() {
@@ -129,10 +131,14 @@ public class BaseActivity extends ParentActivity {
     @Override
     public void finish() {
         //Toast.makeText(this, TAG + "finish", Toast.LENGTH_SHORT).show();
+        stopTimer();
+        super.finish();
+    }
+
+    public void stopTimer() {
         if (myTimer != null) {
             myTimer.cancel();
         }
-        super.finish();
     }
 
     @Override
@@ -245,6 +251,20 @@ public class BaseActivity extends ParentActivity {
                     Arrays.asList((Object) model.getName(), (Object) model.getCaller(), model.getToName(), model.getCallee(), model.getDate(), model.getTime(), model.getComments()
                     )
             );
+        } else if(type.equals("Chat")) {
+            range = "Chat!A:G";
+            DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
+            if (TextUtils.isEmpty(model.getCallee().trim())) {
+                model.setCallee("Unknown");
+            }
+
+            if (TextUtils.isEmpty(model.getToName().trim())) {
+                model.setToName("Unknown");
+            }
+            values = Arrays.asList(
+                    Arrays.asList((Object) model.getName(), (Object) model.getCaller(), model.getToName(), model.getCallee(), model.getDate(), model.getTime(), model.getComments()
+                    )
+            );
         }
         sendToGoogleDrive(sheets, model, spreadsheetId, range, values);
     }
@@ -282,13 +302,14 @@ public class BaseActivity extends ParentActivity {
         return alexBrushRegular;
     }
 
-    private void firebaseUserStatus() {
-        fireBaseHelper.authWithCustomToken(getApplicationContext(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN), new ApiCallback<Firebase>() {
+    private void firebaseUserStatus(String firebaseToken) {
+        fireBaseHelper.authWithCustomToken(getApplicationContext(), firebaseToken, new ApiCallback<Firebase>() {
             @Override
             public void onResult(Firebase result) {
                 String firebaseUserId = preferenceEndPoint.getStringPreference(Constants.FIREBASE_USER_ID);
-
-                initialiseOnlinePresence(result, firebaseUserId);
+                if(!TextUtils.isEmpty(firebaseUserId)) {
+                    initialiseOnlinePresence(result, firebaseUserId);
+                }
             }
 
             @Override
@@ -331,10 +352,4 @@ public class BaseActivity extends ParentActivity {
             Log.e(TAG, "Firebase error :" + e.getMessage());
         }
     }
-
-   /* @Override
-    protected void onUserLeaveHint() {
-        super.onUserLeaveHint();
-        appRunning = false;
-    }*/
 }

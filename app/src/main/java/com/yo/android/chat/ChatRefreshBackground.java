@@ -53,23 +53,26 @@ public class ChatRefreshBackground {
 
     public void doRefresh(final Context context, final String roomId) {
         Injector.obtain(context.getApplicationContext()).inject(this);
-        Firebase authReference = fireBaseHelper.authWithCustomToken(context, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN), null);
-        ValueEventListener valueEventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                new FirebaseRoomAsync(context, roomId).execute(dataSnapshot, null, null);
-            }
+        String firebaseToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
+        if(!firebaseToken.equalsIgnoreCase("")) {
+            Firebase authReference = fireBaseHelper.authWithCustomToken(context, firebaseToken, null);
+            ValueEventListener valueEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    new FirebaseRoomAsync(context, roomId).execute(dataSnapshot, null, null);
+                }
 
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                Log.i(TAG, "firebase Token getAllRooms :: " + loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
-                Log.i(TAG, "firebase User Id getAllRooms :: " + loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID));
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    Log.i(TAG, "firebase Token getAllRooms :: " + loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN));
+                    Log.i(TAG, "firebase User Id getAllRooms :: " + loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID));
+                }
+            };
+            String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
+            if (!firebaseUserId.isEmpty()) {
+                authReference.child(Constants.USERS).child(firebaseUserId).child(Constants.MY_ROOMS).addValueEventListener(valueEventListener);
+                authReference.keepSynced(true);
             }
-        };
-        String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
-        if (!firebaseUserId.isEmpty()) {
-            authReference.child(Constants.USERS).child(firebaseUserId).child(Constants.MY_ROOMS).addValueEventListener(valueEventListener);
-            authReference.keepSynced(true);
         }
     }
 

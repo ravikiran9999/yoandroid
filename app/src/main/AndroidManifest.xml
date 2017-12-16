@@ -412,7 +412,8 @@
 
         <activity
             android:name=".chat.ui.CountryCodeActivity"
-            android:theme="@style/AppTheme.Switch" />
+            android:theme="@style/AppTheme.Switch"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.YoBalanceDetailActivity"
             android:screenOrientation="portrait" />

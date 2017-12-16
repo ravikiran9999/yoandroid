@@ -6,4 +6,8 @@
     <dimen name="balance_txt_size">14sp</dimen>
     <dimen name="article_textsize">22sp</dimen>
     <dimen name="article_title_textsize">24sp</dimen>
+
+    <!--dialer call button-->
+    <dimen name="xxxxsmall_padding">3dp</dimen>
+    <dimen name="xxxsmall_padding">4dp</dimen>
 </resources>
