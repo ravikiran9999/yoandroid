@@ -584,7 +584,10 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         }.getType());
                 loginPrefs.removePreference(Constants.FIRE_BASE_ROOMS);
                 loginPrefs.saveStringPreference(Constants.FIRE_BASE_ROOMS, listString);
-                loginPrefs.saveStringPreference(Constants.FIRE_BASE_ROOMS_REFERENCE, databaseReference.toString());
+
+                if (databaseReference != null) {
+                    loginPrefs.saveStringPreference(Constants.FIRE_BASE_ROOMS_REFERENCE, databaseReference.toString());
+                }
 
                 /*if (chatRoomListAdapter.getOriginalListCount() > 0) {
                     chatRoomListAdapter.clearAll();
@@ -599,33 +602,35 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     private void activeMembers(Firebase firebaseAuthReference, List<String> roomsList) {
-        Firebase memberReference = firebaseAuthReference.getRoot().child(Constants.ROOMS);
-        for (String roomId : roomsList) {
-            memberReference.child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
-                        Room mRoom = getMembersProfile(dataSnapshot);
-                        if (mRoom != null && !arrayOfUsers.contains(mRoom))
-                            arrayOfUsers.add(mRoom);
-                        if (activity != null) {
-                            activity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ArrayList<Room> roomsSortedList = sortedList(arrayOfUsers);
-                                    chatRoomListAdapter.addChatRoomItems(roomsSortedList);
-                                }
-                            });
+        if (firebaseAuthReference != null) {
+            Firebase memberReference = firebaseAuthReference.getRoot().child(Constants.ROOMS);
+            for (String roomId : roomsList) {
+                memberReference.child(roomId).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
+                            Room mRoom = getMembersProfile(dataSnapshot);
+                            if (mRoom != null && !arrayOfUsers.contains(mRoom))
+                                arrayOfUsers.add(mRoom);
+                            if (activity != null) {
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ArrayList<Room> roomsSortedList = sortedList(arrayOfUsers);
+                                        chatRoomListAdapter.addChatRoomItems(roomsSortedList);
+                                    }
+                                });
+                            }
                         }
                     }
-                }
 
-                @Override
-                public void onCancelled(FirebaseError firebaseError) {
-                    firebaseError.getMessage();
-                    showEmptyImage();
-                }
-            });
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+                        firebaseError.getMessage();
+                        showEmptyImage();
+                    }
+                });
+            }
         }
     }
 

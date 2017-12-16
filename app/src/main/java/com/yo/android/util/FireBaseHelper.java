@@ -71,22 +71,21 @@ public class FireBaseHelper {
     public void unauth() {
         if (ref != null) {
             ref.unauth();
+            ref.removeValue();
         }
     }
 
     public Firebase authWithCustomToken(final Context context, final String authToken, ApiCallback<Firebase> firebaseApiCallback) {
         mContext = context;
         //Url from Firebase dashboard
-
         AuthData authData = ref.getAuth();
-        if(firebaseApiCallback != null) {
+        if(firebaseApiCallback != null && authData != null) {
             firebaseApiCallback.onResult(ref);
-        }
-        if (authData == null && !TextUtils.isEmpty(authToken)) {
+        } else if (authData == null && !TextUtils.isEmpty(authToken)) {
             ref.authWithCustomToken(authToken, new Firebase.AuthResultHandler() {
                 @Override
-                public void onAuthenticated(AuthData authData) {
-                    if (authData != null) {
+                public void onAuthenticated(AuthData mAuthData) {
+                    if (mAuthData != null) {
                         Log.i(TAG, "Login Succeeded!");
                         String newAuthToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
                         authWithCustomToken(context, newAuthToken, null);
@@ -121,7 +120,7 @@ public class FireBaseHelper {
                             Log.d(TAG, String.valueOf(++firebaseLoginAttempt));
                             String newAuthToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
                             Log.d(TAG, "newAuthToken :" + newAuthToken);
-                            if(firebaseLoginAttempt <= 3) {
+                            if (firebaseLoginAttempt <= 3) {
                                 authWithCustomToken(context, newAuthToken, null);
                             }
 

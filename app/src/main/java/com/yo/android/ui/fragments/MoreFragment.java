@@ -40,6 +40,7 @@ import com.yo.android.adapters.BalanceAdapter;
 import com.yo.android.adapters.MoreListAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.calllogs.CallLog;
+import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.NonScrollListView;
 import com.yo.android.chat.ui.fragments.BaseFragment;
@@ -53,6 +54,7 @@ import com.yo.android.networkmanager.StartServiceAtBootReceiver;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.ui.AccountDetailsActivity;
+import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.MoreSettingsActivity;
 import com.yo.android.ui.NotificationsActivity;
@@ -131,6 +133,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     private boolean isSharedPreferenceShown;
 
     private boolean isEventLogged;
+    private Activity activity;
 
     public MoreFragment() {
         // Required empty public constructor
@@ -142,7 +145,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         setRetainInstance(true);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 
-        if(!isEventLogged) {
+        if (!isEventLogged) {
             if (getActivity() instanceof BottomTabsActivity) {
                 BottomTabsActivity activity = (BottomTabsActivity) getActivity();
                 if (activity.getFragment() instanceof MoreFragment) {
@@ -176,7 +179,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mLog.i("MoreFragment", "DestroyView");
     }
 
     @Override
@@ -210,6 +212,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                         .into(profilePic);
             } else if (!TextUtils.isEmpty(avatar)) {
                 addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
+                Glide.clear(profilePic);
                 Glide.with(getActivity()).load(avatar)
                         .dontAnimate()
                         .fitCenter()
@@ -266,6 +269,15 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             status = "Available";
         }
         profileStatus.setText(status);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof Activity) {
+            activity = (Activity) context;
+        }
     }
 
     @Override
@@ -356,8 +368,10 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
 
     public void showLogoutDialog() {
-
-        if (getActivity() != null) {
+        if (activity == null) {
+            activity = getActivity();
+        }
+        if (activity != null) {
 
             final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -385,9 +399,8 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                         //Clean contact sync
                         mContactSyncHelper.clean();
 
-                        if (getActivity() != null) {
+                        if (activity != null) {
                             Util.cancelAllNotification(getActivity());
-                            preferenceEndPoint.removePreference(Constants.FIRE_BASE_ROOMS);
                             //  23	Data is missing in dialer screen once user logouts & login again  - Fixed
                             //  CallLog.Calls.clearCallHistory(getActivity());
                         }
@@ -403,30 +416,39 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                         mLog.i("MoreFragment", "Deleted contacts >>>>%d", deleteContacts);
                         if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
                             String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                            fireBaseHelper.unauth();
-                            FirebaseAuth.getInstance().signOut();
                             yoService.updateDeviceTokenAPI(accessToken, null).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    if(activity instanceof BaseActivity) {
+                                        ((BaseActivity) activity).stopTimer();
+                                    }
 
+                                    //stop service on logout
+                                    activity.stopService(new Intent(activity, FirebaseService.class));
+
+                                    fireBaseHelper.unauth();
+
+                                    //FirebaseAuth.getInstance().signOut();
+
+                                    clearPreferences();
                                     preferenceEndPoint.clearAll();
                                     MagazineFlipArticlesFragment.lastReadArticle = 0;
                                     //getActivity().stopService(new Intent(getActivity(), FetchNewArticlesService.class));
                                     //Intent serviceIntent = new Intent(BottomTabsActivity.getAppContext(), FetchNewArticlesService.class);
                                     //PendingIntent sender = PendingIntent.getBroadcast(getActivity(), 1014, serviceIntent, 0);
-                                    if(getActivity() != null) {
+                                    if (getActivity() != null) {
                                         AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
                                    /* if (getActivity() != null) {
                                         getActivity().stopService(serviceIntent);
                                     }*/
                                         try {
-                                            if(BottomTabsActivity.pintent != null) {
+                                            if (BottomTabsActivity.pintent != null) {
                                                 alarmManager.cancel(BottomTabsActivity.pintent);
                                             }
-                                            if(FetchNewArticlesService.pintent != null) {
+                                            if (FetchNewArticlesService.pintent != null) {
                                                 alarmManager.cancel(FetchNewArticlesService.pintent);
                                             }
-                                            if(StartServiceAtBootReceiver.pintent != null) {
+                                            if (StartServiceAtBootReceiver.pintent != null) {
                                                 alarmManager.cancel(StartServiceAtBootReceiver.pintent);
                                             }
                                         } catch (Exception e) {
@@ -584,7 +606,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
 
-            if(preferenceEndPoint != null) {
+            if (preferenceEndPoint != null) {
                 // Capture user id
                 Map<String, String> profileParams = new HashMap<String, String>();
                 String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
@@ -723,5 +745,20 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 break;
 
         }
+    }
+
+    private void clearPreferences() {
+        // clear balance
+        preferenceEndPoint.removePreference(Constants.CURRENT_BALANCE);
+        preferenceEndPoint.removePreference(Constants.SWITCH_BALANCE);
+        preferenceEndPoint.removePreference(Constants.WALLET_BALANCE);
+        preferenceEndPoint.removePreference(Constants.CURRENCY_SYMBOL);
+
+        // clear firebase cached rooms
+        preferenceEndPoint.removePreference(Constants.FIRE_BASE_ROOMS);
+        // clear firebase userId
+        preferenceEndPoint.removePreference(Constants.FIREBASE_USER_ID);
+        // clear firebase authToken
+        preferenceEndPoint.removePreference(Constants.FIREBASE_TOKEN);
     }
 }

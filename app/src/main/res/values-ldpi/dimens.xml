@@ -4,4 +4,9 @@
     <dimen name="xsmall_textsize">12sp</dimen>
     <dimen name="article_textsize">14sp</dimen>
     <dimen name="article_title_textsize">16sp</dimen>
+
+
+    <!--dialer call button-->
+    <dimen name="xxxxsmall_padding">6dp</dimen>
+
 </resources>

@@ -46,10 +46,12 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:layout_marginTop="10dp"
+                android:digits="@string/phone_number_input"
                 android:ems="10"
                 android:hint="@string/mobile_number_hint"
                 android:imeOptions="actionDone"
                 android:inputType="number|phone"
+                android:maxLength="13"
                 android:padding="13dp"
                 android:textColor="@color/black" />
 

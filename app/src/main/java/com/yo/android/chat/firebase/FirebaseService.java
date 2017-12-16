@@ -131,38 +131,41 @@ public class FirebaseService extends InjectedService {
     }
 
     private void getAllRooms() {
-        authReference = fireBaseHelper.authWithCustomToken(this, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN), null);
-        mChildEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                getChatMessageList(dataSnapshot.getKey());
+        String firebaseToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
+        if(!firebaseToken.equalsIgnoreCase("")) {
+            authReference = fireBaseHelper.authWithCustomToken(this, firebaseToken, null);
+            mChildEventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    getChatMessageList(dataSnapshot.getKey());
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                    //getChatMessageList(dataSnapshot.getKey());
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    //Toast.makeText(getApplicationContext(), firebaseError.getMessage(), Toast.LENGTH_LONG).show();
+                    initRoomCount = 0;
+                }
+            };
+            String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
+            if (!firebaseUserId.isEmpty()) {
+                roomReference = authReference.child(Constants.USERS).child(firebaseUserId).child(Constants.MY_ROOMS);
+                registerRoomListener();
             }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                //getChatMessageList(dataSnapshot.getKey());
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                //Toast.makeText(getApplicationContext(), firebaseError.getMessage(), Toast.LENGTH_LONG).show();
-                initRoomCount = 0;
-            }
-        };
-        String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
-        if (!firebaseUserId.isEmpty()) {
-            roomReference = authReference.child(Constants.USERS).child(firebaseUserId).child(Constants.MY_ROOMS);
-            registerRoomListener();
         }
     }
 
@@ -365,7 +368,7 @@ public class FirebaseService extends InjectedService {
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        Toast.makeText(context, "FirebaseService killed", Toast.LENGTH_LONG).show();
+        //Toast.makeText(context, "FirebaseService killed", Toast.LENGTH_LONG).show();
     }
 
     public void onEventMainThread(NotificationCountReset count) {

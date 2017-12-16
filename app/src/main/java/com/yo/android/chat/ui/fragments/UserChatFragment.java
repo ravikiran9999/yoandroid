@@ -181,7 +181,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         @Override
         public void run() {
             checkFirebaseUserStatus(authReference, opponentFirebaseUserId, mUpdateStatus);
-            handler.postDelayed(this, 200);
+            //handler.postDelayed(this, 500);
         }
     };
 
@@ -542,7 +542,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             String message = chatText.getText().toString().trim();
             sendChatMessage(message, Constants.TEXT);
             if (chatText.getText() != null) {
-                chatText.setText("");
+                chatText.getText().clear();
             }
 
         } else if (v.getId() == R.id.emojiView) {
@@ -703,8 +703,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                     } else {
                         chatMessage.setMessageKey(firebase.getKey());
                         chatMessage.setSent(1);
-                        Log.i(TAG, ((ChatActivity) activity).chatUserStatus.getText().toString());
+
                         if (activity instanceof ChatActivity && !((ChatActivity) activity).chatUserStatus.getText().equals("online")) {
+                            Log.i(TAG, ((ChatActivity) activity).chatUserStatus.getText().toString());
                             chatNotificationUsecase.pushChatMessage(chatMessage);
                         }
                         Map<String, Object> hashtaghMap = new ObjectMapper().convertValue(chatMessage, Map.class);
@@ -1136,9 +1137,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        if (count > 0 && !TextUtils.isEmpty(s.toString().trim())) {
+        if (s.length() > 0 && !TextUtils.isEmpty(s.toString().trim())) {
             cameraView.setVisibility(View.GONE);
-        } else if (count == 0 || TextUtils.isEmpty(s.toString().trim())) {
+        } else if (s.length() == 0 || TextUtils.isEmpty(s.toString().trim())) {
             cameraView.setVisibility(View.VISIBLE);
         }
     }

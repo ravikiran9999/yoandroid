@@ -58,9 +58,9 @@ public class FireBaseAuthToken {
 
     public void getFirebaseAuth(final FireBaseAuthListener listener) {
         //if(!loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN).isEmpty()) {
-        String firebackToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
+        String firebaseToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
         //Log.i("FireBaseAuthToken", "FireBaseAuthToken : " + firebackToken);
-        if (TextUtils.isEmpty(firebackToken) & !waitingForReply) {
+        if (TextUtils.isEmpty(firebaseToken) & !waitingForReply) {
             waitingForReply = true;
             String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
             //Log.i("FireBaseAuthToken", "YoApiACCESS_TOKEN : " + access);
@@ -76,7 +76,7 @@ public class FireBaseAuthToken {
                             jsonObject = new JSONObject(response.body().string());
                             String firebaseToken = jsonObject.getString("firebase_token");
                             //String firebaseToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MDQ4ODcwODgsInYiOjAsImlhdCI6MTUwNDg2NTQ5MywiZCI6eyJwcm92aWRlciI6Inlvc2VydmVyIiwidWlkIjoiLUt0VnZvbjc3YVNvTWZHcHZWS1YifX0.bAyL8sz9o0Okee1sU1jgqWCTi6pxKP4ot_Fv6-m-glg";
-                            //Log.i(TAG, "New token generated " + firebaseToken);
+
                             loginPrefs.saveStringPreference(Constants.FIREBASE_TOKEN, firebaseToken);
                             listener.onSuccess();
                             waitingForReply = false;

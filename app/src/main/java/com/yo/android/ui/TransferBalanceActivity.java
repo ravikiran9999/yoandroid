@@ -127,7 +127,7 @@ public class TransferBalanceActivity extends BaseActivity {
         String phoneNumber = enteredPhoneNumber.getText().toString();
         String mPhoneNumber = phoneNo != null ? phoneNo : phoneNumber;
         try {
-            if (!TextUtils.isEmpty(mPhoneNumber.trim())) {
+            if (!TextUtils.isEmpty(mPhoneNumber.trim()) && phoneNumber.length() > 7 ) {
                 double val = mBalanceHelper.removeCurrencyCode(mTransferAmount);
                 if (val != 0) {
                     if (mBalanceHelper.removeCurrencyCode(mBalanceHelper.getCurrentBalance()) > val) {
@@ -377,10 +377,18 @@ public class TransferBalanceActivity extends BaseActivity {
         Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
         yesBtn.setText(getResources().getString(R.string.ok));
 
-        AlertDialog alert = builder.create();
+        final AlertDialog alert = builder.create();
         alert.setCancelable(false);
         alert.getWindow().setBackgroundDrawable(new BitmapDrawable());
         alert.show();
+
+        yesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alert.dismiss();
+            }
+
+        });
     }
 
     private void showAlertDialog(final String value, String titleMsg, String contentMsg, int drawable, final boolean success) {

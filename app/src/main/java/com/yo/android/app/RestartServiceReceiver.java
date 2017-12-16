@@ -23,7 +23,7 @@ public class RestartServiceReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.e(TAG, "onReceive");
-        Toast.makeText(context, "OnReceive from killed service", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "OnReceive from killed service", Toast.LENGTH_SHORT).show();
         Intent service = new Intent(context, com.yo.dialer.YoSipService.class);
         service.setAction(CallExtras.REGISTER);
         context.startService(service);

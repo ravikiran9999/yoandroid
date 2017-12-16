@@ -132,6 +132,7 @@
         <include
             layout="@layout/dial_key_call"
             android:layout_width="0dp"
+            android:padding="@dimen/xxxxsmall_padding"
             android:layout_height="match_parent"
             android:layout_weight="5" />
 

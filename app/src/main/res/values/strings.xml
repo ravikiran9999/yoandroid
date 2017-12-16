@@ -391,7 +391,7 @@
     <string name="recharge">Recharge</string>
     <string name="no_sufficient_bal_recharge">You don\'t have sufficient balance to call. Please recharge.</string>
     <string name="not_in_coverage_area">Recipient not in coverage area.</string>
-    <string name="cannot_transfer_full_balance">You cannot transfer your whole balance. Please maintain atleast US $ 0.001</string>
+    <string name="cannot_transfer_full_balance">You cannot transfer your whole balance. Please maintain atleast 0.001</string>
     <string name="enter_the_code">Enter the code sent to</string>
     <string name="resend_code">Resend code</string>
     <string name="verify_phone_number">Verify phone number</string>
@@ -412,6 +412,7 @@
     <string name="transfer_balance_alert_number">Are you sure you want to transfer %1$s balance to %2$s ?</string>
     <string name="successful_transfer">Your fund transfer to %1$s was successfully done.</string>
 
+    <string name="phone_number_input">0123456789+</string>
 
     <!--video-->
     <string name="selection_default_none">Default (none)</string>

@@ -145,8 +145,6 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Typeface alexBrushRegular = getAlexBrushRegular();
-        //btnAllContacts.setBackgroundResource(R.drawable.all);
-        //btnYoContacts.setBackgroundResource(R.drawable.yo);
         btnYoContacts.setAlpha(0.5f);
         btnYoContacts.setTypeface(alexBrushRegular);
 
@@ -158,7 +156,6 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
         btnAllContacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //btnAllContacts.setBackgroundResource(R.drawable.all);
                 btnAllContacts.setAlpha(1);
                 btnYoContacts.setAlpha(0.5f);
 
@@ -169,7 +166,6 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
         btnYoContacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //btnYoContacts.setBackgroundResource(R.drawable.yo);
                 btnAllContacts.setAlpha(0.5f);
                 btnYoContacts.setAlpha(1);
                 List<Contact> onlyYoUsers = filterYoContacts(allContacts);
