@@ -46,7 +46,7 @@
                         android:layout_marginRight="8dp"
                         android:background="@android:color/transparent"
                         android:padding="5dp"
-                        android:src="@drawable/on_clear2" />
+                        android:src="@drawable/new_clear" />
 
                     <com.yo.android.voip.DigitsEditText
                         android:id="@+id/digits"
@@ -58,12 +58,12 @@
                         android:focusableInTouchMode="true"
                         android:fontFamily="sans-serif-light"
                         android:freezesText="true"
-                        android:gravity="left|bottom"
+                        android:gravity="left|center"
                         android:inputType="number"
                         android:maxLength="15"
                         android:maxLines="1"
                         android:textColor="@color/dialpad_digits_text_color"
-                        android:textSize="@dimen/dialpad_digits_text_size"
+                        android:textSize="35sp"
                         android:textStyle="normal"
                         app:resizing_text_min_size="22sp" />
                 </RelativeLayout>

@@ -723,6 +723,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                     int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
                                     if (resource != null) {
                                         Bitmap bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
+                                        Glide.clear(photoView);
                                         Glide.with(context)
                                                 .load(data.getImage_filename())
                                                 .override(bmp.getWidth(), bmp.getHeight())
@@ -1543,6 +1544,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                     int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
                                     if (resource != null) {
                                         Bitmap bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
+                                        Glide.clear(photoView);
                                         Glide.with(context)
                                                 .load(data.getImage_filename())
                                                 .override(bmp.getWidth(), bmp.getHeight())
@@ -1846,6 +1848,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                     int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
                                     if (resource != null) {
                                         Bitmap bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
+                                        Glide.clear(photoView);
                                         Glide.with(context)
                                                 .load(data.getImage_filename())
                                                 .override(bmp.getWidth(), bmp.getHeight())
@@ -2158,6 +2161,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                     int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
                                     if (resource != null) {
                                         Bitmap bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
+                                        Glide.clear(photoView);
                                         Glide.with(context)
                                                 .load(data.getImage_filename())
                                                 .override(bmp.getWidth(), bmp.getHeight())
