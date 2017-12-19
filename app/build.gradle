@@ -26,8 +26,8 @@ android {
         applicationId "com.yowatsup"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0.1"
+        versionCode 3
+        versionName "1.0.2"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
