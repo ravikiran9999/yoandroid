@@ -1,17 +1,24 @@
 package com.yo.android.model;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by creatives on 12/22/2016.
  */
-public class Categories {
+public class Categories implements Serializable {
 
+    @SerializedName("id")
     private String id;
+    @SerializedName("name")
     private String name;
-    private boolean language_specific;
+    @SerializedName("tags")
     private ArrayList<Topics> tags;
+
+    private transient boolean language_specific;
 
     public String getId() {
         return id;

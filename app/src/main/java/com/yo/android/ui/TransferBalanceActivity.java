@@ -134,9 +134,19 @@ public class TransferBalanceActivity extends BaseActivity {
                         String tranferVal = decimalFormat(val);
                         showMessageDialog(tranferVal, mBalanceHelper.getCurrentBalance(), mPhoneNumber);
 
-                    } else if (mBalanceHelper.removeCurrencyCode(mBalanceHelper.getCurrentBalance()) == val) {
+                    }
+                    /* Nexge support
+                    *
+                    * @Team, Earlier also we have the same rate for SIPTOSIP, we haven't updated this value. Earlier also we faced same issue like allowing app to app call with 0 balance. That time we got different answer from your side. could you please confirmme which one we need to take?
+                      Like earlier when we asked you said you wont allow any calls with 0 balance, to make any call user should have atleast 0.00001 balance
+
+                      Regarding above, as you requested. we have made changes to allow SIPTOSIP calls even when there is no balance. Pls check your mails regarding the same.
+                    *
+                    * */
+
+                    /*else if (mBalanceHelper.removeCurrencyCode(mBalanceHelper.getCurrentBalance()) == val) {
                         showBalanceDialog();
-                    } else {
+                    }*/ else {
                         mToastFactory.showToast(R.string.insufficient_amount);
                     }
                 } else {

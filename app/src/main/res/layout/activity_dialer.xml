@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tool="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -33,36 +34,36 @@
                 <RelativeLayout
                     android:id="@+id/number_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="60dp"
                     android:layout_marginLeft="10dp"
                     android:padding="5dp">
 
                     <ImageButton
                         android:id="@+id/deleteButton"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="8dp"
-                        android:layout_marginTop="5dp"
                         android:background="@android:color/transparent"
-                        android:src="@drawable/on_clear2"
-                        android:padding="5dp"/>
+                        android:padding="5dp"
+                        android:src="@drawable/new_clear" />
 
-                    <com.yo.android.voip.DigitsEditText xmlns:app="http://schemas.android.com/apk/res-auto"
+                    <com.yo.android.voip.DigitsEditText
                         android:id="@+id/digits"
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
+                        android:layout_height="match_parent"
                         android:layout_centerVertical="true"
                         android:layout_toLeftOf="@+id/deleteButton"
                         android:background="@android:color/transparent"
                         android:focusableInTouchMode="true"
                         android:fontFamily="sans-serif-light"
                         android:freezesText="true"
-                        android:gravity="left|bottom"
+                        android:gravity="left|center"
                         android:inputType="number"
+                        android:maxLength="15"
                         android:maxLines="1"
                         android:textColor="@color/dialpad_digits_text_color"
-                        android:textSize="@dimen/dialpad_digits_text_size"
+                        android:textSize="35sp"
                         android:textStyle="normal"
                         app:resizing_text_min_size="22sp" />
                 </RelativeLayout>
@@ -142,12 +143,12 @@
                     android:layout_toLeftOf="@+id/add_balance"
                     android:layout_toRightOf="@+id/txt_balance_title"
                     android:background="@color/white"
+                    android:ellipsize="end"
                     android:gravity="center_vertical"
                     android:paddingLeft="5dp"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="@dimen/balance_txt_size"
                     android:singleLine="true"
-                    android:ellipsize="end"/>
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/balance_txt_size" />
 
 
                 <TextView

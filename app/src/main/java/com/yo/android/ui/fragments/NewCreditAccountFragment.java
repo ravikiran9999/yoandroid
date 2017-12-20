@@ -91,6 +91,13 @@ public class NewCreditAccountFragment extends BaseFragment {
     List<TransferBalanceDenomination> transferBalanceDenominationList;
     Activity activity;
 
+    private static final String ONE_ZERO = "0";
+    private static final String TWO_ZERO = "00";
+    private static final String THREE_ZERO = "000";
+    private static final String FOUR_ZERO = "0000";
+    private static final String FIVE_ZERO = "00000";
+    private static final String SIX_ZERO = "000000";
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -571,7 +578,7 @@ public class NewCreditAccountFragment extends BaseFragment {
 
                     String enteredAmount = editText.getText().toString();
 
-                    if (!TextUtils.isEmpty(enteredAmount) && currencySymbol != null && !enteredAmount.contains(currencySymbol)) {
+                    if (!TextUtils.isEmpty(enteredAmount) && currencySymbol != null && !enteredAmount.contains(currencySymbol) && isValid(enteredAmount)) {
                         if (!isGreaterThanHundred(enteredAmount)) {
                             enteredAmount = String.format(getResources().getString(R.string.currency_code_with_denomination), mBalanceHelper.currencySymbolLookup(currencySymbol), enteredAmount);
                             alert.dismiss();
@@ -654,6 +661,25 @@ public class NewCreditAccountFragment extends BaseFragment {
                 CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, "", "", "Failed to load balance");
             }
         });
+    }
+
+    private boolean isValid(String mEnteredAmount) {
+        switch (mEnteredAmount) {
+            case ONE_ZERO:
+                return false;
+            case TWO_ZERO:
+                return false;
+            case THREE_ZERO:
+                return false;
+            case FOUR_ZERO:
+                return false;
+            case FIVE_ZERO:
+                return false;
+            case SIX_ZERO:
+                return false;
+            default:
+                return true;
+        }
     }
 
     @Override
