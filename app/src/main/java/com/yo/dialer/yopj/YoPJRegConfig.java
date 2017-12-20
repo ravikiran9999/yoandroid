@@ -66,10 +66,7 @@ public class YoPJRegConfig {
                 try {
                     if (cfg != null && cfg.getRegConfig() != null) {
                         cfg.getRegConfig().setTimeoutSec(com.yo.android.pjsip.YoSipService.EXPIRE);
-                        DialerLogs.messageI(TAG, "YO======Crash point" + id);
                         yoAccount.modify(cfg);
-                        DialerLogs.messageI(TAG, "YO======After Crash point" + id);
-
                     }
                 } catch (Exception e) {
                     DialerLogs.messageE(TAG, e.getMessage());

@@ -45,25 +45,27 @@ public class CallHelper {
                 try {
                     String calleeNumber = prepareDestinationDetails(intent);
                     DialerLogs.messageI(TAG, " makeCall Callee Number==========" + calleeNumber);
-                    final YoCall call = new YoCall(yoAccount, -1);
-                    CallOpParam prm = new CallOpParam(true);
-                    String callId = null;
-                    try {
-                        // String dst_uri = "sip:" + calleeNumber + "@" + DialerConfig.NEXGE_SERVER_IP + ":" + DialerConfig.NEXGE_SERVER_TCP_PORT + DialerConfig.TCP;
-                        String dst_uri = String.format("\"%s\" <sip:%s@%s>", calleeNumber, calleeNumber, DialerConfig.NEXGE_SERVER_IP + ":" + DialerConfig.NEXGE_SERVER_TCP_PORT);
-                        DialerLogs.messageI(TAG, "Callee URI==========" + dst_uri);
-                        call.makeCall(dst_uri, prm);
-                        return call;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        callId = call.getInfo().getCallIdString();
-                        call.delete();
-                        DialerLogs.messageE(TAG, "makeCall==========" + e.getMessage());
-                        sipService.callDisconnected(CallExtras.StatusCode.OTHER + "", e.getMessage(), "While making call got an exception and message is " + e.getMessage() + ", So that call is going to disconnecting." + callId);
-                        sipService.setYoAccount(null);
-                        sipService.register(null);
-                        SipHelper.isAlreadyStarted = false;
-                        return null;
+                    if(yoAccount != null) {
+                        final YoCall call = new YoCall(yoAccount, -1);
+                        CallOpParam prm = new CallOpParam(true);
+                        String callId = null;
+                        try {
+                            // String dst_uri = "sip:" + calleeNumber + "@" + DialerConfig.NEXGE_SERVER_IP + ":" + DialerConfig.NEXGE_SERVER_TCP_PORT + DialerConfig.TCP;
+                            String dst_uri = String.format("\"%s\" <sip:%s@%s>", calleeNumber, calleeNumber, DialerConfig.NEXGE_SERVER_IP + ":" + DialerConfig.NEXGE_SERVER_TCP_PORT);
+                            DialerLogs.messageI(TAG, "Callee URI==========" + dst_uri);
+                            call.makeCall(dst_uri, prm);
+                            return call;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            callId = call.getInfo().getCallIdString();
+                            call.delete();
+                            DialerLogs.messageE(TAG, "makeCall==========" + e.getMessage());
+                            sipService.callDisconnected(CallExtras.StatusCode.OTHER + "", e.getMessage(), "While making call got an exception and message is " + e.getMessage() + ", So that call is going to disconnecting." + callId);
+                            sipService.setYoAccount(null);
+                            sipService.register(null);
+                            SipHelper.isAlreadyStarted = false;
+                            return null;
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -159,6 +159,7 @@ public class YoApp {
             acc.create(cfg);
         } catch (Exception e) {
             acc = null;
+            e.printStackTrace();
             return null;
         }
 

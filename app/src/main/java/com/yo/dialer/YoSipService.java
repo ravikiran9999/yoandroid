@@ -797,8 +797,9 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         super.onTaskRemoved(rootIntent);
         SipHelper.isAlreadyStarted = false;
         Util.cancelNotification(this, callNotificationId);
-        DialerLogs.messageE(TAG, "KILLING YO APPLICATION.");
-        sendBroadcast(new Intent("YouWillNeverKillMe"));
+        DialerLogs.messageE(TAG, "KILLING YO APPLICATION." + this);
+        //LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent("YouWillNeverKillMe"));
+        //sendBroadcast(new Intent("YouWillNeverKillMe"));
         if (yoCurrentCall != null) {
             CallOpParam prm = new CallOpParam();
             prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);

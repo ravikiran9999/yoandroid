@@ -300,7 +300,9 @@ class CallBaseActivity extends BaseActivity {
         DialerLogs.messageI(TAG, "callDisconnected Before finishing..");
         if ("Forbidden".equals(reason)) {
             Dialogs.recharge(this);
-        } else {
+        } else if("Service not available/User not online".equals(reason) && isPstn) {
+                finish();
+            } else {
             if(!"Service not available/User not online".equals(reason)) {
                 finish();
             }
