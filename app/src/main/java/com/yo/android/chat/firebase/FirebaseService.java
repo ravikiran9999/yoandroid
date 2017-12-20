@@ -39,6 +39,8 @@ import com.yo.android.model.NotificationCountReset;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
 import com.yo.android.util.Util;
+import com.yo.android.voip.VoipConstants;
+import com.yo.dialer.CallExtras;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -109,6 +111,9 @@ public class FirebaseService extends InjectedService {
         if (isRunning) {
             //count = 1;
             Log.i(TAG, "Service running");
+            Intent service = new Intent(this, com.yo.dialer.YoSipService.class);
+            service.setAction(CallExtras.REGISTER);
+            startService(service);
             FireBaseAuthToken.getInstance(this).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
                 @Override
                 public void onSuccess() {

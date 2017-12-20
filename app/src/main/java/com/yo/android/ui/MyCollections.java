@@ -465,7 +465,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 }
             });
 
-        } else if (requestCode == 6) {
+        } else if (requestCode == 6 && resultCode != RESULT_CANCELED) {
             if (!searchView.isIconified()) {
                 invalidateOptionsMenu();
             }
