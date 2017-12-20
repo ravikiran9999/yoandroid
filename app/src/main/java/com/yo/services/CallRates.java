@@ -44,6 +44,8 @@ public class CallRates {
                     if (BackgroundServices.ENABLE_LOGS) {
                         Log.w(TAG, e);
                     }
+                } finally {
+                    response.body().close();
                 }
             }
 

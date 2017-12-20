@@ -670,11 +670,15 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                         yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                finalHolder.articleFollow.setText("Following");
-                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                                data.setIsFollowing("true");
-                                isFollowing = true;
+                                try {
+                                    ((BaseActivity) context).dismissProgressDialog();
+                                    finalHolder.articleFollow.setText("Following");
+                                    finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                    data.setIsFollowing("true");
+                                    isFollowing = true;
+                                } finally {
+                                    response.body().close();
+                                }
                             }
 
                             @Override
@@ -715,12 +719,15 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                     yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                                         @Override
                                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                            ((BaseActivity) context).dismissProgressDialog();
-                                            finalHolder.articleFollow.setText("Follow");
-                                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                                            data.setIsFollowing("false");
-                                            isFollowing = false;
-
+                                            try {
+                                                ((BaseActivity) context).dismissProgressDialog();
+                                                finalHolder.articleFollow.setText("Follow");
+                                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                                data.setIsFollowing("false");
+                                                isFollowing = false;
+                                            } finally {
+                                                response.body().close();
+                                            }
                                         }
 
                                         @Override
@@ -954,13 +961,16 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                     yoService.followMagazineAPI(ownMagazine.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            dismissProgressDialog();
-                            menuItem.setTitle("");
-                            menuItem.setIcon(R.drawable.ic_mycollections_tick);
-                            isFollowingMagazine = true;
-                            ownMagazine.setIsFollowing("true");
-                            EventBus.getDefault().post(Constants.OTHERS_MAGAZINE_ACTION);
-
+                            try {
+                                dismissProgressDialog();
+                                menuItem.setTitle("");
+                                menuItem.setIcon(R.drawable.ic_mycollections_tick);
+                                isFollowingMagazine = true;
+                                ownMagazine.setIsFollowing("true");
+                                EventBus.getDefault().post(Constants.OTHERS_MAGAZINE_ACTION);
+                            } finally {
+                                response.body().close();
+                            }
                         }
 
                         @Override
@@ -998,14 +1008,18 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                             yoService.unfollowMagazineAPI(ownMagazine.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    dismissProgressDialog();
-                                    menuItem.setIcon(null);
-                                    menuItem.setTitle("Follow");
-                                    isFollowingMagazine = false;
-                                    ownMagazine.setIsFollowing("false");
-                                    //EventBus.getDefault().post(Constants.OTHERS_MAGAZINE_ACTION);
-                                    if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
-                                        MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(ownMagazine.getId(), Constants.FOLLOW_TOPIC_EVENT);
+                                    try {
+                                        dismissProgressDialog();
+                                        menuItem.setIcon(null);
+                                        menuItem.setTitle("Follow");
+                                        isFollowingMagazine = false;
+                                        ownMagazine.setIsFollowing("false");
+                                        //EventBus.getDefault().post(Constants.OTHERS_MAGAZINE_ACTION);
+                                        if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
+                                            MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(ownMagazine.getId(), Constants.FOLLOW_TOPIC_EVENT);
+                                        }
+                                    } finally {
+                                        response.body().close();
                                     }
                                 }
 

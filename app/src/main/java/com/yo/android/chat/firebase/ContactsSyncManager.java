@@ -198,11 +198,18 @@ public class ContactsSyncManager {
     }
 
     public Contact getContactByVoxUserName(String voxUserName) {
-        if (voxUserName != null) {
-            Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
-            Cursor c = context.getContentResolver().query(uri, PROJECTION, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME + "= '" + voxUserName + "'", null, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + " desc");
-            if (c != null && c.moveToFirst()) {
-                return ContactsSyncManager.prepareContact(c);
+        Cursor c = null;
+        try {
+            if (voxUserName != null) {
+                Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
+                c = context.getContentResolver().query(uri, PROJECTION, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_VOX_USER_NAME + "= '" + voxUserName + "'", null, YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_IS_YOAPP_USER + " desc");
+                if (c != null && c.moveToFirst()) {
+                    return ContactsSyncManager.prepareContact(c);
+                }
+            }
+        } finally {
+            if (c != null) {
+                c.close();
             }
         }
         return null;
@@ -295,15 +302,18 @@ public class ContactsSyncManager {
         yoService.getContacts(access).enqueue(new Callback<List<Contact>>() {
             @Override
             public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
-                Log.d(TAG, new Gson().toJson(response));
-                setContacts(response.body());
-                if (callback != null) {
-                    callback.onResponse(call, response);
-                }
                 try {
-                    YoContactsSyncAdapter.updateLocalFeedData(context, cacheList, new SyncResult());
-                } catch (RemoteException | OperationApplicationException e) {
-                    e.printStackTrace();
+                    setContacts(response.body());
+                    if (callback != null) {
+                        callback.onResponse(call, response);
+                    }
+                    try {
+                        YoContactsSyncAdapter.updateLocalFeedData(context, cacheList, new SyncResult());
+                    } catch (RemoteException | OperationApplicationException e) {
+                        e.printStackTrace();
+                    }
+                }finally {
+                    //response.raw().close();
                 }
             }
 

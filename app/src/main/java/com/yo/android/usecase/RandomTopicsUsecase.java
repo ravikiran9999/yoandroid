@@ -32,19 +32,27 @@ public class RandomTopicsUsecase {
         yoService.randomTagsAPI(accessToken).enqueue(new Callback<List<Categories>>() {
             @Override
             public void onResponse(Call<List<Categories>> call, Response<List<Categories>> response) {
-                if (response == null || response.body() == null) {
-                    return;
-                }
-                if(response.body().size() > 0 ) {
-                    randomCategories.onResult(response.body());
-                } else {
-                    randomCategories.onFailure(NO_TOPICS_AVAILABLE);
+                try {
+                    if (response == null || response.body() == null) {
+                        return;
+                    }
+                    if (response.body().size() > 0) {
+                        randomCategories.onResult(response.body());
+                    } else {
+                        randomCategories.onFailure(NO_TOPICS_AVAILABLE);
+                    }
+                } catch (Exception e) {
+
+                } finally {
+                    if (response != null && response.raw() != null) {
+                        //response.raw().close();
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<List<Categories>> call, Throwable t) {
-              randomCategories.onFailure(NO_TOPICS_AVAILABLE);
+                randomCategories.onFailure(NO_TOPICS_AVAILABLE);
             }
         });
     }

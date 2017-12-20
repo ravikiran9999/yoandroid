@@ -93,6 +93,8 @@ public class FireBaseAuthToken {
                         e.printStackTrace();
                         waitingForReply = false;
                         listener.onFailed();
+                    } finally {
+                        response.body().close();
                     }
                 }
 

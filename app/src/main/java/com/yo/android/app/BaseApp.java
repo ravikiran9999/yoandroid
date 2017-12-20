@@ -87,6 +87,12 @@ public class BaseApp extends MultiDexApplication {
         StrictMode.setVmPolicy(builder.build());
         builder.detectFileUriExposure();
 
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                .detectAll()
+                .penaltyLog()
+                //.penaltyDeath()
+                .build());
+
     }
 
 
@@ -131,4 +137,9 @@ public class BaseApp extends MultiDexApplication {
         MultiDex.install(this);
     }
 
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        
+    }
 }

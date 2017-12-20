@@ -325,7 +325,13 @@ public class UpdateProfileActivity extends BaseActivity {
             yoService.updateDeviceTokenAPI(accessToken, refreshedToken).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    Log.i(TAG, "FCM token updated successfully");
+                    try {
+                        Log.i(TAG, "FCM token updated successfully");
+                    } finally {
+                        if (response != null && response.body() != null) {
+                            response.body().close();
+                        }
+                    }
                 }
 
                 @Override

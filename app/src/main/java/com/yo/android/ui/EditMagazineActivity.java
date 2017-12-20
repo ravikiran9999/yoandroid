@@ -94,9 +94,13 @@ public class EditMagazineActivity extends BaseActivity {
         yoService.deleteMagazineAPI(magazineId, accessToken).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                mToastFactory.showToast("Magazine " + magazineTitle + "  deleted successfully");
-                EventBus.getDefault().post(Constants.DELETE_MAGAZINE_ACTION);
-                finish();
+                try {
+                    mToastFactory.showToast("Magazine " + magazineTitle + "  deleted successfully");
+                    EventBus.getDefault().post(Constants.DELETE_MAGAZINE_ACTION);
+                    finish();
+                } finally {
+                    response.body().close();
+                }
             }
 
             @Override

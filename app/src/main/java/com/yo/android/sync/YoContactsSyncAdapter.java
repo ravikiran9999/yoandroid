@@ -146,27 +146,31 @@ public class YoContactsSyncAdapter extends AbstractThreadedSyncAdapter {
         mYoService.getContacts(access).enqueue(new Callback<List<Contact>>() {
             @Override
             public void onResponse(Call<List<Contact>> call, Response<List<Contact>> list) {
-                if (list.isSuccessful()) {
-                    contacts = list.body();
-                } else {
-                    contacts = mContactsSyncManager.getCachContacts();
-                }
-                //Store them in cache
-                mContactsSyncManager.setContacts(contacts);
-                new AsyncTask<Void, Void, Void>() {
-
-                    @Override
-                    protected Void doInBackground(Void... params) {
-                        try {
-                            updateLocalFeedData(getContext(), contacts, syncResult);
-                        } catch (RemoteException | OperationApplicationException e) {
-                            Log.e(TAG, "Error updating database: " + e.toString());
-                            syncResult.databaseError = true;
-                            e.printStackTrace();
-                        }
-                        return null;
+                try {
+                    if (list.isSuccessful()) {
+                        contacts = list.body();
+                    } else {
+                        contacts = mContactsSyncManager.getCachContacts();
                     }
-                };
+                    //Store them in cache
+                    mContactsSyncManager.setContacts(contacts);
+                    new AsyncTask<Void, Void, Void>() {
+
+                        @Override
+                        protected Void doInBackground(Void... params) {
+                            try {
+                                updateLocalFeedData(getContext(), contacts, syncResult);
+                            } catch (RemoteException | OperationApplicationException e) {
+                                Log.e(TAG, "Error updating database: " + e.toString());
+                                syncResult.databaseError = true;
+                                e.printStackTrace();
+                            }
+                            return null;
+                        }
+                    };
+                } finally {
+                    //list.raw().close();
+                }
             }
 
             @Override

@@ -163,6 +163,8 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
                     }
                 } catch (Exception e) {
                     mLog.w(TAG, e);
+                } finally {
+                    response.body().close();
                 }
                 showEmptyText();
             }

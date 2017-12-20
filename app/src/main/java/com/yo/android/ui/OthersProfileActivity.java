@@ -121,18 +121,22 @@ public class OthersProfileActivity extends BaseActivity {
                     yoService.followUsersAPI(accessToken, userId).enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            dismissProgressDialog();
-                            btnFolow.setText("Following");
-                            btnFolow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                            followersCount = followersCount + 1;
-                            dataList.get(1).setCount(followersCount);
-                            ((TextView) tabLayout.getTabAt(1).getCustomView().findViewById(R.id.count)).setText(String.valueOf(followersCount));
-                            if (mAdapter.getCount() >= 2) {
-                                if (mAdapter.getItem(1) instanceof OtherProfilesFollowers) {
-                                    ((OtherProfilesFollowers) mAdapter.getItem(1)).update();
+                            try {
+                                dismissProgressDialog();
+                                btnFolow.setText("Following");
+                                btnFolow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                followersCount = followersCount + 1;
+                                dataList.get(1).setCount(followersCount);
+                                ((TextView) tabLayout.getTabAt(1).getCustomView().findViewById(R.id.count)).setText(String.valueOf(followersCount));
+                                if (mAdapter.getCount() >= 2) {
+                                    if (mAdapter.getItem(1) instanceof OtherProfilesFollowers) {
+                                        ((OtherProfilesFollowers) mAdapter.getItem(1)).update();
+                                    }
                                 }
+                                isFollowingUser = true;
+                            } finally {
+                                response.body().close();
                             }
-                            isFollowingUser = true;
                         }
 
                         @Override
@@ -169,18 +173,22 @@ public class OthersProfileActivity extends BaseActivity {
                             yoService.unfollowUsersAPI(accessToken, userId).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    dismissProgressDialog();
-                                    btnFolow.setText("Follow");
-                                    btnFolow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                                    followersCount = followersCount - 1;
-                                    dataList.get(1).setCount(followersCount);
-                                    ((TextView) tabLayout.getTabAt(1).getCustomView().findViewById(R.id.count)).setText(String.valueOf(followersCount));
-                                    if (mAdapter.getCount() >= 2) {
-                                        if (mAdapter.getItem(1) instanceof OtherProfilesFollowers) {
-                                            ((OtherProfilesFollowers) mAdapter.getItem(1)).update();
+                                    try {
+                                        dismissProgressDialog();
+                                        btnFolow.setText("Follow");
+                                        btnFolow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                        followersCount = followersCount - 1;
+                                        dataList.get(1).setCount(followersCount);
+                                        ((TextView) tabLayout.getTabAt(1).getCustomView().findViewById(R.id.count)).setText(String.valueOf(followersCount));
+                                        if (mAdapter.getCount() >= 2) {
+                                            if (mAdapter.getItem(1) instanceof OtherProfilesFollowers) {
+                                                ((OtherProfilesFollowers) mAdapter.getItem(1)).update();
+                                            }
                                         }
+                                        isFollowingUser = false;
+                                    } finally {
+                                        response.body().close();
                                     }
-                                    isFollowingUser = false;
                                 }
 
                                 @Override
