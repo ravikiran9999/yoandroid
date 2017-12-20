@@ -181,7 +181,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         @Override
         public void run() {
             checkFirebaseUserStatus(authReference, opponentFirebaseUserId, mUpdateStatus);
-            //handler.postDelayed(this, 500);
         }
     };
 

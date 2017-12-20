@@ -20,6 +20,7 @@ public class ChatNotificationResponse implements Serializable {
     @SerializedName("data")
     @Expose
     private String data;
+
     private final static long serialVersionUID = -135761664401171714L;
 
     public Integer getCode() {

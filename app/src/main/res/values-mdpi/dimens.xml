@@ -6,6 +6,6 @@
     <dimen name="article_title_textsize">18sp</dimen>
 
     <!--dialer call button-->
-    <dimen name="xxxxsmall_padding">8dp</dimen>
+    <dimen name="call_button_padding">8dp</dimen>
 
 </resources>

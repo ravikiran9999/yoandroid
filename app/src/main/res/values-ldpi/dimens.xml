@@ -7,6 +7,6 @@
 
 
     <!--dialer call button-->
-    <dimen name="xxxxsmall_padding">6dp</dimen>
+    <dimen name="call_button_padding">6dp</dimen>
 
 </resources>

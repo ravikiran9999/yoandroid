@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:666825786281:android:8fc8840d3a4d2322",
         "android_client_info": {
-          "package_name": "com.yowatsup.android"
+          "package_name": "com.yowatsup"
         }
       },
       "oauth_client": [
