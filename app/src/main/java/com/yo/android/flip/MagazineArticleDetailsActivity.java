@@ -125,15 +125,19 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                dismissProgressDialog();
+                                try {
+                                    dismissProgressDialog();
 
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                MagazineArticlesBaseAdapter.initListener();
-                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
+                                    data.setIsChecked(true);
+                                    data.setLiked("true");
+                                    MagazineArticlesBaseAdapter.initListener();
+                                    if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                        MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
+                                    }
+                                    mToastFactory.showToast("You have liked the article " + data.getTitle());
+                                } finally {
+                                    response.body().close();
                                 }
-                                mToastFactory.showToast("You have liked the article " + data.getTitle());
                             }
 
                             @Override
@@ -150,14 +154,18 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
                         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                dismissProgressDialog();
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                MagazineArticlesBaseAdapter.initListener();
-                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
+                                try {
+                                    dismissProgressDialog();
+                                    data.setIsChecked(false);
+                                    data.setLiked("false");
+                                    MagazineArticlesBaseAdapter.initListener();
+                                    if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                        MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
+                                    }
+                                    mToastFactory.showToast("You have unliked the article " + data.getTitle());
+                                } finally {
+                                    response.body().close();
                                 }
-                                mToastFactory.showToast("You have unliked the article " + data.getTitle());
                             }
 
                             @Override

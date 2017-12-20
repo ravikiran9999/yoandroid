@@ -146,12 +146,16 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                         yoService.followUsersAPI(accessToken, item.getId()).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                holder.getBtnFindPeopleFollow().setText("Following");
-                                holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                                item.setIsFollowing("true");
-                                item.setFollowersCount(item.getFollowersCount() + 1);
-                                isFollowingUser = true;
+                                try {
+                                    ((BaseActivity) context).dismissProgressDialog();
+                                    holder.getBtnFindPeopleFollow().setText("Following");
+                                    holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                    item.setIsFollowing("true");
+                                    item.setFollowersCount(item.getFollowersCount() + 1);
+                                    isFollowingUser = true;
+                                } finally {
+                                    response.body().close();
+                                }
                             }
 
                             @Override
@@ -189,20 +193,24 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                                     yoService.unfollowUsersAPI(accessToken, item.getId()).enqueue(new Callback<ResponseBody>() {
                                         @Override
                                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                            ((BaseActivity) context).dismissProgressDialog();
-                                            if (context instanceof FollowingsActivity) {
-                                                removeItem(item);
-                                                if (getOriginalListCount() == 0) {
-                                                    ((FollowingsActivity) context).showEmptyDataScreen();
+                                            try {
+                                                ((BaseActivity) context).dismissProgressDialog();
+                                                if (context instanceof FollowingsActivity) {
+                                                    removeItem(item);
+                                                    if (getOriginalListCount() == 0) {
+                                                        ((FollowingsActivity) context).showEmptyDataScreen();
+                                                    }
+                                                } else {
+                                                    // do nothing
                                                 }
-                                            } else {
-                                                // do nothing
+                                                holder.getBtnFindPeopleFollow().setText("Follow");
+                                                holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                                item.setIsFollowing("false");
+                                                item.setFollowersCount(item.getFollowersCount() - 1);
+                                                isFollowingUser = false;
+                                            } finally {
+                                                response.body().close();
                                             }
-                                            holder.getBtnFindPeopleFollow().setText("Follow");
-                                            holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                                            item.setIsFollowing("false");
-                                            item.setFollowersCount(item.getFollowersCount() - 1);
-                                            isFollowingUser = false;
                                         }
 
                                         @Override

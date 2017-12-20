@@ -208,7 +208,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         } else {
             if (position == 0 && "Follow more topics".equalsIgnoreCase(collections.getName())) {
                 Intent intent;
-                if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                     intent = new Intent(MyCollections.this, FollowMoreTopicsActivity.class);
                 } else {
                     intent = new Intent(MyCollections.this, NewFollowMoreTopicsActivity.class);
@@ -246,7 +246,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
             menu.findItem(R.id.menu_search).setVisible(true);
         }
 
-        Util.prepareSearch(this, menu, myCollectionsAdapter, noSearchFound, null, gridView , networkFailureText);
+        Util.prepareSearch(this, menu, myCollectionsAdapter, noSearchFound, null, gridView, networkFailureText);
         searchView =
                 (SearchView) menu.findItem(R.id.menu_search).getActionView();
         return super.onPrepareOptionsMenu(menu);
@@ -355,11 +355,10 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                             preferenceEndPoint.saveStringPreference("Constants.MAGAZINE_TAGS", TextUtils.join(",", followedTopicsIdsList));
 
                             if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
-                                for(int i=0; i < topicIds.size(); i++) {
+                                for (int i = 0; i < topicIds.size(); i++) {
                                     MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(topicIds.get(i), Constants.FOLLOW_TOPIC_EVENT);
                                 }
                             }
-
                         }
 
                         @Override
@@ -410,7 +409,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                             preferenceEndPoint.saveStringPreference("Constants.MAGAZINE_TAGS", TextUtils.join(",", followedTopicsIdsList));
 
                             if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
-                                for(int i=0; i < magazineIds.size(); i++) {
+                                for (int i = 0; i < magazineIds.size(); i++) {
                                     MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(magazineIds.get(i), Constants.FOLLOW_TOPIC_EVENT);
                                 }
                             }
@@ -539,10 +538,10 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
-        if(firstVisibleItem >= 2) {
+        if (firstVisibleItem >= 2) {
             swipeRefreshContainer.setEnabled(false);
             swipeRefreshContainer.setRefreshing(false);
-        } else if(firstVisibleItem == 0) {
+        } else if (firstVisibleItem == 0) {
             swipeRefreshContainer.setEnabled(true);
         }
 

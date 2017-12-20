@@ -330,13 +330,17 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                dismissProgressDialog();
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                if (!((BaseActivity)context).hasDestroyed()) {
-                                    notifyDataSetChanged();
+                                try {
+                                    dismissProgressDialog();
+                                    data.setIsChecked(true);
+                                    data.setLiked("true");
+                                    if (!((BaseActivity) context).hasDestroyed()) {
+                                        notifyDataSetChanged();
+                                    }
+                                    mToastFactory.showToast("You have liked the article " + data.getTitle());
+                                } finally {
+                                    response.body().close();
                                 }
-                                mToastFactory.showToast("You have liked the article " + data.getTitle());
                             }
 
                             @Override
@@ -400,13 +404,17 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                dismissProgressDialog();
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                if (!((BaseActivity)context).hasDestroyed()) {
-                                    notifyDataSetChanged();
+                                try {
+                                    dismissProgressDialog();
+                                    data.setIsChecked(true);
+                                    data.setLiked("true");
+                                    if (!((BaseActivity) context).hasDestroyed()) {
+                                        notifyDataSetChanged();
+                                    }
+                                    mToastFactory.showToast("You have liked the article " + data.getTitle());
+                                } finally {
+                                    response.body().close();
                                 }
-                                mToastFactory.showToast("You have liked the article " + data.getTitle());
                             }
 
                             @Override
@@ -426,13 +434,17 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                dismissProgressDialog();
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                if (!((BaseActivity)context).hasDestroyed()) {
-                                    notifyDataSetChanged();
+                                try {
+                                    dismissProgressDialog();
+                                    data.setIsChecked(false);
+                                    data.setLiked("false");
+                                    if (!((BaseActivity) context).hasDestroyed()) {
+                                        notifyDataSetChanged();
+                                    }
+                                    mToastFactory.showToast("You have unliked the article " + data.getTitle());
+                                } finally {
+                                    response.body().close();
                                 }
-                                mToastFactory.showToast("You have unliked the article " + data.getTitle());
                             }
 
                             @Override

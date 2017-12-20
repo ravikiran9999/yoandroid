@@ -552,30 +552,33 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                                ((BaseActivity) context).dismissProgressDialog();
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                                if (OtherProfilesLikedArticles.getListener() != null) {
-                                    OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
-                                }
-                                mToastFactory.showToast("You have liked the article " + data.getTitle());
-
-                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                                if (cachedMagazinesList != null) {
-                                    List<Articles> tempList = cachedMagazinesList;
-                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(tempList.get(i).getId())) {
-                                            tempList.get(i).setLiked("true");
-                                        }
+                                try {
+                                    ((BaseActivity) context).dismissProgressDialog();
+                                    data.setIsChecked(true);
+                                    data.setLiked("true");
+                                    if (!((BaseActivity) context).hasDestroyed()) {
+                                        notifyDataSetChanged();
                                     }
+                                    if (OtherProfilesLikedArticles.getListener() != null) {
+                                        OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
+                                    }
+                                    mToastFactory.showToast("You have liked the article " + data.getTitle());
 
-                                    cachedMagazinesList = tempList;
+                                    List<Articles> cachedMagazinesList = getCachedMagazinesList();
+                                    if (cachedMagazinesList != null) {
+                                        List<Articles> tempList = cachedMagazinesList;
+                                        for (int i = 0; i < cachedMagazinesList.size(); i++) {
+                                            if (data.getId().equals(tempList.get(i).getId())) {
+                                                tempList.get(i).setLiked("true");
+                                            }
+                                        }
 
-                                    saveCachedMagazinesList(cachedMagazinesList);
+                                        cachedMagazinesList = tempList;
+
+                                        saveCachedMagazinesList(cachedMagazinesList);
+                                    }
+                                } finally {
+                                    response.body().close();
                                 }
 
                             }
@@ -611,30 +614,34 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                if (OtherProfilesLikedArticles.getListener() != null) {
-                                    OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
-                                }
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-
-                                mToastFactory.showToast("You have un-liked the article " + data.getTitle());
-
-                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                                if (cachedMagazinesList != null) {
-                                    List<Articles> tempList = cachedMagazinesList;
-                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(tempList.get(i).getId())) {
-                                            tempList.get(i).setLiked("false");
-                                        }
+                                try {
+                                    ((BaseActivity) context).dismissProgressDialog();
+                                    data.setIsChecked(false);
+                                    data.setLiked("false");
+                                    if (OtherProfilesLikedArticles.getListener() != null) {
+                                        OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
+                                    }
+                                    if (!((BaseActivity) context).hasDestroyed()) {
+                                        notifyDataSetChanged();
                                     }
 
-                                    cachedMagazinesList = tempList;
+                                    mToastFactory.showToast("You have un-liked the article " + data.getTitle());
 
-                                    saveCachedMagazinesList(cachedMagazinesList);
+                                    List<Articles> cachedMagazinesList = getCachedMagazinesList();
+                                    if (cachedMagazinesList != null) {
+                                        List<Articles> tempList = cachedMagazinesList;
+                                        for (int i = 0; i < cachedMagazinesList.size(); i++) {
+                                            if (data.getId().equals(tempList.get(i).getId())) {
+                                                tempList.get(i).setLiked("false");
+                                            }
+                                        }
+
+                                        cachedMagazinesList = tempList;
+
+                                        saveCachedMagazinesList(cachedMagazinesList);
+                                    }
+                                } finally {
+                                    response.body().close();
                                 }
 
                             }
@@ -1085,28 +1092,32 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    ((BaseActivity) context).dismissProgressDialog();
-                    follow.setText("Following");
-                    follow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                    data.setIsFollowing("true");
-                    if (OtherProfilesLikedArticles.getListener() != null) {
-                        OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.FOLLOW_EVENT);
-                    }
-                    if (!((BaseActivity) context).hasDestroyed()) {
-                        notifyDataSetChanged();
-                    }
-                    Type type = new TypeToken<List<Articles>>() {
-                    }.getType();
-                    String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
-                    List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                    if (cachedMagazinesList != null) {
-                        for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                            if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                cachedMagazinesList.get(i).setIsFollowing("true");
-                            }
+                    try {
+                        ((BaseActivity) context).dismissProgressDialog();
+                        follow.setText("Following");
+                        follow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                        data.setIsFollowing("true");
+                        if (OtherProfilesLikedArticles.getListener() != null) {
+                            OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.FOLLOW_EVENT);
                         }
+                        if (!((BaseActivity) context).hasDestroyed()) {
+                            notifyDataSetChanged();
+                        }
+                        Type type = new TypeToken<List<Articles>>() {
+                        }.getType();
+                        String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
+                        List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                        if (cachedMagazinesList != null) {
+                            for (int i = 0; i < cachedMagazinesList.size(); i++) {
+                                if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                    cachedMagazinesList.get(i).setIsFollowing("true");
+                                }
+                            }
 
-                        preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
+                            preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
+                        }
+                    } finally {
+                        response.body().close();
                     }
                 }
 
@@ -1175,28 +1186,32 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                                                                                         @Override
                                                                                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                                                                            ((BaseActivity) context).dismissProgressDialog();
-                                                                                            follow.setText("Follow");
-                                                                                            follow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                                                                                            data.setIsFollowing("false");
-                                                                                            if (OtherProfilesLikedArticles.getListener() != null) {
-                                                                                                OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.FOLLOW_EVENT);
-                                                                                            }
-                                                                                            if (!((BaseActivity) context).hasDestroyed()) {
-                                                                                                notifyDataSetChanged();
-                                                                                            }
-                                                                                            Type type = new TypeToken<List<Articles>>() {
-                                                                                            }.getType();
-                                                                                            String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
-                                                                                            List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                                                                                            if (cachedMagazinesList != null) {
-                                                                                                for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                                                                                    if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                                                                                        cachedMagazinesList.get(i).setIsFollowing("false");
-                                                                                                    }
+                                                                                            try {
+                                                                                                ((BaseActivity) context).dismissProgressDialog();
+                                                                                                follow.setText("Follow");
+                                                                                                follow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                                                                                data.setIsFollowing("false");
+                                                                                                if (OtherProfilesLikedArticles.getListener() != null) {
+                                                                                                    OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.FOLLOW_EVENT);
                                                                                                 }
+                                                                                                if (!((BaseActivity) context).hasDestroyed()) {
+                                                                                                    notifyDataSetChanged();
+                                                                                                }
+                                                                                                Type type = new TypeToken<List<Articles>>() {
+                                                                                                }.getType();
+                                                                                                String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
+                                                                                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
+                                                                                                if (cachedMagazinesList != null) {
+                                                                                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
+                                                                                                        if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
+                                                                                                            cachedMagazinesList.get(i).setIsFollowing("false");
+                                                                                                        }
+                                                                                                    }
 
-                                                                                                preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
+                                                                                                    preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
+                                                                                                }
+                                                                                            } finally {
+                                                                                                response.body().close();
                                                                                             }
                                                                                         }
 

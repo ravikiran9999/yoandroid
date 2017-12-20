@@ -638,19 +638,23 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                         yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                finalHolder.articleFollow.setText("Following");
-                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                                data.setIsFollowing("true");
-                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
-                                }
-                                if (MagazineArticlesBaseAdapter.mListener != null) {
-                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.FOLLOW_EVENT);
-                                }
-                                isFollowing = true;
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
+                                try {
+                                    ((BaseActivity) context).dismissProgressDialog();
+                                    finalHolder.articleFollow.setText("Following");
+                                    finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                    data.setIsFollowing("true");
+                                    if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                        MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
+                                    }
+                                    if (MagazineArticlesBaseAdapter.mListener != null) {
+                                        MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.FOLLOW_EVENT);
+                                    }
+                                    isFollowing = true;
+                                    if (!((BaseActivity) context).hasDestroyed()) {
+                                        notifyDataSetChanged();
+                                    }
+                                } finally {
+                                    response.body().close();
                                 }
                             }
 
@@ -694,21 +698,24 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                 yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                                     @Override
                                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                        ((BaseActivity) context).dismissProgressDialog();
-                                        finalHolder.articleFollow.setText("Follow");
-                                        finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                                        data.setIsFollowing("false");
-                                        if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                            MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
+                                        try {
+                                            ((BaseActivity) context).dismissProgressDialog();
+                                            finalHolder.articleFollow.setText("Follow");
+                                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                            data.setIsFollowing("false");
+                                            if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                                MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
+                                            }
+                                            if (MagazineArticlesBaseAdapter.mListener != null) {
+                                                MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.FOLLOW_EVENT);
+                                            }
+                                            isFollowing = false;
+                                            if (!((BaseActivity) context).hasDestroyed()) {
+                                                notifyDataSetChanged();
+                                            }
+                                        } finally {
+                                            response.body().close();
                                         }
-                                        if (MagazineArticlesBaseAdapter.mListener != null) {
-                                            MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.FOLLOW_EVENT);
-                                        }
-                                        isFollowing = false;
-                                        if (!((BaseActivity) context).hasDestroyed()) {
-                                            notifyDataSetChanged();
-                                        }
-
                                     }
 
                                     @Override

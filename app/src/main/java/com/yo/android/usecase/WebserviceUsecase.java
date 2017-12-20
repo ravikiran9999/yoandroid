@@ -33,14 +33,18 @@ public class WebserviceUsecase {
         call.enqueue(new Callback<Lock>() {
             @Override
             public void onResponse(Call<Lock> call, Response<Lock> response) {
-                if (response.body() != null) {
-                    loginPrefs.saveBooleanPreference(Constants.MAGAZINE_LOCK, response.body().getData().isIsMagzineLocked());
-                    loginPrefs.saveBooleanPreference(Constants.DIALER_LOCK, response.body().getData().isIsDailerLocked());
-                    loginPrefs.saveBooleanPreference(Constants.APP_LOCK, response.body().getData().isIsAppLocked());
-                    loginPrefs.saveBooleanPreference(Constants.RENEWAL, response.body().getData().isIsAutorenewalDone());
-                    if (lockApiCallback != null) {
-                        lockApiCallback.onResult(response.body());
+                try {
+                    if (response.body() != null) {
+                        loginPrefs.saveBooleanPreference(Constants.MAGAZINE_LOCK, response.body().getData().isIsMagzineLocked());
+                        loginPrefs.saveBooleanPreference(Constants.DIALER_LOCK, response.body().getData().isIsDailerLocked());
+                        loginPrefs.saveBooleanPreference(Constants.APP_LOCK, response.body().getData().isIsAppLocked());
+                        loginPrefs.saveBooleanPreference(Constants.RENEWAL, response.body().getData().isIsAutorenewalDone());
+                        if (lockApiCallback != null) {
+                            lockApiCallback.onResult(response.body());
+                        }
                     }
+                } finally {
+                    response.body().setData(null);
                 }
             }
 

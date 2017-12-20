@@ -109,7 +109,7 @@ public class TopicsDetailActivity extends BaseActivity {
                 dismissProgressDialog();
                 if (response.body() != null && response.body().size() > 0) {
                     for (int i = 0; i < response.body().size(); i++) {
-                        if(!"...".equalsIgnoreCase(response.body().get(i).getSummary())) {
+                        if (!"...".equalsIgnoreCase(response.body().get(i).getSummary())) {
                             articlesList.add(response.body().get(i));
                         }
                     }
@@ -519,7 +519,7 @@ public class TopicsDetailActivity extends BaseActivity {
                                                 .setText(Html.fromHtml(data.getSummary()));
                                     }
 
-                                    if(articleTitle != null) {
+                                    if (articleTitle != null) {
                                         ViewTreeObserver vto1 = articleTitle.getViewTreeObserver();
                                         vto1.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                                             private int maxLines = -1;
@@ -536,13 +536,13 @@ public class TopicsDetailActivity extends BaseActivity {
                                                     articleTitle.setEllipsize(TextUtils.TruncateAt.END);
                                                     // Re-assign text to ensure ellipsize is performed correctly.
                                                     articleTitle.setText(AphidLog.format("%s", data.getTitle()));
-                                                } else if(maxLines == -1 && articleTitle.getHeight() > 0) {
+                                                } else if (maxLines == -1 && articleTitle.getHeight() > 0) {
                                                     //Log.d("BaseAdapter", "Max lines inside else if" + maxLines);
                                                     articleTitle.setMaxLines(1);
                                                     articleTitle.setEllipsize(TextUtils.TruncateAt.END);
                                                     // Re-assign text to ensure ellipsize is performed correctly.
                                                     articleTitle.setText(AphidLog.format("%s", data.getTitle()));
-                                                } else if(maxLines == -1 && articleTitle.getHeight() == 0) {
+                                                } else if (maxLines == -1 && articleTitle.getHeight() == 0) {
                                                     // Log.d("BaseAdapter", "Full screen image after options cut or not shown");
                                                     if (fullImageTitle != null && articleTitle != null && blackMask != null && rlFullImageOptions != null) {
                                                         fullImageTitle.setVisibility(View.VISIBLE);
@@ -556,7 +556,7 @@ public class TopicsDetailActivity extends BaseActivity {
                                         });
                                     }
 
-                                    if(textView1 != null) {
+                                    if (textView1 != null) {
                                         ViewTreeObserver vto = textView1.getViewTreeObserver();
                                         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                                             private int maxLines = -1;
@@ -639,18 +639,22 @@ public class TopicsDetailActivity extends BaseActivity {
                         yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                finalHolder.articleFollow.setText("Following");
-                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                                data.setIsFollowing("true");
-                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
-                                }
-                                if (MagazineArticlesBaseAdapter.mListener != null) {
-                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.FOLLOW_EVENT);
-                                }
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
+                                try {
+                                    ((BaseActivity) context).dismissProgressDialog();
+                                    finalHolder.articleFollow.setText("Following");
+                                    finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                    data.setIsFollowing("true");
+                                    if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                        MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
+                                    }
+                                    if (MagazineArticlesBaseAdapter.mListener != null) {
+                                        MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.FOLLOW_EVENT);
+                                    }
+                                    if (!((BaseActivity) context).hasDestroyed()) {
+                                        notifyDataSetChanged();
+                                    }
+                                } finally {
+                                    response.body().close();
                                 }
                             }
 
@@ -759,18 +763,22 @@ public class TopicsDetailActivity extends BaseActivity {
                         yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                                                                                             @Override
                                                                                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                                                                                ((BaseActivity) context).dismissProgressDialog();
-                                                                                                finalHolder.articleFollow.setText("Follow");
-                                                                                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                                                                                                data.setIsFollowing("false");
-                                                                                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                                                                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
-                                                                                                }
-                                                                                                if (MagazineArticlesBaseAdapter.mListener != null) {
-                                                                                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
-                                                                                                }
-                                                                                                if (!((BaseActivity) context).hasDestroyed()) {
-                                                                                                    notifyDataSetChanged();
+                                                                                                try {
+                                                                                                    ((BaseActivity) context).dismissProgressDialog();
+                                                                                                    finalHolder.articleFollow.setText("Follow");
+                                                                                                    finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                                                                                    data.setIsFollowing("false");
+                                                                                                    if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                                                                                        MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
+                                                                                                    }
+                                                                                                    if (MagazineArticlesBaseAdapter.mListener != null) {
+                                                                                                        MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
+                                                                                                    }
+                                                                                                    if (!((BaseActivity) context).hasDestroyed()) {
+                                                                                                        notifyDataSetChanged();
+                                                                                                    }
+                                                                                                } finally {
+                                                                                                    response.body().close();
                                                                                                 }
                                                                                             }
 
@@ -900,7 +908,7 @@ public class TopicsDetailActivity extends BaseActivity {
                         }
                     }
                     followedTopicsIdsList.add(String.valueOf(topic.getTopicId()));
-                    yoService.addTopicsAPI(accessToken, followedTopicsIdsList,"").enqueue(new Callback<ResponseBody>() {
+                    yoService.addTopicsAPI(accessToken, followedTopicsIdsList, "").enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             dismissProgressDialog();
@@ -953,16 +961,20 @@ public class TopicsDetailActivity extends BaseActivity {
                             yoService.removeTopicsAPI(accessToken, topicIds).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    dismissProgressDialog();
-                                    menuItem.setIcon(null);
-                                    menuItem.setTitle("Follow");
-                                    isFollowingTopic = false;
-                                    topic.setTopicFollowing("false");
+                                    try {
+                                        dismissProgressDialog();
+                                        menuItem.setIcon(null);
+                                        menuItem.setTitle("Follow");
+                                        isFollowingTopic = false;
+                                        topic.setTopicFollowing("false");
 
-                                    if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
-                                        for(int i=0; i < topicIds.size(); i++) {
-                                            MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(topicIds.get(i), Constants.FOLLOW_TOPIC_EVENT);
+                                        if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
+                                            for (int i = 0; i < topicIds.size(); i++) {
+                                                MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(topicIds.get(i), Constants.FOLLOW_TOPIC_EVENT);
+                                            }
                                         }
+                                    } finally {
+                                        response.body().close();
                                     }
                                 }
 

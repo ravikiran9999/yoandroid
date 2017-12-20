@@ -125,6 +125,8 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
                     }
                 } catch (Exception e) {
                     mLog.w(TAG, e);
+                } finally {
+                    response.body().close();
                 }
                 showEmptyText();
             }

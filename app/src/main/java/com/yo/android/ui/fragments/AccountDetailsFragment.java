@@ -242,11 +242,15 @@ public class AccountDetailsFragment extends BaseFragment {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 dismissProgressDialog();
-                if (response.body() != null) {
-                    saveUserProfileValues(response.body());
-                    getActivity().finish();
-                } else {
-                    mToastFactory.showToast(getString(R.string.failed_update));
+                try {
+                    if (response.body() != null) {
+                        saveUserProfileValues(response.body());
+                        getActivity().finish();
+                    } else {
+                        mToastFactory.showToast(getString(R.string.failed_update));
+                    }
+                } finally {
+
                 }
             }
 

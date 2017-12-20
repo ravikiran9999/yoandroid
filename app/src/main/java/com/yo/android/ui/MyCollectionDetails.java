@@ -800,18 +800,22 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                         yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                finalHolder.articleFollow.setText("Following");
-                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                                data.setIsFollowing("true");
-                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
-                                }
-                                if (MagazineArticlesBaseAdapter.mListener != null) {
-                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.FOLLOW_EVENT);
-                                }
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
+                                try {
+                                    ((BaseActivity) context).dismissProgressDialog();
+                                    finalHolder.articleFollow.setText("Following");
+                                    finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                    data.setIsFollowing("true");
+                                    if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                        MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
+                                    }
+                                    if (MagazineArticlesBaseAdapter.mListener != null) {
+                                        MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.FOLLOW_EVENT);
+                                    }
+                                    if (!((BaseActivity) context).hasDestroyed()) {
+                                        notifyDataSetChanged();
+                                    }
+                                } finally {
+                                    response.body().close();
                                 }
                             }
 
@@ -896,18 +900,22 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                         yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                                                                                             @Override
                                                                                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                                                                                ((BaseActivity) context).dismissProgressDialog();
-                                                                                                finalHolder.articleFollow.setText("Follow");
-                                                                                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                                                                                                data.setIsFollowing("false");
-                                                                                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                                                                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
-                                                                                                }
-                                                                                                if (MagazineArticlesBaseAdapter.mListener != null) {
-                                                                                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
-                                                                                                }
-                                                                                                if (!((BaseActivity) context).hasDestroyed()) {
-                                                                                                    notifyDataSetChanged();
+                                                                                                try {
+                                                                                                    ((BaseActivity) context).dismissProgressDialog();
+                                                                                                    finalHolder.articleFollow.setText("Follow");
+                                                                                                    finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                                                                                    data.setIsFollowing("false");
+                                                                                                    if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                                                                                        MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
+                                                                                                    }
+                                                                                                    if (MagazineArticlesBaseAdapter.mListener != null) {
+                                                                                                        MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
+                                                                                                    }
+                                                                                                    if (!((BaseActivity) context).hasDestroyed()) {
+                                                                                                        notifyDataSetChanged();
+                                                                                                    }
+                                                                                                }finally {
+                                                                                                    response.body().close();
                                                                                                 }
                                                                                             }
 
@@ -1041,15 +1049,19 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
-                                    dismissProgressDialog();
+                                    try {
+                                        dismissProgressDialog();
 
-                                    if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
-                                        MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(topicId, Constants.FOLLOW_TOPIC_EVENT);
+                                        if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
+                                            MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(topicId, Constants.FOLLOW_TOPIC_EVENT);
+                                        }
+
+                                        Intent intent = new Intent();
+                                        setResult(6, intent);
+                                        finish();
+                                    } finally {
+                                        response.body().close();
                                     }
-
-                                    Intent intent = new Intent();
-                                    setResult(6, intent);
-                                    finish();
 
                                 }
 
@@ -1095,15 +1107,19 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                             yoService.unfollowMagazineAPI(topicId, accessToken).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    dismissProgressDialog();
+                                    try {
+                                        dismissProgressDialog();
 
-                                    if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
-                                        MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(topicId, Constants.FOLLOW_TOPIC_EVENT);
+                                        if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
+                                            MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(topicId, Constants.FOLLOW_TOPIC_EVENT);
+                                        }
+
+                                        Intent intent = new Intent();
+                                        setResult(6, intent);
+                                        finish();
+                                    } finally {
+                                        response.body().close();
                                     }
-
-                                    Intent intent = new Intent();
-                                    setResult(6, intent);
-                                    finish();
                                 }
 
                                 @Override

@@ -699,14 +699,17 @@ public class BottomTabsActivity extends BaseActivity {
         yoService.updateProfile(userId, access, null, null, null, null, null, null, null, null, body).enqueue(new Callback<UserProfileInfo>() {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
-                dismissProgressDialog();
-                if (response.body() != null) {
-                    preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
+                try {
+                    dismissProgressDialog();
+                    if (response.body() != null) {
+                        preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
+                    }
+                    if (getFragment() != null && getFragment() instanceof MoreFragment) {
+                        ((MoreFragment) getFragment()).loadImage();
+                    }
+                } finally {
+                    //response.raw().close();
                 }
-                if (getFragment() != null && getFragment() instanceof MoreFragment) {
-                    ((MoreFragment) getFragment()).loadImage();
-                }
-
             }
 
             @Override
@@ -846,7 +849,13 @@ public class BottomTabsActivity extends BaseActivity {
             yoService.updateDeviceTokenAPI(accessToken, refreshedToken).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    Log.i(TAG, "FCM token updated successfully");
+                    try {
+                        Log.i(TAG, "FCM token updated successfully");
+                    } finally {
+                        if (response != null && response.body() != null) {
+                            response.body().close();
+                        }
+                    }
                 }
 
                 @Override

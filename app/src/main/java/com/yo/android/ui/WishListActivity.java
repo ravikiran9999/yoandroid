@@ -650,15 +650,19 @@ public class WishListActivity extends BaseActivity {
                         yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                finalHolder.articleFollow.setText("Following");
-                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                                data.setIsFollowing("true");
-                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
-                                }
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
+                                try {
+                                    ((BaseActivity) context).dismissProgressDialog();
+                                    finalHolder.articleFollow.setText("Following");
+                                    finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
+                                    data.setIsFollowing("true");
+                                    if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                        MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
+                                    }
+                                    if (!((BaseActivity) context).hasDestroyed()) {
+                                        notifyDataSetChanged();
+                                    }
+                                } finally {
+                                    response.body().close();
                                 }
                             }
 
@@ -701,21 +705,25 @@ public class WishListActivity extends BaseActivity {
                                 yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                                     @Override
                                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                        ((BaseActivity) context).dismissProgressDialog();
-                                        finalHolder.articleFollow.setText("Follow");
-                                        finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                                        data.setIsFollowing("false");
-                                        if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                            MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
-                                        }
-                                        if (!((BaseActivity) context).hasDestroyed()) {
-                                            notifyDataSetChanged();
-                                        }
+                                        try {
+                                            ((BaseActivity) context).dismissProgressDialog();
+                                            finalHolder.articleFollow.setText("Follow");
+                                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                                            data.setIsFollowing("false");
+                                            if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                                MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
+                                            }
+                                            if (!((BaseActivity) context).hasDestroyed()) {
+                                                notifyDataSetChanged();
+                                            }
 
-                                        articlesList.clear();
-                                        myBaseAdapter.addItems(articlesList);
+                                            articlesList.clear();
+                                            myBaseAdapter.addItems(articlesList);
 
-                                        refreshWishList();
+                                            refreshWishList();
+                                        } finally {
+                                            response.body().close();
+                                        }
                                     }
 
                                     @Override

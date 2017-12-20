@@ -419,60 +419,65 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                             yoService.updateDeviceTokenAPI(accessToken, null).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    if(activity instanceof BaseActivity) {
-                                        ((BaseActivity) activity).stopTimer();
-                                    }
+                                    try {
+                                        if (activity instanceof BaseActivity) {
+                                            ((BaseActivity) activity).stopTimer();
+                                        }
 
-                                    //stop service on logout
-                                    activity.stopService(new Intent(activity, FirebaseService.class));
+                                        //stop service on logout
+                                        activity.stopService(new Intent(activity, FirebaseService.class));
 
-                                    fireBaseHelper.unauth();
+                                        fireBaseHelper.unauth();
 
-                                    //FirebaseAuth.getInstance().signOut();
+                                        //FirebaseAuth.getInstance().signOut();
 
-                                    clearPreferences();
-                                    preferenceEndPoint.clearAll();
-                                    MagazineFlipArticlesFragment.lastReadArticle = 0;
-                                    //getActivity().stopService(new Intent(getActivity(), FetchNewArticlesService.class));
-                                    //Intent serviceIntent = new Intent(BottomTabsActivity.getAppContext(), FetchNewArticlesService.class);
-                                    //PendingIntent sender = PendingIntent.getBroadcast(getActivity(), 1014, serviceIntent, 0);
-                                    if (getActivity() != null) {
-                                        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+                                        clearPreferences();
+                                        preferenceEndPoint.clearAll();
+                                        MagazineFlipArticlesFragment.lastReadArticle = 0;
+                                        //getActivity().stopService(new Intent(getActivity(), FetchNewArticlesService.class));
+                                        //Intent serviceIntent = new Intent(BottomTabsActivity.getAppContext(), FetchNewArticlesService.class);
+                                        //PendingIntent sender = PendingIntent.getBroadcast(getActivity(), 1014, serviceIntent, 0);
+                                        if (getActivity() != null) {
+                                            AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
                                    /* if (getActivity() != null) {
                                         getActivity().stopService(serviceIntent);
                                     }*/
-                                        try {
-                                            if (BottomTabsActivity.pintent != null) {
-                                                alarmManager.cancel(BottomTabsActivity.pintent);
+                                            try {
+                                                if (BottomTabsActivity.pintent != null) {
+                                                    alarmManager.cancel(BottomTabsActivity.pintent);
+                                                }
+                                                if (FetchNewArticlesService.pintent != null) {
+                                                    alarmManager.cancel(FetchNewArticlesService.pintent);
+                                                }
+                                                if (StartServiceAtBootReceiver.pintent != null) {
+                                                    alarmManager.cancel(StartServiceAtBootReceiver.pintent);
+                                                }
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
                                             }
-                                            if (FetchNewArticlesService.pintent != null) {
-                                                alarmManager.cancel(FetchNewArticlesService.pintent);
+                                        }
+                                        //stop firebase service
+                                        //getActivity().stopService(new Intent(getActivity(), FirebaseService.class));
+
+                                        //Stop SIP service
+                                        Intent intent = new Intent(VoipConstants.ACCOUNT_LOGOUT, null, getActivity(), YoSipService.class);
+                                        getActivity().startService(intent);
+                                        //Start login activity
+                                        startActivity(new Intent(getActivity(), LoginActivity.class));
+                                        getActivity().finish();
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                if (isAdded()) {
+                                                    dismissProgressDialog();
+                                                }
                                             }
-                                            if (StartServiceAtBootReceiver.pintent != null) {
-                                                alarmManager.cancel(StartServiceAtBootReceiver.pintent);
-                                            }
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
+                                        }, 1000);
+                                    } finally {
+                                        if (response != null && response.body() != null) {
+                                            response.body().close();
                                         }
                                     }
-                                    //stop firebase service
-                                    //getActivity().stopService(new Intent(getActivity(), FirebaseService.class));
-
-                                    //Stop SIP service
-                                    Intent intent = new Intent(VoipConstants.ACCOUNT_LOGOUT, null, getActivity(), YoSipService.class);
-                                    getActivity().startService(intent);
-                                    //Start login activity
-                                    startActivity(new Intent(getActivity(), LoginActivity.class));
-                                    getActivity().finish();
-                                    new Handler().postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if (isAdded()) {
-                                                dismissProgressDialog();
-                                            }
-                                        }
-                                    }, 1000);
-
                                 }
 
                                 @Override

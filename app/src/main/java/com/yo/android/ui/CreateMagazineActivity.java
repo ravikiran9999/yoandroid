@@ -98,14 +98,17 @@ public class CreateMagazineActivity extends BaseActivity implements SwipeRefresh
                     yoService.addArticleMagazineApi(accessToken, ownMagazine.getId(), articlesList).enqueue(new Callback<com.yo.android.model.Response>() {
                         @Override
                         public void onResponse(Call<com.yo.android.model.Response> call, Response<com.yo.android.model.Response> response) {
-                            if (response.code() == Constants.SUCCESS_CODE) {
-                                setResult(RESULT_OK, new Intent());
-                                addArticleMagazineId = null;
-                                mToastFactory.showToast("Article added into " + createMagazinesAdapter.getItem(position).getName());
-                                finish();
-                            } else {
-                                new ToastFactoryImpl(CreateMagazineActivity.this).showToast("Selected Article already available");
-                                finish();
+                            try {
+                                if (response.code() == Constants.SUCCESS_CODE) {
+                                    setResult(RESULT_OK, new Intent());
+                                    addArticleMagazineId = null;
+                                    mToastFactory.showToast("Article added into " + createMagazinesAdapter.getItem(position).getName());
+                                    finish();
+                                } else {
+                                    new ToastFactoryImpl(CreateMagazineActivity.this).showToast("Selected Article already available");
+                                    finish();
+                                }
+                            }finally {
                             }
                         }
 

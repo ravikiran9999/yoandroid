@@ -100,6 +100,8 @@ public class BalanceHelper {
                     } catch (IOException | JSONException e) {
                         mLog.w(TAG, "loadBalance", e);
 
+                    } finally {
+                        response.body().close();
                     }
                 }
             }
@@ -166,6 +168,10 @@ public class BalanceHelper {
                         }
                     } catch (IOException | JSONException e) {
                         mLog.w(TAG, "loadBalance", e);
+                    } finally {
+                        if (response != null && response.body() != null) {
+                            response.body().close();
+                        }
                     }
                 }
                 if (callback != null) {
@@ -194,8 +200,14 @@ public class BalanceHelper {
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (callback != null) {
-                            callback.onResponse(call, response);
+                        try {
+                            if (callback != null) {
+                                callback.onResponse(call, response);
+                            }
+                        }finally {
+                            if (response != null && response.body() != null) {
+                                response.body().close();
+                            }
                         }
                     }
 
