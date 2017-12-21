@@ -189,6 +189,8 @@ public class YoSipService extends InjectedService implements IncomingCallListene
     public static SimpleDateFormat df;
     public static SimpleDateFormat sdf;
 
+    private static boolean isServiceStarted;
+
 
     static {
         df = new SimpleDateFormat("dd-MM-yyyy");
@@ -290,12 +292,15 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         if (intent != null) {
             DialerLogs.messageI(TAG, "Intent Action===========" + intent.getAction());
             if (CallExtras.REGISTER.equals(intent.getAction())) {
-                DialerLogs.messageI(TAG, "sipServiceHandler===========");
+                if(!isServiceStarted) {
+                    isServiceStarted = true;
+                    DialerLogs.messageI(TAG, "sipServiceHandler===========");
 
-                //   if (sipServiceHandler == null || (sipServiceHandler != null && sipServiceHandler.getRegistersCount() == 0)) {
-                DialerLogs.messageI(TAG, "Registering Account===========");
-                setYoAccount(null);
-                register(null);
+                    //   if (sipServiceHandler == null || (sipServiceHandler != null && sipServiceHandler.getRegistersCount() == 0)) {
+                    DialerLogs.messageI(TAG, "Registering Account===========");
+                    setYoAccount(null);
+                    register(null);
+                }
                 //   }
             } else if (CallExtras.UN_REGISTER.equals(intent.getAction())) {
                 if (sipServiceHandler != null && sipServiceHandler.getRegistersCount() > 0) {
