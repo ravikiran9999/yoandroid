@@ -523,13 +523,16 @@ public class NewCreditAccountFragment extends BaseFragment {
 
         TextView textView = (TextView) view.findViewById(R.id.current_balance);
         //textView.setText(getCurrentAvailableBalance());
-        textView.setText(mBalanceHelper.currencySymbolLookup(mBalanceHelper.getCurrentBalance()));
+
 
         Button processed = (Button) view.findViewById(R.id.processed_btn);
         Button cancel = (Button) view.findViewById(R.id.cancel);
         final EditText editText = (EditText) view.findViewById(R.id.edit_amount);
         final TextView giveFour = (TextView) view.findViewById(R.id.give_four);
         final TextView giveFive = (TextView) view.findViewById(R.id.give_five);
+
+        final String availableBalance = mBalanceHelper.getCurrentBalance();
+        textView.setText(mBalanceHelper.currencySymbolLookup(availableBalance));
 
         if (transferBalanceDenominationList != null) {
             if (transferBalanceDenominationList.get(3) != null && transferBalanceDenominationList.get(3).getStatus().equalsIgnoreCase(Constants.PACKAGE_STATUS)) {
@@ -580,9 +583,15 @@ public class NewCreditAccountFragment extends BaseFragment {
 
                     if (!TextUtils.isEmpty(enteredAmount) && currencySymbol != null && !enteredAmount.contains(currencySymbol) && isValid(enteredAmount)) {
                         if (!isGreaterThanHundred(enteredAmount)) {
-                            enteredAmount = String.format(getResources().getString(R.string.currency_code_with_denomination), mBalanceHelper.currencySymbolLookup(currencySymbol), enteredAmount);
-                            alert.dismiss();
-                            transferBalance(enteredAmount);
+                            double val = mBalanceHelper.removeCurrencyCode(enteredAmount);
+                            if (val < mBalanceHelper.removeCurrencyCode(availableBalance)) {
+                                enteredAmount = String.format(getResources().getString(R.string.currency_code_with_denomination), mBalanceHelper.currencySymbolLookup(currencySymbol), enteredAmount);
+                                alert.dismiss();
+                                transferBalance(enteredAmount);
+                            } else {
+                                mToastFactory.showToast(R.string.insufficient_amount);
+                            }
+
                         } else {
                             mToastFactory.newToast(getResources().getString(R.string.more_than_hundred_error), Toast.LENGTH_LONG);
                         }
