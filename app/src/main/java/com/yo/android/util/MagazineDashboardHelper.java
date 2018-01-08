@@ -194,7 +194,9 @@ public class MagazineDashboardHelper {
                     magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                     magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
                     magazineFlipArticlesFragment.getLandingCachedArticles();
-                    Toast.makeText(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.getActivity().getResources().getString(R.string.connectivity_network_settings), Toast.LENGTH_LONG).show();
+                    if (magazineFlipArticlesFragment.getActivity() != null) {
+                        Toast.makeText(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.getActivity().getResources().getString(R.string.connectivity_network_settings), Toast.LENGTH_LONG).show();
+                    }
                 }
             });
         }
@@ -330,7 +332,9 @@ public class MagazineDashboardHelper {
                     magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                     magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
                     magazineFlipArticlesFragment.getLandingCachedArticles();
-                    Toast.makeText(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.getActivity().getResources().getString(R.string.connectivity_network_settings), Toast.LENGTH_LONG).show();
+                    if(magazineFlipArticlesFragment.getActivity() != null) {
+                        Toast.makeText(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.getActivity().getResources().getString(R.string.connectivity_network_settings), Toast.LENGTH_LONG).show();
+                    }
                 }
             });
         }

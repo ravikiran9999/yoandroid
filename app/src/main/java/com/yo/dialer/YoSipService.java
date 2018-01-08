@@ -559,8 +559,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 changeHoldUI = true;
             } else {
                 DialerLogs.messageE(TAG, "YO===Pending Re-Inviting");
-                yoCurrentCall.setPendingReInvite(true);
-                YoSipService.changeHoldUI = false;
+                if(yoCurrentCall != null) {
+                    yoCurrentCall.setPendingReInvite(true);
+                    YoSipService.changeHoldUI = false;
+                }
             }
         } catch (Exception e) {
             getSipServiceHandler().updateWithCallStatus(CallExtras.StatusCode.YO_INV_STATE_SC_RE_CONNECTING);
