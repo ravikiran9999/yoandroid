@@ -154,7 +154,9 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                                     item.setFollowersCount(item.getFollowersCount() + 1);
                                     isFollowingUser = true;
                                 } finally {
-                                    response.body().close();
+                                    if(response != null && response.body() != null) {
+                                        response.body().close();
+                                    }
                                 }
                             }
 
@@ -209,7 +211,9 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                                                 item.setFollowersCount(item.getFollowersCount() - 1);
                                                 isFollowingUser = false;
                                             } finally {
-                                                response.body().close();
+                                                if(response != null && response.body() != null) {
+                                                    response.body().close();
+                                                }
                                             }
                                         }
 

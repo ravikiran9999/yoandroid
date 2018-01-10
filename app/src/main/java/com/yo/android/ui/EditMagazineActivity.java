@@ -99,7 +99,9 @@ public class EditMagazineActivity extends BaseActivity {
                     EventBus.getDefault().post(Constants.DELETE_MAGAZINE_ACTION);
                     finish();
                 } finally {
-                    response.body().close();
+                    if(response != null && response.body() != null) {
+                        response.body().close();
+                    }
                 }
             }
 

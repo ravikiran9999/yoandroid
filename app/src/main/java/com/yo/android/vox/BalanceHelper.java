@@ -101,7 +101,9 @@ public class BalanceHelper {
                         mLog.w(TAG, "loadBalance", e);
 
                     } finally {
-                        response.body().close();
+                        if(response != null && response.body() != null) {
+                            response.body().close();
+                        }
                     }
                 }
             }

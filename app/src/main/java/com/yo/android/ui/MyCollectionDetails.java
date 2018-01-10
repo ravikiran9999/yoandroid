@@ -815,7 +815,9 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                                         notifyDataSetChanged();
                                     }
                                 } finally {
-                                    response.body().close();
+                                    if(response != null && response.body() != null) {
+                                        response.body().close();
+                                    }
                                 }
                             }
 
@@ -915,7 +917,9 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                                                                                                         notifyDataSetChanged();
                                                                                                     }
                                                                                                 }finally {
-                                                                                                    response.body().close();
+                                                                                                    if(response != null && response.body() != null) {
+                                                                                                        response.body().close();
+                                                                                                    }
                                                                                                 }
                                                                                             }
 
@@ -1060,7 +1064,9 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                                         setResult(6, intent);
                                         finish();
                                     } finally {
-                                        response.body().close();
+                                        if(response != null && response.body() != null) {
+                                            response.body().close();
+                                        }
                                     }
 
                                 }
@@ -1118,7 +1124,9 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                                         setResult(6, intent);
                                         finish();
                                     } finally {
-                                        response.body().close();
+                                        if(response != null && response.body() != null) {
+                                            response.body().close();
+                                        }
                                     }
                                 }
 

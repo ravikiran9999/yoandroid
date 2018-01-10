@@ -10,6 +10,7 @@ public class Notification {
     private String updated_at;
     private String tag;
     private String id;
+    private String notification_id;
 
     public String getTitle() {
         return title;
@@ -49,5 +50,13 @@ public class Notification {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getNotification_id() {
+        return notification_id;
+    }
+
+    public void setNotification_id(String notification_id) {
+        this.notification_id = notification_id;
     }
 }

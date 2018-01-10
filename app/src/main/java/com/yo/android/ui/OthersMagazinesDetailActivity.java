@@ -677,7 +677,9 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                     data.setIsFollowing("true");
                                     isFollowing = true;
                                 } finally {
-                                    response.body().close();
+                                    if(response != null && response.body() != null) {
+                                        response.body().close();
+                                    }
                                 }
                             }
 
@@ -726,7 +728,9 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                                 data.setIsFollowing("false");
                                                 isFollowing = false;
                                             } finally {
-                                                response.body().close();
+                                                if(response != null && response.body() != null) {
+                                                    response.body().close();
+                                                }
                                             }
                                         }
 
@@ -969,7 +973,9 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                 ownMagazine.setIsFollowing("true");
                                 EventBus.getDefault().post(Constants.OTHERS_MAGAZINE_ACTION);
                             } finally {
-                                response.body().close();
+                                if(response != null && response.body() != null) {
+                                    response.body().close();
+                                }
                             }
                         }
 
@@ -1019,7 +1025,9 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                             MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(ownMagazine.getId(), Constants.FOLLOW_TOPIC_EVENT);
                                         }
                                     } finally {
-                                        response.body().close();
+                                        if(response != null && response.body() != null) {
+                                            response.body().close();
+                                        }
                                     }
                                 }
 

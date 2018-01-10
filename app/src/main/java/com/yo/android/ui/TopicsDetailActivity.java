@@ -654,7 +654,9 @@ public class TopicsDetailActivity extends BaseActivity {
                                         notifyDataSetChanged();
                                     }
                                 } finally {
-                                    response.body().close();
+                                    if(response != null && response.body() != null) {
+                                        response.body().close();
+                                    }
                                 }
                             }
 
@@ -778,7 +780,9 @@ public class TopicsDetailActivity extends BaseActivity {
                                                                                                         notifyDataSetChanged();
                                                                                                     }
                                                                                                 } finally {
-                                                                                                    response.body().close();
+                                                                                                    if(response != null && response.body() != null) {
+                                                                                                        response.body().close();
+                                                                                                    }
                                                                                                 }
                                                                                             }
 
@@ -974,7 +978,9 @@ public class TopicsDetailActivity extends BaseActivity {
                                             }
                                         }
                                     } finally {
-                                        response.body().close();
+                                        if(response != null && response.body() != null) {
+                                            response.body().close();
+                                        }
                                     }
                                 }
 

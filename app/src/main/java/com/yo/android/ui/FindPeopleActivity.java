@@ -40,6 +40,7 @@ import com.yo.dialer.DialerLogs;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import butterknife.Bind;
@@ -247,9 +248,9 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getFindPeopleAPI(accessToken, pageCount, 30).enqueue(new Callback<List<FindPeople>>() {
             @Override
-            public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
+            public void onResponse(Call<List<FindPeople>> call, @Nonnull Response<List<FindPeople>> response) {
                 dismissProgressDialog();
-                if (response.body().size() > 0) {
+                if (response.body() != null && response.body().size() > 0) {
                     List<FindPeople> findPeopleList = response.body();
                     findPeopleAdapter.addItemsAll(findPeopleList);
                     originalList.addAll(findPeopleList);

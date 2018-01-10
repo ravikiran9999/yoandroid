@@ -578,7 +578,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                         saveCachedMagazinesList(cachedMagazinesList);
                                     }
                                 } finally {
-                                    response.body().close();
+                                    if(response != null && response.body() != null) {
+                                        response.body().close();
+                                    }
                                 }
 
                             }
@@ -641,7 +643,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                         saveCachedMagazinesList(cachedMagazinesList);
                                     }
                                 } finally {
-                                    response.body().close();
+                                    if(response != null && response.body() != null) {
+                                        response.body().close();
+                                    }
                                 }
 
                             }
@@ -722,7 +726,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             .load(data.getImage_filename())
                             .asBitmap()
                             .placeholder(R.drawable.magazine_backdrop)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                             .dontAnimate()
                             .into(new SimpleTarget<Bitmap>() {
                                 @Override
@@ -736,7 +740,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                                 .override(bmp.getWidth(), bmp.getHeight())
                                                 .placeholder(R.drawable.magazine_backdrop)
                                                 .crossFade()
-                                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                                                 .dontAnimate()
                                                 .into(photoView);
                                         int screenHeight = DeviceDimensionsHelper.getDisplayHeight(context);
@@ -1117,7 +1121,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
                         }
                     } finally {
-                        response.body().close();
+                        if(response != null && response.body() != null) {
+                            response.body().close();
+                        }
                     }
                 }
 
@@ -1211,7 +1217,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                                                                                     preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
                                                                                                 }
                                                                                             } finally {
-                                                                                                response.body().close();
+                                                                                                if(response != null && response.body() != null) {
+                                                                                                    response.body().close();
+                                                                                                }
                                                                                             }
                                                                                         }
 
@@ -1551,7 +1559,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             .load(data.getImage_filename())
                             .asBitmap()
                             .placeholder(R.drawable.magazine_backdrop)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                             .dontAnimate()
                             .into(new SimpleTarget<Bitmap>() {
                                 @Override
@@ -1565,7 +1573,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                                 .override(bmp.getWidth(), bmp.getHeight())
                                                 .placeholder(R.drawable.magazine_backdrop)
                                                 .crossFade()
-                                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                                                 .dontAnimate()
                                                 .into(photoView);
                                     }
@@ -1855,7 +1863,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             .load(data.getImage_filename())
                             .asBitmap()
                             .placeholder(R.drawable.magazine_backdrop)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                             .dontAnimate()
                             .into(new SimpleTarget<Bitmap>() {
                                 @Override
@@ -1869,7 +1877,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                                 .override(bmp.getWidth(), bmp.getHeight())
                                                 .placeholder(R.drawable.magazine_backdrop)
                                                 .crossFade()
-                                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                                                 .dontAnimate()
                                                 .into(photoView);
                                     }
@@ -2168,7 +2176,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             .load(data.getImage_filename())
                             .asBitmap()
                             .placeholder(R.drawable.magazine_backdrop)
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                             .dontAnimate()
                             .into(new SimpleTarget<Bitmap>() {
                                 @Override
@@ -2182,7 +2190,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                                 .override(bmp.getWidth(), bmp.getHeight())
                                                 .placeholder(R.drawable.magazine_backdrop)
                                                 .crossFade()
-                                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                                                 .dontAnimate()
                                                 .into(photoView);
                                     }

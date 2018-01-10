@@ -186,8 +186,8 @@
 
                             <ImageView
                                 android:id="@+id/add_more_amount"
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
                                 android:layout_alignParentEnd="true"
                                 android:layout_alignParentRight="true"
                                 android:layout_alignParentTop="true"

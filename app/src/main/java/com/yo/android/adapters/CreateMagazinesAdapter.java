@@ -50,7 +50,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                         .load(item.getImage())
                         .asBitmap()
                         .placeholder(R.drawable.magazine_backdrop)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                         .dontAnimate()
                         .into(new SimpleTarget<Bitmap>() {
                             @Override
@@ -63,7 +63,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                                             .override(bmp.getWidth(), bmp.getHeight())
                                             .placeholder(R.drawable.magazine_backdrop)
                                             .crossFade()
-                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                                             .dontAnimate()
                                             .into(holder.getImageView());
                                 }
@@ -76,7 +76,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                             .load(R.drawable.ic_default_magazine)
                             .fitCenter()
                             .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                             .dontAnimate()
                             .into(holder.getImageView());
                 } else {
@@ -84,7 +84,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                             .load(R.drawable.magazine_backdrop)
                             .fitCenter()
                             .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                             .dontAnimate()
                             .into(holder.getImageView());
                 }
@@ -105,7 +105,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                         .load(item.getImage())
                         .asBitmap()
                         .placeholder(R.drawable.magazine_backdrop)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                         .dontAnimate()
                         .into(new SimpleTarget<Bitmap>() {
                             @Override
@@ -118,7 +118,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                                             .override(bmp.getWidth(), bmp.getHeight())
                                             .placeholder(R.drawable.magazine_backdrop)
                                             .crossFade()
-                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                                             .dontAnimate()
                                             .into(holder.getImageView());
                                 }
@@ -131,7 +131,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                             .load(R.drawable.ic_default_magazine)
                             .fitCenter()
                             .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                             .dontAnimate()
                             .into(holder.getImageView());
                 } else {
@@ -139,7 +139,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                             .load(R.drawable.magazine_backdrop)
                             .fitCenter()
                             .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                             .dontAnimate()
                             .into(holder.getImageView());
                 }

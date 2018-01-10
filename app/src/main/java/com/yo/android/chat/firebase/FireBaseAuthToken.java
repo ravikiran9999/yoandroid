@@ -94,7 +94,9 @@ public class FireBaseAuthToken {
                         waitingForReply = false;
                         listener.onFailed();
                     } finally {
-                        response.body().close();
+                        if(response != null && response.body() != null) {
+                            response.body().close();
+                        }
                     }
                 }
 

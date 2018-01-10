@@ -44,7 +44,9 @@ public class WebserviceUsecase {
                         }
                     }
                 } finally {
-                    response.body().setData(null);
+                    if (response != null && response.body() != null) {
+                        response.body().setData(null);
+                    }
                 }
             }
 

@@ -3,15 +3,21 @@ package com.yo.android.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.NotificationsAdapter;
+import com.yo.android.api.ApiCallback;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.notification.helper.NotificationCache;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
@@ -19,8 +25,10 @@ import com.yo.android.model.Articles;
 import com.yo.android.model.FindPeople;
 import com.yo.android.model.Notification;
 import com.yo.android.ui.fragments.InviteActivity;
+import com.yo.android.usecase.NotificationUsecase;
 import com.yo.android.util.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -37,7 +45,9 @@ import retrofit2.Response;
 /**
  * This activity is used to display the list of Notifications
  */
-public class NotificationsActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener{
+public class NotificationsActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
+
+    public static final String CLEAR = "clear";
 
     @Bind(R.id.lv_notifications)
     protected ListView lvNotifications;
@@ -56,6 +66,9 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
     private NotificationsAdapter notificationsAdapter;
+
+    @Inject
+    NotificationUsecase notificationUsecase;
 
 
     @Override
@@ -86,7 +99,7 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
                 String title = notificationsAdapter.getItem(position).getTitle();
                 lvNotifications.setEnabled(false);
 
-                if("User".equals(tag)) {
+                if ("User".equals(tag)) {
                     String accessToken = preferenceEndPoint.getStringPreference("access_token");
                     yoService.getUserInfoFromId(redirectId, accessToken).enqueue(new Callback<FindPeople>() {
                         @Override
@@ -112,13 +125,13 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
                         }
                     });
 
-                } else if("Topic".equals(tag)) {
+                } else if ("Topic".equals(tag)) {
                     Intent intent = new Intent(NotificationsActivity.this, MyCollectionDetails.class);
                     intent.putExtra("TopicId", redirectId);
                     intent.putExtra("TopicName", title);
                     intent.putExtra("Type", "Tag");
                     startActivity(intent);
-                } else if("Article".equals(tag)) {
+                } else if ("Article".equals(tag)) {
                     String accessToken = preferenceEndPoint.getStringPreference("access_token");
                     yoService.getArticleInfo(redirectId, accessToken).enqueue(new Callback<Articles>() {
                         @Override
@@ -140,15 +153,15 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
                         }
                     });
 
-                } else if("Magzine".equals(tag)) {
+                } else if ("Magzine".equals(tag)) {
                     Intent intent = new Intent(NotificationsActivity.this, MyCollectionDetails.class);
                     intent.putExtra("TopicId", redirectId);
                     intent.putExtra("TopicName", title);
                     intent.putExtra("Type", "Magzine");
                     startActivity(intent);
-                } else if("Recharge".equals(tag) || "Credit".equals(tag) || "BalanceTransferred".equals(tag)) {
+                } else if ("Recharge".equals(tag) || "Credit".equals(tag) || "BalanceTransferred".equals(tag)) {
                     startActivity(new Intent(NotificationsActivity.this, TabsHeaderActivity.class));
-                } else if("Broadcast".equals(tag) || "Tip".equals(tag) || "PriceUpdate".equals(tag)) {
+                } else if ("Broadcast".equals(tag) || "Tip".equals(tag) || "PriceUpdate".equals(tag)) {
                     if (redirectId.equals("AddFriends")) {
                         startActivity(new Intent(NotificationsActivity.this, InviteActivity.class));
                     } else if (redirectId.equals("AddBalance")) {
@@ -164,15 +177,15 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
 
     private void getNotifications(final SwipeRefreshLayout swipeRefreshContainer) {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        if(swipeRefreshContainer != null) {
+        if (swipeRefreshContainer != null) {
             swipeRefreshContainer.setRefreshing(false);
         } else {
             showProgressDialog();
         }
-        yoService.getNotifications(accessToken).enqueue(new Callback<List<Notification>>() {
+        yoService.getNotifications(accessToken, "", "").enqueue(new Callback<List<Notification>>() {
             @Override
             public void onResponse(Call<List<Notification>> call, Response<List<Notification>> response) {
-                if(swipeRefreshContainer != null) {
+                if (swipeRefreshContainer != null) {
                     swipeRefreshContainer.setRefreshing(false);
                 } else {
                     dismissProgressDialog();
@@ -199,7 +212,7 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
 
             @Override
             public void onFailure(Call<List<Notification>> call, Throwable t) {
-                if(swipeRefreshContainer != null) {
+                if (swipeRefreshContainer != null) {
                     swipeRefreshContainer.setRefreshing(false);
                 } else {
                     dismissProgressDialog();
@@ -213,25 +226,68 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.clear();
+        getMenuInflater().inflate(R.menu.menu_notifications, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.clear) {
+            List<String> clearNotifications = new ArrayList<>();
+            for(Notification notification : notificationsAdapter.getAllItems()) {
+                clearNotifications.add(notification.getNotification_id());
+            }
+            if(clearNotifications.size() > 0) {
+                String notificationIds = new Gson().toJson(clearNotifications);
+                notificationUsecase.getNotifications(notificationIds, CLEAR, new ApiCallback<List<Notification>>() {
+                    @Override
+                    public void onResult(List<Notification> result) {
+                        notificationsAdapter.getAllItems().clear();
+
+                        lvNotifications.setVisibility(View.GONE);
+                        llNoNotifications.setVisibility(View.VISIBLE);
+
+                        notificationsAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onFailure(String message) {
+
+                    }
+                });
+
+            }
+        } else if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+
+        return true;
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         preferenceEndPoint.saveBooleanPreference("isNotifications", false);
         EventBus.getDefault().unregister(this);
     }
+
     public void onEvent(final String action) {
 
-    runOnUiThread(new Runnable() {
-        @Override
-        public void run() {
-            onEventMainThread(action);
-        }
-    });
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                onEventMainThread(action);
+            }
+        });
     }
+
     public void onEventMainThread(String action) {
         if (Constants.UPDATE_NOTIFICATIONS.equals(action)) {
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
             showProgressDialog();
-            yoService.getNotifications(accessToken).enqueue(new Callback<List<Notification>>() {
+            yoService.getNotifications(accessToken, "", "").enqueue(new Callback<List<Notification>>() {
                 @Override
                 public void onResponse(Call<List<Notification>> call, Response<List<Notification>> response) {
                     dismissProgressDialog();

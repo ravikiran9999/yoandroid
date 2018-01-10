@@ -93,7 +93,7 @@ public class ImageLoader {
     }
 
 
-    static CustomTransformation transformation = new CustomTransformation() {
+    /*static CustomTransformation transformation = new CustomTransformation() {
         private String fileName;
         private String folderName;
 
@@ -134,7 +134,7 @@ public class ImageLoader {
         public String key() {
             return "transformation" + " desiredWidth";
         }
-    };
+    };*/
 
     private static void getImageHeightAndWidth(Context context, final File file, ImageView imageView, final ProgressBar progressBar) {
         //NewImageCompress.getImage(context, file, imageView, progressBar);

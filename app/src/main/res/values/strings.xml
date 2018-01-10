@@ -444,4 +444,6 @@
     <string name="unable_to_fetch_new_articles">Unable to connect to fetch new articles, Please check your network connection.</string>
     <string name="no_topics_available">No topics are available for selection</string>
     <string name="no_topics_selected">Please select the topics</string>
+
+    <string name="clear">Clear</string>
 </resources>

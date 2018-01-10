@@ -654,7 +654,9 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                         notifyDataSetChanged();
                                     }
                                 } finally {
-                                    response.body().close();
+                                    if(response != null && response.body() != null) {
+                                        response.body().close();
+                                    }
                                 }
                             }
 
@@ -714,7 +716,9 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                                 notifyDataSetChanged();
                                             }
                                         } finally {
-                                            response.body().close();
+                                            if(response != null && response.body() != null) {
+                                                response.body().close();
+                                            }
                                         }
                                     }
 

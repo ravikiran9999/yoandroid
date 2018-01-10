@@ -662,7 +662,9 @@ public class WishListActivity extends BaseActivity {
                                         notifyDataSetChanged();
                                     }
                                 } finally {
-                                    response.body().close();
+                                    if(response != null && response.body() != null) {
+                                        response.body().close();
+                                    }
                                 }
                             }
 
@@ -722,7 +724,9 @@ public class WishListActivity extends BaseActivity {
 
                                             refreshWishList();
                                         } finally {
-                                            response.body().close();
+                                            if(response != null && response.body() != null) {
+                                                response.body().close();
+                                            }
                                         }
                                     }
 
