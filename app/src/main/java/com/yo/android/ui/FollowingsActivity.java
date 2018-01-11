@@ -104,14 +104,25 @@ public class FollowingsActivity extends BaseActivity implements SwipeRefreshLayo
                     dismissProgressDialog();
                 }
                 if (response.body() != null && response.body().size() > 0) {
-                    noData.setVisibility(View.GONE);
-                    llNoPeople.setVisibility(View.GONE);
-                    lvFindPeople.setVisibility(View.VISIBLE);
-                    networkFailureText.setVisibility(View.GONE);
-                    List<FindPeople> findPeopleList = response.body();
-                    findPeopleAdapter.addItems(findPeopleList);
-                    isEmptyDataSet = false;
-                    isNetworkFailure = false;
+                    try {
+                        noData.setVisibility(View.GONE);
+                        llNoPeople.setVisibility(View.GONE);
+                        lvFindPeople.setVisibility(View.VISIBLE);
+                        networkFailureText.setVisibility(View.GONE);
+                        List<FindPeople> findPeopleList = response.body();
+                        findPeopleAdapter.addItems(findPeopleList);
+                        isEmptyDataSet = false;
+                        isNetworkFailure = false;
+                    } finally {
+                        if(response != null && response.body() != null) {
+                            try {
+                                response.body().clear();
+                                response = null;
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
                 } else {
                     noData.setVisibility(View.GONE);
                     llNoPeople.setVisibility(View.VISIBLE);
@@ -162,15 +173,26 @@ public class FollowingsActivity extends BaseActivity implements SwipeRefreshLayo
 
                         dismissProgressDialog();
                         if (response.body().size() > 0) {
-                            noData.setVisibility(View.GONE);
-                            llNoPeople.setVisibility(View.GONE);
-                            lvFindPeople.setVisibility(View.VISIBLE);
-                            networkFailureText.setVisibility(View.GONE);
-                            List<FindPeople> findPeopleList = response.body();
-                            findPeopleAdapter.clearAll();
-                            findPeopleAdapter.addItems(findPeopleList);
-                            isEmptyDataSet = false;
-                            isNetworkFailure = false;
+                            try {
+                                noData.setVisibility(View.GONE);
+                                llNoPeople.setVisibility(View.GONE);
+                                lvFindPeople.setVisibility(View.VISIBLE);
+                                networkFailureText.setVisibility(View.GONE);
+                                List<FindPeople> findPeopleList = response.body();
+                                findPeopleAdapter.clearAll();
+                                findPeopleAdapter.addItems(findPeopleList);
+                                isEmptyDataSet = false;
+                                isNetworkFailure = false;
+                            } finally {
+                                if(response != null && response.body() != null) {
+                                    try {
+                                        response.body().clear();
+                                        response = null;
+                                    }catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
                         } else {
                             noData.setVisibility(View.GONE);
                             llNoPeople.setVisibility(View.VISIBLE);

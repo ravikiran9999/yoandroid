@@ -250,7 +250,13 @@ public class AccountDetailsFragment extends BaseFragment {
                         mToastFactory.showToast(getString(R.string.failed_update));
                     }
                 } finally {
-
+                    if(response != null && response.body() != null) {
+                        try {
+                            response = null;
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
 

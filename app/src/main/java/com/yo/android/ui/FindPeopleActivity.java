@@ -165,29 +165,40 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
         yoService.getFindPeopleAPI(accessToken, 1, 30).enqueue(new Callback<List<FindPeople>>() {
             @Override
             public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
-                if (swipeRefreshContainer != null) {
-                    swipeRefreshContainer.setRefreshing(false);
-                } else {
-                    dismissProgressDialog();
-                }
-                if (response.body() != null && response.body().size() > 0) {
-                    List<FindPeople> findPeopleList = response.body();
-                    findPeopleAdapter.clearAll();
-                    findPeopleAdapter.addItemsAll(findPeopleList);
+                try {
+                    if (swipeRefreshContainer != null) {
+                        swipeRefreshContainer.setRefreshing(false);
+                    } else {
+                        dismissProgressDialog();
+                    }
+                    if (response.body() != null && response.body().size() > 0) {
+                        List<FindPeople> findPeopleList = response.body();
+                        findPeopleAdapter.clearAll();
+                        findPeopleAdapter.addItemsAll(findPeopleList);
 
-                    // Todo comment below lines
-                    lvFindPeople.setVisibility(View.VISIBLE);
-                    noData.setVisibility(View.GONE);
-                    llNoPeople.setVisibility(View.GONE);
-                    originalList = response.body();
-                    networkFailureText.setVisibility(View.GONE);
+                        // Todo comment below lines
+                        lvFindPeople.setVisibility(View.VISIBLE);
+                        noData.setVisibility(View.GONE);
+                        llNoPeople.setVisibility(View.GONE);
+                        originalList = response.body();
+                        networkFailureText.setVisibility(View.GONE);
 
-                } else {
-                    // Todo comment below lines
-                    noData.setVisibility(View.GONE);
-                    llNoPeople.setVisibility(View.VISIBLE);
-                    lvFindPeople.setVisibility(View.GONE);
-                    networkFailureText.setVisibility(View.GONE);
+                    } else {
+                        // Todo comment below lines
+                        noData.setVisibility(View.GONE);
+                        llNoPeople.setVisibility(View.VISIBLE);
+                        lvFindPeople.setVisibility(View.GONE);
+                        networkFailureText.setVisibility(View.GONE);
+                    }
+                } finally {
+                    if(response != null && response.body() != null) {
+                        try {
+                            response.body().clear();
+                            response = null;
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
 
@@ -249,13 +260,23 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
         yoService.getFindPeopleAPI(accessToken, pageCount, 30).enqueue(new Callback<List<FindPeople>>() {
             @Override
             public void onResponse(Call<List<FindPeople>> call, @Nonnull Response<List<FindPeople>> response) {
-                dismissProgressDialog();
-                if (response.body() != null && response.body().size() > 0) {
-                    List<FindPeople> findPeopleList = response.body();
-                    findPeopleAdapter.addItemsAll(findPeopleList);
-                    originalList.addAll(findPeopleList);
+                try {
+                    dismissProgressDialog();
+                    if (response.body() != null && response.body().size() > 0) {
+                        List<FindPeople> findPeopleList = response.body();
+                        findPeopleAdapter.addItemsAll(findPeopleList);
+                        originalList.addAll(findPeopleList);
+                    }
+                    isMoreLoading = false;
+                } finally {
+                    if(response != null && response.body() != null) {
+                        try {
+                            response.body().clear();
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
-                isMoreLoading = false;
             }
 
             @Override
@@ -362,15 +383,26 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
                 public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
                     dismissProgressDialog();
                     if (response.body() != null && response.body().size() > 0) {
-                        List<FindPeople> findPeopleList = response.body();
-                        findPeopleAdapter.clearAll();
-                        findPeopleAdapter.addItemsAll(findPeopleList);
+                        try {
+                            List<FindPeople> findPeopleList = response.body();
+                            findPeopleAdapter.clearAll();
+                            findPeopleAdapter.addItemsAll(findPeopleList);
 
-                        // Todo comment below lines
-                        lvFindPeople.setVisibility(View.VISIBLE);
-                        noData.setVisibility(View.GONE);
-                        llNoPeople.setVisibility(View.GONE);
-                        networkFailureText.setVisibility(View.GONE);
+                            // Todo comment below lines
+                            lvFindPeople.setVisibility(View.VISIBLE);
+                            noData.setVisibility(View.GONE);
+                            llNoPeople.setVisibility(View.GONE);
+                            networkFailureText.setVisibility(View.GONE);
+                        } finally {
+                            if(response != null && response.body() != null) {
+                                try {
+                                    response.body().clear();
+                                    response = null;
+                                }catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
 
                     } else {
                         // Todo comment below lines

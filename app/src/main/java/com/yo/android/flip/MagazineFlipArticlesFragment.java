@@ -24,6 +24,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.util.ConnectivityHelper;
@@ -121,6 +122,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     private MagazineDashboardHelper magazineDashboardHelper;
     private String followedTopicId;
     private static int articleCountThreshold = 2000;
+    private Context mContext;
     //private boolean isFetchArticlesPosted;
 
     @SuppressLint("ValidFragment")
@@ -163,6 +165,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             update();
         }
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
     }
 
     @Override
@@ -396,7 +404,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     public void onDestroyView() {
         super.onDestroyView();
+        try {
+            Glide glide = Glide.get(mContext);
+            glide.clearMemory();
+        } finally {
 
+        }
     }
 
     @Override
@@ -1619,4 +1632,5 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         boolean appLockStatus = preferenceEndPoint.getBooleanPreference(Constants.APP_LOCK, false);
         return appLockStatus && updateCalled == 0;
     }
+
 }

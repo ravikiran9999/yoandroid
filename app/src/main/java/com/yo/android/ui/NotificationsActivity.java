@@ -106,16 +106,26 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
                         public void onResponse(Call<FindPeople> call, Response<FindPeople> response) {
 
                             if (response.body() != null) {
-                                FindPeople userInfo = response.body();
-                                Intent intent = new Intent(NotificationsActivity.this, OthersProfileActivity.class);
-                                intent.putExtra(Constants.USER_ID, redirectId);
-                                intent.putExtra("PersonName", userInfo.getFirst_name() + " " + userInfo.getLast_name());
-                                intent.putExtra("PersonPic", userInfo.getAvatar());
-                                intent.putExtra("PersonIsFollowing", userInfo.getIsFollowing());
-                                intent.putExtra("MagazinesCount", userInfo.getMagzinesCount());
-                                intent.putExtra("FollowersCount", userInfo.getFollowersCount());
-                                intent.putExtra("LikedArticlesCount", userInfo.getLikedArticlesCount());
-                                startActivity(intent);
+                                try {
+                                    FindPeople userInfo = response.body();
+                                    Intent intent = new Intent(NotificationsActivity.this, OthersProfileActivity.class);
+                                    intent.putExtra(Constants.USER_ID, redirectId);
+                                    intent.putExtra("PersonName", userInfo.getFirst_name() + " " + userInfo.getLast_name());
+                                    intent.putExtra("PersonPic", userInfo.getAvatar());
+                                    intent.putExtra("PersonIsFollowing", userInfo.getIsFollowing());
+                                    intent.putExtra("MagazinesCount", userInfo.getMagzinesCount());
+                                    intent.putExtra("FollowersCount", userInfo.getFollowersCount());
+                                    intent.putExtra("LikedArticlesCount", userInfo.getLikedArticlesCount());
+                                    startActivity(intent);
+                                } finally {
+                                    if(response != null && response.body() != null) {
+                                        try {
+                                            response = null;
+                                        }catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
                             }
                         }
 
@@ -137,13 +147,23 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
                         @Override
                         public void onResponse(Call<Articles> call, Response<Articles> response) {
                             if (response.body() != null) {
-                                Articles articles = response.body();
-                                Intent intent = new Intent(NotificationsActivity.this, MagazineArticleDetailsActivity.class);
-                                intent.putExtra("Title", articles.getTitle());
-                                intent.putExtra("Image", articles.getUrl());
-                                intent.putExtra("Article", articles);
-                                intent.putExtra("Position", 0);
-                                startActivity(intent);
+                                try {
+                                    Articles articles = response.body();
+                                    Intent intent = new Intent(NotificationsActivity.this, MagazineArticleDetailsActivity.class);
+                                    intent.putExtra("Title", articles.getTitle());
+                                    intent.putExtra("Image", articles.getUrl());
+                                    intent.putExtra("Article", articles);
+                                    intent.putExtra("Position", 0);
+                                    startActivity(intent);
+                                } finally {
+                                    if(response != null && response.body() != null) {
+                                        try {
+                                            response = null;
+                                        }catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
                             }
                         }
 
@@ -190,23 +210,33 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
                 } else {
                     dismissProgressDialog();
                 }
-
-                if (response == null || response.body() == null || response.body().isEmpty()) {
-                    lvNotifications.setVisibility(View.GONE);
-                    noData.setVisibility(View.GONE);
-                    llNoNotifications.setVisibility(View.VISIBLE);
-                    networkFailureText.setVisibility(View.GONE);
-                    return;
-                }
-                if (response != null && response.body().size() > 0) {
-                    preferenceEndPoint.saveIntPreference(Constants.NOTIFICATION_COUNT, 0);
-                    NotificationCache.clearNotifications();
-                    List<Notification> notificationList = response.body();
-                    notificationsAdapter.addItems(notificationList);
-                    lvNotifications.setVisibility(View.VISIBLE);
-                    noData.setVisibility(View.GONE);
-                    llNoNotifications.setVisibility(View.GONE);
-                    networkFailureText.setVisibility(View.GONE);
+                try {
+                    if (response == null || response.body() == null || response.body().isEmpty()) {
+                        lvNotifications.setVisibility(View.GONE);
+                        noData.setVisibility(View.GONE);
+                        llNoNotifications.setVisibility(View.VISIBLE);
+                        networkFailureText.setVisibility(View.GONE);
+                        return;
+                    }
+                    if (response != null && response.body().size() > 0) {
+                        preferenceEndPoint.saveIntPreference(Constants.NOTIFICATION_COUNT, 0);
+                        NotificationCache.clearNotifications();
+                        List<Notification> notificationList = response.body();
+                        notificationsAdapter.addItems(notificationList);
+                        lvNotifications.setVisibility(View.VISIBLE);
+                        noData.setVisibility(View.GONE);
+                        llNoNotifications.setVisibility(View.GONE);
+                        networkFailureText.setVisibility(View.GONE);
+                    }
+                } finally {
+                    if (response != null && response.body() != null) {
+                        try {
+                            response.body().clear();
+                            response = null;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
 
@@ -236,10 +266,10 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.clear) {
             List<String> clearNotifications = new ArrayList<>();
-            for(Notification notification : notificationsAdapter.getAllItems()) {
+            for (Notification notification : notificationsAdapter.getAllItems()) {
                 clearNotifications.add(notification.getNotification_id());
             }
-            if(clearNotifications.size() > 0) {
+            if (clearNotifications.size() > 0) {
                 String notificationIds = new Gson().toJson(clearNotifications);
                 notificationUsecase.getNotifications(notificationIds, CLEAR, new ApiCallback<List<Notification>>() {
                     @Override
@@ -291,22 +321,33 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
                 @Override
                 public void onResponse(Call<List<Notification>> call, Response<List<Notification>> response) {
                     dismissProgressDialog();
-                    if (response == null || response.body() == null) {
-                        lvNotifications.setVisibility(View.GONE);
-                        noData.setVisibility(View.GONE);
-                        llNoNotifications.setVisibility(View.VISIBLE);
-                        networkFailureText.setVisibility(View.GONE);
-                        return;
-                    }
-                    if (response != null && response.body().size() > 0) {
-                        NotificationCache.clearNotifications();
-                        preferenceEndPoint.saveIntPreference(Constants.NOTIFICATION_COUNT, 0);
-                        List<Notification> notificationList = response.body();
-                        notificationsAdapter.addItems(notificationList);
-                        lvNotifications.setVisibility(View.VISIBLE);
-                        noData.setVisibility(View.GONE);
-                        llNoNotifications.setVisibility(View.GONE);
-                        networkFailureText.setVisibility(View.GONE);
+                    try {
+                        if (response == null || response.body() == null) {
+                            lvNotifications.setVisibility(View.GONE);
+                            noData.setVisibility(View.GONE);
+                            llNoNotifications.setVisibility(View.VISIBLE);
+                            networkFailureText.setVisibility(View.GONE);
+                            return;
+                        }
+                        if (response != null && response.body().size() > 0) {
+                            NotificationCache.clearNotifications();
+                            preferenceEndPoint.saveIntPreference(Constants.NOTIFICATION_COUNT, 0);
+                            List<Notification> notificationList = response.body();
+                            notificationsAdapter.addItems(notificationList);
+                            lvNotifications.setVisibility(View.VISIBLE);
+                            noData.setVisibility(View.GONE);
+                            llNoNotifications.setVisibility(View.GONE);
+                            networkFailureText.setVisibility(View.GONE);
+                        }
+                    }finally {
+                        if(response != null && response.body() != null) {
+                            try {
+                                response.body().clear();
+                                response = null;
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }
 

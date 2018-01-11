@@ -168,24 +168,34 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                         @Override
                         public void onResponse(Call<YOUserInfo> call, Response<YOUserInfo> response) {
                             //update new data into database
-                            YOUserInfo yoUserInfo = response.body();
-                            contact.setId(yoUserInfo.getId());
-                            contact.setFirebaseRoomId(yoUserInfo.getFirebaseRoomId());
-                            contact.setImage(yoUserInfo.getAvatar());
-                            contact.setName(yoUserInfo.getFirst_name());
+                            try {
+                                YOUserInfo yoUserInfo = response.body();
+                                contact.setId(yoUserInfo.getId());
+                                contact.setFirebaseRoomId(yoUserInfo.getFirebaseRoomId());
+                                contact.setImage(yoUserInfo.getAvatar());
+                                contact.setName(yoUserInfo.getFirst_name());
 
-                            args.putString(Constants.CHAT_ROOM_ID, yoUserInfo.getFirebaseRoomId());
-                            args.putString(Constants.OPPONENT_CONTACT_IMAGE, yoUserInfo.getAvatar());
-                            args.putString(Constants.OPPONENT_ID, yoUserInfo.getId());
-                            args.putParcelable(Constants.CONTACT, contact);
-                            if (yoUserInfo.getFirebaseRoomId() != null && !TextUtils.isEmpty(yoUserInfo.getFirebaseRoomId())) {
-                                callUserChat(args, userChatFragment);
-                            } else {
-                                mToastFactory.showToast(R.string.chat_room_id_error);
-                                String message = new Gson().toJson(args);
-                                appLogglyUsecase.sendAlertsToLoggly(Constants.CHAT_MODULE, message, Constants.CRITICAL, 808);
+                                args.putString(Constants.CHAT_ROOM_ID, yoUserInfo.getFirebaseRoomId());
+                                args.putString(Constants.OPPONENT_CONTACT_IMAGE, yoUserInfo.getAvatar());
+                                args.putString(Constants.OPPONENT_ID, yoUserInfo.getId());
+                                args.putParcelable(Constants.CONTACT, contact);
+                                if (yoUserInfo.getFirebaseRoomId() != null && !TextUtils.isEmpty(yoUserInfo.getFirebaseRoomId())) {
+                                    callUserChat(args, userChatFragment);
+                                } else {
+                                    mToastFactory.showToast(R.string.chat_room_id_error);
+                                    String message = new Gson().toJson(args);
+                                    appLogglyUsecase.sendAlertsToLoggly(Constants.CHAT_MODULE, message, Constants.CRITICAL, 808);
+                                }
+                                //callUserChat(args, userChatFragment);
+                            }finally {
+                                if(response != null && response.body() != null) {
+                                    try {
+                                        response = null;
+                                    }catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
                             }
-                            //callUserChat(args, userChatFragment);
                         }
 
                         @Override

@@ -178,15 +178,26 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
                     public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
                         dismissProgressDialog();
                         if (response.body() != null && response.body().size() > 0) {
-                            List<FindPeople> findPeopleList = response.body();
+                            try {
+                                List<FindPeople> findPeopleList = response.body();
 
-                            //originalList = response.body();
+                                //originalList = response.body();
 
-                            //loadAlphabetOrder(findPeopleList);
+                                //loadAlphabetOrder(findPeopleList);
 
-                            listView.setVisibility(View.VISIBLE);
-                            noData.setVisibility(View.GONE);
-                            llNoPeople.setVisibility(View.GONE);
+                                listView.setVisibility(View.VISIBLE);
+                                noData.setVisibility(View.GONE);
+                                llNoPeople.setVisibility(View.GONE);
+                            } finally {
+                                if(response != null && response.body() != null) {
+                                    try {
+                                        response.body().clear();
+                                        response = null;
+                                    }catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
 
                         } else {
                             noData.setVisibility(View.VISIBLE);
@@ -282,12 +293,23 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         yoService.getRepresentativePeopleAPI(accessToken, pageCount, 30, true).enqueue(new Callback<List<FindPeople>>() {
             @Override
             public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
-                dismissProgressDialog();
-                if (response.body().size() > 0) {
-                    List<FindPeople> findPeopleList = response.body();
-                    //loadAlphabetOrder(findPeopleList);
+                try {
+                    dismissProgressDialog();
+                    if (response.body().size() > 0) {
+                        List<FindPeople> findPeopleList = response.body();
+                        //loadAlphabetOrder(findPeopleList);
+                    }
+                    isMoreLoading = false;
+                }finally {
+                    if(response != null && response.body() != null) {
+                        try {
+                            response.body().clear();
+                            response = null;
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
-                isMoreLoading = false;
             }
 
             @Override
@@ -390,12 +412,23 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
                 @Override
                 public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
                     if (response.body() != null && response.body().size() > 0) {
-                        List<Contact> contactList = response.body();
-                        contactsListAdapter.clearAll();
-                        contactsListAdapter.addItemsAll(contactList);
-                        listView.setVisibility(View.VISIBLE);
-                        noData.setVisibility(View.GONE);
-                        llNoPeople.setVisibility(View.GONE);
+                        try {
+                            List<Contact> contactList = response.body();
+                            contactsListAdapter.clearAll();
+                            contactsListAdapter.addItemsAll(contactList);
+                            listView.setVisibility(View.VISIBLE);
+                            noData.setVisibility(View.GONE);
+                            llNoPeople.setVisibility(View.GONE);
+                        } finally {
+                            if(response != null && response.body() != null) {
+                                try {
+                                    response.body().clear();
+                                    response = null;
+                                }catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
 
                     } else {
                         noData.setVisibility(View.VISIBLE);

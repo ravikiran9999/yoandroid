@@ -90,17 +90,28 @@ public class WishListActivity extends BaseActivity {
             public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
                 dismissProgressDialog();
                 if (response.body() != null && response.body().size() > 0) {
-                    for (int i = 0; i < response.body().size(); i++) {
-                        flipContainer.setVisibility(View.VISIBLE);
-                        if (noArticals != null) {
-                            noArticals.setVisibility(View.GONE);
-                            llNoWishlist.setVisibility(View.GONE);
+                    try {
+                        for (int i = 0; i < response.body().size(); i++) {
+                            flipContainer.setVisibility(View.VISIBLE);
+                            if (noArticals != null) {
+                                noArticals.setVisibility(View.GONE);
+                                llNoWishlist.setVisibility(View.GONE);
+                            }
+                            if (!"...".equalsIgnoreCase(response.body().get(i).getSummary())) {
+                                articlesList.add(response.body().get(i));
+                            }
                         }
-                        if(!"...".equalsIgnoreCase(response.body().get(i).getSummary())) {
-                            articlesList.add(response.body().get(i));
+                        myBaseAdapter.addItems(articlesList);
+                    }finally {
+                        if(response != null && response.body() != null) {
+                            try {
+                                response.body().clear();
+                                response = null;
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
-                    myBaseAdapter.addItems(articlesList);
                 } else {
                     flipContainer.setVisibility(View.GONE);
                     if (noArticals != null) {
@@ -484,8 +495,10 @@ public class WishListActivity extends BaseActivity {
                             @Override
                             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                                 int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
+                                Bitmap bmp = null;
                                 if (resource != null) {
-                                    Bitmap bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
+                                    try {
+                                    bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
                                     Glide.with(context)
                                             .load(data.getImage_filename())
                                             .override(bmp.getWidth(), bmp.getHeight())
@@ -523,7 +536,12 @@ public class WishListActivity extends BaseActivity {
                                         textView1
                                                 .setText(Html.fromHtml(data.getSummary()));
                                     }
-
+                                    }finally {
+                                        if(bmp != null) {
+                                            bmp.recycle();
+                                            bmp = null;
+                                        }
+                                    }
                                     if(articleTitle != null) {
                                         ViewTreeObserver vto1 = articleTitle.getViewTreeObserver();
                                         vto1.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -887,17 +905,28 @@ public class WishListActivity extends BaseActivity {
             @Override
             public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
                 if (response.body() != null && response.body().size() > 0) {
-                    for (int i = 0; i < response.body().size(); i++) {
-                        if (!hasDestroyed()) {
-                            if (noArticals != null) {
-                                noArticals.setVisibility(View.GONE);
-                                llNoWishlist.setVisibility(View.GONE);
-                                flipContainer.setVisibility(View.VISIBLE);
+                    try {
+                        for (int i = 0; i < response.body().size(); i++) {
+                            if (!hasDestroyed()) {
+                                if (noArticals != null) {
+                                    noArticals.setVisibility(View.GONE);
+                                    llNoWishlist.setVisibility(View.GONE);
+                                    flipContainer.setVisibility(View.VISIBLE);
+                                }
+                                articlesList.add(response.body().get(i));
                             }
-                            articlesList.add(response.body().get(i));
+                        }
+                        myBaseAdapter.addItems(articlesList);
+                    }finally {
+                        if(response != null && response.body() != null) {
+                            try {
+                                response.body().clear();
+                                response = null;
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
-                    myBaseAdapter.addItems(articlesList);
                 } else {
                     if (!hasDestroyed()) {
                         if (noArticals != null) {

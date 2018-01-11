@@ -107,26 +107,36 @@ public class FindPeopleFragment extends BaseFragment implements SwipeRefreshLayo
         yoService.getFindPeopleAPI(accessToken, 1, 30).enqueue(new Callback<List<FindPeople>>() {
             @Override
             public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
-                if(swipeRefreshContainer != null) {
-                    swipeRefreshContainer.setRefreshing(false);
-                } else {
-                    dismissProgressDialog();
-                }
-                if (response.body() != null && response.body().size() > 0) {
-                    List<FindPeople> findPeopleList = response.body();
-                    findPeopleAdapter.clearAll();
-                    findPeopleAdapter.addItemsAll(findPeopleList);
-                    lvFindPeople.setVisibility(View.VISIBLE);
-                    noData.setVisibility(View.GONE);
-                    llNoPeople.setVisibility(View.GONE);
-                    originalList = response.body();
-                    networkFailureText.setVisibility(View.GONE);
+                try {
+                    if (swipeRefreshContainer != null) {
+                        swipeRefreshContainer.setRefreshing(false);
+                    } else {
+                        dismissProgressDialog();
+                    }
+                    if (response.body() != null && response.body().size() > 0) {
+                        List<FindPeople> findPeopleList = response.body();
+                        findPeopleAdapter.clearAll();
+                        findPeopleAdapter.addItemsAll(findPeopleList);
+                        lvFindPeople.setVisibility(View.VISIBLE);
+                        noData.setVisibility(View.GONE);
+                        llNoPeople.setVisibility(View.GONE);
+                        originalList = response.body();
+                        networkFailureText.setVisibility(View.GONE);
 
-                } else {
-                    noData.setVisibility(View.GONE);
-                    llNoPeople.setVisibility(View.VISIBLE);
-                    lvFindPeople.setVisibility(View.GONE);
-                    networkFailureText.setVisibility(View.GONE);
+                    } else {
+                        noData.setVisibility(View.GONE);
+                        llNoPeople.setVisibility(View.VISIBLE);
+                        lvFindPeople.setVisibility(View.GONE);
+                        networkFailureText.setVisibility(View.GONE);
+                    }
+                } finally {
+                    if(response != null && response.body() != null) {
+                        try {
+                            response.body().clear();
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
 

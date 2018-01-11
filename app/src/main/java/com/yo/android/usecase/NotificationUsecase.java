@@ -29,7 +29,18 @@ public class NotificationUsecase {
         call.enqueue(new Callback<List<Notification>>() {
             @Override
             public void onResponse(Call<List<Notification>> call, Response<List<Notification>> response) {
-                notificationCallback.onResult(response.body());
+                try {
+                    notificationCallback.onResult(response.body());
+                }finally {
+                    if(response != null && response.body() != null) {
+                        try {
+                            response.body().clear();
+                            response = null;
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
 
             @Override

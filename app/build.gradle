@@ -163,6 +163,10 @@ ext {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile fileTree(include: ['*.so'], dir: 'libs')
+
+    // detect memory leaks
+    //debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+
     //Support libs
     compile "com.android.support:appcompat-v7:${supportAppcompatVersion}"
     compile "com.android.support:design:${supportDesignVersion}"

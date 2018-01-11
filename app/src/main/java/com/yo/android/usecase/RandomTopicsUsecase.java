@@ -45,7 +45,12 @@ public class RandomTopicsUsecase {
 
                 } finally {
                     if (response != null && response.raw() != null) {
-                        //response.raw().close();
+                        try {
+                            response.body().clear();
+                            response = null;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }

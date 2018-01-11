@@ -140,26 +140,38 @@ public class GroupContactsActivity extends BaseActivity {
             @Override
             public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
                 List<Contact> contactList = new ArrayList<>();
-                if (response.body() != null) {
-                    for (int i = 0; i < response.body().size(); i++) {
-                        if (response.body().get(i).isYoAppUser()) {
-                            contactList.add(response.body().get(i));
+                try {
+                    if (response.body() != null) {
+                        for (int i = 0; i < response.body().size(); i++) {
+                            if (response.body().get(i).isYoAppUser()) {
+                                contactList.add(response.body().get(i));
+                            }
                         }
-                    }
 
-                    if (contactList.isEmpty()) {
+                        if (contactList.isEmpty()) {
+                            listView.setVisibility(View.GONE);
+                            textView.setVisibility(View.VISIBLE);
+                        } else {
+                            loadInAlphabeticalOrder(contactList);
+                        }
+                    } else {
                         listView.setVisibility(View.GONE);
                         textView.setVisibility(View.VISIBLE);
-                    } else {
-                        loadInAlphabeticalOrder(contactList);
                     }
-                } else {
-                    listView.setVisibility(View.GONE);
-                    textView.setVisibility(View.VISIBLE);
-                }
 
-                dismissProgressDialog();
+                    dismissProgressDialog();
+                } finally {
+                    if(response != null && response.body() != null) {
+                        try {
+                            response.body().clear();
+                            response = null;
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
+
 
             @Override
             public void onFailure(Call<List<Contact>> call, Throwable t) {

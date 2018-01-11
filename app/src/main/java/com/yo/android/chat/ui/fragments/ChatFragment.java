@@ -31,6 +31,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -163,6 +164,12 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         emptyImageView.setVisibility(View.GONE);
         swipeRefreshContainer.setOnRefreshListener(this);
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activity = (Activity)context;
     }
 
     private void getActiveSavedRooms() {
@@ -853,6 +860,16 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             Room room = (Room) data.getParcelableExtra(Constants.ROOM);
             ChatFragment.addNewGroup(room);
             ChatActivity.start(getActivity(), room);
+        }
+    }
+
+    public void onDestroyView() {
+        super.onDestroyView();
+        try {
+            Glide glide = Glide.get(activity);
+            glide.clearMemory();
+        } finally {
+
         }
     }
 }

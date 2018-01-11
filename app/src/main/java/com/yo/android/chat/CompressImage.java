@@ -31,10 +31,11 @@ public class CompressImage {
 
     public String compressImage(String imagePath, String iFolderName) {
         Bitmap scaledBitmap = null;
+        Bitmap bmp = null;
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        Bitmap bmp = BitmapFactory.decodeFile(imagePath, options);
+        bmp = BitmapFactory.decodeFile(imagePath, options);
 
         int actualHeight = options.outHeight;
         int actualWidth = options.outWidth;
@@ -95,6 +96,7 @@ public class CompressImage {
 
         if (bmp != null) {
             bmp.recycle();
+            bmp = null;
         }
 
         ExifInterface exif;
@@ -137,6 +139,11 @@ public class CompressImage {
                     e.printStackTrace();
                 }
 
+            }
+
+            if(scaledBitmap != null) {
+                scaledBitmap.recycle();
+                scaledBitmap = null;
             }
         }
 

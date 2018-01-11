@@ -61,14 +61,25 @@ public class OthersProfileMagazines extends BaseFragment {
             @Override
             public void onResponse(Call<List<OwnMagazine>> call, Response<List<OwnMagazine>> response) {
                 dismissProgressDialog();
-                if (response.body() != null && response.body().size() > 0) {
-                    List<OwnMagazine> magazineList = response.body();
-                    adapter = new OthersMagazinesAdapter(getActivity());
-                    adapter.addItems(magazineList);
-                    gridView.setAdapter(adapter);
-                } else {
-                    gridView.setVisibility(View.GONE);
-                    noData.setVisibility(View.VISIBLE);
+                try {
+                    if (response.body() != null && response.body().size() > 0) {
+                        List<OwnMagazine> magazineList = response.body();
+                        adapter = new OthersMagazinesAdapter(getActivity());
+                        adapter.addItems(magazineList);
+                        gridView.setAdapter(adapter);
+                    } else {
+                        gridView.setVisibility(View.GONE);
+                        noData.setVisibility(View.VISIBLE);
+                    }
+                } finally {
+                    if (response != null && response.body() != null) {
+                        try {
+                            response.body().clear();
+                            response = null;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
 
@@ -80,7 +91,9 @@ public class OthersProfileMagazines extends BaseFragment {
             }
         });
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+
+        {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 

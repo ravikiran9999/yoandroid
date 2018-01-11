@@ -732,37 +732,44 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 @Override
                                 public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                                     int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
+                                    Bitmap bmp = null;
                                     if (resource != null) {
-                                        Bitmap bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
-                                        Glide.clear(photoView);
-                                        Glide.with(context)
-                                                .load(data.getImage_filename())
-                                                .override(bmp.getWidth(), bmp.getHeight())
-                                                .placeholder(R.drawable.magazine_backdrop)
-                                                .crossFade()
-                                                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                                .dontAnimate()
-                                                .into(photoView);
-                                        int screenHeight = DeviceDimensionsHelper.getDisplayHeight(context);
-                                        //Log.d("BaseAdapter", "screenHeight " + screenHeight);
+                                        try {
+                                            bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
+                                            Glide.clear(photoView);
+                                            Glide.with(context)
+                                                    .load(data.getImage_filename())
+                                                    .override(bmp.getWidth(), bmp.getHeight())
+                                                    .placeholder(R.drawable.magazine_backdrop)
+                                                    .crossFade()
+                                                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                                                    .dontAnimate()
+                                                    .into(photoView);
+                                            int screenHeight = DeviceDimensionsHelper.getDisplayHeight(context);
+                                            //Log.d("BaseAdapter", "screenHeight " + screenHeight);
                                        /*int spaceForImage = screenHeight - 120;
                                        Log.d("BaseAdapter", "spaceForImage" + spaceForImage);*/
-                                        //Log.d("BaseAdapter", "bmp.getHeight()" + bmp.getHeight());
-                                        int total = bmp.getHeight() + 120;
-                                        //if(bmp.getHeight() >= spaceForImage-30) {
-                                        //Log.d("BaseAdapter", "total" + total);
-                                        if (screenHeight - total <= 250) {
+                                            //Log.d("BaseAdapter", "bmp.getHeight()" + bmp.getHeight());
+                                            int total = bmp.getHeight() + 120;
+                                            //if(bmp.getHeight() >= spaceForImage-30) {
+                                            //Log.d("BaseAdapter", "total" + total);
+                                            if (screenHeight - total <= 250) {
 
-                                            Log.d("BaseAdapter", "Full screen image");
-                                            if (fullImageTitle != null && articleTitle != null && blackMask != null && rlFullImageOptions != null) {
-                                                fullImageTitle.setVisibility(View.VISIBLE);
-                                                fullImageTitle.setText(articleTitle.getText().toString());
-                                                blackMask.setVisibility(View.VISIBLE);
-                                                rlFullImageOptions.setVisibility(View.VISIBLE);
+                                                Log.d("BaseAdapter", "Full screen image");
+                                                if (fullImageTitle != null && articleTitle != null && blackMask != null && rlFullImageOptions != null) {
+                                                    fullImageTitle.setVisibility(View.VISIBLE);
+                                                    fullImageTitle.setText(articleTitle.getText().toString());
+                                                    blackMask.setVisibility(View.VISIBLE);
+                                                    rlFullImageOptions.setVisibility(View.VISIBLE);
 
+                                                }
                                             }
+                                        }finally {
+                                        if(bmp != null) {
+                                            bmp.recycle();
+                                            bmp = null;
                                         }
-
+                                    }
                                         if (articleTitle != null) {
                                             ViewTreeObserver vto1 = articleTitle.getViewTreeObserver();
                                             vto1.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -1565,17 +1572,25 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 @Override
                                 public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                                     int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
+                                    Bitmap bmp = null;
                                     if (resource != null) {
-                                        Bitmap bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
-                                        Glide.clear(photoView);
-                                        Glide.with(context)
-                                                .load(data.getImage_filename())
-                                                .override(bmp.getWidth(), bmp.getHeight())
-                                                .placeholder(R.drawable.magazine_backdrop)
-                                                .crossFade()
-                                                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                                .dontAnimate()
-                                                .into(photoView);
+                                        try {
+                                            bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
+                                            Glide.clear(photoView);
+                                            Glide.with(context)
+                                                    .load(data.getImage_filename())
+                                                    .override(bmp.getWidth(), bmp.getHeight())
+                                                    .placeholder(R.drawable.magazine_backdrop)
+                                                    .crossFade()
+                                                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                                                    .dontAnimate()
+                                                    .into(photoView);
+                                        }finally {
+                                            if(bmp != null) {
+                                                bmp.recycle();
+                                                bmp = null;
+                                            }
+                                        }
                                     }
                                 }
                             });
@@ -1869,17 +1884,25 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 @Override
                                 public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                                     int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
+                                    Bitmap bmp = null;
                                     if (resource != null) {
-                                        Bitmap bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
-                                        Glide.clear(photoView);
-                                        Glide.with(context)
-                                                .load(data.getImage_filename())
-                                                .override(bmp.getWidth(), bmp.getHeight())
-                                                .placeholder(R.drawable.magazine_backdrop)
-                                                .crossFade()
-                                                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                                .dontAnimate()
-                                                .into(photoView);
+                                        try {
+                                            bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
+                                            Glide.clear(photoView);
+                                            Glide.with(context)
+                                                    .load(data.getImage_filename())
+                                                    .override(bmp.getWidth(), bmp.getHeight())
+                                                    .placeholder(R.drawable.magazine_backdrop)
+                                                    .crossFade()
+                                                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                                                    .dontAnimate()
+                                                    .into(photoView);
+                                        }finally {
+                                            if(bmp != null) {
+                                                bmp.recycle();
+                                                bmp = null;
+                                            }
+                                        }
                                     }
                                 }
                             });
@@ -2182,17 +2205,25 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 @Override
                                 public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                                     int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
+                                    Bitmap bmp = null;
                                     if (resource != null) {
-                                        Bitmap bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
-                                        Glide.clear(photoView);
-                                        Glide.with(context)
-                                                .load(data.getImage_filename())
-                                                .override(bmp.getWidth(), bmp.getHeight())
-                                                .placeholder(R.drawable.magazine_backdrop)
-                                                .crossFade()
-                                                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                                .dontAnimate()
-                                                .into(photoView);
+                                        try {
+                                            bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
+                                            Glide.clear(photoView);
+                                            Glide.with(context)
+                                                    .load(data.getImage_filename())
+                                                    .override(bmp.getWidth(), bmp.getHeight())
+                                                    .placeholder(R.drawable.magazine_backdrop)
+                                                    .crossFade()
+                                                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                                                    .dontAnimate()
+                                                    .into(photoView);
+                                        }finally {
+                                            if(bmp != null) {
+                                                bmp.recycle();
+                                                bmp = null;
+                                            }
+                                        }
                                     }
                                 }
                             });

@@ -319,9 +319,14 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 mAdapter.addAll(categoriesList);
                 mAdapter.notifyDataSetChanged();*/
                 } finally {
-                    /*if (response != null) {
-                        response.raw().close();
-                    }*/
+                    if(response != null && response.body() != null) {
+                        try {
+                            response.body().clear();
+                            response = null;
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
 

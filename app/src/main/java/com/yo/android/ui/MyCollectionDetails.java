@@ -616,8 +616,10 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                             @Override
                             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                                 int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
+                                Bitmap bmp = null;
                                 if (resource != null) {
-                                    Bitmap bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
+                                    try {
+                                    bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
                                     Glide.with(context)
                                             .load(data.getImage_filename())
                                             .override(bmp.getWidth(), bmp.getHeight())
@@ -655,7 +657,12 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                                         textView1
                                                 .setText(Html.fromHtml(data.getSummary()));
                                     }
-
+                                    }finally {
+                                        if(bmp != null) {
+                                            bmp.recycle();
+                                            bmp = null;
+                                        }
+                                    }
                                     if(articleTitle != null) {
                                         ViewTreeObserver vto1 = articleTitle.getViewTreeObserver();
                                         vto1.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -1271,13 +1278,24 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
                 dismissProgressDialog();
                 if (response.body() != null && response.body().size() > 0) {
-                    for (int i = 0; i < response.body().size(); i++) {
-                        if(!"...".equalsIgnoreCase(response.body().get(i).getSummary())) {
-                            articlesHashSet.add(response.body().get(i));
+                    try {
+                        for (int i = 0; i < response.body().size(); i++) {
+                            if (!"...".equalsIgnoreCase(response.body().get(i).getSummary())) {
+                                articlesHashSet.add(response.body().get(i));
+                            }
+                        }
+                        articlesList = new ArrayList<Articles>(articlesHashSet);
+                        articlesList.addAll(cachedArticlesList);
+                    } finally {
+                        if(response != null && response.body() != null) {
+                            try {
+                                response.body().clear();
+                                response = null;
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
-                    articlesList = new ArrayList<Articles>(articlesHashSet);
-                    articlesList.addAll(cachedArticlesList);
                     List<Articles> tempArticlesList = new ArrayList<Articles>(articlesList);
                     String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
                     String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(MyCollectionDetails.this, userId).getString("read_article_ids", "");
@@ -1355,13 +1373,23 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             public void onResponse(Call<MagazineArticles> call, Response<MagazineArticles> response) {
                 dismissProgressDialog();
                 if (response.body().getArticlesList() != null && response.body().getArticlesList().size() > 0) {
-                    for (int i = 0; i < response.body().getArticlesList().size(); i++) {
-                        if(!"...".equalsIgnoreCase(response.body().getArticlesList().get(i).getSummary())) {
-                            articlesHashSet.add(response.body().getArticlesList().get(i));
+                    try {
+                        for (int i = 0; i < response.body().getArticlesList().size(); i++) {
+                            if (!"...".equalsIgnoreCase(response.body().getArticlesList().get(i).getSummary())) {
+                                articlesHashSet.add(response.body().getArticlesList().get(i));
+                            }
+                        }
+                        articlesList = new ArrayList<Articles>(articlesHashSet);
+                        articlesList.addAll(cachedArticlesList);
+                    } finally {
+                        if(response != null && response.body() != null) {
+                            try {
+                                response = null;
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
-                    articlesList = new ArrayList<Articles>(articlesHashSet);
-                    articlesList.addAll(cachedArticlesList);
                     List<Articles> tempArticlesList = new ArrayList<Articles>(articlesList);
                     String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
                     String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(MyCollectionDetails.this, userId).getString("read_article_ids", "");

@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,18 +30,20 @@ public class SplashScreenActivity extends BaseActivity {
     PreferenceEndPoint preferenceEndPoint;
     @Inject
     WebserviceUsecase webserviceUsecase;
-    private Handler mHandler = new Handler();
+    //private Handler mHandler = new Handler();
     private static final long DURATION = 1000L;
+    private static Activity mActivity;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        new SplashScreen().execute();
+        new SplashScreen(this, preferenceEndPoint, webserviceUsecase).execute();
         //startService(new Intent(this, YoSipService.class));
 
     }
 
 
+    //Remove it
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
@@ -51,7 +54,7 @@ public class SplashScreenActivity extends BaseActivity {
                 if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_PROFILE_SCREEN)) {
                     startActivity(new Intent(SplashScreenActivity.this, UpdateProfileActivity.class));
                 } else if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
-                    if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                    if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                         startActivity(new Intent(SplashScreenActivity.this, FollowMoreTopicsActivity.class));
                     } else {
                         startActivity(new Intent(SplashScreenActivity.this, NewFollowMoreTopicsActivity.class));
@@ -66,22 +69,32 @@ public class SplashScreenActivity extends BaseActivity {
         }
     };
 
-    private class SplashScreen extends AsyncTask<Void, Void, Void> {
+    private static class SplashScreen extends AsyncTask<Void, Void, Void> {
         String phoneNumber;
         boolean enableProfileScreen;
         boolean enableFollowTopicsScreen;
 
+        private PreferenceEndPoint mPreferenceEndPoint;
+        private WebserviceUsecase mWebserviceUsecase;
+
+
+        public SplashScreen(Activity activity, PreferenceEndPoint preferenceEndPoint, WebserviceUsecase webserviceUsecase) {
+            mPreferenceEndPoint = preferenceEndPoint;
+            mWebserviceUsecase = webserviceUsecase;
+            mActivity = activity;
+        }
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            setContentView(R.layout.activity_splash);
+            mActivity.setContentView(R.layout.activity_splash);
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            phoneNumber = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
-            enableProfileScreen = preferenceEndPoint.getBooleanPreference(Constants.ENABLE_PROFILE_SCREEN);
-            enableFollowTopicsScreen = preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN);
+            phoneNumber = mPreferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
+            enableProfileScreen = mPreferenceEndPoint.getBooleanPreference(Constants.ENABLE_PROFILE_SCREEN);
+            enableFollowTopicsScreen = mPreferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN);
 
 
             /*ImageView imageView = (ImageView) findViewById(R.id.imageView);
@@ -94,7 +107,7 @@ public class SplashScreenActivity extends BaseActivity {
                     e.printStackTrace();
                 }
             } else {
-                webserviceUsecase.appStatus(new ApiCallback<Lock>() {
+                mWebserviceUsecase.appStatus(new ApiCallback<Lock>() {
                     @Override
                     public void onResult(Lock result) {
                         return;
@@ -111,26 +124,43 @@ public class SplashScreenActivity extends BaseActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            if (!TextUtils.isEmpty(phoneNumber)) {
-                //1.Profile
-                //2.Follow
-                //3. Home
-                if (enableProfileScreen) {
-                    startActivity(new Intent(SplashScreenActivity.this, UpdateProfileActivity.class));
-                } else if (enableFollowTopicsScreen) {
-                    if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
-                        startActivity(new Intent(SplashScreenActivity.this, FollowMoreTopicsActivity.class));
+            try {
+                if (!TextUtils.isEmpty(phoneNumber)) {
+                    //1.Profile
+                    //2.Follow
+                    //3. Home
+                    if (enableProfileScreen) {
+                        mActivity.startActivity(new Intent(mActivity, UpdateProfileActivity.class));
+                    } else if (enableFollowTopicsScreen) {
+                        if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                            mActivity.startActivity(new Intent(mActivity, FollowMoreTopicsActivity.class));
+                        } else {
+                            mActivity.startActivity(new Intent(mActivity, NewFollowMoreTopicsActivity.class));
+                        }
                     } else {
-                        startActivity(new Intent(SplashScreenActivity.this, NewFollowMoreTopicsActivity.class));
+                        mActivity.startActivity(new Intent(mActivity, BottomTabsActivity.class));
                     }
                 } else {
-                    startActivity(new Intent(SplashScreenActivity.this, BottomTabsActivity.class));
+                    mActivity.startActivity(new Intent(mActivity, LoginActivity.class));
                 }
-            } else {
-                startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
+                mActivity.finish();
+            } finally {
+                if (mActivity != null) {
+                    mActivity = null;
+                }
             }
-            finish();
             super.onPostExecute(aVoid);
         }
+
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mActivity != null) {
+            mActivity = null;
+        }
+        super.onDestroy();
+
     }
 }

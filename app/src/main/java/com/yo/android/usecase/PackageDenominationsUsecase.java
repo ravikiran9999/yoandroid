@@ -42,23 +42,33 @@ public class PackageDenominationsUsecase {
         call.enqueue(new Callback<List<PackageDenomination>>() {
             @Override
             public void onResponse(Call<List<PackageDenomination>> call, Response<List<PackageDenomination>> response) {
-                if (response.body() != null && response.code() == 200) {
-                    ArrayList<PackageDenomination> denominations = new ArrayList<>(response.body());
+                try {
+                    if (response.body() != null && response.code() == 200) {
+                        ArrayList<PackageDenomination> denominations = new ArrayList<>(response.body());
 
-                    Collections.sort(denominations, new Comparator<PackageDenomination>() {
-                        @Override
-                        public int compare(PackageDenomination lhs, PackageDenomination rhs) {
-                            int x = Integer.valueOf(lhs.getPackage());
-                            int y = Integer.valueOf(rhs.getPackage());
+                        Collections.sort(denominations, new Comparator<PackageDenomination>() {
+                            @Override
+                            public int compare(PackageDenomination lhs, PackageDenomination rhs) {
+                                int x = Integer.valueOf(lhs.getPackage());
+                                int y = Integer.valueOf(rhs.getPackage());
 
-                            return x - y;
+                                return x - y;
+                            }
+                        });
+                        packageCallback.onResult(denominations);
+                    } else {
+                        errorMessage(response, packageCallback);
+                    }
+                } finally {
+                    if(response != null && response.body() != null) {
+                        try {
+                            response.body().clear();
+                            response = null;
+                        }catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    });
-                    packageCallback.onResult(denominations);
-                } else {
-                    errorMessage(response, packageCallback);
+                    }
                 }
-
             }
 
             @Override

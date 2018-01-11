@@ -64,6 +64,15 @@ public class BaseApp extends MultiDexApplication {
         super.onCreate();
         baseAppInstance = this;
 
+        // Memory leaks
+        /*if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);*/
+
+
         /* Enable disk persistence  */
         // FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         Firebase.getDefaultConfig().setPersistenceEnabled(true);

@@ -236,22 +236,32 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
             yoService.postStoryMagazineAPI(accessToken, url, magazineTitle, magazineDesc, magazinePrivacy, magazineId, tag).enqueue(new Callback<Articles>() {
                 @Override
                 public void onResponse(Call<Articles> call, Response<Articles> response) {
-                    if (response != null && response.body() != null) {
-                        EventBus.getDefault().post(Constants.REFRESH_TOPICS_ACTION);
-                        setResult(RESULT_OK);
-                        finish();
-                        Intent intent = new Intent(LoadMagazineActivity.this, CreatedMagazineDetailActivity.class);
-                        intent.putExtra("MagazineTitle", magazineTitle);
-                        if (response.body() != null) {
-                            intent.putExtra("MagazineId", response.body().getMagzine_id());
+                    try {
+                        if (response != null && response.body() != null) {
+                            EventBus.getDefault().post(Constants.REFRESH_TOPICS_ACTION);
+                            setResult(RESULT_OK);
+                            finish();
+                            Intent intent = new Intent(LoadMagazineActivity.this, CreatedMagazineDetailActivity.class);
+                            intent.putExtra("MagazineTitle", magazineTitle);
+                            if (response.body() != null) {
+                                intent.putExtra("MagazineId", response.body().getMagzine_id());
+                            }
+                            intent.putExtra("MagazineDesc", magazineDesc);
+                            intent.putExtra("MagazinePrivacy", magazinePrivacy);
+                            startActivity(intent);
+                        } else if (response != null && response.errorBody() != null) {
+                            Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
+                            mToastFactory.showToast("Magazine Title is already taken");
+                            isPostClicked = false;
                         }
-                        intent.putExtra("MagazineDesc", magazineDesc);
-                        intent.putExtra("MagazinePrivacy", magazinePrivacy);
-                        startActivity(intent);
-                    } else if (response != null && response.errorBody() != null) {
-                        Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
-                        mToastFactory.showToast("Magazine Title is already taken");
-                        isPostClicked = false;
+                    }finally {
+                        if(response != null && response.body() != null) {
+                            try {
+                                response = null;
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }
 
@@ -274,14 +284,24 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
             yoService.addStoryMagazineAPI(accessToken, url, magazineId, tag).enqueue(new Callback<Articles>() {
                 @Override
                 public void onResponse(Call<Articles> call, Response<Articles> response) {
-                    if (response.body() != null) {
-                        EventBus.getDefault().post(Constants.REFRESH_TOPICS_ACTION);
-                        setResult(RESULT_OK);
-                        finish();
-                    } else if (response.errorBody() != null) {
-                        Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
-                        mToastFactory.showToast("Article already added into current magazine");
-                        isPostClicked = false;
+                    try {
+                        if (response.body() != null) {
+                            EventBus.getDefault().post(Constants.REFRESH_TOPICS_ACTION);
+                            setResult(RESULT_OK);
+                            finish();
+                        } else if (response.errorBody() != null) {
+                            Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
+                            mToastFactory.showToast("Article already added into current magazine");
+                            isPostClicked = false;
+                        }
+                    } finally {
+                        if(response != null && response.body() != null) {
+                            try {
+                                response = null;
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }
 
@@ -321,6 +341,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                 } finally {
                     if (response != null && response.body() != null) {
                         response.body().clear();
+                        response = null;
                     }
                 }
             }

@@ -48,8 +48,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.yo.android.ui.BottomTabsActivity.activity;
-
 public class CreditAccountFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, BalanceAdapter.MoreItemListener {
 
     private static final String TAG = CreditAccountFragment.class.getSimpleName();
@@ -398,17 +396,28 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
             @Override
             public void onResponse(Call<List<Denominations>> call, Response<List<Denominations>> response) {
                 if (response.body() != null && response.body().size() > 0) {
-                    txtEmpty.setVisibility(View.GONE);
-                    List<Denominations> demonimations = response.body();
-                    prepareCreditAccountList(demonimations);
-                    if (demonimations != null && demonimations.size() > 0) {
-                        preferenceEndPoint.saveStringPreference(Constants.CURRENCY_SYMBOL, demonimations.get(0).getCurrencySymbol());
+                    try {
+                        txtEmpty.setVisibility(View.GONE);
+                        List<Denominations> demonimations = response.body();
+                        prepareCreditAccountList(demonimations);
+                        if (demonimations != null && demonimations.size() > 0) {
+                            preferenceEndPoint.saveStringPreference(Constants.CURRENCY_SYMBOL, demonimations.get(0).getCurrencySymbol());
 
-                    } else {
-                        txtEmpty.setVisibility(View.VISIBLE);
-                        FragmentActivity activity = getActivity();
-                        if (activity != null) {
-                            txtEmpty.setText(activity.getResources().getString(R.string.no_denominations_for_your_country));
+                        } else {
+                            txtEmpty.setVisibility(View.VISIBLE);
+                            FragmentActivity activity = getActivity();
+                            if (activity != null) {
+                                txtEmpty.setText(activity.getResources().getString(R.string.no_denominations_for_your_country));
+                            }
+                        }
+                    } finally {
+                        if(response != null && response.body() != null) {
+                            try {
+                                response.body().clear();
+                                response = null;
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 } else {

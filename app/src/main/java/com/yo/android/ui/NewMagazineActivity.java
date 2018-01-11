@@ -90,20 +90,30 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
                 }
 
                 if (!TextUtils.isEmpty(magazineTitle.trim())) {
-                    if(!isSaveClicked) {
+                    if (!isSaveClicked) {
                         isSaveClicked = true;
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.createMagazinesAPI(accessToken, magazineTitle, magazineDesc, magazinePrivacy).enqueue(new Callback<OwnMagazine>() {
                             @Override
                             public void onResponse(Call<OwnMagazine> call, Response<OwnMagazine> response) {
-                                if (response.body() != null) {
-                                    Intent intent = new Intent();
-                                    setResult(2, intent);
-                                    //finishing activity
-                                    finish();
-                                } else if (response.errorBody() != null) {
-                                    isSaveClicked = false;
-                                    mToastFactory.showToast("Magazine Title is already taken");
+                                try {
+                                    if (response.body() != null) {
+                                        Intent intent = new Intent();
+                                        setResult(2, intent);
+                                        //finishing activity
+                                        finish();
+                                    } else if (response.errorBody() != null) {
+                                        isSaveClicked = false;
+                                        mToastFactory.showToast("Magazine Title is already taken");
+                                    }
+                                } finally {
+                                    if(response != null && response.body() != null) {
+                                        try {
+                                            response = null;
+                                        }catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
                                 }
                             }
 

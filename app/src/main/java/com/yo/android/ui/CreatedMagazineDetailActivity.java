@@ -115,16 +115,18 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
             @Override
             public void onResponse(Call<MagazineArticles> call, final Response<MagazineArticles> response) {
                 dismissProgressDialog();
-                if (response.body() != null) {
-                    final String id = response.body().getId();
-                    if (response.body().getArticlesList() != null && response.body().getArticlesList().size() > 0) {
-                        for (int i = 0; i < response.body().getArticlesList().size(); i++) {
+                MagazineArticles magazineArticlesResponse = response.body();
+                if (magazineArticlesResponse != null) {
+                    final String id = magazineArticlesResponse.getId();
+                    if (magazineArticlesResponse.getArticlesList() != null && magazineArticlesResponse.getArticlesList().size() > 0) {
+
+                        for (int i = 0; i < magazineArticlesResponse.getArticlesList().size(); i++) {
                             flipContainer.setVisibility(View.VISIBLE);
                             if (noArticals != null) {
                                 noArticals.setVisibility(View.GONE);
                             }
-                                if(!"...".equalsIgnoreCase(response.body().getArticlesList().get(i).getSummary())) {
-                                    articlesList.add(response.body().getArticlesList().get(i));
+                                if(!"...".equalsIgnoreCase(magazineArticlesResponse.getArticlesList().get(i).getSummary())) {
+                                    articlesList.add(magazineArticlesResponse.getArticlesList().get(i));
                                 }
                         }
                         myBaseAdapter.addItems(articlesList);
@@ -506,25 +508,28 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                             @Override
                             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                                 int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
+                                Bitmap bmp = null;
                                 if (resource != null) {
-                                    Bitmap bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
-                                    Glide.with(context)
-                                            .load(data.getImage_filename())
-                                            .override(bmp.getWidth(), bmp.getHeight())
-                                            .placeholder(R.drawable.magazine_backdrop)
-                                            .crossFade()
-                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                            .dontAnimate()
-                                            .into(photoView);
+                                    try {
+                                        bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
+                                        Glide.with(context)
+                                                .load(data.getImage_filename())
+                                                .override(bmp.getWidth(), bmp.getHeight())
+                                                .placeholder(R.drawable.magazine_backdrop)
+                                                .crossFade()
+                                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                                .dontAnimate()
+                                                .into(photoView);
 
-                                    int screenHeight = DeviceDimensionsHelper.getDisplayHeight(context);
-                                    //Log.d("BaseAdapter", "screenHeight " + screenHeight);
+                                        int screenHeight = DeviceDimensionsHelper.getDisplayHeight(context);
+                                        //Log.d("BaseAdapter", "screenHeight " + screenHeight);
                                        /*int spaceForImage = screenHeight - 120;
                                        Log.d("BaseAdapter", "spaceForImage" + spaceForImage);*/
-                                    //Log.d("BaseAdapter", "bmp.getHeight()" + bmp.getHeight());
-                                    int total = bmp.getHeight() + 50;
-                                    //if(bmp.getHeight() >= spaceForImage-30) {
-                                    //Log.d("BaseAdapter", "total" + total);
+                                        //Log.d("BaseAdapter", "bmp.getHeight()" + bmp.getHeight());
+                                        int total = bmp.getHeight() + 50;
+                                        //if(bmp.getHeight() >= spaceForImage-30) {
+                                        //Log.d("BaseAdapter", "total" + total);
+
                                     if (screenHeight - total <= 250) {
 
                                         Log.d("BaseAdapter", "Full screen image");
@@ -545,7 +550,12 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                                         textView1
                                                 .setText(Html.fromHtml(data.getSummary()));
                                     }
-
+                                    }finally {
+                                        if(bmp != null) {
+                                            bmp.recycle();
+                                            bmp = null;
+                                        }
+                                    }
                                     if(articleTitle != null) {
                                         ViewTreeObserver vto1 = articleTitle.getViewTreeObserver();
                                         vto1.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {

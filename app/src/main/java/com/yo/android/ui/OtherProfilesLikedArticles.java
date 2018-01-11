@@ -137,16 +137,27 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                 }
                 tvProgressText.setVisibility(View.GONE);
                 if (!response.body().isEmpty()) {
-                    for (int i = 0; i < response.body().size(); i++) {
-                        flipContainer.setVisibility(View.VISIBLE);
-                        if (noArticals != null) {
-                            noArticals.setVisibility(View.GONE);
+                    try {
+                        for (int i = 0; i < response.body().size(); i++) {
+                            flipContainer.setVisibility(View.VISIBLE);
+                            if (noArticals != null) {
+                                noArticals.setVisibility(View.GONE);
+                            }
+                            if (!"...".equalsIgnoreCase(response.body().get(i).getSummary())) {
+                                articlesList.add(response.body().get(i));
+                            }
                         }
-                        if(!"...".equalsIgnoreCase(response.body().get(i).getSummary())) {
-                            articlesList.add(response.body().get(i));
+                        myBaseAdapter.addItems(articlesList);
+                    }finally {
+                        if(response != null && response.body() != null) {
+                            try {
+                                response.body().clear();
+                                response = null;
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
-                    myBaseAdapter.addItems(articlesList);
                 } else {
                     flipContainer.setVisibility(View.GONE);
                     if (noArticals != null) {

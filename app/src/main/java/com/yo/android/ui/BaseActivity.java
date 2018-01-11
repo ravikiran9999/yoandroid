@@ -124,6 +124,7 @@ public class BaseActivity extends ParentActivity {
 
     @Override
     protected void onDestroy() {
+        activity = null;
         super.onDestroy();
         isDestroyed = true;
     }
@@ -352,4 +353,6 @@ public class BaseActivity extends ParentActivity {
             Log.e(TAG, "Firebase error :" + e.getMessage());
         }
     }
+
+
 }

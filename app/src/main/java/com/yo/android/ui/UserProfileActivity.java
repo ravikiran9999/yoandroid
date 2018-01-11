@@ -173,6 +173,9 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         }
         ButterKnife.bind(this);
         enableBack();
+        initCircularView();
+
+
         groupMembersList = new ArrayList<>();
         groupMembersHashMap = new HashMap<>();
         mLog.e(TAG, "Firebase token reading from pref " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
@@ -241,11 +244,16 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
     }
 
+    private void initCircularView() {
+        profileImage.setBorderColor(getResources().getColor(R.color.white));
+        profileImage.setBorderWidth(5);
+    }
+
     private void setDataFromPreferences() {
         if (contact != null) {
+
             getSupportActionBar().setTitle(getResources().getString(R.string.profile));
             Contact mContact = mContactsSyncManager.getContactByVoxUserName(contact.getNexgieUserName());
-
             if (roomName != null) {
                 Glide.with(this)
                         .load(contact.getImage())
@@ -571,6 +579,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
     /**
      * Add contact to phonebook
+     *
      * @param phoneNumber
      */
     private void addContacts(String phoneNumber) {
@@ -623,11 +632,9 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                     Uri uri = Uri.fromFile(file);
                     Bitmap bitmap = null;
                     try {
-                        bitmap = MediaStore.Images.Media.getBitmap(BottomTabsActivity.activity.getContentResolver(), uri);
+                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                         if (imagePath != null) {
-                            if (BottomTabsActivity.activity != null) {
-                                Helper.setSelectedImage(this, imagePath, true, bitmap, true);
-                            }
+                            Helper.setSelectedImage(this, imagePath, true, bitmap, true);
                         }
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
@@ -643,8 +650,8 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             case Constants.ADD_SELECT_PICTURE:
                 if (data != null) {
                     try {
-                        String imagePath = ImagePickHelper.getGalleryImagePath(BottomTabsActivity.activity, data);
-                        Helper.setSelectedImage(BottomTabsActivity.activity, imagePath, true, null, false);
+                        String imagePath = ImagePickHelper.getGalleryImagePath(this, data);
+                        Helper.setSelectedImage(this, imagePath, true, null, false);
                     } catch (Exception e) {
                         mLog.w("MoreFragment", e);
                     }
@@ -652,7 +659,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 break;
 
             case GROUP_SUBJECT_REQUEST:
-                if(data != null) {
+                if (data != null) {
                     showProgressDialog();
                     final String subject = data.getStringExtra(GROUP_SUBJECT);
                     String firebaseRoomId = getIntent().getStringExtra(Constants.CHAT_ROOM_ID);
@@ -698,8 +705,18 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 @Override
                 public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                     dismissProgressDialog();
-                    if (response.body() != null) {
-                        preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
+                    try {
+                        if (response.body() != null) {
+                            preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
+                        }
+                    } finally {
+                        if (response != null && response.body() != null) {
+                            try {
+                                response = null;
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                     //loadImage();
                 }
