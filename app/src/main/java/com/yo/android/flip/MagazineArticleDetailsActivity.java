@@ -136,7 +136,9 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
                                     }
                                     mToastFactory.showToast("You have liked the article " + data.getTitle());
                                 } finally {
-                                    response.body().close();
+                                    if(response != null && response.body() != null) {
+                                        response.body().close();
+                                    }
                                 }
                             }
 
@@ -164,7 +166,9 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
                                     }
                                     mToastFactory.showToast("You have unliked the article " + data.getTitle());
                                 } finally {
-                                    response.body().close();
+                                    if(response != null && response.body() != null) {
+                                        response.body().close();
+                                    }
                                 }
                             }
 

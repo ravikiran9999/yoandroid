@@ -121,13 +121,24 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 collections.setName("Follow more topics");
                 collections.setImage("");
                 collectionsList.add(0, collections);
-                if (response == null || response.body() == null) {
-                    return;
+                try {
+                    if (response == null || response.body() == null) {
+                        return;
+                    }
+                    collectionsList.addAll(response.body());
+                    myCollectionsAdapter.addItems(collectionsList);
+                    gridView.setAdapter(myCollectionsAdapter);
+                    isNetworkFailure = false;
+                } finally {
+                    if(response != null && response.body() != null) {
+                        try {
+                            response.body().clear();
+                            response = null;
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
-                collectionsList.addAll(response.body());
-                myCollectionsAdapter.addItems(collectionsList);
-                gridView.setAdapter(myCollectionsAdapter);
-                isNetworkFailure = false;
 
             }
 
@@ -340,13 +351,24 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                             collections.setName("Follow more topics");
                             collections.setImage("");
                             collectionsList.add(0, collections);
-                            if (response == null || response.body() == null) {
-                                return;
+                            try {
+                                if (response == null || response.body() == null) {
+                                    return;
+                                }
+                                collectionsList.addAll(response.body());
+                                myCollectionsAdapter.clearAll();
+                                myCollectionsAdapter.addItems(collectionsList);
+                                gridView.setAdapter(myCollectionsAdapter);
+                            }finally {
+                                if(response != null && response.body() != null) {
+                                    try {
+                                        response.body().clear();
+                                        response = null;
+                                    }catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
                             }
-                            collectionsList.addAll(response.body());
-                            myCollectionsAdapter.clearAll();
-                            myCollectionsAdapter.addItems(collectionsList);
-                            gridView.setAdapter(myCollectionsAdapter);
 
                             List<String> followedTopicsIdsList = new ArrayList<String>();
                             for (int i = 0; i < collectionsList.size(); i++) {
@@ -394,14 +416,24 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                             collections.setName("Follow more topics");
                             collections.setImage("");
                             collectionsList.add(0, collections);
-                            if (response == null || response.body() == null) {
-                                return;
+                            try {
+                                if (response == null || response.body() == null) {
+                                    return;
+                                }
+                                collectionsList.addAll(response.body());
+                                myCollectionsAdapter.clearAll();
+                                myCollectionsAdapter.addItems(collectionsList);
+                                gridView.setAdapter(myCollectionsAdapter);
+                            } finally {
+                                if(response != null && response.body() != null) {
+                                    try {
+                                        response.body().clear();
+                                        response = null;
+                                    }catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
                             }
-                            collectionsList.addAll(response.body());
-                            myCollectionsAdapter.clearAll();
-                            myCollectionsAdapter.addItems(collectionsList);
-                            gridView.setAdapter(myCollectionsAdapter);
-
                             List<String> followedTopicsIdsList = new ArrayList<String>();
                             for (int i = 0; i < collectionsList.size(); i++) {
                                 followedTopicsIdsList.add(collectionsList.get(i).getId());
@@ -449,14 +481,24 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                     collections.setName("Follow more topics");
                     collections.setImage("");
                     collectionsList.add(0, collections);
-                    if (response == null || response.body() == null) {
-                        return;
+                    try {
+                        if (response == null || response.body() == null) {
+                            return;
+                        }
+                        collectionsList.addAll(response.body());
+                        myCollectionsAdapter.clearAll();
+                        myCollectionsAdapter.addItems(collectionsList);
+                        gridView.setAdapter(myCollectionsAdapter);
+                    } finally {
+                        if(response != null && response.body() != null) {
+                            try {
+                                response.body().clear();
+                                response = null;
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
-                    collectionsList.addAll(response.body());
-                    myCollectionsAdapter.clearAll();
-                    myCollectionsAdapter.addItems(collectionsList);
-                    gridView.setAdapter(myCollectionsAdapter);
-
                 }
 
                 @Override
@@ -485,9 +527,10 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                     collections.setName("Follow more topics");
                     collections.setImage("");
                     collectionsList.add(0, collections);
-                    if (response == null || response.body() == null) {
-                        return;
-                    }
+                    try {
+                        if (response == null || response.body() == null) {
+                            return;
+                        }
 
                     /*if (!TextUtils.isEmpty(finalSearchText.trim())) {
                         for (int i = 0; i < response.body().size(); i++) {
@@ -504,11 +547,21 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                         myCollectionsAdapter.addItems(collectionsList);
                     }*/
 
-                    collectionsList.addAll(response.body());
-                    myCollectionsAdapter.clearAll();
-                    myCollectionsAdapter.addItems(collectionsList);
+                        collectionsList.addAll(response.body());
+                        myCollectionsAdapter.clearAll();
+                        myCollectionsAdapter.addItems(collectionsList);
 
-                    gridView.setAdapter(myCollectionsAdapter);
+                        gridView.setAdapter(myCollectionsAdapter);
+                    } finally {
+                        if(response != null && response.body() != null) {
+                            try {
+                                response.body().clear();
+                                response = null;
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
 
                     List<String> followedTopicsIdsList = new ArrayList<String>();
                     for (int i = 0; i < collectionsList.size(); i++) {

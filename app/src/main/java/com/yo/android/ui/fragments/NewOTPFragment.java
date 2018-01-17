@@ -242,20 +242,29 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
             public void onResponse(Call<OTPResponse> call, Response<OTPResponse> response) {
                 //dismissProgressDialog();
                 FragmentActivity activity = getActivity();
+                try {
+                    if (response.isSuccessful()) {
+                        preferenceEndPoint.saveBooleanPreference(Constants.SESSION_EXPIRE, false);
+                        //contactsSyncManager.syncContacts();
+                        count++;
+                        storeTokens(response, phoneNumber, password);
 
-                if (response.isSuccessful()) {
-                    preferenceEndPoint.saveBooleanPreference(Constants.SESSION_EXPIRE, false);
-                    //contactsSyncManager.syncContacts();
-                    count++;
-                    storeTokens(response, phoneNumber, password);
+                        generateFirebaseToken();
 
-                    generateFirebaseToken();
-
-                    //finishAndNavigateToHome();
-                    addSubscriber(response.body().getAccessToken());
-                } else {
-                    if (activity != null) {
-                        mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));
+                        //finishAndNavigateToHome();
+                        addSubscriber(response.body().getAccessToken());
+                    } else {
+                        if (activity != null) {
+                            mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));
+                        }
+                    }
+                }finally {
+                    if(response != null && response.body() != null) {
+                        try {
+                            response = null;
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -280,11 +289,21 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
             @Override
             public void onResponse(Call<Subscriber> call, Response<Subscriber> response) {
                 if (response.isSuccessful()) {
-                    preferenceEndPoint.saveStringPreference(Constants.SUBSCRIBER_ID, response.body().getNexge_subscriber_id());
-                    preferenceEndPoint.saveStringPreference(Constants.CALLINGCARDNUMBER, response.body().getNexge_subscriber_telID());
-                    preferenceEndPoint.saveStringPreference(Constants.VOX_USER_NAME, response.body().getNexge_subscriber_username());
-                    preferenceEndPoint.saveStringPreference(Constants.PASSWORD, response.body().getNexge_subscriber_password());
-                    finishAndNavigateToHome();
+                    try {
+                        preferenceEndPoint.saveStringPreference(Constants.SUBSCRIBER_ID, response.body().getNexge_subscriber_id());
+                        preferenceEndPoint.saveStringPreference(Constants.CALLINGCARDNUMBER, response.body().getNexge_subscriber_telID());
+                        preferenceEndPoint.saveStringPreference(Constants.VOX_USER_NAME, response.body().getNexge_subscriber_username());
+                        preferenceEndPoint.saveStringPreference(Constants.PASSWORD, response.body().getNexge_subscriber_password());
+                        finishAndNavigateToHome();
+                    }finally {
+                        if(response != null && response.body() != null) {
+                            try {
+                                response = null;
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
                 } else {
                     mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));
                 }

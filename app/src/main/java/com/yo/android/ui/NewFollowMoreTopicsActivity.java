@@ -175,12 +175,13 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
         yoService.categoriesAPI(accessToken, true).enqueue(new Callback<List<Categories>>() {
             @Override
             public void onResponse(Call<List<Categories>> call, Response<List<Categories>> response) {
-                if (response == null || response.body() == null) {
-                    dismissProgressDialog();
-                    return;
-                }
+                try {
+                    if (response == null || response.body() == null) {
+                        dismissProgressDialog();
+                        return;
+                    }
 
-                serverTopics = response.body();
+                    serverTopics = response.body();
                 mData = new ArrayList<>();
                 for (Categories categories : serverTopics) {
                     mData.add(new CategoriesAccordionSection(categories.getId(), categories.getName(), categories.isLanguage_specific(), categories.getTags(), false));
@@ -188,6 +189,17 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
 
                 loadCategoriesAdapter(mData);
                 dismissProgressDialog();
+
+                } finally {
+                    if(response != null && response.body() != null) {
+                        try {
+                            response.body().clear();
+                            response = null;
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
 
                 /*categorisedList = new NewCategorizedList(NewFollowMoreTopicsActivity.this, recyclerView, initialTags, serverTopics);
                 new NewTagLoader(context, new NewFollowMoreTopicsActivity.TagsLoader() {

@@ -479,8 +479,10 @@ public class TopicsDetailActivity extends BaseActivity {
                             @Override
                             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                                 int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
+                                Bitmap bmp = null;
                                 if (resource != null) {
-                                    Bitmap bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
+                                    try {
+                                    bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
                                     Glide.with(context)
                                             .load(data.getImage_filename())
                                             .override(bmp.getWidth(), bmp.getHeight())
@@ -518,7 +520,12 @@ public class TopicsDetailActivity extends BaseActivity {
                                         textView1
                                                 .setText(Html.fromHtml(data.getSummary()));
                                     }
-
+                                    }finally {
+                                        if(bmp != null) {
+                                            bmp.recycle();
+                                            bmp = null;
+                                        }
+                                    }
                                     if (articleTitle != null) {
                                         ViewTreeObserver vto1 = articleTitle.getViewTreeObserver();
                                         vto1.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -654,7 +661,9 @@ public class TopicsDetailActivity extends BaseActivity {
                                         notifyDataSetChanged();
                                     }
                                 } finally {
-                                    response.body().close();
+                                    if(response != null && response.body() != null) {
+                                        response.body().close();
+                                    }
                                 }
                             }
 
@@ -778,7 +787,9 @@ public class TopicsDetailActivity extends BaseActivity {
                                                                                                         notifyDataSetChanged();
                                                                                                     }
                                                                                                 } finally {
-                                                                                                    response.body().close();
+                                                                                                    if(response != null && response.body() != null) {
+                                                                                                        response.body().close();
+                                                                                                    }
                                                                                                 }
                                                                                             }
 
@@ -974,7 +985,9 @@ public class TopicsDetailActivity extends BaseActivity {
                                             }
                                         }
                                     } finally {
-                                        response.body().close();
+                                        if(response != null && response.body() != null) {
+                                            response.body().close();
+                                        }
                                     }
                                 }
 

@@ -71,6 +71,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
                 holder.getOpponentName().setText(item.getFullName());
             }
             if (!TextUtils.isEmpty(item.getImage())) {
+                Glide.clear(holder.getChatRoomPic());
                 Glide.with(mContext).load(item.getImage())
                         .placeholder(loadAvatarImage(item, holder, false))
                         .error(loadAvatarImage(item, holder, false))

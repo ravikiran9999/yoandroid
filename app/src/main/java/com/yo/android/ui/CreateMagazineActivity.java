@@ -152,15 +152,23 @@ public class CreateMagazineActivity extends BaseActivity implements SwipeRefresh
                 ownMagazine.setName("+ New Magazine");
                 ownMagazine.setImage("");
                 ownMagazineList.add(ownMagazine);
-
-                if (response == null || response.body() == null) {
-                    return;
+                try {
+                    if (response == null || response.body() == null) {
+                        return;
+                    }
+                    ownMagazineList.addAll(response.body());
+                    createMagazinesAdapter.addItems(ownMagazineList);
+                    isNetworkFailure = false;
+                } finally {
+                    if(response != null && response.body() != null) {
+                        try {
+                            response.body().clear();
+                            response = null;
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
-                for (int i = 0; i < response.body().size(); i++) {
-                    ownMagazineList.add(response.body().get(i));
-                }
-                createMagazinesAdapter.addItems(ownMagazineList);
-                isNetworkFailure = false;
 
             }
 
@@ -193,16 +201,24 @@ public class CreateMagazineActivity extends BaseActivity implements SwipeRefresh
                     ownMagazine.setName("+ New Magazine");
                     ownMagazine.setImage("");
                     ownMagazineList.add(ownMagazine);
+                    try {
+                        if (response == null || response.body() == null) {
+                            return;
+                        }
+                        ownMagazineList.addAll(response.body());
 
-                    if (response == null || response.body() == null) {
-                        return;
+                        createMagazinesAdapter.clearAll();
+                        createMagazinesAdapter.addItems(ownMagazineList);
+                    } finally {
+                        if(response != null && response.body() != null) {
+                            try {
+                                response.body().clear();
+                                response = null;
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
-                    for (int i = 0; i < response.body().size(); i++) {
-                        ownMagazineList.add(response.body().get(i));
-                    }
-
-                    createMagazinesAdapter.clearAll();
-                    createMagazinesAdapter.addItems(ownMagazineList);
                 }
 
                 @Override
@@ -232,15 +248,23 @@ public class CreateMagazineActivity extends BaseActivity implements SwipeRefresh
                     ownMagazine.setName("+ New Magazine");
                     ownMagazine.setImage("");
                     ownMagazineList.add(ownMagazine);
-
-                    if (response == null || response.body() == null) {
-                        return;
+                    try {
+                        if (response == null || response.body() == null) {
+                            return;
+                        }
+                        ownMagazineList.addAll(response.body());
+                        createMagazinesAdapter.clearAll();
+                        createMagazinesAdapter.addItems(ownMagazineList);
+                    } finally {
+                        if(response != null && response.body() != null) {
+                            try {
+                                response.body().clear();
+                                response = null;
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
-                    for (int i = 0; i < response.body().size(); i++) {
-                        ownMagazineList.add(response.body().get(i));
-                    }
-                    createMagazinesAdapter.clearAll();
-                    createMagazinesAdapter.addItems(ownMagazineList);
                 }
 
                 @Override

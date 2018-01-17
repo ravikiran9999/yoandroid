@@ -135,7 +135,9 @@ public class OthersProfileActivity extends BaseActivity {
                                 }
                                 isFollowingUser = true;
                             } finally {
-                                response.body().close();
+                                if(response != null && response.body() != null) {
+                                    response.body().close();
+                                }
                             }
                         }
 
@@ -187,7 +189,9 @@ public class OthersProfileActivity extends BaseActivity {
                                         }
                                         isFollowingUser = false;
                                     } finally {
-                                        response.body().close();
+                                        if(response != null && response.body() != null) {
+                                            response.body().close();
+                                        }
                                     }
                                 }
 

@@ -33,10 +33,20 @@ public class AppLogglyUsecase {
         call.enqueue(new Callback<Alerts>() {
             @Override
             public void onResponse(Call<Alerts> call, Response<Alerts> response) {
-                if (response.body() != null && response.code() == 200) {
-                    // request success
-                } else {
-                    errorMessage(response);
+                try {
+                    if (response.body() != null && response.code() == 200) {
+                        // request success
+                    } else {
+                        errorMessage(response);
+                    }
+                } finally {
+                    if(response != null && response.body() != null) {
+                        try {
+                            response = null;
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
 

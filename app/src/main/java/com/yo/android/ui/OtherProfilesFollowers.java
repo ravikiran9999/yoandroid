@@ -80,12 +80,23 @@ public class OtherProfilesFollowers extends BaseFragment {
             @Override
             public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
                 dismissProgressDialog();
-                if (response.body() != null) {
-                    noData.setVisibility(View.GONE);
-                    lvFindPeople.setVisibility(View.VISIBLE);
-                    List<FindPeople> findPeopleList = response.body();
-                    findPeopleAdapter.clearAll();
-                    findPeopleAdapter.addItemsAll(findPeopleList);
+                try {
+                    if (response.body() != null) {
+                        noData.setVisibility(View.GONE);
+                        lvFindPeople.setVisibility(View.VISIBLE);
+                        List<FindPeople> findPeopleList = response.body();
+                        findPeopleAdapter.clearAll();
+                        findPeopleAdapter.addItemsAll(findPeopleList);
+                    }
+                } finally {
+                    if(response != null && response.body() != null) {
+                        try {
+                            response.body().clear();
+                            response = null;
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
 
@@ -116,12 +127,23 @@ public class OtherProfilesFollowers extends BaseFragment {
                     @Override
                     public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
                         dismissProgressDialog();
-                        if (response.body().size() > 0) {
-                            noData.setVisibility(View.GONE);
-                            lvFindPeople.setVisibility(View.VISIBLE);
-                            List<FindPeople> findPeopleList = response.body();
-                            findPeopleAdapter.clearAll();
-                            findPeopleAdapter.addItemsAll(findPeopleList);
+                        try {
+                            if (response.body().size() > 0) {
+                                noData.setVisibility(View.GONE);
+                                lvFindPeople.setVisibility(View.VISIBLE);
+                                List<FindPeople> findPeopleList = response.body();
+                                findPeopleAdapter.clearAll();
+                                findPeopleAdapter.addItemsAll(findPeopleList);
+                            }
+                        }finally {
+                            if(response != null && response.body() != null) {
+                                try {
+                                    response.body().clear();
+                                    response = null;
+                                }catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
                         }
                     }
 

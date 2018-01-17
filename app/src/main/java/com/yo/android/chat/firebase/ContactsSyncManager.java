@@ -302,19 +302,16 @@ public class ContactsSyncManager {
         yoService.getContacts(access).enqueue(new Callback<List<Contact>>() {
             @Override
             public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
-                try {
-                    setContacts(response.body());
-                    if (callback != null) {
-                        callback.onResponse(call, response);
-                    }
-                    try {
-                        YoContactsSyncAdapter.updateLocalFeedData(context, cacheList, new SyncResult());
-                    } catch (RemoteException | OperationApplicationException e) {
-                        e.printStackTrace();
-                    }
-                }finally {
-                    //response.raw().close();
+                setContacts(response.body());
+                if (callback != null) {
+                    callback.onResponse(call, response);
                 }
+                try {
+                    YoContactsSyncAdapter.updateLocalFeedData(context, cacheList, new SyncResult());
+                } catch (RemoteException | OperationApplicationException e) {
+                    e.printStackTrace();
+                }
+                //response.raw().close();
             }
 
             @Override

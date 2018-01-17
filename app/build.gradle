@@ -26,8 +26,8 @@ android {
         applicationId "com.yowatsup"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 4
-        versionName "1.0.3"
+        versionCode 5
+        versionName "1.0.4"
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
@@ -163,6 +163,10 @@ ext {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile fileTree(include: ['*.so'], dir: 'libs')
+
+    // detect memory leaks
+    //debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+
     //Support libs
     compile "com.android.support:appcompat-v7:${supportAppcompatVersion}"
     compile "com.android.support:design:${supportDesignVersion}"
@@ -209,7 +213,7 @@ dependencies {
     compile 'com.amazonaws:aws-android-sdk-core:2.2.18'
     compile 'com.amazonaws:aws-android-sdk-cognito:2.2.18'
     compile 'com.amazonaws:aws-android-sdk-s3:2.2.18'
-    compile 'com.squareup.picasso:picasso:2.5.2'
+    //compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile 'com.github.chrisbanes:PhotoView:1.2.6'
     compile 'de.hdodenhof:circleimageview:2.0.0'

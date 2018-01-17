@@ -45,7 +45,9 @@ public class CallRates {
                         Log.w(TAG, e);
                     }
                 } finally {
-                    response.body().close();
+                    if(response != null && response.body() != null) {
+                        response.body().close();
+                    }
                 }
             }
 

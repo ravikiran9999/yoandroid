@@ -28,7 +28,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
-                android:src="@drawable/dynamic_profile" />
+                android:src="@drawable/dynamic_profile"
+                />
 
             <LinearLayout
                 android:id="@+id/layout"

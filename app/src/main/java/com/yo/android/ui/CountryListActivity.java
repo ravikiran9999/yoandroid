@@ -25,6 +25,8 @@ import com.yo.android.util.Util;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.Bind;
@@ -117,16 +119,20 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
                     List<CallRateDetail> callRateDetailList = gson.fromJson(new InputStreamReader(response.body().byteStream()), new TypeToken<List<CallRateDetail>>() {
                     }.getType());
                     if (callRateDetailList != null && !callRateDetailList.isEmpty()) {
-                        String json = gson.toJson(callRateDetailList);
+                       List<CallRateDetail> mCallRateDetails = loadAlphabetOrder(callRateDetailList);
+
+                        String json = gson.toJson(mCallRateDetails);
                         preferenceEndPoint.saveStringPreference(Constants.COUNTRY_LIST, json);
-                        adapter.addItems(callRateDetailList);
+                        adapter.addItems(mCallRateDetails);
                         //Util.setDynamicHeight(listView);
                         //Util.setDynamicHeight(listViewRecent);
                     }
                 } catch (Exception e) {
                     mLog.w(TAG, e);
                 } finally {
-                    response.body().close();
+                    if(response != null && response.body() != null) {
+                        response.body().close();
+                    }
                 }
                 showEmptyText();
             }
@@ -139,18 +145,30 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
         });
     }
 
+    private List<CallRateDetail> loadAlphabetOrder(List<CallRateDetail> list) {
+
+        Collections.sort(list, new Comparator<CallRateDetail>() {
+            @Override
+            public int compare(CallRateDetail lhs, CallRateDetail rhs) {
+                return lhs.getDestination().toLowerCase().compareTo(rhs.getDestination().toLowerCase());
+            }
+        });
+
+        return list;
+    }
+
     private void showEmptyText() {
         txtEmptyView.setText(R.string.empty_country_list_message);
         txtEmptyView.setVisibility(adapter.getCount() == 0 ? View.VISIBLE : View.GONE);
-        if(txtEmptyView.getVisibility() == View.VISIBLE) {
+        if (txtEmptyView.getVisibility() == View.VISIBLE) {
             countryTitle.setVisibility(View.GONE);
             recentTextView.setVisibility(View.GONE);
         } else {
             countryTitle.setVisibility(View.VISIBLE);
             recentTextView.setVisibility(recentTextView.getVisibility());
-            if(recentAdapter.getAllItems().size()>0) {
+            if (recentAdapter.getAllItems().size() > 0) {
                 recentTextView.setVisibility(View.VISIBLE);
-            } else if(recentAdapter.getCount() == 0) {
+            } else if (recentAdapter.getCount() == 0) {
                 recentTextView.setVisibility(View.GONE);
             }
         }
@@ -207,7 +225,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
         if (object instanceof CallRateDetail) {
             CallRateDetail callRateDetail = (CallRateDetail) object;
             callRateDetail.setRecentSelected(true);
-            if(!recentCallRateDetails.contains(callRateDetail)) {
+            if (!recentCallRateDetails.contains(callRateDetail)) {
                 recentCallRateDetails.add(callRateDetail);
             }
             String json = new Gson().toJson(recentCallRateDetails);

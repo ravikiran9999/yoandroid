@@ -109,12 +109,9 @@ import retrofit2.Response;
 import static com.yo.android.app.BaseApp.appRunning;
 import static com.yo.dialer.googlesheet.UploadCallDetails.SCOPES;
 
-/**
- * Created by Ramesh on 3/7/16.
- */
 public class BottomTabsActivity extends BaseActivity {
 
-    private static final String TAG = BottomTabsActivity.class.getSimpleName();
+    private static String TAG = BottomTabsActivity.class.getSimpleName();
     private TabLayout tabLayout;
     private List<TabsData> dataList;
     @Inject
@@ -131,17 +128,15 @@ public class BottomTabsActivity extends BaseActivity {
     TabsPagerAdapter mAdapter;
     public CustomViewPager viewPager;
     private Button notificationCount;
-    private ImageView notificationEnable;
-    private ViewGroup customActionBar;
     private Context context;
     private SipBinder sipBinder;
-    private static Context mContext;
-    public static Activity activity;
+    //private static Context mContext;
     public static PendingIntent pintent;
     private TextView actionBarTitle;
     private SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-    private static final int REQUEST_AUDIO_RECORD = 200;
+    private static int REQUEST_AUDIO_RECORD = 200;
     private int lastFragmentPosition = 0;
+    public static GoogleAccountCredential mCredential;
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -158,16 +153,12 @@ public class BottomTabsActivity extends BaseActivity {
         }
     };
 
-    public static GoogleAccountCredential mCredential;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bottom_tabs);
         context = this;
-        activity = this;
-        mContext = getApplicationContext();
+        //mContext = getApplicationContext();
         String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
 
         appRunning = true;
@@ -187,6 +178,7 @@ public class BottomTabsActivity extends BaseActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.GET_ACCOUNTS,
                     Manifest.permission.READ_PHONE_STATE,
                     Manifest.permission.READ_CONTACTS,
@@ -248,7 +240,7 @@ public class BottomTabsActivity extends BaseActivity {
             index++;
         }
 
-        customActionBar = (ViewGroup) getLayoutInflater().inflate(R.layout.custom_action_bar, null);
+        ViewGroup customActionBar = (ViewGroup) getLayoutInflater().inflate(R.layout.custom_action_bar, null);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setCustomView(customActionBar);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -256,7 +248,7 @@ public class BottomTabsActivity extends BaseActivity {
         }
 
         notificationCount = (Button) customActionBar.findViewById(R.id.notif_count);
-        notificationEnable = (ImageView) customActionBar.findViewById(R.id.yo_icon);
+        ImageView notificationEnable = (ImageView) customActionBar.findViewById(R.id.yo_icon);
         notificationEnable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -418,17 +410,27 @@ public class BottomTabsActivity extends BaseActivity {
                         public void onResponse(Call<FindPeople> call, Response<FindPeople> response) {
 
                             if (response.body() != null) {
-                                FindPeople userInfo = response.body();
-                                Intent intent = new Intent(BottomTabsActivity.this, OthersProfileActivity.class);
-                                intent.putExtra(Constants.USER_ID, redirectId);
-                                intent.putExtra("PersonName", userInfo.getFirst_name() + " " + userInfo.getLast_name());
-                                intent.putExtra("PersonPic", userInfo.getAvatar());
-                                intent.putExtra("PersonIsFollowing", userInfo.getIsFollowing());
-                                intent.putExtra("MagazinesCount", userInfo.getMagzinesCount());
-                                intent.putExtra("FollowersCount", userInfo.getFollowersCount());
-                                intent.putExtra("LikedArticlesCount", userInfo.getLikedArticlesCount());
-                                startActivity(intent);
-                                finish();
+                                try {
+                                    FindPeople userInfo = response.body();
+                                    Intent intent = new Intent(BottomTabsActivity.this, OthersProfileActivity.class);
+                                    intent.putExtra(Constants.USER_ID, redirectId);
+                                    intent.putExtra("PersonName", userInfo.getFirst_name() + " " + userInfo.getLast_name());
+                                    intent.putExtra("PersonPic", userInfo.getAvatar());
+                                    intent.putExtra("PersonIsFollowing", userInfo.getIsFollowing());
+                                    intent.putExtra("MagazinesCount", userInfo.getMagzinesCount());
+                                    intent.putExtra("FollowersCount", userInfo.getFollowersCount());
+                                    intent.putExtra("LikedArticlesCount", userInfo.getLikedArticlesCount());
+                                    startActivity(intent);
+                                    finish();
+                                }finally {
+                                    if(response != null && response.body() != null) {
+                                        try {
+                                            response = null;
+                                        }catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
                             }
                         }
 
@@ -451,14 +453,24 @@ public class BottomTabsActivity extends BaseActivity {
                         @Override
                         public void onResponse(Call<Articles> call, Response<Articles> response) {
                             if (response.body() != null) {
-                                Articles articles = response.body();
-                                Intent intent = new Intent(BottomTabsActivity.this, MagazineArticleDetailsActivity.class);
-                                intent.putExtra("Title", articles.getTitle());
-                                intent.putExtra("Image", articles.getUrl());
-                                intent.putExtra("Article", articles);
-                                intent.putExtra("Position", 0);
-                                startActivity(intent);
-                                finish();
+                                try {
+                                    Articles articles = response.body();
+                                    Intent intent = new Intent(BottomTabsActivity.this, MagazineArticleDetailsActivity.class);
+                                    intent.putExtra("Title", articles.getTitle());
+                                    intent.putExtra("Image", articles.getUrl());
+                                    intent.putExtra("Article", articles);
+                                    intent.putExtra("Position", 0);
+                                    startActivity(intent);
+                                    finish();
+                                } finally {
+                                    if(response != null && response.body() != null) {
+                                        try {
+                                            response = null;
+                                        }catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
                             }
                         }
 
@@ -529,8 +541,6 @@ public class BottomTabsActivity extends BaseActivity {
     }
 
     @Override
-
-
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         DialerLogs.messageI(TAG, requestCode + " Permissions while requesting " + grantResults[2]);
        /* mCredential = GoogleAccountCredential.usingOAuth2(
@@ -708,7 +718,13 @@ public class BottomTabsActivity extends BaseActivity {
                         ((MoreFragment) getFragment()).loadImage();
                     }
                 } finally {
-                    //response.raw().close();
+                    if(response != null && response.body() != null) {
+                        try {
+                            response = null;
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
 
@@ -817,16 +833,25 @@ public class BottomTabsActivity extends BaseActivity {
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 if (response.body() != null) {
-                    Util.saveUserDetails(response, preferenceEndPoint);
-                    preferenceEndPoint.saveStringPreference(Constants.USER_ID, response.body().getId());
-                    preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
-                    preferenceEndPoint.saveStringPreference(Constants.USER_STATUS, response.body().getDescription());
-                    preferenceEndPoint.saveStringPreference(Constants.FIREBASE_USER_ID, response.body().getFirebaseUserId());
-                    if (TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.USER_NAME))) {
-                        preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
+                    try {
+                        Util.saveUserDetails(response, preferenceEndPoint);
+                        preferenceEndPoint.saveStringPreference(Constants.USER_ID, response.body().getId());
+                        preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
+                        preferenceEndPoint.saveStringPreference(Constants.USER_STATUS, response.body().getDescription());
+                        preferenceEndPoint.saveStringPreference(Constants.FIREBASE_USER_ID, response.body().getFirebaseUserId());
+                        if (TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.USER_NAME))) {
+                            preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
+                        }
+                        preferenceEndPoint.saveBooleanPreference(Constants.USER_TYPE, response.body().isRepresentative());
+                    } finally {
+                        if(response != null && response.body() != null) {
+                            try {
+                                response = null;
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
-                    preferenceEndPoint.saveBooleanPreference(Constants.USER_TYPE, response.body().isRepresentative());
-
                 }
             }
 
@@ -947,19 +972,17 @@ public class BottomTabsActivity extends BaseActivity {
 
         cal.set(Calendar.SECOND, calendar.get(Calendar.SECOND) + dif);
 
-        Intent intent = new Intent(getAppContext(), FetchNewArticlesService.class);
+        Intent intent = new Intent(getApplicationContext(), FetchNewArticlesService.class);
         pintent = PendingIntent.getService(this, 1014, intent,
                 0);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        /*alarm.setRepeating(AlarmManager.RTC_WAKEUP, (((24 * 60 * 60) - currentTimeInSec) * 1000),
-                AlarmManager.INTERVAL_DAY, pintent);*/
         alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, pintent);
     }
 
-    public static Context getAppContext() {
+    /*public static Context getAppContext() {
         return BottomTabsActivity.mContext;
-    }
+    }*/
 
     @Override
     protected void onDestroy() {
@@ -970,7 +993,11 @@ public class BottomTabsActivity extends BaseActivity {
         EventBus.getDefault().unregister(this);
         appRunning = false;
 
+        TAG = null;
+        mCredential = null;
+        pintent = null;
         super.onDestroy();
     }
+
 
 }

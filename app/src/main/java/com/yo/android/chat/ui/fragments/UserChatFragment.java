@@ -693,7 +693,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                             retryMessageCount++;
 
                         } else if (activity != null) {
-                            if(BuildConfig.DEBUG) {
+                            if (BuildConfig.DEBUG) {
                                 Log.i(TAG, "firebaseToken :: " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
                                 Log.i(TAG, "firebase User Id :: " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_USER_ID));
                             }
@@ -983,6 +983,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             getActivity().startActivity(photoIntent);
         }
     }
+
+    /*
+     Firebase is having cursor closing issue
+     https://github.com/firebase/quickstart-android/issues/176
+     */
 
     @Override
     public void onChildAdded(com.firebase.client.DataSnapshot dataSnapshot, String s) {

@@ -44,7 +44,13 @@ public class WebserviceUsecase {
                         }
                     }
                 } finally {
-                    response.body().setData(null);
+                    if (response != null && response.body() != null) {
+                        try {
+                            response = null;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
 

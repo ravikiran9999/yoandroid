@@ -97,29 +97,39 @@ public class FollowersActivity extends BaseActivity implements SwipeRefreshLayou
         yoService.getFollowersAPI(accessToken).enqueue(new Callback<List<FindPeople>>() {
             @Override
             public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
-                if (response.body() != null && response.body().size() > 0) {
-                    noData.setVisibility(View.GONE);
-                    llNoPeople.setVisibility(View.GONE);
-                    lvFindPeople.setVisibility(View.VISIBLE);
-                    networkFailureText.setVisibility(View.GONE);
-                    List<FindPeople> findPeopleList = response.body();
-                    findPeopleAdapter.addItems(findPeopleList);
-                    isEmptyDataSet = false;
-                    isNetworkFailure = false;
-                } else {
-                    noData.setVisibility(View.GONE);
-                    llNoPeople.setVisibility(View.VISIBLE);
-                    lvFindPeople.setVisibility(View.GONE);
-                    networkFailureText.setVisibility(View.GONE);
-                    isEmptyDataSet = true;
-                    isNetworkFailure = false;
+                try {
+                    if (response.body() != null && response.body().size() > 0) {
+                        noData.setVisibility(View.GONE);
+                        llNoPeople.setVisibility(View.GONE);
+                        lvFindPeople.setVisibility(View.VISIBLE);
+                        networkFailureText.setVisibility(View.GONE);
+                        List<FindPeople> findPeopleList = response.body();
+                        findPeopleAdapter.addItems(findPeopleList);
+                        isEmptyDataSet = false;
+                        isNetworkFailure = false;
+                    } else {
+                        noData.setVisibility(View.GONE);
+                        llNoPeople.setVisibility(View.VISIBLE);
+                        lvFindPeople.setVisibility(View.GONE);
+                        networkFailureText.setVisibility(View.GONE);
+                        isEmptyDataSet = true;
+                        isNetworkFailure = false;
+                    }
+                    if (swipeRefreshContainer != null) {
+                        swipeRefreshContainer.setRefreshing(false);
+                    } else {
+                        dismissProgressDialog();
+                    }
+                } finally {
+                    if(response != null && response.body() != null) {
+                        try {
+                            response.body().clear();
+                            response = null;
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
-                if(swipeRefreshContainer != null) {
-                    swipeRefreshContainer.setRefreshing(false);
-                } else {
-                    dismissProgressDialog();
-                }
-
             }
 
             @Override
@@ -157,25 +167,36 @@ public class FollowersActivity extends BaseActivity implements SwipeRefreshLayou
                 yoService.getFollowersAPI(accessToken).enqueue(new Callback<List<FindPeople>>() {
                     @Override
                     public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
-                        if (response!=null && response.body()!=null && response.body().size() > 0) {
-                            noData.setVisibility(View.GONE);
-                            llNoPeople.setVisibility(View.GONE);
-                            lvFindPeople.setVisibility(View.VISIBLE);
-                            networkFailureText.setVisibility(View.GONE);
-                            List<FindPeople> findPeopleList = response.body();
-                            findPeopleAdapter.clearAll();
-                            findPeopleAdapter.addItems(findPeopleList);
-                            isEmptyDataSet = false;
-                            isNetworkFailure = false;
-                        } else {
-                            noData.setVisibility(View.GONE);
-                            llNoPeople.setVisibility(View.VISIBLE);
-                            lvFindPeople.setVisibility(View.GONE);
-                            networkFailureText.setVisibility(View.GONE);
-                            isEmptyDataSet = true;
-                            isNetworkFailure = false;
+                        try {
+                            if (response != null && response.body() != null && response.body().size() > 0) {
+                                noData.setVisibility(View.GONE);
+                                llNoPeople.setVisibility(View.GONE);
+                                lvFindPeople.setVisibility(View.VISIBLE);
+                                networkFailureText.setVisibility(View.GONE);
+                                List<FindPeople> findPeopleList = response.body();
+                                findPeopleAdapter.clearAll();
+                                findPeopleAdapter.addItems(findPeopleList);
+                                isEmptyDataSet = false;
+                                isNetworkFailure = false;
+                            } else {
+                                noData.setVisibility(View.GONE);
+                                llNoPeople.setVisibility(View.VISIBLE);
+                                lvFindPeople.setVisibility(View.GONE);
+                                networkFailureText.setVisibility(View.GONE);
+                                isEmptyDataSet = true;
+                                isNetworkFailure = false;
+                            }
+                            dismissProgressDialog();
+                        } finally {
+                            if(response != null && response.body() != null) {
+                                try {
+                                    response.body().clear();
+                                    response = null;
+                                }catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
                         }
-                        dismissProgressDialog();
                     }
 
                     @Override

@@ -164,22 +164,31 @@ public class FollowMoreTopicsActivity extends BaseActivity {
         yoService.categoriesAPI(accessToken).enqueue(new Callback<List<Categories>>() {
             @Override
             public void onResponse(Call<List<Categories>> call, Response<List<Categories>> response) {
-                if (response == null || response.body() == null) {
-                    dismissProgressDialog();
-                    return;
-                }
-
-                serverTopics = response.body();
-
-                categorisedList = new CategorizedList(FollowMoreTopicsActivity.this, listView, initialTags, serverTopics);
-                new TagLoader(FollowMoreTopicsActivity.this, new TagsLoader() {
-                    @Override
-                    public void loaded() {
-                        searchTagsArrayList = new ArrayList<Tag>(initialTags);
-                        arraylist = new ArrayList<Tag>(initialTags);
+                try {
+                    if (response == null || response.body() == null) {
+                        dismissProgressDialog();
+                        return;
                     }
-                }, serverTopics, tagViewAdapter, initialTags, categorisedList).execute();
 
+                    serverTopics = response.body();
+                    categorisedList = new CategorizedList(FollowMoreTopicsActivity.this, listView, initialTags, serverTopics);
+                    new TagLoader(FollowMoreTopicsActivity.this, new TagsLoader() {
+                        @Override
+                        public void loaded() {
+                            searchTagsArrayList = new ArrayList<Tag>(initialTags);
+                            arraylist = new ArrayList<Tag>(initialTags);
+                        }
+                    }, serverTopics, tagViewAdapter, initialTags, categorisedList).execute();
+                } finally {
+                    if (response != null && response.body() != null) {
+                        try {
+                            response.body().clear();
+                            response = null;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
 
             @Override
@@ -254,6 +263,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
     /**
      * Action done on clicking the Done button
+     *
      * @param followedTopicsIdsList The topics list
      */
     private void performDoneAction(final List<String> followedTopicsIdsList) {
@@ -354,6 +364,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
     /**
      * Searches for the tag
+     *
      * @param activity
      * @param menu
      */
@@ -409,6 +420,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
     /**
      * Filters the tags based on the text to be searched for
+     *
      * @param searchText The search text
      */
     private void filterTags(CharSequence searchText) {
@@ -500,6 +512,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
     /**
      * Creates the tags
+     *
      * @param tags The list of tags
      * @return the TagView
      */
@@ -513,6 +526,7 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
     /**
      * Sets the searched tags
+     *
      * @param cs The search text
      */
     private void setTags(CharSequence cs) {
@@ -623,7 +637,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
     /**
      * Performs operations on clicking the tag
-     * @param mTag The Tag object
+     *
+     * @param mTag     The Tag object
      * @param position The position
      */
     public void onClickingTag(Tag mTag, int position) {
@@ -791,7 +806,8 @@ public class FollowMoreTopicsActivity extends BaseActivity {
 
     /**
      * Updates the clicked tag
-     * @param mTag The Tag object
+     *
+     * @param mTag     The Tag object
      * @param position The position
      */
     private void onUpdatingClickedTag(Tag mTag, int position) {

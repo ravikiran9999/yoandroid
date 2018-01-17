@@ -113,7 +113,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     FrameLayout changePhoto;
 
-    CircleImageView profilePic;
+
 
     @Inject
     ImagePickHelper cameraIntent;
@@ -123,6 +123,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Bind(R.id.add_change_photo_text)
     TextView addOrChangePhotoText;
+
+    @Bind(R.id.profile_pic)
+    CircleImageView profilePic;
 
     @Inject
     FireBaseHelper fireBaseHelper;
@@ -186,7 +189,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         changePhoto = (FrameLayout) view.findViewById(R.id.change_layout);
-        profilePic = (CircleImageView) view.findViewById(R.id.profile_pic);
         profileStatus = (TextView) view.findViewById(R.id.profile_status);
         changePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,10 +197,15 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             }
         });
 
+        initCircularView();
         loadImage();
         callOtherInfoApi();
     }
 
+    private void initCircularView() {
+        profilePic.setBorderColor(getResources().getColor(R.color.white));
+        profilePic.setBorderWidth(5);
+    }
 
     public void loadImage() {
         if (preferenceEndPoint != null && addOrChangePhotoText != null && getActivity() != null) {
@@ -246,10 +253,20 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                 @Override
                 public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                     dismissProgressDialog();
-                    if (response.body() != null) {
-                        preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
+                    try {
+                        if (response.body() != null) {
+                            preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
+                        }
+                        loadImage();
+                    }finally {
+                        if(response != null && response.body() != null) {
+                            try {
+                                response = null;
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
-                    loadImage();
                 }
 
                 @Override
@@ -530,10 +547,10 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                     Uri uri = Uri.fromFile(file);
                     Bitmap bitmap = null;
                     try {
-                        bitmap = MediaStore.Images.Media.getBitmap(BottomTabsActivity.activity.getContentResolver(), uri);
+                        bitmap = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), uri);
                         if (imagePath != null) {
-                            if (BottomTabsActivity.activity != null) {
-                                Helper.setSelectedImage(BottomTabsActivity.activity, imagePath, true, bitmap, true);
+                            if (activity != null) {
+                                Helper.setSelectedImage(activity, imagePath, true, bitmap, true);
                             }
                         }
                     } catch (FileNotFoundException e) {
@@ -550,8 +567,8 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             case Constants.ADD_SELECT_PICTURE: {
                 if (data != null) {
                     try {
-                        String imagePath = ImagePickHelper.getGalleryImagePath(BottomTabsActivity.activity, data);
-                        Helper.setSelectedImage(BottomTabsActivity.activity, imagePath, true, null, false);
+                        String imagePath = ImagePickHelper.getGalleryImagePath(activity, data);
+                        Helper.setSelectedImage(activity, imagePath, true, null, false);
                     } catch (Exception e) {
                         mLog.w("MoreFragment", e);
                     }
@@ -684,15 +701,25 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             @Override
             public void onResponse(Call<UserProfileInfo> call, Response<UserProfileInfo> response) {
                 dismissProgressDialog();
-                if (response.body() != null) {
-                    saveUserProfileValues(response.body());
+                try {
+                    if (response.body() != null) {
+                        saveUserProfileValues(response.body());
+                    }
+                    loadImage();
+                    String status = preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, "Available");
+                    if (status.equalsIgnoreCase("")) {
+                        status = "Available";
+                    }
+                    profileStatus.setText(status);
+                } finally {
+                    if(response != null && response.body() != null) {
+                        try {
+                            response = null;
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
-                loadImage();
-                String status = preferenceEndPoint.getStringPreference(Constants.DESCRIPTION, "Available");
-                if (status.equalsIgnoreCase("")) {
-                    status = "Available";
-                }
-                profileStatus.setText(status);
             }
 
             @Override

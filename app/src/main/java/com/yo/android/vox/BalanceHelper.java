@@ -101,7 +101,9 @@ public class BalanceHelper {
                         mLog.w(TAG, "loadBalance", e);
 
                     } finally {
-                        response.body().close();
+                        if(response != null && response.body() != null) {
+                            response.body().close();
+                        }
                     }
                 }
             }
@@ -458,8 +460,19 @@ public class BalanceHelper {
             @Override
             public void onResponse(Call<List<PaymentHistoryItem>> call, Response<List<PaymentHistoryItem>> response) {
                 mLog.i(TAG, "loadPaymentHistory: onResponse - %b", response.isSuccessful());
-                if (callback != null) {
-                    callback.onResponse(call, response);
+                try {
+                    if (callback != null) {
+                        callback.onResponse(call, response);
+                    }
+                } finally {
+                    if(response != null && response.body() != null) {
+                        try {
+                            response.body().clear();
+                            response = null;
+                        }catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
 

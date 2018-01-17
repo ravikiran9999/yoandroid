@@ -45,8 +45,10 @@ public  class NewImageRenderTask extends AsyncTask<Void, Void, Bitmap> {
         super.onPostExecute(urlBitmap);
         int screenWidth = DeviceDimensionsHelper.getDisplayWidth(mContext);
         int screenHeight = DeviceDimensionsHelper.getDisplayHeight(mContext);
+        Bitmap bmp = null;
         if (urlBitmap != null) {
-            Bitmap bmp = BitmapScaler.scaleToFitWidth(urlBitmap, screenWidth);
+            try {
+            bmp = BitmapScaler.scaleToFitWidth(urlBitmap, screenWidth);
             //BitmapCache.getInstance(mContext).addBitmapToMemoryCache(imageLink,bmp);
             //articleImageView.setImageBitmap(bmp);
             //byte[] byteArray = bitmapToByte(bmp);
@@ -74,10 +76,16 @@ public  class NewImageRenderTask extends AsyncTask<Void, Void, Bitmap> {
                         .dontAnimate()
                         .into(articleImageView);
             }
-
+            }finally {
+                if(bmp != null) {
+                    bmp.recycle();
+                    bmp = null;
+                }
+            }
         } else {
             articleImageView.setImageResource(R.drawable.magazine_backdrop);
         }
+
     }
 
     public static Bitmap getBitmapFromURL(String src) {

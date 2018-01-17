@@ -231,22 +231,32 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
 
                 @Override
                 public void onResponse(Call<Room> call, Response<Room> response) {
-                    if (response.isSuccessful()) {
-                        if (!ContactsArrayList.isEmpty()) {
-                            ContactsArrayList.clear();
+                    try {
+                        if (response.isSuccessful()) {
+                            if (!ContactsArrayList.isEmpty()) {
+                                ContactsArrayList.clear();
+                            }
+                            Intent intent = new Intent();
+                            Room body1 = response.body();
+                            long time = addTimeStamp(body1.getCreated_at());
+                            body1.setTime(time);
+                            intent.putExtra(Constants.ROOM, body1);
+                            setResult(Activity.RESULT_OK, intent);
+                            updateCache(body1);
+                            finish();
+                        } else {
+                            Toast.makeText(CreateGroupActivity.this, getResources().getString(R.string.group_creation_error), Toast.LENGTH_SHORT).show();
                         }
-                        Intent intent = new Intent();
-                        Room body1 = response.body();
-                        long time = addTimeStamp(body1.getCreated_at());
-                        body1.setTime(time);
-                        intent.putExtra(Constants.ROOM, body1);
-                        setResult(Activity.RESULT_OK, intent);
-                        updateCache(body1);
-                        finish();
-                    } else {
-                        Toast.makeText(CreateGroupActivity.this, getResources().getString(R.string.group_creation_error), Toast.LENGTH_SHORT).show();
+                        dismissProgressDialog();
+                    } finally {
+                        if(response != null && response.body() != null) {
+                            try {
+                                response = null;
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
-                    dismissProgressDialog();
                 }
 
                 @Override

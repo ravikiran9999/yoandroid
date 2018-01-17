@@ -35,30 +35,40 @@ public class DenominationsUsecase {
         call.enqueue(new Callback<List<TransferBalanceDenomination>>() {
             @Override
             public void onResponse(Call<List<TransferBalanceDenomination>> call, Response<List<TransferBalanceDenomination>> response) {
-                if (response.body() != null && response.code() == 200) {
-                    ArrayList<TransferBalanceDenomination> denominations = new ArrayList<>(response.body());
+                try {
+                    if (response.body() != null && response.code() == 200) {
+                        ArrayList<TransferBalanceDenomination> denominations = new ArrayList<>(response.body());
 
-                    Collections.sort(denominations, new Comparator<TransferBalanceDenomination>() {
-                        @Override
-                        public int compare(TransferBalanceDenomination lhs, TransferBalanceDenomination rhs) {
-                            int x = Integer.valueOf(lhs.getDenomination());
-                            int y = Integer.valueOf(rhs.getDenomination());
+                        Collections.sort(denominations, new Comparator<TransferBalanceDenomination>() {
+                            @Override
+                            public int compare(TransferBalanceDenomination lhs, TransferBalanceDenomination rhs) {
+                                int x = Integer.valueOf(lhs.getDenomination());
+                                int y = Integer.valueOf(rhs.getDenomination());
 
-                            return x - y;
+                                return x - y;
+                            }
+                        });
+                        balanceTransferCallback.onResult(denominations);
+                    } else if (response.code() == 404 || response.code() == 422) {
+                        balanceTransferCallback.onFailure(response.message());
+                    } else {
+                        balanceTransferCallback.onFailure(response.message());
+                    }
+                } finally {
+                    if (response != null && response.body() != null) {
+                        try {
+                            response.body().clear();
+                            response = null;
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    });
-                    balanceTransferCallback.onResult(denominations);
-                } else if (response.code() == 404 || response.code() == 422) {
-                    balanceTransferCallback.onFailure(response.message());
-                } else {
-                    balanceTransferCallback.onFailure(response.message());
+                    }
                 }
-
             }
 
             @Override
             public void onFailure(Call<List<TransferBalanceDenomination>> call, Throwable t) {
-                if(t != null && t instanceof ConnectException) {
+                if (t != null && t instanceof ConnectException) {
                     balanceTransferCallback.onFailure(noWifiError);
                 } else {
                     balanceTransferCallback.onFailure(t.getMessage());

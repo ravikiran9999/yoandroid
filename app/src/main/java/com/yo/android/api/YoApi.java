@@ -260,7 +260,7 @@ public class YoApi {
                                       @Field("credit") String credit);
 
         @GET("api/user/notifications.json")
-        Call<List<Notification>> getNotifications(@Query("access_token") String access_token);
+        Call<List<Notification>> getNotifications(@Query("access_token") String access_token, @Query("req_type") String type, @Query("notification_ids") String notificationIds);
 
         @FormUrlEncoded
         @POST("api/articles.json")
