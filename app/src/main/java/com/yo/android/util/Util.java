@@ -986,16 +986,32 @@ public class Util {
 
     public static String addDenomination(String amount, String amountWithDenomination) {
         try {
-
+            amount = amountLookUp(amount);
             if (amountWithDenomination != null) {
                 String denomination = amountWithDenomination.replaceAll("[0-9]", "");
-                return String.format("%s %s", denomination, amount);
+                return String.format("%s %s", currencySymbolUpLook(denomination), amount);
             } else {
-                return String.format("%s %s", "IN Rs", amount);
+                return String.format("%s %s", currencySymbolUpLook("$"), amount);
             }
         } catch (Exception e) {
-            return String.format("%s %s", "IN Rs", amount);
+            return String.format("%s %s", currencySymbolUpLook("$"), amount);
         }
+    }
+
+    private static String currencySymbolUpLook(String currencyCode) {
+        if (currencyCode.contains("INR") || currencyCode.contains("₨")) {
+            return "₹";
+        } else {
+            return "$";
+        }
+    }
+
+    private static String amountLookUp(String amount) {
+        if (amount.startsWith(".")) {
+            return "0" + amount;
+        }
+
+        return amount;
     }
 
     public static void appendLog(String text) {

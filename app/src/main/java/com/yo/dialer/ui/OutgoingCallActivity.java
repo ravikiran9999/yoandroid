@@ -134,6 +134,15 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
         floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
 
         registerListerners();
+        initCircularView();
+    }
+
+    private void initCircularView() {
+        calleImageView.setBorderColor(getResources().getColor(R.color.white));
+        calleImageView.setBorderWidth(5);
+
+        acceptedCalleImageView.setBorderColor(getResources().getColor(R.color.white));
+        acceptedCalleImageView.setBorderWidth(5);
     }
 
     private void registerListerners() {

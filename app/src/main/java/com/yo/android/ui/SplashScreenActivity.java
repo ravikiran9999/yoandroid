@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
@@ -20,9 +19,6 @@ import com.yo.android.util.Constants;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-/**
- * Created by Ramesh on 30/6/16.
- */
 public class SplashScreenActivity extends BaseActivity {
     private final static String TAG = "SplashScreenActivity";
     @Inject

@@ -1,14 +1,11 @@
 package com.yo.android.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
@@ -17,7 +14,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
@@ -25,7 +21,6 @@ import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,7 +40,6 @@ import com.yo.android.ui.fragments.RechargeDetailsFragment;
 import com.yo.android.ui.fragments.SpendDetailsFragment;
 import com.yo.android.util.Constants;
 import com.yo.android.util.PopupDialogListener;
-import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
 
 import java.lang.reflect.Type;
@@ -55,7 +49,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 
@@ -338,17 +331,13 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         Typeface alexBrushRegular = getAlexBrushRegular();
         TypefaceSpan alexBrushRegularSpan = new CustomTypefaceSpan("", alexBrushRegular);
         final SpannableStringBuilder text = new SpannableStringBuilder(mTitle);
-        // Span to make text bold
-        //final StyleSpan bss = new StyleSpan(android.graphics.Typeface.BOLD);
 
         text.setSpan(alexBrushRegularSpan, 0, 3, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         text.setSpan(new RelativeSizeSpan(2f), 0, 3, 0); // set size
-        //text.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorPrimary)), 17, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        // make them also bold
-        //text.setSpan(bss, 17, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
 
         return text;
     }
+
 
     private void registerBroadCastReceiver() {
         IntentFilter intentFilter = new IntentFilter();

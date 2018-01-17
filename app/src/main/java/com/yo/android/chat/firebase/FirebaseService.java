@@ -190,13 +190,15 @@ public class FirebaseService extends InjectedService {
 
                         String userId = loginPrefs.getStringPreference(Constants.PHONE_NUMBER);
                         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-                        ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
-                        String[] strings = cn.getShortClassName().split(Pattern.quote("."));
-                        int i = strings.length - 1;
-                        if (!userId.equalsIgnoreCase(chatMessage.getSenderID()) && chatMessage.getDelivered() == 0 && loginPrefs.getBooleanPreference(Constants.NOTIFICATION_ALERTS) && (!strings[i].equalsIgnoreCase("ChatActivity"))) {
-                            //newPushNotification(chatMessage.getRoomId(), chatMessage);
+                        List<ActivityManager.RunningTaskInfo> runningTaskInfos = am.getRunningTasks(1);
+                        if(runningTaskInfos.size() > 0) {
+                            ComponentName cn = runningTaskInfos.get(0).topActivity;
+                            String[] strings = cn.getShortClassName().split(Pattern.quote("."));
+                            int i = strings.length - 1;
+                            if (!userId.equalsIgnoreCase(chatMessage.getSenderID()) && chatMessage.getDelivered() == 0 && loginPrefs.getBooleanPreference(Constants.NOTIFICATION_ALERTS) && (!strings[i].equalsIgnoreCase("ChatActivity"))) {
+                                //newPushNotification(chatMessage.getRoomId(), chatMessage);
+                            }
                         }
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

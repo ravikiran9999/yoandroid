@@ -995,7 +995,6 @@ public class BottomTabsActivity extends BaseActivity {
 
         TAG = null;
         mCredential = null;
-        pintent = null;
         super.onDestroy();
     }
 
