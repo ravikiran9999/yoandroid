@@ -469,4 +469,11 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
             llNoPeople.setVisibility(View.GONE);
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        clearGlideMemory(this);
+        super.onDestroy();
+
+    }
 }

@@ -66,6 +66,7 @@ public class FetchNewArticlesService extends Service {
         return START_STICKY;
     }
 
+
     private void showTrayNotification() {
 
         Intent intent = new Intent(getApplicationContext(), BottomTabsActivity.class);

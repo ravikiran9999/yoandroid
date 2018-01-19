@@ -723,7 +723,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     }*/
 
                     Glide.with(context)
-                            .load(data.getImage_filename())
+                            //.load(data.getImage_filename()())
+                            .load(data.getS3_image_filename())
                             .asBitmap()
                             .placeholder(R.drawable.magazine_backdrop)
                             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
@@ -738,7 +739,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                             bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
                                             Glide.clear(photoView);
                                             Glide.with(context)
-                                                    .load(data.getImage_filename())
+                                                    //.load(data.getImage_filename())
+                                                    .load(data.getS3_image_filename())
                                                     .override(bmp.getWidth(), bmp.getHeight())
                                                     .placeholder(R.drawable.magazine_backdrop)
                                                     .crossFade()

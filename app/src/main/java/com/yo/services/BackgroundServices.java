@@ -103,6 +103,6 @@ public class BackgroundServices extends InjectedService {
     }
 
     private void fetchCallRates() {
-        CallRates.fetch(yoService, preferenceEndPoint);
+        //CallRates.fetch(yoService, preferenceEndPoint);
     }
 }

@@ -53,7 +53,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
                     .load(R.color.grey_divider)
                     .fitCenter()
                     .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .dontAnimate()
                     .into(holder.getImageView());
 
@@ -64,7 +64,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
                     .load(item.getImage())
                     .asBitmap()
                     .placeholder(R.drawable.magazine_backdrop)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .dontAnimate()
                     .into(new SimpleTarget<Bitmap>() {
                         @Override

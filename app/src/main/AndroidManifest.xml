@@ -360,7 +360,7 @@
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
-            <!-- This points to an XMLf ile which describes our account service. -->
+            <!-- This points to an XMLfile which describes our account service. -->
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />

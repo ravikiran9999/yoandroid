@@ -13,6 +13,7 @@ public class Collections {
     private int articlesCount;
     private String video_url;
 
+
     public int getArticlesCount() {
         return articlesCount;
     }

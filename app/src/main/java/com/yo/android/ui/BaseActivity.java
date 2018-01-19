@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.FirebaseException;
@@ -354,5 +355,9 @@ public class BaseActivity extends ParentActivity {
         }
     }
 
+    public void clearGlideMemory(Context context) {
+        Glide glide = Glide.get(context);
+        glide.clearMemory();
+    }
 
 }

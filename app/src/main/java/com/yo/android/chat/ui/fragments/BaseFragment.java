@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -155,5 +156,14 @@ public class BaseFragment extends Fragment {
             alexBrushRegular = Typeface.createFromAsset(getActivity().getAssets(), TypefacePath.ALEX_BRUSH_REGULAR);
         }
         return alexBrushRegular;
+    }
+
+    public void clearGlideMemory(Context context) {
+        try {
+            Glide glide = Glide.get(context);
+            glide.clearMemory();
+        } finally {
+
+        }
     }
 }

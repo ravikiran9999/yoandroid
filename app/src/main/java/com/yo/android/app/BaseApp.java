@@ -1,34 +1,20 @@
 package com.yo.android.app;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
-import android.os.Bundle;
-import android.os.Handler;
 import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.FirebaseException;
-import com.firebase.client.ValueEventListener;
 import com.flurry.android.FlurryAgent;
 import com.flurry.android.FlurryAgentListener;
-import com.google.gson.Gson;
 import com.orion.android.common.preferences.PreferenceEndPoint;
-import com.yo.android.api.ApiCallback;
+//import com.squareup.leakcanary.LeakCanary;
 import com.yo.android.di.Injector;
 import com.yo.android.di.RootModule;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.inject.Inject;
 import javax.inject.Named;

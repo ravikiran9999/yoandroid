@@ -301,6 +301,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     protected void onDestroy() {
+        clearGlideMemory(this);
         super.onDestroy();
         if (!ContactsArrayList.isEmpty()) {
             ContactsArrayList.clear();
@@ -325,4 +326,6 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
     public void afterTextChanged(Editable s) {
 
     }
+
+
 }

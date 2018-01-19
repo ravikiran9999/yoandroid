@@ -14,6 +14,7 @@ public class Articles implements Parcelable {
     private String title;
     private String url;
     private String image_filename;
+    private String s3_image_filename;
     private String summary;
     private boolean isChecked;
     private String liked;
@@ -47,6 +48,7 @@ public class Articles implements Parcelable {
         topicFollowing = in.readString();
         updated = in.readString();
         video_url = in.readString();
+        s3_image_filename = in.readString();
     }
 
     public static final Creator<Articles> CREATOR = new Creator<Articles>() {
@@ -189,6 +191,13 @@ public class Articles implements Parcelable {
         this.video_url = video_url;
     }
 
+    public String getS3_image_filename() {
+        return s3_image_filename;
+    }
+
+    public void setS3_image_filename(String s3_image_filename) {
+        this.s3_image_filename = s3_image_filename;
+    }
 
     @Override
     public int describeContents() {
@@ -216,6 +225,7 @@ public class Articles implements Parcelable {
         dest.writeString(topicFollowing);
         dest.writeString(updated);
         dest.writeString(video_url);
+        dest.writeString(s3_image_filename);
     }
 
     public int hashCode() {
