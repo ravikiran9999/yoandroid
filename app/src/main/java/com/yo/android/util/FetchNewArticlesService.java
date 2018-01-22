@@ -56,8 +56,6 @@ public class FetchNewArticlesService extends Service {
         preferenceEndPoint.saveBooleanPreference(Constants.IS_ARTICLES_POSTED, false);
         preferenceEndPoint.saveBooleanPreference(Constants.STARTING_SERVICE, true);
         int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
-        int currentMin = Calendar.getInstance().get(Calendar.MINUTE); //Current hour
-        int currentSec = Calendar.getInstance().get(Calendar.SECOND); //Current hour
         if (currentHour == 1) {
             //showTrayNotification();
             preferenceEndPoint.saveBooleanPreference(Constants.IS_SERVICE_RUNNING, true);
@@ -67,33 +65,6 @@ public class FetchNewArticlesService extends Service {
     }
 
 
-    private void showTrayNotification() {
-
-        Intent intent = new Intent(getApplicationContext(), BottomTabsActivity.class);
-
-        PendingIntent notificationPendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-
-        NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setSmallIcon(R.drawable.ic_yo_notification)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_yo_notification))
-                .setColor(getResources().getColor(R.color.colorPrimary))
-                .setContentTitle("Fetching magazine started")
-                .setContentIntent(notificationPendingIntent)
-                .setContentText(getCurrentTime())
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setStyle(new NotificationCompat.BigTextStyle())
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setPriority(Notification.PRIORITY_HIGH | Notification.PRIORITY_MAX);
-        mNotificationManager.notify(GROUP_NOTIFICATION_ID, builder.build());
-    }
-
-    private String getCurrentTime() {
-        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-        return currentDateTimeString;
-    }
 
     @Override
     public void onDestroy() {

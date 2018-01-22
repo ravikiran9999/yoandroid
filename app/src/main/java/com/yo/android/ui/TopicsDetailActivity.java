@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
@@ -41,6 +42,7 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -70,6 +72,7 @@ public class TopicsDetailActivity extends BaseActivity {
     private Articles topic;
     private int position;
     private String articlePlacement;
+    Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +103,7 @@ public class TopicsDetailActivity extends BaseActivity {
         articlesList.clear();
 
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        List<String> tagIds = new ArrayList<String>();
+        List<String> tagIds = new ArrayList<>();
         tagIds.add(topic.getTopicId());
         showProgressDialog();
         yoService.getArticlesAPI(accessToken, tagIds).enqueue(new Callback<List<Articles>>() {
@@ -130,10 +133,19 @@ public class TopicsDetailActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
+        handler = new Handler();
+        handler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                clearGlideMemory(TopicsDetailActivity.this);
+            }
+        }, 10000);
     }
 
     public void onPause() {
         super.onPause();
+        handler.removeCallbacksAndMessages(null);
     }
 
     private class MyBaseAdapter extends BaseAdapter {
@@ -470,10 +482,11 @@ public class TopicsDetailActivity extends BaseActivity {
                 final RelativeLayout rlFullImageOptions = holder.rlFullImageOptions;
                 final TextView textView1 = holder.articleShortDesc;
                 Glide.with(context)
-                        .load(data.getImage_filename())
+                        //.load(data.getImage_filename())
+                        .load(data.getS3_image_filename())
                         .asBitmap()
                         .placeholder(R.drawable.magazine_backdrop)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                         .dontAnimate()
                         .into(new SimpleTarget<Bitmap>() {
                             @Override
@@ -482,46 +495,47 @@ public class TopicsDetailActivity extends BaseActivity {
                                 Bitmap bmp = null;
                                 if (resource != null) {
                                     try {
-                                    bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
-                                    Glide.with(context)
-                                            .load(data.getImage_filename())
-                                            .override(bmp.getWidth(), bmp.getHeight())
-                                            .placeholder(R.drawable.magazine_backdrop)
-                                            .crossFade()
-                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                            .dontAnimate()
-                                            .into(photoView);
+                                        bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
+                                        Glide.with(context)
+                                                //.load(data.getImage_filename())
+                                                .load(data.getS3_image_filename())
+                                                .override(bmp.getWidth(), bmp.getHeight())
+                                                .placeholder(R.drawable.magazine_backdrop)
+                                                .crossFade()
+                                                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                                                .dontAnimate()
+                                                .into(photoView);
 
-                                    int screenHeight = DeviceDimensionsHelper.getDisplayHeight(context);
-                                    //Log.d("BaseAdapter", "screenHeight " + screenHeight);
+                                        int screenHeight = DeviceDimensionsHelper.getDisplayHeight(context);
+                                        //Log.d("BaseAdapter", "screenHeight " + screenHeight);
                                        /*int spaceForImage = screenHeight - 120;
                                        Log.d("BaseAdapter", "spaceForImage" + spaceForImage);*/
-                                    //Log.d("BaseAdapter", "bmp.getHeight()" + bmp.getHeight());
-                                    int total = bmp.getHeight() + 50;
-                                    //if(bmp.getHeight() >= spaceForImage-30) {
-                                    //Log.d("BaseAdapter", "total" + total);
-                                    if (screenHeight - total <= 250) {
+                                        //Log.d("BaseAdapter", "bmp.getHeight()" + bmp.getHeight());
+                                        int total = bmp.getHeight() + 50;
+                                        //if(bmp.getHeight() >= spaceForImage-30) {
+                                        //Log.d("BaseAdapter", "total" + total);
+                                        if (screenHeight - total <= 250) {
 
-                                        Log.d("BaseAdapter", "Full screen image");
-                                        if (fullImageTitle != null && articleTitle != null && blackMask != null && rlFullImageOptions != null) {
-                                            fullImageTitle.setVisibility(View.VISIBLE);
-                                            fullImageTitle.setText(articleTitle.getText().toString());
-                                            blackMask.setVisibility(View.VISIBLE);
-                                            rlFullImageOptions.setVisibility(View.VISIBLE);
+                                            Log.d("BaseAdapter", "Full screen image");
+                                            if (fullImageTitle != null && articleTitle != null && blackMask != null && rlFullImageOptions != null) {
+                                                fullImageTitle.setVisibility(View.VISIBLE);
+                                                fullImageTitle.setText(articleTitle.getText().toString());
+                                                blackMask.setVisibility(View.VISIBLE);
+                                                rlFullImageOptions.setVisibility(View.VISIBLE);
 
+                                            }
+                                        } else {
+                                            fullImageTitle.setVisibility(View.GONE);
+                                            blackMask.setVisibility(View.GONE);
+                                            rlFullImageOptions.setVisibility(View.GONE);
+                                            articleTitle
+                                                    .setText(AphidLog.format("%s", data.getTitle()));
+                                            textView1.setMaxLines(1000);
+                                            textView1
+                                                    .setText(Html.fromHtml(data.getSummary()));
                                         }
-                                    } else {
-                                        fullImageTitle.setVisibility(View.GONE);
-                                        blackMask.setVisibility(View.GONE);
-                                        rlFullImageOptions.setVisibility(View.GONE);
-                                        articleTitle
-                                                .setText(AphidLog.format("%s", data.getTitle()));
-                                        textView1.setMaxLines(1000);
-                                        textView1
-                                                .setText(Html.fromHtml(data.getSummary()));
-                                    }
-                                    }finally {
-                                        if(bmp != null) {
+                                    } finally {
+                                        if (bmp != null) {
                                             bmp.recycle();
                                             bmp = null;
                                         }
@@ -661,7 +675,7 @@ public class TopicsDetailActivity extends BaseActivity {
                                         notifyDataSetChanged();
                                     }
                                 } finally {
-                                    if(response != null && response.body() != null) {
+                                    if (response != null && response.body() != null) {
                                         response.body().close();
                                     }
                                 }
@@ -787,7 +801,7 @@ public class TopicsDetailActivity extends BaseActivity {
                                                                                                         notifyDataSetChanged();
                                                                                                     }
                                                                                                 } finally {
-                                                                                                    if(response != null && response.body() != null) {
+                                                                                                    if (response != null && response.body() != null) {
                                                                                                         response.body().close();
                                                                                                     }
                                                                                                 }
@@ -911,12 +925,10 @@ public class TopicsDetailActivity extends BaseActivity {
                     showProgressDialog();
 
                     String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                    final List<String> followedTopicsIdsList = new ArrayList<String>();
+                    final List<String> followedTopicsIdsList = new ArrayList<>();
                     if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.MAGAZINE_TAGS))) {
                         String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference(Constants.MAGAZINE_TAGS), ",");
-                        for (int i = 0; i < prefTags.length; i++) {
-                            followedTopicsIdsList.add(prefTags[i]);
-                        }
+                        followedTopicsIdsList.addAll(Arrays.asList(prefTags));
                     }
                     followedTopicsIdsList.add(String.valueOf(topic.getTopicId()));
                     yoService.addTopicsAPI(accessToken, followedTopicsIdsList, "").enqueue(new Callback<ResponseBody>() {
@@ -967,7 +979,7 @@ public class TopicsDetailActivity extends BaseActivity {
                             alertDialog.dismiss();
                             showProgressDialog();
                             String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                            final List<String> topicIds = new ArrayList<String>();
+                            final List<String> topicIds = new ArrayList<>();
                             topicIds.add(topic.getTopicId());
                             yoService.removeTopicsAPI(accessToken, topicIds).enqueue(new Callback<ResponseBody>() {
                                 @Override
@@ -985,7 +997,7 @@ public class TopicsDetailActivity extends BaseActivity {
                                             }
                                         }
                                     } finally {
-                                        if(response != null && response.body() != null) {
+                                        if (response != null && response.body() != null) {
                                             response.body().close();
                                         }
                                     }
@@ -1056,5 +1068,11 @@ public class TopicsDetailActivity extends BaseActivity {
             }
 
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        clearGlideMemory(this);
     }
 }

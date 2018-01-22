@@ -121,6 +121,7 @@ android {
             //enhancement
             /*buildConfigField "String", "CLIENT_ID", "\"385e29bdabe89c20ec32cae501b556554a8ece1605142b58ab6966cfee0635be\""
             buildConfigField "String", "CLIENT_SECRET", "\"5262628e450e5e356561753f712196d678acc0a994058935bc2dcbc351aa2fee\""*/
+
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://enhancement-94ccd.appspot.com\""
             buildConfigField "String", "FIREBASE_URL", "\"https://enhancement-94ccd.firebaseio.com\""
             buildConfigField "boolean", "NEW_YO_CREDIT_SCREEN", "true"
@@ -222,8 +223,6 @@ dependencies {
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile 'com.github.chrisbanes:PhotoView:1.2.6'
     compile 'de.hdodenhof:circleimageview:2.0.0'
-
-
 
     // Glide
     compile 'com.github.bumptech.glide:glide:3.5.2'
