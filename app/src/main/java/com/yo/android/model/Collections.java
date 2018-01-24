@@ -8,10 +8,12 @@ public class Collections {
     private String id;
     private String name;
     private String image;
+    private String s3_image_filename;
     private String type;
     private boolean select;
     private int articlesCount;
     private String video_url;
+
 
     public int getArticlesCount() {
         return articlesCount;
@@ -71,5 +73,13 @@ public class Collections {
 
     public void setVideo_url(String video_url) {
         this.video_url = video_url;
+    }
+
+    public String getS3_image_filename() {
+        return s3_image_filename;
+    }
+
+    public void setS3_image_filename(String s3_image_filename) {
+        this.s3_image_filename = s3_image_filename;
     }
 }

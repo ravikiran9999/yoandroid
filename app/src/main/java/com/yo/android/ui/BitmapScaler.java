@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 
 /**
@@ -22,5 +23,13 @@ public class BitmapScaler {
 
         float factor = height / (float) b.getHeight();
         return Bitmap.createScaledBitmap(b, (int) (b.getWidth() * factor), height, true);
+    }
+
+    public static int getScreenWidth() {
+        return Resources.getSystem().getDisplayMetrics().widthPixels;
+    }
+
+    public static int getScreenHeight() {
+        return Resources.getSystem().getDisplayMetrics().heightPixels;
     }
 }

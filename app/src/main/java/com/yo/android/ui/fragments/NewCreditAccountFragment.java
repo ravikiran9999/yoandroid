@@ -585,6 +585,9 @@ public class NewCreditAccountFragment extends BaseFragment {
                         if (!isGreaterThanHundred(enteredAmount)) {
                             double val = mBalanceHelper.removeCurrencyCode(enteredAmount);
                             if (val < mBalanceHelper.removeCurrencyCode(availableBalance)) {
+                                if (enteredAmount.startsWith(".")) {
+                                    enteredAmount = "0" + enteredAmount;
+                                }
                                 enteredAmount = String.format(getResources().getString(R.string.currency_code_with_denomination), mBalanceHelper.currencySymbolLookup(currencySymbol), enteredAmount);
                                 alert.dismiss();
                                 transferBalance(enteredAmount);

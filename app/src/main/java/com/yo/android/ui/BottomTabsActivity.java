@@ -3,6 +3,7 @@ package com.yo.android.ui;
 import android.Manifest;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -952,6 +953,8 @@ public class BottomTabsActivity extends BaseActivity {
             update(preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT));
         }
 
+        ActivityManager am = (ActivityManager) context.getSystemService(context.ACTIVITY_SERVICE);
+        Log.i(TAG, "Heap size : " + am.getLargeMemoryClass());
     }
 
     private void startServiceToFetchNewArticles(int currentTimeInSec) {
@@ -995,7 +998,6 @@ public class BottomTabsActivity extends BaseActivity {
 
         TAG = null;
         mCredential = null;
-        pintent = null;
         super.onDestroy();
     }
 

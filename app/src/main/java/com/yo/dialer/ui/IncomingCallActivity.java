@@ -77,7 +77,7 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
         callePhoneNumberTxt = (TextView) mInComingHeader.findViewById(R.id.tv_caller_number);
         fullImageLayout = (RelativeLayout) findViewById(R.id.full_image_layout);
         tvCallStatus = (TextView) mInComingHeader.findViewById(R.id.tv_incoming);
-        tvCallType = (TextView)mInComingHeader.findViewById(R.id.tv_incoming_call);
+        tvCallType = (TextView) mInComingHeader.findViewById(R.id.tv_incoming_call);
         mAcceptedCallHeader.setVisibility(View.GONE);
 
         //Accepted call
@@ -86,7 +86,7 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
         acceptedcallePhoneNumberTxt = (TextView) mAcceptedCallHeader.findViewById(R.id.tv_caller_number);
         connectionStatusTxtView = (TextView) mAcceptedCallHeader.findViewById(R.id.connection_status);
         durationTxtview = (TextView) mAcceptedCallHeader.findViewById(R.id.tv_call_duration);
-        tvAccepetedCallType = (TextView)mAcceptedCallHeader.findViewById(R.id.tv_call_type);
+        tvAccepetedCallType = (TextView) mAcceptedCallHeader.findViewById(R.id.tv_call_type);
 
 
         callAcceptBtn = (ImageView) findViewById(R.id.btnAcceptCall);
@@ -112,6 +112,15 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
         floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
 
         registerListerners();
+        initCircularView();
+    }
+
+    private void initCircularView() {
+        calleImageView.setBorderColor(getResources().getColor(R.color.white));
+        calleImageView.setBorderWidth(5);
+
+        acceptedCalleImageView.setBorderColor(getResources().getColor(R.color.white));
+        acceptedCalleImageView.setBorderWidth(5);
     }
 
     private void hideMicAndSpeaker() {
@@ -195,7 +204,7 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
 
     private void init() {
 
-        if(mSnackbar == null) {
+        if (mSnackbar == null) {
             mSnackbar = TSnackbar.make(relative_layout_main, "", TSnackbar.LENGTH_LONG);
         }
 
@@ -207,7 +216,7 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
 
         // Inflate our custom view
         View snackView = getLayoutInflater().inflate(R.layout.custom_seekbar, null);
-        seekBar = (SeekBar)snackView.findViewById(R.id.seek_bar);
+        seekBar = (SeekBar) snackView.findViewById(R.id.seek_bar);
         layout.addView(snackView, 0);
         mSnackbar.show();
         mSnackbar.setCallback(new TSnackbar.Callback() {
@@ -220,7 +229,7 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
 
         // volume controller
         //AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        if(am != null) {
+        if (am != null) {
             Util.initBar(seekBar, am, AudioManager.STREAM_VOICE_CALL);
         }
     }
@@ -228,7 +237,7 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
     private void initVolume() {
         // volume controller
         //AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        if(am != null) {
+        if (am != null) {
             Util.initVolumeToSixty(am);
         }
     }

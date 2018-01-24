@@ -597,6 +597,5 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         } else if (firstVisibleItem == 0) {
             swipeRefreshContainer.setEnabled(true);
         }
-
     }
 }

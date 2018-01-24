@@ -87,7 +87,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     private List<Topics> topicsList;
     private Menu menu;
     public static List<Topics> unSelectedTopics;
-    FilterWithSpaceAdapter<String> mAdapter;
+    private FilterWithSpaceAdapter<String> mAdapter;
     private boolean isAlreadyShown;
     List<String> topicsNames;
     private List<Topics> topicsNewList;
@@ -319,11 +319,11 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 mAdapter.addAll(categoriesList);
                 mAdapter.notifyDataSetChanged();*/
                 } finally {
-                    if(response != null && response.body() != null) {
+                    if (response != null && response.body() != null) {
                         try {
                             response.body().clear();
                             response = null;
-                        }catch (Exception e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -519,6 +519,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                             MagazineFlipArticlesFragment.lastReadArticle = 0;
                             mMagazineFlipArticlesFragment.loadArticles(tagIds, false);
                         }
+                        mAdapter.clear();
                     }
                     return true;
                 }

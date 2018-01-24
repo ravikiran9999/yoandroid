@@ -114,6 +114,7 @@ public class TransferBalanceActivity extends BaseActivity {
             etAmount.setVisibility(View.GONE);
 
         }*/
+
         tvTransferAmount.setText(String.format(getString(R.string.transfer_amount), mTransferAmount));
         tvBalance.setText(String.format(getString(R.string.your_yo_balance_without_line_break), mBalanceHelper.currencySymbolLookup(balance)));
 
@@ -127,7 +128,7 @@ public class TransferBalanceActivity extends BaseActivity {
         String phoneNumber = enteredPhoneNumber.getText().toString();
         String mPhoneNumber = phoneNo != null ? phoneNo : phoneNumber;
         try {
-            if (!TextUtils.isEmpty(mPhoneNumber.trim()) && phoneNumber.length() > 7 ) {
+            if (!TextUtils.isEmpty(mPhoneNumber.trim()) && phoneNumber.length() > 7) {
                 double val = mBalanceHelper.removeCurrencyCode(mTransferAmount);
                 if (val != 0) {
                     if (mBalanceHelper.removeCurrencyCode(mBalanceHelper.getCurrentBalance()) > val) {
@@ -146,7 +147,8 @@ public class TransferBalanceActivity extends BaseActivity {
 
                     /*else if (mBalanceHelper.removeCurrencyCode(mBalanceHelper.getCurrentBalance()) == val) {
                         showBalanceDialog();
-                    }*/ else {
+                    }*/
+                    else {
                         mToastFactory.showToast(R.string.insufficient_amount);
                     }
                 } else {
@@ -221,7 +223,7 @@ public class TransferBalanceActivity extends BaseActivity {
                             switch (statusCode) {
                                 case 200:
                                     String mName = name != null ? name : phoneNo;
-                                    showAlertDialog(response.body().getBalance(),getString(R.string.transfer_success), getString(R.string.successful_transfer, mName), R.drawable.right_icon, true);
+                                    showAlertDialog(response.body().getBalance(), getString(R.string.transfer_success), getString(R.string.successful_transfer, mName), R.drawable.right_icon, true);
                                     break;
                                 case 606:
                                 case 607:
@@ -242,7 +244,7 @@ public class TransferBalanceActivity extends BaseActivity {
                                     CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, phoneNo, name, "Failed to transfer balance because of " + response.body().getData().toString());
                                     break;
                                 default:
-                                    if(response.body().getData() != null) {
+                                    if (response.body().getData() != null) {
                                         mToastFactory.showToast(response.body().getData().toString());
                                         CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, phoneNo, name, "Failed to transfer balance because of " + response.body().getData().toString());
                                     } else {

@@ -19,13 +19,14 @@
             android:layout_weight="1"
             android:background="@color/white"
             android:scaleType="fitXY"></ImageView>-->
-        <ImageView
+
+        <com.yo.android.helpers.ProportionalImageView
             android:id="@+id/photo"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="1"
-            android:background="@color/magazine_background"/>
+            android:adjustViewBounds="true"
+            android:background="@color/magazine_background" />
 
         <Button
             android:id="@+id/imv_magazine_follow"
@@ -43,57 +44,59 @@
             android:textColor="@android:color/white"
             android:visibility="gone" />
 
-        <ImageView android:id="@+id/imv_black_mask"
+        <ImageView
+            android:id="@+id/imv_black_mask"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/image_blankmask"
             android:scaleType="fitXY"
-            android:visibility="gone"/>
+            android:src="@drawable/image_blankmask"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_full_image_title_top"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
+            android:text="Article 1"
             android:textColor="@android:color/white"
             android:textSize="20sp"
-            android:layout_marginRight="10dp"
-            android:text="Article 1"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
-        <RelativeLayout android:id="@+id/rl_full_image_options"
+        <RelativeLayout
+            android:id="@+id/rl_full_image_options"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_below="@+id/tv_full_image_title_top"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:visibility="gone"
-            android:layout_below="@+id/tv_full_image_title_top">
+            android:layout_marginTop="10dp"
+            android:visibility="gone">
 
             <CheckBox
                 android:id="@+id/cb_full_image_magazine_like_top"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="10dp"
-                android:paddingRight="10dp"
+                android:button="@drawable/magazine_like_white_selector"
                 android:paddingBottom="10dp"
-                android:button="@drawable/magazine_like_white_selector" />
+                android:paddingRight="10dp"
+                android:paddingTop="10dp" />
 
             <ImageView
                 android:id="@+id/imv_full_image_magazine_add_top"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
                 android:layout_toRightOf="@+id/cb_full_image_magazine_like_top"
+                android:padding="10dp"
                 android:src="@drawable/ic_add_white" />
 
             <ImageView
                 android:id="@+id/imv_full_image_magazine_share_top"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
                 android:layout_toRightOf="@+id/imv_full_image_magazine_add_top"
+                android:padding="10dp"
                 android:src="@drawable/ic_magazine_share_white" />
 
         </RelativeLayout>
@@ -179,8 +182,8 @@
             android:id="@+id/ll_article_info"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_marginBottom="5dp">
+            android:layout_marginBottom="5dp"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tv_article_title"
@@ -190,18 +193,18 @@
                 android:layout_marginRight="10dp"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/article_title_textsize"
-                android:textStyle="bold" />android:text="Article 1"
+                android:textStyle="bold" />
 
-            <TextView
+            <com.yo.android.helpers.ProportionalTextView
                 android:id="@+id/tv_article_short_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="fill_vertical"
+                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="5dp"
-                android:ellipsize="end"
-                android:textSize="@dimen/article_textsize"
-                 />
+                android:textSize="@dimen/article_textsize" />
 
             <LinearLayout
                 android:layout_width="match_parent"

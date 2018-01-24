@@ -240,6 +240,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        clearGlideMemory(this);
         preferenceEndPoint.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
 
     }

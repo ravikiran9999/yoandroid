@@ -111,15 +111,14 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Inject
     YoApi.YoService yoService;
 
-    FrameLayout changePhoto;
-
-
-
     @Inject
     ImagePickHelper cameraIntent;
 
     @Inject
     ConnectivityHelper mHelper;
+
+    @Inject
+    FireBaseHelper fireBaseHelper;
 
     @Bind(R.id.add_change_photo_text)
     TextView addOrChangePhotoText;
@@ -127,11 +126,8 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Bind(R.id.profile_pic)
     CircleImageView profilePic;
 
-    @Inject
-    FireBaseHelper fireBaseHelper;
-
+    FrameLayout changePhoto;
     private boolean isAlreadyShown;
-
     private TextView profileStatus;
     private boolean isSharedPreferenceShown;
 

@@ -72,7 +72,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
 
 
     private TextView customTitle;
-    public  TextView chatUserStatus;
+    public TextView chatUserStatus;
 
     @Inject
     ContactsSyncManager mContactsSyncManager;
@@ -187,11 +187,11 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                                     appLogglyUsecase.sendAlertsToLoggly(Constants.CHAT_MODULE, message, Constants.CRITICAL, 808);
                                 }
                                 //callUserChat(args, userChatFragment);
-                            }finally {
-                                if(response != null && response.body() != null) {
+                            } finally {
+                                if (response != null && response.body() != null) {
                                     try {
                                         response = null;
-                                    }catch (Exception e) {
+                                    } catch (Exception e) {
                                         e.printStackTrace();
                                     }
                                 }
@@ -289,7 +289,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
             if (title != null) {
                 customTitle.setText(title);
             } else {
-                customTitle.setText(opponent);
+                customTitle.setText(removeYoUser(opponent));
             }
 
             if (room != null && room.getGroupName() != null) {
@@ -477,5 +477,17 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
             }
         });
 
+    }
+
+    private String removeYoUser(String opponent) {
+        if (opponent != null && opponent.contains(Constants.YO_USER)) {
+            try {
+                opponent = opponent.substring(opponent.indexOf(Constants.YO_USER) + 6, opponent.length() - 1);
+                return opponent.startsWith("+") ? opponent : "+" + opponent;
+
+            } catch (StringIndexOutOfBoundsException e) {
+            }
+        }
+        return opponent;
     }
 }
