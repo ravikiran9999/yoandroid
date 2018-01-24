@@ -23,12 +23,14 @@ public class ConnectivityHelper {
      * of being established, {@code false} otherwise.
      */
     public boolean isConnected() {
-        final ConnectivityManager cm =
-                (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(mContext != null) {
+            final ConnectivityManager cm =
+                    (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        final NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        if (activeNetwork != null) {
-            return activeNetwork.isConnectedOrConnecting();
+            final NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            if (activeNetwork != null) {
+                return activeNetwork.isConnectedOrConnecting();
+            }
         }
         return false;
     }

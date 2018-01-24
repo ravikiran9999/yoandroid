@@ -338,46 +338,7 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
     }
 
     private void finishAndNavigateToHome() {
-        //contactsSyncManager.syncContacts();
-        //
-
-       /* String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.getAllArticlesAPI(accessToken).enqueue(callback);*/
-
         navigation();
-
-        /*final boolean isNewUser = preferenceEndPoint.getBooleanPreference("isNewUser");
-        final boolean balanceAdded = preferenceEndPoint.getBooleanPreference("balanceAdded");
-        if (isNewUser) {
-            //TODO:Enable flag for Profile
-            preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_PROFILE_SCREEN, true);
-            preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
-            Intent intent = new Intent(getActivity(), UpdateProfileActivity.class);
-            intent.putExtra(Constants.PHONE_NUMBER, phoneNumber);
-            dismissProgressDialog();
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-        } else if(!balanceAdded) {
-            preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_PROFILE_SCREEN, false);
-            preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, true);
-            preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
-            preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN_AND_VERIFIED, true);
-            Intent intent = new Intent(getActivity(), FollowMoreTopicsActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra("From", "UpdateProfileActivity");
-            startActivity(intent);
-        } else {
-            startActivity(new Intent(getActivity(), BottomTabsActivity.class));
-        }
-        //Start Sip service
-        getActivity().startService(new Intent(getActivity(), YoSipService.class));
-
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction(VoipConstants.NEW_ACCOUNT_REGISTRATION);
-        getActivity().sendBroadcast(broadcastIntent);
-
-        getActivity().finish();
-*/
     }
 
     private Callback<List<Articles>> callback = new Callback<List<Articles>>() {

@@ -826,6 +826,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     }
 
                     if (textView != null) {
+                        textView.setText(Html.fromHtml(data.getSummary()));
+                    }
+
+                    /*if (textView != null) {
                         ViewTreeObserver vto = textView.getViewTreeObserver();
                         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                             private int maxLines = -1;
@@ -833,19 +837,19 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             @Override
                             public void onGlobalLayout() {
                                 if (maxLines < 0 && textView.getHeight() > 0 && textView.getLineHeight() > 0) {
-                                 /*   int height = textView.getHeight();
+                                 *//*   int height = textView.getHeight();
                                     int lineHeight = textView.getLineHeight();
                                     int lineCount = textView.getLineCount();
                                     maxLines = height / lineHeight;
                                     textView.setMaxLines(maxLines);
-                                    textView.setEllipsize(TextUtils.TruncateAt.END);*/
+                                    textView.setEllipsize(TextUtils.TruncateAt.END);*//*
                                     // Re-assign text to ensure ellipsize is performed correctly.
                                     textView.setText(Html.fromHtml(data.getSummary()));
 
                                 }
                             }
                         });
-                    }
+                    }*/
                 }
             } else {
                 photoView.setImageResource(R.drawable.magazine_backdrop);

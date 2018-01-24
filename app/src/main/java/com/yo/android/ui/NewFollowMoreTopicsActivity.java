@@ -97,6 +97,8 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
     Button skip;
     @Bind(R.id.bottom)
     LinearLayout bottomLayout;
+    @Bind(R.id.no_categories)
+    TextView noCategories;
 
     private List<String> followedTopicsIdsList;
     private int lineMargin;
@@ -182,20 +184,20 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
                     }
 
                     serverTopics = response.body();
-                mData = new ArrayList<>();
-                for (Categories categories : serverTopics) {
-                    mData.add(new CategoriesAccordionSection(categories.getId(), categories.getName(), categories.isLanguage_specific(), categories.getTags(), false));
-                }
+                    mData = new ArrayList<>();
+                    for (Categories categories : serverTopics) {
+                        mData.add(new CategoriesAccordionSection(categories.getId(), categories.getName(), categories.isLanguage_specific(), categories.getTags(), false));
+                    }
 
-                loadCategoriesAdapter(mData);
-                dismissProgressDialog();
+                    loadCategoriesAdapter(mData);
+                    dismissProgressDialog();
 
                 } finally {
-                    if(response != null && response.body() != null) {
+                    if (response != null && response.body() != null) {
                         try {
                             response.body().clear();
                             response = null;
-                        }catch (Exception e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -215,6 +217,9 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
             @Override
             public void onFailure(Call<List<Categories>> call, Throwable t) {
                 dismissProgressDialog();
+                noCategories.setText(R.string.socket_time_out);
+                noCategories.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
             }
         });
 
@@ -239,11 +244,17 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
         skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, TabsHeaderActivity.class);
+                /*
+                 Not to show add balance screen after selecting topics for new user
+                */
+
+                /*Intent intent = new Intent(context, TabsHeaderActivity.class);
                 intent.putExtra(Constants.OPEN_ADD_BALANCE, true);
-                startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
+                startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);*/
+
                 skip.setEnabled(false);
                 isSkipClicked = true;
+                navigation();
             }
         });
 
@@ -289,83 +300,60 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
      */
     private void performDoneAction(final List<String> followedTopicsIdsList) {
 
-        if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
+        /*
+          Not to show add balance screen after selecting topics for new user
+         */
+
+        /*if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
             Intent intent = new Intent(context, TabsHeaderActivity.class);
             intent.putExtra(Constants.OPEN_ADD_BALANCE, true);
             startActivityForResult(intent, OPEN_ADD_BALANCE_RESULT);
-        } else {
-            /*if (searchTags != null && !searchTags.isEmpty()) {
-                for (int i = 0; i < initialTags.size(); i++) {
-                    for (int j = 0; j < searchTags.size(); j++) {
-                        TagSelected initialSel = (TagSelected) initialTags.get(i);
-                        TagSelected searchSel = (TagSelected) searchTags.get(j);
-                        if (initialSel.getTagId().equals(searchSel.getTagId())) {
-                            initialTags.remove(initialSel);
-                            initialTags.add(searchSel);
+
+        } else {*/
+        if (mHelper != null && mHelper.isConnected()) {
+            for (Object object : getCategoriesAdapter().getData()) {
+                if (object instanceof CategoriesAccordionSection) {
+                    for (Topics topics : ((CategoriesAccordionSection) object).getTags()) {
+                        if (topics.isSelected()) {
+                            followedTopicsIdsList.add(topics.getId());
                         }
+
                     }
                 }
             }
-
-            tagViewAdapter.addTags(initialTags);
-            for (int k = 0; k < tagViewAdapter.getTags().size(); k++) {
-                TagSelected t = (TagSelected) tagViewAdapter.getTags().get(k);
-                if (t.getSelected()) {
-
-                    followedTopicsIdsList.add(String.valueOf(t.getTagId()));
-
-                }
-
-            }*/
-
-            if(mHelper != null && mHelper.isConnected()) {
-                for (Object object : getCategoriesAdapter().getData()) {
-                    if (object instanceof CategoriesAccordionSection) {
-                        for (Topics topics : ((CategoriesAccordionSection) object).getTags()) {
-                            if (topics.isSelected()) {
-                                followedTopicsIdsList.add(topics.getId());
-                            }
-
-                        }
-                    }
-                }
-            }
-
-            /*if (selectedTopics != null && !selectedTopics.isEmpty()) {
-                followedTopicsIdsList.addAll(selectedTopics);
-            }*/
-
-            showProgressDialog();
-            String accessToken = preferenceEndPoint.getStringPreference("access_token");
-            yoService.addTopicsAPI(accessToken, followedTopicsIdsList, "").enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    dismissProgressDialog();
-                    if ("Magazines".equals(from)) {
-                        Intent myCollectionsIntent = new Intent(context, MyCollections.class);
-                        startActivity(myCollectionsIntent);
-                        finish();
-                    } else if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
-                        //TODO:Disalbe flag for Follow more
-                        preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, false);
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.getArticlesWithPaginationAPI(accessToken, 1, 200);
-                    } else {
-                        Intent intent = new Intent();
-                        setResult(2, intent);
-                        finish();
-                    }
-
-                    preferenceEndPoint.saveStringPreference(Constants.MAGAZINE_TAGS, TextUtils.join(",", followedTopicsIdsList));
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    dismissProgressDialog();
-                    Toast.makeText(context, "Error while adding topics", Toast.LENGTH_LONG).show();
-                }
-            });
         }
+
+        showProgressDialog();
+        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        yoService.addTopicsAPI(accessToken, followedTopicsIdsList, "").enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if ("Magazines".equals(from)) {
+                    Intent myCollectionsIntent = new Intent(context, MyCollections.class);
+                    startActivity(myCollectionsIntent);
+                    finish();
+                } else if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
+                    //TODO:Disalbe flag for Follow more
+                    preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, false);
+                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    yoService.getArticlesWithPaginationAPI(accessToken, 1, 200);
+                } else {
+                    Intent intent = new Intent();
+                    setResult(2, intent);
+                    finish();
+                }
+                dismissProgressDialog();
+                navigation();
+                preferenceEndPoint.saveStringPreference(Constants.MAGAZINE_TAGS, TextUtils.join(",", followedTopicsIdsList));
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                dismissProgressDialog();
+                Toast.makeText(context, "Error while adding topics", Toast.LENGTH_LONG).show();
+            }
+        });
+        //}
     }
 
     @NonNull
@@ -601,7 +589,11 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
         }
     }
 
-    @Override
+    /*
+      No need to come back from add balance screen
+    */
+
+    /*@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == OPEN_ADD_BALANCE_RESULT && resultCode == RESULT_OK) {
@@ -635,7 +627,7 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
             skip.setEnabled(true);
             isSkipClicked = false;
         }
-    }
+    }*/
 
     private Callback<List<Articles>> callback = new Callback<List<Articles>>() {
         @Override

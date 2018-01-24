@@ -446,4 +446,6 @@
     <string name="no_topics_selected">Please select the topics</string>
 
     <string name="clear">Clear</string>
+    <string name="interests_you">Hello. What interests you?</string>
+    <string name="topics_to_follow">Pick some topics to follow.</string>
 </resources>
