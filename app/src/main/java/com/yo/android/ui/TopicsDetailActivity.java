@@ -484,11 +484,12 @@ public class TopicsDetailActivity extends BaseActivity {
                 Glide.with(context)
                         //.load(data.getImage_filename())
                         .load(data.getS3_image_filename())
-                        .asBitmap()
+                        //.asBitmap()
                         .placeholder(R.drawable.magazine_backdrop)
                         .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                         .dontAnimate()
-                        .into(new SimpleTarget<Bitmap>() {
+                        .into(photoView);
+                        /*.into(new SimpleTarget<Bitmap>() {
                             @Override
                             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                                 int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
@@ -508,8 +509,8 @@ public class TopicsDetailActivity extends BaseActivity {
 
                                         int screenHeight = DeviceDimensionsHelper.getDisplayHeight(context);
                                         //Log.d("BaseAdapter", "screenHeight " + screenHeight);
-                                       /*int spaceForImage = screenHeight - 120;
-                                       Log.d("BaseAdapter", "spaceForImage" + spaceForImage);*/
+                                       *//*int spaceForImage = screenHeight - 120;
+                                       Log.d("BaseAdapter", "spaceForImage" + spaceForImage);*//*
                                         //Log.d("BaseAdapter", "bmp.getHeight()" + bmp.getHeight());
                                         int total = bmp.getHeight() + 50;
                                         //if(bmp.getHeight() >= spaceForImage-30) {
@@ -598,7 +599,66 @@ public class TopicsDetailActivity extends BaseActivity {
                                     }
                                 }
                             }
-                        });
+                        });*/
+
+                if (articleTitle != null) {
+                    ViewTreeObserver vto1 = articleTitle.getViewTreeObserver();
+                    vto1.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                        private int maxLines = -1;
+
+                        @Override
+                        public void onGlobalLayout() {
+                            //Log.d("BaseAdapter", "Second Title " + data.getTitle() + " max lines " + maxLines + " textView.getHeight() " + textView.getHeight() + " textView.getLineHeight() " + textView.getLineHeight());
+                            if (maxLines < 0 && articleTitle.getHeight() > 0 && articleTitle.getLineHeight() > 0) {
+                                //Log.d("BaseAdapter", "Max lines inside if" + maxLines);
+                                int height = articleTitle.getHeight();
+                                int lineHeight = articleTitle.getLineHeight();
+                                maxLines = height / lineHeight;
+                                articleTitle.setMaxLines(maxLines);
+                                articleTitle.setEllipsize(TextUtils.TruncateAt.END);
+                                // Re-assign text to ensure ellipsize is performed correctly.
+                                articleTitle.setText(AphidLog.format("%s", data.getTitle()));
+                            } else if (maxLines == -1 && articleTitle.getHeight() > 0) {
+                                //Log.d("BaseAdapter", "Max lines inside else if" + maxLines);
+                                articleTitle.setMaxLines(1);
+                                articleTitle.setEllipsize(TextUtils.TruncateAt.END);
+                                // Re-assign text to ensure ellipsize is performed correctly.
+                                articleTitle.setText(AphidLog.format("%s", data.getTitle()));
+                            } else if (maxLines == -1 && articleTitle.getHeight() == 0) {
+                                // Log.d("BaseAdapter", "Full screen image after options cut or not shown");
+                                if (fullImageTitle != null && articleTitle != null && blackMask != null && rlFullImageOptions != null) {
+                                    fullImageTitle.setVisibility(View.VISIBLE);
+                                    fullImageTitle.setText(articleTitle.getText().toString());
+                                    blackMask.setVisibility(View.VISIBLE);
+                                    rlFullImageOptions.setVisibility(View.VISIBLE);
+
+                                }
+                            }
+                        }
+                    });
+                }
+
+                textView1.setText(Html.fromHtml(data.getSummary()));
+
+                /*if (textView1 != null) {
+                    ViewTreeObserver vto = textView1.getViewTreeObserver();
+                    vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                        private int maxLines = -1;
+
+                        @Override
+                        public void onGlobalLayout() {
+                            if (maxLines < 0 && textView1.getHeight() > 0 && textView1.getLineHeight() > 0) {
+                                //int height = textView1.getHeight();
+                                //int lineHeight = textView1.getLineHeight();
+                                //maxLines = height / lineHeight;
+                                //textView1.setMaxLines(maxLines);
+                                //textView1.setEllipsize(TextUtils.TruncateAt.END);
+                                // Re-assign text to ensure ellipsize is performed correctly.
+                                textView1.setText(Html.fromHtml(data.getSummary()));
+                            }
+                        }
+                    });
+                }*/
             } else {
                 photoView.setImageResource(R.drawable.magazine_backdrop);
             }
