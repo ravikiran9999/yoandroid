@@ -1,5 +1,7 @@
 package com.yo.android.ui.fragments;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -40,6 +42,7 @@ import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.FindPeopleActivity;
 import com.yo.android.ui.FollowersActivity;
 import com.yo.android.ui.FollowingsActivity;
+import com.yo.android.ui.MagazineActivity;
 import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.WishListActivity;
 import com.yo.android.util.Constants;
@@ -95,6 +98,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     private boolean isSharedPreferenceShown;
 
     private boolean isEventLogged;
+    private Activity activity;
+    private MagazineFlipArticlesFragment mMagazineFlipArticlesFragment;
 
 
     public MagazineFlipArticlesFragment getmMagazineFlipArticlesFragment() {
@@ -105,15 +110,23 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
         this.mMagazineFlipArticlesFragment = mMagazineFlipArticlesFragment;
     }
 
-    private MagazineFlipArticlesFragment mMagazineFlipArticlesFragment;
 
     public MagazinesFragment() {
         // Required empty public constructor
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activity = (Activity) context;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
         setHasOptionsMenu(true);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         EventBus.getDefault().register(this);
@@ -167,9 +180,9 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         mAdapter = new FilterWithSpaceAdapter<String>(getActivity(),
                 R.layout.textviewitem, new ArrayList<String>());
+
         if ((mMagazineFlipArticlesFragment = (MagazineFlipArticlesFragment) getChildFragmentManager().findFragmentById(R.id.bottom)) != null) {
             getChildFragmentManager()
                     .beginTransaction()

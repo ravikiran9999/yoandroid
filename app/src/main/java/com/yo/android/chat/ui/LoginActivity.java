@@ -69,8 +69,7 @@ public class LoginActivity extends ParentActivity implements AdapterView.OnItemS
     private static final String TAG = "LoginActivity";
     private static final int READ_SMS_REQUEST_CODE_ASK_SMS_PERMISSIONSPERMISSIONS = 123;
     private static final String FRAGMENT_TAG = "OTPFragment";
-    //public static final String URL = BuildConfig.BASE_URL + "T&C/YO_PRIVACY_POLICY.html";
-    public static final String URL = "http://yowatsup.com/TC";
+    public static final String URL = "http://yowatsup.com/yoadmin/feeds/tc";
 
 
     @Bind(R.id.et_enter_phone)

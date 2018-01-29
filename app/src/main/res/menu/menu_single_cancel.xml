@@ -4,5 +4,5 @@
         android:id="@+id/action_cancel"
         app:showAsAction="always"
         android:title="@string/cancel"
-        android:icon="@drawable/ic_close"/>
+        android:icon="@drawable/ic_magazine_close"/>
 </menu>
