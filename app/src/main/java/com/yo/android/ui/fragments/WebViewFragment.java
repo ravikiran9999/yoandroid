@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,23 +19,33 @@ import android.webkit.WebViewClient;
 import com.yo.android.R;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.util.Util;
+import com.yo.android.widgets.CustomSwipeRefreshLayout;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public abstract class WebViewFragment extends BaseFragment
-         {
+public abstract class WebViewFragment extends BaseFragment implements
+        SwipeRefreshLayout.OnRefreshListener,
+        CustomSwipeRefreshLayout.CanChildScrollUpCallback {
 
-    @Bind(R.id.webview_stub) ViewStub webViewStub;
+    @Bind(R.id.webview_stub)
+    ViewStub webViewStub;
+    @Bind(R.id.swipe_layout) CustomSwipeRefreshLayout swipeRefreshLayout;
+
+
     WebView webView;
 
     protected String urlToLoad;
     protected String domainUrl;
 
     protected abstract void initToolbar();
+
     protected abstract void onWebViewInflated();
+
     protected abstract void onPageStartedCallback();
+
     protected abstract void onPageFinishedCallback();
+
     protected abstract boolean isCacheSettingEnabled();
 
     @Override
@@ -49,6 +60,9 @@ public abstract class WebViewFragment extends BaseFragment
     }
 
     private void initView() {
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setCanChildScrollUpCallback(this);
+
         new Handler().post(new Runnable() {
             @Override
             public void run() {
@@ -66,6 +80,7 @@ public abstract class WebViewFragment extends BaseFragment
                 super.onPageStarted(view, url, favicon);
 
                 onPageStartedCallback();
+                swipeRefreshLayout.setRefreshing(true);
             }
 
             @Override
@@ -73,6 +88,7 @@ public abstract class WebViewFragment extends BaseFragment
                 super.onPageFinished(view, url);
 
                 onPageFinishedCallback();
+                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
@@ -106,8 +122,7 @@ public abstract class WebViewFragment extends BaseFragment
             webSettings.setAppCacheEnabled(true);
             if (Util.isOnline(getActivity())) {
                 webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
-            }
-            else {
+            } else {
                 webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
             }
         }
@@ -161,4 +176,13 @@ public abstract class WebViewFragment extends BaseFragment
         }
     }
 
+    @Override
+    public void onRefresh() {
+        webView.loadUrl(webView.getUrl());
+    }
+
+    @Override
+    public boolean canSwipeRefreshChildScrollUp() {
+        return webView != null && webView.getScrollY() > 0;
+    }
 }

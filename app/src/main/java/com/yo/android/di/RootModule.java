@@ -5,6 +5,7 @@ import android.content.Context;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.adapters.NewSuggestionsAdapter;
 import com.yo.android.chat.ChatRefreshBackground;
+import com.yo.android.ui.MagazineActivity;
 import com.yo.android.ui.NewFollowMoreTopicsActivity;
 import com.yo.android.usecase.AddTopicsUsecase;
 import com.yo.android.usecase.AppLogglyUsecase;
@@ -175,8 +176,6 @@ import dagger.Provides;
                 UserProfileActivity.class,
                 CountryCodeActivity.class,
                 NewFollowMoreTopicsActivity.class,
-
-
                 InviteActivity.class,
                 AccountDetailsActivity.class,
                 OthersProfileMagazines.class,
@@ -197,6 +196,8 @@ import dagger.Provides;
                 PhoneBookActivity.class,
                 PhoneChatActivity.class,
                 CallLogDetailsActivity.class,
+                MagazineActivity.class,
+                GroupContactsActivity.class,
 
                 //Fragments
                 ContactsFragment.class,
@@ -212,7 +213,6 @@ import dagger.Provides;
                 MagazineFlipArticlesFragment.class,
                 MoreFragment.class,
                 MagazinesFragment.class,
-                GroupContactsActivity.class,
                 InviteFriendsFragment.class,
                 CreditAccountFragment.class,
                 NewCreditAccountFragment.class,

@@ -73,6 +73,7 @@ import retrofit2.Response;
 
 public class NewContactsFragment extends BaseFragment implements AdapterView.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
     private static final String TAG = NewContactsFragment.class.getSimpleName();
+
     @Inject
     ConnectivityHelper mHelper;
 
@@ -112,6 +113,7 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
     private Button btnYoContacts;
     private TextView tvContactsCount;
     private LinearLayout llTabsLayout;
+    private boolean isAllContactsSelected = true;
 
     private List<Contact> allContacts;
 
@@ -144,6 +146,7 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         Typeface alexBrushRegular = getAlexBrushRegular();
         btnYoContacts.setAlpha(0.5f);
         btnYoContacts.setTypeface(alexBrushRegular);
@@ -156,6 +159,7 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
         btnAllContacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                isAllContactsSelected = true;
                 btnAllContacts.setAlpha(1);
                 btnYoContacts.setAlpha(0.5f);
 
@@ -166,6 +170,7 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
         btnYoContacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                isAllContactsSelected = false;
                 btnAllContacts.setAlpha(0.5f);
                 btnYoContacts.setAlpha(1);
                 List<Contact> onlyYoUsers = filterYoContacts(allContacts);
@@ -306,12 +311,13 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
                 return true;
             }
 
+            // Display All contacts or Yo contacts based on selection after closing search view
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 layout.setVisibility(View.VISIBLE);
                 llTabsLayout.setVisibility(View.VISIBLE);
                 getActivity().invalidateOptionsMenu();
-                if (btnAllContacts.getCurrentTextColor() == getResources().getColor(R.color.contacts_selected_red)) {
+                if (isAllContactsSelected) {
                     loadAlphabetOrder(allContacts);
                     contactsListAdapter.updateItems(allContacts);
                 } else {

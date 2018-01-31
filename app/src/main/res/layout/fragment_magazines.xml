@@ -1,12 +1,8 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
-    <!--    <FrameLayout
-            android:id="@+id/top"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"></FrameLayout>-->
     <TextView
         android:id="@+id/no_search_results"
         android:layout_width="match_parent"
@@ -24,19 +20,4 @@
         android:layout_height="match_parent"
         android:visibility="visible"/>
 
-    <!--
-        <fragment
-            android:id="@+id/topics_selection_fragment"
-            android:name="com.yo.android.flip.MagazineTopicsSelectionFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <fragment
-            android:id="@+id/flip_articles_fragment"
-            android:name="com.yo.android.flip.MagazineFlipArticlesFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    -->
-
-</LinearLayout>
+</FrameLayout>

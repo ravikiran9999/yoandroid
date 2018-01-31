@@ -164,7 +164,7 @@ public class BottomTabsActivity extends BaseActivity {
 
         appRunning = true;
 
-        Log.i(TAG, "cURRENT TIME " + currentDateTimeString);
+        Log.i(TAG, "CURRENT TIME " + currentDateTimeString);
         // TODO: Test
         Intent service = new Intent(this, com.yo.dialer.YoSipService.class);
         service.setAction(CallExtras.REGISTER);
@@ -187,7 +187,6 @@ public class BottomTabsActivity extends BaseActivity {
                     Manifest.permission.WAKE_LOCK,
                     Manifest.permission.MODIFY_AUDIO_SETTINGS,
                     Manifest.permission.CAMERA,
-                    //Manifest.permission.RECEIVE_SMS,
                     Manifest.permission.VIBRATE,
                     Manifest.permission.GET_TASKS,
                     Manifest.permission.WRITE_SYNC_SETTINGS,
@@ -338,7 +337,6 @@ public class BottomTabsActivity extends BaseActivity {
                     ((MagazinesFragment) getFragment()).removeReadArticles();
                     ((MagazinesFragment) getFragment()).update();
                     MagazineFlipArticlesFragment.currentFlippedPosition = 0;
-
 
                 }
 

@@ -62,9 +62,6 @@ import retrofit2.Response;
 import se.emilsjolander.flipview.FlipView;
 import se.emilsjolander.flipview.OverFlipMode;
 
-/**
- * Created by creatives on 6/30/2016.
- */
 public class MagazineFlipArticlesFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, FlipView.OnFlipListener, FlipView.OnOverFlipListener {
 
     public static boolean refreshing;
@@ -690,9 +687,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
             String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
             String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
-
-            /*String sharedFollowedCachedMagazines = "";
-            String sharedRandomCachedMagazines = "";*/
 
             if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) && !sharedFollowedCachedMagazines.equalsIgnoreCase("[]") || !TextUtils.isEmpty(sharedRandomCachedMagazines) && !sharedRandomCachedMagazines.equalsIgnoreCase("[]")) {
                 if (mProgress != null) {
