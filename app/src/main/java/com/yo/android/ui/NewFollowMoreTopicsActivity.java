@@ -328,6 +328,7 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
         yoService.addTopicsAPI(accessToken, followedTopicsIdsList, "").enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                dismissProgressDialog();
                 if ("Magazines".equals(from)) {
                     Intent myCollectionsIntent = new Intent(context, MyCollections.class);
                     startActivity(myCollectionsIntent);
@@ -337,13 +338,13 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
                     preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, false);
                     String accessToken = preferenceEndPoint.getStringPreference("access_token");
                     yoService.getArticlesWithPaginationAPI(accessToken, 1, 200);
+                    navigation();
                 } else {
                     Intent intent = new Intent();
                     setResult(2, intent);
                     finish();
                 }
-                dismissProgressDialog();
-                navigation();
+
                 preferenceEndPoint.saveStringPreference(Constants.MAGAZINE_TAGS, TextUtils.join(",", followedTopicsIdsList));
             }
 

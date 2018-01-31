@@ -65,6 +65,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -106,14 +108,23 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
 
     private ListView layout;
     private boolean isAlreadyShown;
-    private TextView noSearchResult;
+
+    @Bind(R.id.no_search_results)
+    TextView noSearchResult;
+    @Bind(R.id.allContactsSection)
+    Button btnAllContacts;
+    @Bind(R.id.yoContactsSection)
+    Button btnYoContacts;
+    @Bind(R.id.tv_contacts_count)
+    TextView tvContactsCount;
+    @Bind(R.id.tabs_layout)
+    LinearLayout llTabsLayout;
+    @Bind(R.id.no_contacts)
+    TextView tvNoContacts;
+
+    private boolean isAllContactsSelected = true;
     private boolean isSharedPreferenceShown;
     private SearchView searchView;
-    private Button btnAllContacts;
-    private Button btnYoContacts;
-    private TextView tvContactsCount;
-    private LinearLayout llTabsLayout;
-    private boolean isAllContactsSelected = true;
 
     private List<Contact> allContacts;
 
@@ -133,13 +144,9 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_new_contacts, container, false);
+        ButterKnife.bind(this, view);
         listView = (ListView) view.findViewById(R.id.lv_contacts);
         layout = (ListView) view.findViewById(R.id.side_index);
-        noSearchResult = (TextView) view.findViewById(R.id.no_search_results);
-        btnAllContacts = (Button) view.findViewById(R.id.allContactsSection);
-        btnYoContacts = (Button) view.findViewById(R.id.yoContactsSection);
-        tvContactsCount = (TextView) view.findViewById(R.id.tv_contacts_count);
-        llTabsLayout = (LinearLayout) view.findViewById(R.id.tabs_layout);
         return view;
     }
 
@@ -250,7 +257,7 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
         mSyncManager.loadContacts(new Callback<List<Contact>>() {
             @Override
             public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
-                noSearchResult.setVisibility(View.GONE);
+                tvNoContacts.setVisibility(View.GONE);
                 llTabsLayout.setVisibility(View.VISIBLE);
                 List<Contact> list = response.body();
                 loadAlphabetOrder(list);
@@ -264,11 +271,10 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
             @Override
             public void onFailure(Call<List<Contact>> call, Throwable t) {
                 dismissProgressDialog();
-                noSearchResult.setVisibility(View.VISIBLE);
-                //llTabsLayout.setVisibility(View.GONE);
                 FragmentActivity activity = getActivity();
-                if (activity != null) {
-                    noSearchResult.setText(activity.getResources().getString(R.string.connectivity_network_settings));
+                if (activity != null && allContacts.size() == 0) {
+                    tvNoContacts.setVisibility(View.VISIBLE);
+                    tvNoContacts.setText(activity.getResources().getString(R.string.connectivity_network_settings));
                 }
             }
         });
@@ -347,7 +353,7 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_CONTACT_REQUEST && data != null) {
             String nameAndNumber = uploadContact(data.getData());
-            Toast.makeText(getActivity(), "Contect added " + nameAndNumber, Toast.LENGTH_LONG).show();
+            //Toast.makeText(getActivity(), "Contect added " + nameAndNumber, Toast.LENGTH_LONG).show();
         }
     }
 

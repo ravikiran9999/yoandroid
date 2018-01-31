@@ -24,8 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="1"
-            android:background="@color/magazine_background"></ImageView>
+            android:background="@color/magazine_background"/>
 
 <!--        <ImageView
             android:id="@+id/iv_button"
@@ -195,7 +194,7 @@
                 android:layout_marginRight="10dp"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:textStyle="bold" />android:text="Article 1"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_article_short_desc"

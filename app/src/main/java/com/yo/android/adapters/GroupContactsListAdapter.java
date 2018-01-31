@@ -60,7 +60,7 @@ public class GroupContactsListAdapter extends AbstractBaseAdapter<Contact, Group
 
         try {
             if (!TextUtils.isEmpty(item.getImage())) {
-
+                Glide.clear(holder.getContactPic());
                 Glide.with(mContext)
                         .load(item.getImage())
                         .fitCenter()

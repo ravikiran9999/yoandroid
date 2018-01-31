@@ -28,6 +28,7 @@ import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.ui.AccountDetailsActivity;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 
 import org.pjsip.pjsua2.Account;
@@ -149,7 +150,9 @@ public class AccountDetailsFragment extends BaseFragment {
         if (isValidDate(preferenceEndPoint.getStringPreference(Constants.DOB_TEMP, ""))) {
             saveDOBProperly();
         }
-        accountPhoneNumber.setText(preferenceEndPoint.getStringPreference(Constants.PHONE_NO));
+
+
+        accountPhoneNumber.setText(Util.numberFromNexgeFormat(preferenceEndPoint.getStringPreference(Constants.PHONE_NO)));
         String dob = preferenceEndPoint.getStringPreference(Constants.DOB_TEMP, dobHint);
         if (dob.equalsIgnoreCase("")) {
             dob = dobHint;
@@ -250,10 +253,10 @@ public class AccountDetailsFragment extends BaseFragment {
                         mToastFactory.showToast(getString(R.string.failed_update));
                     }
                 } finally {
-                    if(response != null && response.body() != null) {
+                    if (response != null && response.body() != null) {
                         try {
                             response = null;
-                        }catch (Exception e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -378,5 +381,4 @@ public class AccountDetailsFragment extends BaseFragment {
             textView.setTextColor(getResources().getColor(R.color.black));
         }
     }
-
 }
