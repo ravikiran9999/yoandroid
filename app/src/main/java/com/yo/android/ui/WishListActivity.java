@@ -102,12 +102,12 @@ public class WishListActivity extends BaseActivity {
                             }
                         }
                         myBaseAdapter.addItems(articlesList);
-                    }finally {
-                        if(response != null && response.body() != null) {
+                    } finally {
+                        if (response != null && response.body() != null) {
                             try {
                                 response.body().clear();
                                 response = null;
-                            }catch (Exception e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
@@ -132,15 +132,6 @@ public class WishListActivity extends BaseActivity {
                 }
             }
         });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    public void onPause() {
-        super.onPause();
     }
 
     private class MyBaseAdapter extends BaseAdapter {
@@ -234,8 +225,11 @@ public class WishListActivity extends BaseActivity {
                         .setText(AphidLog.format("%s", data.getTitle()));
 
                 final TextView textView = holder.articleTitle;
+                if (textView != null) {
+                    textView.setText(AphidLog.format("%s", data.getTitle()));
+                }
 
-                ViewTreeObserver vto = textView.getViewTreeObserver();
+                /*ViewTreeObserver vto = textView.getViewTreeObserver();
                 vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     private int maxLines = -1;
 
@@ -252,12 +246,15 @@ public class WishListActivity extends BaseActivity {
                             textView.setText(AphidLog.format("%s", data.getTitle()));
                         }
                     }
-                });
+                });*/
             }
 
             if (holder.articleShortDesc != null) {
                 if (data.getSummary() != null && holder.articleShortDesc != null) {
-                    holder.articleShortDesc.setMaxLines(1000);
+                    final TextView textView = holder.articleShortDesc;
+                    holder.articleShortDesc.setText(Html.fromHtml(data.getSummary()));
+
+                    /*holder.articleShortDesc.setMaxLines(1000);
                     holder.articleShortDesc
                             .setText(Html.fromHtml(data.getSummary()));
                     //Log.d("BaseAdapter", "The text size is " + holder.articleShortDesc.getTextSize());
@@ -279,7 +276,7 @@ public class WishListActivity extends BaseActivity {
                                 textView.setText(Html.fromHtml(data.getSummary()));
                             }
                         }
-                    });
+                    });*/
                 }
             }
 
@@ -370,92 +367,92 @@ public class WishListActivity extends BaseActivity {
                 }
             });
 
-                    holder.fullImageMagazineLike.setOnCheckedChangeListener(null);
-                    if (Boolean.valueOf(data.getLiked())) {
-                        data.setIsChecked(true);
-                    } else {
-                        data.setIsChecked(false);
-                    }
+            holder.fullImageMagazineLike.setOnCheckedChangeListener(null);
+            if (Boolean.valueOf(data.getLiked())) {
+                data.setIsChecked(true);
+            } else {
+                data.setIsChecked(false);
+            }
 
-                    holder.fullImageMagazineLike.setText("");
-                    holder.fullImageMagazineLike.setChecked(Boolean.valueOf(data.getLiked()));
+            holder.fullImageMagazineLike.setText("");
+            holder.fullImageMagazineLike.setChecked(Boolean.valueOf(data.getLiked()));
 
-                    holder.fullImageMagazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            holder.fullImageMagazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                            if (isChecked) {
-                                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                                yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                                    @Override
-                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (isChecked) {
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
-                                        data.setIsChecked(true);
-                                        data.setLiked("true");
-                                        MagazineArticlesBaseAdapter.initListener();
-                                        if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                            MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
-                                        }
-                                        if (!((BaseActivity) context).hasDestroyed()) {
-                                            notifyDataSetChanged();
-                                        }
-                                        mToastFactory.showToast("You have liked the article " + data.getTitle());
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                        Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                        data.setIsChecked(false);
-                                        data.setLiked("false");
-                                        if (!((BaseActivity) context).hasDestroyed()) {
-                                            notifyDataSetChanged();
-                                        }
-                                    }
-                                });
-                            } else {
-                                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                                showProgressDialog();
-                                yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                                    @Override
-                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                        dismissProgressDialog();
-                                        data.setIsChecked(false);
-                                        data.setLiked("false");
-                                        MagazineArticlesBaseAdapter.initListener();
-                                        if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                            MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
-                                        }
-
-                                        if (OthersMagazinesDetailActivity.myBaseAdapter != null) {
-                                            if (OthersMagazinesDetailActivity.myBaseAdapter.reflectListener != null) {
-                                                OthersMagazinesDetailActivity.myBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
-                                            }
-                                        }
-                                        if (!((BaseActivity) context).hasDestroyed()) {
-                                            notifyDataSetChanged();
-                                        }
-                                        mToastFactory.showToast("You have unliked the article " + data.getTitle());
-
-                                        articlesList.clear();
-                                        myBaseAdapter.addItems(articlesList);
-
-                                        refreshWishList();
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                        Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                        data.setIsChecked(true);
-                                        data.setLiked("true");
-                                        dismissProgressDialog();
-                                        if (!((BaseActivity) context).hasDestroyed()) {
-                                            notifyDataSetChanged();
-                                        }
-                                    }
-                                });
+                                data.setIsChecked(true);
+                                data.setLiked("true");
+                                MagazineArticlesBaseAdapter.initListener();
+                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
+                                }
+                                if (!((BaseActivity) context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
+                                mToastFactory.showToast("You have liked the article " + data.getTitle());
                             }
-                        }
-                    });
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
+                                data.setIsChecked(false);
+                                data.setLiked("false");
+                                if (!((BaseActivity) context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
+                            }
+                        });
+                    } else {
+                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        showProgressDialog();
+                        yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                dismissProgressDialog();
+                                data.setIsChecked(false);
+                                data.setLiked("false");
+                                MagazineArticlesBaseAdapter.initListener();
+                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
+                                }
+
+                                if (OthersMagazinesDetailActivity.myBaseAdapter != null) {
+                                    if (OthersMagazinesDetailActivity.myBaseAdapter.reflectListener != null) {
+                                        OthersMagazinesDetailActivity.myBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
+                                    }
+                                }
+                                if (!((BaseActivity) context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
+                                mToastFactory.showToast("You have unliked the article " + data.getTitle());
+
+                                articlesList.clear();
+                                myBaseAdapter.addItems(articlesList);
+
+                                refreshWishList();
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
+                                data.setIsChecked(true);
+                                data.setLiked("true");
+                                dismissProgressDialog();
+                                if (!((BaseActivity) context).hasDestroyed()) {
+                                    notifyDataSetChanged();
+                                }
+                            }
+                        });
+                    }
+                }
+            });
 
             UI
                     .<TextView>findViewById(layout, R.id.tv_category_full_story)
@@ -489,9 +486,18 @@ public class WishListActivity extends BaseActivity {
                         .load(data.getImage_filename())
                         .asBitmap()
                         .placeholder(R.drawable.magazine_backdrop)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                         .dontAnimate()
-                        .into(new SimpleTarget<Bitmap>() {
+                        .into(photoView);
+
+                if (articleTitle != null) {
+                    articleTitle.setText(AphidLog.format("%s", data.getTitle()));
+                }
+
+                if (textView1 != null && data.getSummary() != null) {
+                    textView1.setText(Html.fromHtml(data.getSummary()));
+                }
+                        /*.into(new SimpleTarget<Bitmap>() {
                             @Override
                             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                                 int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
@@ -510,8 +516,8 @@ public class WishListActivity extends BaseActivity {
 
                                     int screenHeight = DeviceDimensionsHelper.getDisplayHeight(context);
                                     //Log.d("BaseAdapter", "screenHeight " + screenHeight);
-                                       /*int spaceForImage = screenHeight - 120;
-                                       Log.d("BaseAdapter", "spaceForImage" + spaceForImage);*/
+                                       *//*int spaceForImage = screenHeight - 120;
+                                       Log.d("BaseAdapter", "spaceForImage" + spaceForImage);*//*
                                     //Log.d("BaseAdapter", "bmp.getHeight()" + bmp.getHeight());
                                     int total = bmp.getHeight() + 50;
                                     //if(bmp.getHeight() >= spaceForImage-30) {
@@ -600,7 +606,7 @@ public class WishListActivity extends BaseActivity {
                                     }
                                 }
                             }
-                        });
+                        });*/
             } else {
                 photoView.setImageResource(R.drawable.magazine_backdrop);
             }
@@ -609,7 +615,7 @@ public class WishListActivity extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     String videoUrl = data.getVideo_url();
-                    if(videoUrl != null && !TextUtils.isEmpty(videoUrl)) {
+                    if (videoUrl != null && !TextUtils.isEmpty(videoUrl)) {
                         InAppVideoActivity.start((Activity) context, videoUrl, data.getTitle());
                     } else {
                         Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
@@ -680,7 +686,7 @@ public class WishListActivity extends BaseActivity {
                                         notifyDataSetChanged();
                                     }
                                 } finally {
-                                    if(response != null && response.body() != null) {
+                                    if (response != null && response.body() != null) {
                                         response.body().close();
                                     }
                                 }
@@ -742,7 +748,7 @@ public class WishListActivity extends BaseActivity {
 
                                             refreshWishList();
                                         } finally {
-                                            if(response != null && response.body() != null) {
+                                            if (response != null && response.body() != null) {
                                                 response.body().close();
                                             }
                                         }
@@ -775,34 +781,34 @@ public class WishListActivity extends BaseActivity {
                 }
             });
 
-                    if (holder.fullImageMagazineAdd != null) {
-                        ImageView add1 = holder.fullImageMagazineAdd;
-                        add1.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent(context, CreateMagazineActivity.class);
-                                intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
-                                if (context instanceof Activity) {
-                                    ((Activity) context).startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
-                                }
-                            }
-                        });
+            if (holder.fullImageMagazineAdd != null) {
+                ImageView add1 = holder.fullImageMagazineAdd;
+                add1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(context, CreateMagazineActivity.class);
+                        intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
+                        if (context instanceof Activity) {
+                            ((Activity) context).startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
+                        }
                     }
+                });
+            }
 
-                    if (holder.fullImageMagazineShare != null) {
-                        ImageView share1 = holder.fullImageMagazineShare;
-                        share1.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                if (data.getImage_filename() != null) {
-                                    new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
-                                } else {
-                                    String summary = Html.fromHtml(data.getSummary()).toString();
-                                    Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, null);
-                                }
-                            }
-                        });
+            if (holder.fullImageMagazineShare != null) {
+                ImageView share1 = holder.fullImageMagazineShare;
+                share1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (data.getImage_filename() != null) {
+                            new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
+                        } else {
+                            String summary = Html.fromHtml(data.getSummary()).toString();
+                            Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, null);
+                        }
                     }
+                });
+            }
 
             LinearLayout llArticleInfo = (LinearLayout) layout.findViewById(R.id.ll_article_info);
             if (llArticleInfo != null) {
@@ -842,6 +848,7 @@ public class WishListActivity extends BaseActivity {
 
         /**
          * Adds items to the list
+         *
          * @param articlesList The articles list
          */
         public void addItems(List<Articles> articlesList) {
@@ -853,9 +860,10 @@ public class WishListActivity extends BaseActivity {
 
         /**
          * Updates the topic with the topic following
+         *
          * @param isFollowing isFollowing or not
-         * @param topic The articles object
-         * @param position The position
+         * @param topic       The articles object
+         * @param position    The position
          */
         public void updateTopic(boolean isFollowing, Articles topic, int position) {
             items.remove(position);
@@ -877,9 +885,10 @@ public class WishListActivity extends BaseActivity {
 
         /**
          * Updates the articles
-         * @param isLiked isLiked or not
-         * @param articles The articles object
-         * @param position The position
+         *
+         * @param isLiked      isLiked or not
+         * @param articles     The articles object
+         * @param position     The position
          * @param articlePlace The articles placement
          */
         public void updateArticle(boolean isLiked, Articles articles, int position, String articlePlace) {
@@ -917,12 +926,12 @@ public class WishListActivity extends BaseActivity {
                             }
                         }
                         myBaseAdapter.addItems(articlesList);
-                    }finally {
-                        if(response != null && response.body() != null) {
+                    } finally {
+                        if (response != null && response.body() != null) {
                             try {
                                 response.body().clear();
                                 response = null;
-                            }catch (Exception e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }

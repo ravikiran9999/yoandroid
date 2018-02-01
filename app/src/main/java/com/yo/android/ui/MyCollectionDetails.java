@@ -95,11 +95,14 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
     private TextView tvNoArticles;
     private FlipView flipView;
     private List<Articles> cachedArticlesList = new ArrayList<>();
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_collection_details);
+
+        context = this;
 
         flipView = (FlipView) findViewById(R.id.flip_view);
         tvNoArticles = (TextView) findViewById(R.id.tv_no_articles);
@@ -146,7 +149,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
             cachedArticlesList.addAll(cachedTopicMagazinesList);
             List<Articles> tempArticlesList = new ArrayList<Articles>(cachedArticlesList);
-            String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(MyCollectionDetails.this, userId).getString("read_article_ids", "");
+            String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("read_article_ids", "");
             if (!TextUtils.isEmpty(readCachedIds)) {
                 Type type1 = new TypeToken<List<String>>() {
                 }.getType();
@@ -210,7 +213,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
             cachedArticlesList.addAll(cachedTopicMagazinesList);
             List<Articles> tempArticlesList = new ArrayList<Articles>(cachedArticlesList);
-            String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(MyCollectionDetails.this, userId).getString("read_article_ids", "");
+            String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("read_article_ids", "");
             if (!TextUtils.isEmpty(readCachedIds)) {
                 Type type1 = new TypeToken<List<String>>() {
                 }.getType();
@@ -369,8 +372,9 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                         .setText(AphidLog.format("%s", data.getTitle()));
 
                 final TextView textView = holder.articleTitle;
+                textView.setText(AphidLog.format("%s", data.getTitle()));
 
-                ViewTreeObserver vto = textView.getViewTreeObserver();
+                /*ViewTreeObserver vto = textView.getViewTreeObserver();
                 vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     private int maxLines = -1;
 
@@ -387,12 +391,14 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                             textView.setText(AphidLog.format("%s", data.getTitle()));
                         }
                     }
-                });
+                });*/
             }
 
             if (holder.articleShortDesc != null) {
                 if (data.getSummary() != null && holder.articleShortDesc != null) {
-                    holder.articleShortDesc.setMaxLines(1000);
+                    holder.articleShortDesc.setText(Html.fromHtml(data.getSummary()));
+
+                    /*holder.articleShortDesc.setMaxLines(1000);
                     holder.articleShortDesc
                             .setText(Html.fromHtml(data.getSummary()));
                     //Log.d("BaseAdapter", "The text size is " + holder.articleShortDesc.getTextSize());
@@ -414,7 +420,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                                 textView.setText(Html.fromHtml(data.getSummary()));
                             }
                         }
-                    });
+                    });*/
                 }
             }
 
@@ -744,7 +750,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(MyCollectionDetails.this, CreateMagazineActivity.class);
+                    Intent intent = new Intent(context, CreateMagazineActivity.class);
                     intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
                     startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
                 }
@@ -768,7 +774,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(MyCollectionDetails.this, CreateMagazineActivity.class);
+                    Intent intent = new Intent(context, CreateMagazineActivity.class);
                     intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
                     startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
                 }
@@ -1032,9 +1038,9 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
         switch (item.getItemId()) {
             case R.id.menu_follow_magazine:
                 if ("Tag".equals(type)) {
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(MyCollectionDetails.this);
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-                    LayoutInflater layoutInflater = LayoutInflater.from(MyCollectionDetails.this);
+                    LayoutInflater layoutInflater = LayoutInflater.from(context);
                     final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
                     builder.setView(view);
 
@@ -1095,9 +1101,9 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
                 } else {
 
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(MyCollectionDetails.this);
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-                    LayoutInflater layoutInflater = LayoutInflater.from(MyCollectionDetails.this);
+                    LayoutInflater layoutInflater = LayoutInflater.from(context);
                     final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
                     builder.setView(view);
 
@@ -1206,7 +1212,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
             String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
             SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(this, userId);
-            String readCachedIds1 = MagazinePreferenceEndPoint.getInstance().getPref(MyCollectionDetails.this, userId).getString("read_article_ids", "");
+            String readCachedIds1 = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("read_article_ids", "");
             List<String> cachedReadList1 = new ArrayList<>();
             if (!TextUtils.isEmpty(readCachedIds1)) {
                 Type type2 = new TypeToken<List<String>>() {
@@ -1296,7 +1302,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                     }
                     List<Articles> tempArticlesList = new ArrayList<Articles>(articlesList);
                     String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-                    String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(MyCollectionDetails.this, userId).getString("read_article_ids", "");
+                    String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("read_article_ids", "");
                     if (!TextUtils.isEmpty(readCachedIds)) {
                         Type type1 = new TypeToken<List<String>>() {
                         }.getType();
@@ -1389,7 +1395,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                     }
                     List<Articles> tempArticlesList = new ArrayList<Articles>(articlesList);
                     String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-                    String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(MyCollectionDetails.this, userId).getString("read_article_ids", "");
+                    String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("read_article_ids", "");
                     if (!TextUtils.isEmpty(readCachedIds)) {
                         Type type1 = new TypeToken<List<String>>() {
                         }.getType();

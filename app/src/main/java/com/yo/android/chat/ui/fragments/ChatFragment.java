@@ -169,7 +169,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (Activity)context;
+        activity = (Activity) context;
     }
 
     private void getActiveSavedRooms() {
@@ -557,7 +557,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                                 isShowDefault = false;
                             } else if (((DataSnapshot) params[0]).getChildrenCount() == executed) {
                                 //dismissProgressDialog();
-                                if (activeCount == 0) {
+                                if (activeCount == 0 && chatRoomListAdapter.getOriginalListCount() == 0) {
                                     emptyImageView.setVisibility(View.VISIBLE);
                                 }
                             }
