@@ -448,4 +448,6 @@
     <string name="clear">Clear</string>
     <string name="interests_you">Hello. What interests you?</string>
     <string name="topics_to_follow">Pick some topics to follow.</string>
+    <string name="no_articles">There are no articles</string>
+    <string name="error_retrieving_articles">Error retrieving Articles</string>
 </resources>

@@ -1,12 +1,12 @@
-<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/swipeContainer"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical">
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <GridView
             android:id="@+id/create_magazines_gridview"
@@ -20,27 +20,27 @@
             android:padding="5dp"
             android:stretchMode="columnWidth"
             android:verticalSpacing="5dp" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 
-        <TextView
-            android:id="@+id/no_search_results"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:padding="30dp"
-            android:text="@string/no_result_found"
-            android:textColor="@color/black"
-            android:visibility="gone" />
+    <TextView
+        android:id="@+id/no_search_results"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:padding="30dp"
+        android:text="@string/no_result_found"
+        android:textColor="@color/black"
+        android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/network_failure"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:padding="30dp"
-            android:text="@string/connectivity_network_settings"
-            android:visibility="gone"
-            android:textColor="@color/black"/>
+    <TextView
+        android:id="@+id/network_failure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:padding="30dp"
+        android:text="@string/connectivity_network_settings"
+        android:textColor="@color/black"
+        android:visibility="gone" />
 
-    </LinearLayout>
-</android.support.v4.widget.SwipeRefreshLayout>
+</LinearLayout>
 

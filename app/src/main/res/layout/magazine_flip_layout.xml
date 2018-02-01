@@ -185,12 +185,13 @@
             android:layout_marginBottom="5dp"
             android:orientation="vertical">
 
-            <TextView
+            <com.yo.android.helpers.ProportionalTextView
                 android:id="@+id/tv_article_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
+                android:maxLines="2"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/article_title_textsize"
                 android:textStyle="bold" />

@@ -542,7 +542,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                         .load(data.getImage_filename())
                         .asBitmap()
                         .placeholder(R.drawable.magazine_backdrop)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                         .dontAnimate()
                         .into(new SimpleTarget<Bitmap>() {
                             @Override

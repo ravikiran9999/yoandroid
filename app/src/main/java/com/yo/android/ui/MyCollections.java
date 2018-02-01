@@ -64,12 +64,14 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
 
+    @Bind(R.id.network_failure)
+    TextView networkFailureText;
+
     protected SearchView searchView;
     MyCollectionsAdapter myCollectionsAdapter;
     private boolean contextualMenu;
     private int initialVisiblePosition;
-    @Bind(R.id.network_failure)
-    protected TextView networkFailureText;
+
     public boolean isNetworkFailure;
 
 

@@ -53,12 +53,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -179,13 +181,15 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             hashSet.addAll(cachedArticlesList);
             cachedArticlesList = new ArrayList<Articles>(hashSet);
             myBaseAdapter.addItems(cachedArticlesList);
-            if (cachedArticlesList.size() == 0) {
+
+            /*if (cachedArticlesList.size() == 0) {
                 tvNoArticles.setVisibility(View.VISIBLE);
                 flipView.setVisibility(View.GONE);
             } else {
                 tvNoArticles.setVisibility(View.GONE);
                 flipView.setVisibility(View.VISIBLE);
-            }
+            }*/
+
             showProgressDialog();
 
             List<String> existingArticleIds = checkCachedMagazines();
@@ -238,15 +242,15 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             cachedArticlesList = notEmptyUpdatedArticles;
             LinkedHashSet<Articles> hashSet = new LinkedHashSet<>();
             hashSet.addAll(cachedArticlesList);
-            cachedArticlesList = new ArrayList<Articles>(hashSet);
+            cachedArticlesList = new ArrayList<>(hashSet);
             myBaseAdapter.addItems(cachedArticlesList);
-            if (cachedArticlesList.size() == 0) {
+            /*if (cachedArticlesList.size() == 0) {
                 tvNoArticles.setVisibility(View.VISIBLE);
                 flipView.setVisibility(View.GONE);
             } else {
                 tvNoArticles.setVisibility(View.GONE);
                 flipView.setVisibility(View.VISIBLE);
-            }
+            }*/
 
             showProgressDialog();
             List<String> existingArticleIds = checkCachedMagazines();
@@ -610,9 +614,11 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                         .load(data.getImage_filename())
                         .asBitmap()
                         .placeholder(R.drawable.magazine_backdrop)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                         .dontAnimate()
-                        .into(new SimpleTarget<Bitmap>() {
+                        .into(photoView);
+
+                        /*.into(new SimpleTarget<Bitmap>() {
                             @Override
                             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                                 int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
@@ -631,8 +637,8 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
                                     int screenHeight = DeviceDimensionsHelper.getDisplayHeight(context);
                                     //Log.d("BaseAdapter", "screenHeight " + screenHeight);
-                                       /*int spaceForImage = screenHeight - 120;
-                                       Log.d("BaseAdapter", "spaceForImage" + spaceForImage);*/
+                                       *//*int spaceForImage = screenHeight - 120;
+                                       Log.d("BaseAdapter", "spaceForImage" + spaceForImage);*//*
                                     //Log.d("BaseAdapter", "bmp.getHeight()" + bmp.getHeight());
                                     int total = bmp.getHeight() + 50;
                                     //if(bmp.getHeight() >= spaceForImage-30) {
@@ -663,7 +669,8 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                                             bmp = null;
                                         }
                                     }
-                                    if(articleTitle != null) {
+
+                                    *//*if(articleTitle != null) {
                                         ViewTreeObserver vto1 = articleTitle.getViewTreeObserver();
                                         vto1.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                                             private int maxLines = -1;
@@ -698,30 +705,21 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                                                 }
                                             }
                                         });
-                                    }
+                                    }*//*
 
-                                    if(textView1 != null) {
-                                        ViewTreeObserver vto = textView1.getViewTreeObserver();
-                                        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                                            private int maxLines = -1;
 
-                                            @Override
-                                            public void onGlobalLayout() {
-                                                if (maxLines < 0 && textView1.getHeight() > 0 && textView1.getLineHeight() > 0) {
-                                                    int height = textView1.getHeight();
-                                                    int lineHeight = textView1.getLineHeight();
-                                                    maxLines = height / lineHeight;
-                                                    textView1.setMaxLines(maxLines);
-                                                    textView1.setEllipsize(TextUtils.TruncateAt.END);
-                                                    // Re-assign text to ensure ellipsize is performed correctly.
-                                                    textView1.setText(Html.fromHtml(data.getSummary()));
-                                                }
-                                            }
-                                        });
-                                    }
                                 }
                             }
-                        });
+                        });*/
+
+                if(articleTitle != null) {
+                    articleTitle.setText(AphidLog.format("%s", data.getTitle()));
+                }
+
+                if(textView1 != null) {
+                    textView1.setText(Html.fromHtml(data.getSummary()));
+                }
+
             } else {
                 photoView.setImageResource(R.drawable.magazine_backdrop);
             }
@@ -1284,7 +1282,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                                 articlesHashSet.add(response.body().get(i));
                             }
                         }
-                        articlesList = new ArrayList<Articles>(articlesHashSet);
+                        articlesList = new ArrayList<>(articlesHashSet);
                         articlesList.addAll(cachedArticlesList);
                     } finally {
                         if(response != null && response.body() != null) {
@@ -1354,8 +1352,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             public void onFailure(Call<List<Articles>> call, Throwable t) {
                 dismissProgressDialog();
                 if (cachedArticlesList.size() == 0) {
-                    tvNoArticles.setVisibility(View.VISIBLE);
-                    flipView.setVisibility(View.GONE);
+                    failureError(t);
                 }
             }
         });
@@ -1446,12 +1443,22 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             public void onFailure(Call<MagazineArticles> call, Throwable t) {
                 dismissProgressDialog();
                 if (cachedArticlesList.size() == 0) {
-                    tvNoArticles.setVisibility(View.VISIBLE);
-                    flipView.setVisibility(View.GONE);
+                    failureError(t);
                 }
             }
         });
     }
+
+    private void failureError(Throwable t) {
+        if(t instanceof SocketTimeoutException) {
+            tvNoArticles.setText(R.string.socket_time_out);
+        } else {
+            tvNoArticles.setText(R.string.no_articles);
+        }
+        tvNoArticles.setVisibility(View.VISIBLE);
+        flipView.setVisibility(View.GONE);
+    }
+
 
     /**
      * Gets the cached articles list
