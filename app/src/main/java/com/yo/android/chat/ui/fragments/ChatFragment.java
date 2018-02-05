@@ -446,6 +446,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                     room.setTime(chatMessage.getTime());
                     room.setTimeStamp(DateUtil.getChatListTimeFormat(activity, chatMessage.getTime()));
                     if (!arrayOfUsers.contains(room)) {
+                        /*if(!room.getMobileNumber().startsWith("+")) {
+                            room.setMobileNumber("+" + room.getMobileNumber());
+                        }*/
                         arrayOfUsers.add(room);
                     } else {
                         List<Room> listRoom = new ArrayList<>();
@@ -618,6 +621,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                         if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
                             Room mRoom = getMembersProfile(dataSnapshot);
                             if (mRoom != null && !arrayOfUsers.contains(mRoom))
+                                /*if(!mRoom.getMobileNumber().startsWith("+")) {
+                                    mRoom.setMobileNumber("+" + mRoom.getMobileNumber());
+                                }*/
                                 arrayOfUsers.add(mRoom);
                             if (activity != null) {
                                 activity.runOnUiThread(new Runnable() {

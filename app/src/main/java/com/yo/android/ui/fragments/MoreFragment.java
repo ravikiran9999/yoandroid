@@ -419,7 +419,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                         if (activity != null) {
                             Util.cancelAllNotification(getActivity());
                             //  23	Data is missing in dialer screen once user logouts & login again  - Fixed
-                            //  CallLog.Calls.clearCallHistory(getActivity());
+                            CallLog.Calls.clearCallHistory(getActivity());
                         }
 
                         //Delete user from PJSIP
@@ -792,6 +792,8 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
         // clear firebase cached rooms
         preferenceEndPoint.removePreference(Constants.FIRE_BASE_ROOMS);
+        preferenceEndPoint.removePreference(Constants.FIRE_BASE_ROOMS);
+
         // clear firebase userId
         preferenceEndPoint.removePreference(Constants.FIREBASE_USER_ID);
         // clear firebase authToken

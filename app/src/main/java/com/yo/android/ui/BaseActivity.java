@@ -363,7 +363,7 @@ public class BaseActivity extends ParentActivity {
         List<List<Object>> values = new ArrayList<>();
         String range = " ";
         if (type.equals("Calls")) {
-            range = "1.0.4.2 Call Logs!A:L";
+            range = "1.0.4 Call Logs!A:L";
             //range = "17.4.5.0!A:L";
             DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
             if (TextUtils.isEmpty(model.getCallee().trim())) {

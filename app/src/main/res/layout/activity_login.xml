@@ -11,38 +11,32 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
         android:src="@drawable/app_logo" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="25dp"
         android:text="An SMS with PIN would be sent to this number for verification"
         android:textColor="@android:color/white" />
-
-    <!--<org.angmarch.views.NiceSpinner xmlns:app="http://schemas.android.com/apk/res-auto"-->
-        <!--android:id="@+id/spCountrySpinner"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--app:textTint="@color/black" />-->
 
     <EditText
         android:id="@+id/et_country_code"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:background="@android:color/white"
+        android:cursorVisible="false"
+        android:drawableEnd="@drawable/arrow"
+        android:drawableRight="@drawable/arrow"
         android:ems="10"
+        android:focusableInTouchMode="false"
         android:imeOptions="actionDone"
         android:padding="13dp"
-        android:drawableEnd="@drawable/arrow"
-        android:cursorVisible="false"
-        android:focusableInTouchMode="false"
         android:singleLine="true" />
-
 
 
     <EditText
@@ -50,12 +44,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:background="@android:color/white"
-        android:inputType="number"
         android:ems="10"
         android:hint="Enter mobile number"
         android:imeOptions="actionDone"
+        android:inputType="phone|number"
         android:padding="13dp"
         android:singleLine="true" />
 
@@ -75,10 +69,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:gravity="center"
-        android:textSize="@dimen/xxsmall_textsize"
         android:layout_marginTop="@dimen/small_padding"
+        android:gravity="center"
         android:text="@string/tc"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+        android:textSize="@dimen/xxsmall_textsize" />
 
 </LinearLayout>

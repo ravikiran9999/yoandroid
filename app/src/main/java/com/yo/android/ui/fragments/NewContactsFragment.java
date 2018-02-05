@@ -138,6 +138,12 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activity = (Activity) context;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -275,7 +281,6 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
             @Override
             public void onFailure(Call<List<Contact>> call, Throwable t) {
                 dismissProgressDialog();
-                FragmentActivity activity = getActivity();
                 if (activity != null && allContacts != null && allContacts.size() == 0) {
                     tvNoContacts.setVisibility(View.VISIBLE);
                     tvNoContacts.setText(activity.getResources().getString(R.string.connectivity_network_settings));
@@ -310,6 +315,8 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Util.prepareContactsSearch(activity, menu, contactsListAdapter, Constants.CONT_FRAG, noSearchResult, null);
+        searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
         MenuItem view = menu.findItem(R.id.menu_search);
         // Hide right side alphabets when search is opened.
         MenuItemCompat.setOnActionExpandListener(view, new MenuItemCompat.OnActionExpandListener() {
@@ -339,8 +346,6 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
             }
         });
         //contactsListAdapter.updateItems(allContacts);
-        Util.prepareContactsSearch(getActivity(), menu, contactsListAdapter, Constants.CONT_FRAG, noSearchResult, null);
-        searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
 
         if (item.getItemId() == R.id.invite) {
             Intent i = new Intent(Intent.ACTION_INSERT);
@@ -513,7 +518,6 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
         String contactName = null;
         String contactPhoneNumber = null;
         // Get the name
-        FragmentActivity activity = getActivity();
         cursor = activity.getContentResolver().query(uri,
                 new String[]{ContactsContract.Contacts.DISPLAY_NAME},
                 null, null, null);

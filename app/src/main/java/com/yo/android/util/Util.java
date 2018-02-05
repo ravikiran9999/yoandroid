@@ -236,9 +236,7 @@ public class Util {
     public static void prepareSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter, final TextView noData, final ListView listView, final GridView gridView, final TextView networkFailureText) {
         final SearchManager searchManager =
                 (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
-        MenuItem searchMenuItem;
         SearchView searchView;
-        searchMenuItem = menu.findItem(R.id.menu_search);
         searchView =
                 (SearchView) menu.findItem(R.id.menu_search).getActionView();
         searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
@@ -323,9 +321,7 @@ public class Util {
     public static void preparePeopleSearch(final Activity activity, Menu menu, final AbstractBaseAdapter adapter, final TextView noData, final ListView listView, final GridView gridView, final LinearLayout llNoPeople, final TextView networkFailureText) {
         final SearchManager searchManager =
                 (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
-        MenuItem searchMenuItem;
         SearchView searchView;
-        searchMenuItem = menu.findItem(R.id.menu_search);
         searchView =
                 (SearchView) menu.findItem(R.id.menu_search).getActionView();
         searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
@@ -427,7 +423,6 @@ public class Util {
         final SearchManager searchManager =
                 (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView;
-        MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
         searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
         searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Enter atleast 4 characters...." + "</font>"));
         searchView.setSearchableInfo(
@@ -494,7 +489,7 @@ public class Util {
      * @param noContactsFound
      * @return
      */
-    public static SearchView prepareContactsSearch(final Activity activity, final Menu menu, final AbstractBaseAdapter adapter, final String roomType, final TextView noSearchResult, final TextView noContactsFound) {
+    public static void prepareContactsSearch(final Activity activity, final Menu menu, final AbstractBaseAdapter adapter, final String roomType, final TextView noSearchResult, final TextView noContactsFound) {
 
         final SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView;
@@ -503,7 +498,7 @@ public class Util {
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(activity.getComponentName()));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            public static final String TAG = "PrepareSearch in Util";
+            private static final String TAG = "PrepareSearch in Util";
 
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -560,7 +555,6 @@ public class Util {
                 return true;
             }
         });
-        return searchView;
     }
 
     public static void changeMenuItemsVisibility(Menu menu, int menuId, boolean visibility) {

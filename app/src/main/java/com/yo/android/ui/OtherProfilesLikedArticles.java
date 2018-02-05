@@ -9,8 +9,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +62,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import se.emilsjolander.flipview.FlipView;
+import se.emilsjolander.flipview.OverFlipMode;
 
 /**
  * Created by root on 15/7/16.
@@ -70,6 +73,8 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
     @Inject
     YoApi.YoService yoService;
 
+    @Bind(R.id.refreshContainer)
+    SwipeRefreshLayout swipeRefreshContainer;
     @Bind(R.id.txtEmptyArticals)
     TextView noArticals;
     @Bind(R.id.flipView_container)
@@ -81,6 +86,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
     @Bind(R.id.flip_view)
     FlipView flipView;
 
+    public static boolean refreshing;
     private List<Articles> articlesList = new ArrayList<Articles>();
     private MyBaseAdapter myBaseAdapter;
     private static OtherProfilesLikedArticles listener;
@@ -116,6 +122,9 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
         ButterKnife.bind(this, view);
         myBaseAdapter = new MyBaseAdapter(activity);
         flipView.setAdapter(myBaseAdapter);
+
+        swipeRefreshContainer.setEnabled(false);
+        swipeRefreshContainer.setRefreshing(false);
 
         flipContainer.setVisibility(View.GONE);
 
@@ -299,7 +308,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             }
             holder.magazineLike.setTag(position);
 
-            if (holder.articleTitle != null) {
+            /*if (holder.articleTitle != null) {
                 holder.fullImageTitle.setVisibility(View.GONE);
                 holder.blackMask.setVisibility(View.GONE);
                 holder.rlFullImageOptions.setVisibility(View.GONE);
@@ -326,8 +335,11 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                         }
                     }
                 });
-            }
+            }*/
 
+            if (holder.articleTitle != null) {
+                holder.articleTitle.setText(AphidLog.format("%s", data.getTitle()));
+            }
             if (holder.articleShortDesc != null) {
                 holder.articleShortDesc.setText(Html.fromHtml(data.getSummary()));
             }

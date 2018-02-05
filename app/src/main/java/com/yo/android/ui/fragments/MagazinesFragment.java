@@ -380,7 +380,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
         boolean renewalStatus = preferenceEndPoint.getBooleanPreference(Constants.MAGAZINE_LOCK, false);
         switch (item.getItemId()) {
             case R.id.menu_move_to_first:
-                mMagazineFlipArticlesFragment.getLandingCachedArticles();
+                //mMagazineFlipArticlesFragment.getLandingCachedArticles();
+                mMagazineFlipArticlesFragment.moveToFirst();
                 break;
             case R.id.menu_create_magazines:
                 if (!renewalStatus) {
@@ -510,7 +511,6 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     if (mMagazineFlipArticlesFragment != null) {
                         MagazineFlipArticlesFragment.lastReadArticle = 0;
                         mMagazineFlipArticlesFragment.getLandingCachedArticles();
-
                     }
                     return true;
                 }
