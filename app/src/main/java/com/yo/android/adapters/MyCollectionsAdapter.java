@@ -102,6 +102,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
                         .dontAnimate()
                         .into(holder.getImageView());
             } else {
+                Glide.clear(holder.getImageView());
                 Glide.with(mContext)
                         .load(R.drawable.magazine_backdrop)
                         .fitCenter()

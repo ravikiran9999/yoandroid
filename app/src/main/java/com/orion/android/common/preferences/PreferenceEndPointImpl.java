@@ -217,6 +217,7 @@ public class PreferenceEndPointImpl implements PreferenceEndPoint {
         final SharedPreferences settings = getSharedPreferences();
         final SharedPreferences.Editor editor = settings.edit();
         editor.clear();
+        editor.apply();
         editor.commit();
     }
 

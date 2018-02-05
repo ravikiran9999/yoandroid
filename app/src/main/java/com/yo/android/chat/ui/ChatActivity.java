@@ -286,7 +286,10 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                 title = Util.numberFromNexgeFormat(opponent);
             }
 
-            if (title != null) {
+            // display number or name in userChatFragment
+            if (title != null && TextUtils.isDigitsOnly(title)) {
+                customTitle.setText(String.format(getResources().getString(R.string.plus_number), title));
+            } else if (title != null) {
                 customTitle.setText(title);
             } else {
                 customTitle.setText(removeYoUser(opponent));
@@ -362,9 +365,11 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         intent.putExtra(Constants.OPPONENT_CONTACT_IMAGE, mOpponentImg);
         String titles = title == null ? opponent : title;
         intent.putExtra(Constants.OPPONENT_NAME, titles);
-        if (opponentTrim != null && TextUtils.isDigitsOnly(opponentTrim)) {
+        if (opponentTrim != null && !opponentTrim.startsWith("+")) {
             String mOpponentNumber = String.format(getResources().getString(R.string.plus_number), opponentTrim);
             intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, mOpponentNumber);
+        } else {
+            intent.putExtra(Constants.OPPONENT_PHONE_NUMBER, opponentTrim);
         }
 
         if (groupName != null) {

@@ -1,12 +1,15 @@
 package com.yo.android.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
@@ -43,9 +46,12 @@ import com.yo.dialer.DialerLogs;
 import com.yo.dialer.googlesheet.UploadCallDetails;
 import com.yo.dialer.googlesheet.UploadModel;
 
+import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -54,9 +60,6 @@ import javax.inject.Inject;
 
 import static com.yo.android.app.BaseApp.appRunning;
 
-/**
- * Created by ramesh on 12/3/16.
- */
 public class BaseActivity extends ParentActivity {
 
     @Inject
@@ -121,6 +124,162 @@ public class BaseActivity extends ParentActivity {
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(isDeviceRooted(this)) {
+            showRootedDeviceMessage();
+        }
+
+    }
+
+    // Display rooted message dialog
+    public void showRootedDeviceMessage() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.alert);
+
+        builder.setMessage(R.string.rooted_device_msg);
+        builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+
+                finish();
+
+            }
+        });
+
+
+        AlertDialog dialog = builder.create();
+
+        if (dialog != null) {
+            dialog.show();
+        }
+    }
+
+    // Check whether phone is rooted or not
+    public static boolean isDeviceRooted(Context mcon)
+    {
+        try
+        {
+            String buildTags = android.os.Build.TAGS;
+            if (buildTags != null && buildTags.contains("test-keys"))
+            {
+                if (!areTestKeysFalse(mcon.getApplicationContext(), Build.MODEL))
+                {
+                    return true;
+                }
+            }
+            String[] rootApks = new String[]{"superuser.apk", "z4root.apk", "superoneclick.apk", "androot.apk", "z4mod-1.apk", "cwmmanager.apk"};
+            HashSet<String> hs = new HashSet<>();
+            hs.addAll(Arrays.asList(rootApks));
+            try
+            {
+                File appsFolder = new File("/system/app/");
+                File[] fileList = appsFolder.listFiles();
+                for (File aFileList : fileList)
+                {
+                    if (aFileList.isFile())
+                    {
+                        String name = aFileList.getName().toLowerCase();
+                        if (name.endsWith(".apk") && hs.contains(name))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
+            try
+            {
+                String knoxbit = getKnoxBit(mcon, Build.MANUFACTURER);
+                if ("1".equalsIgnoreCase(knoxbit))
+                {
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            try
+            {
+                Process proc = Runtime.getRuntime().exec("su");
+                if (proc != null)
+                {
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private static String getKnoxBit(Context ctx, String make)
+    {
+        if ("samsung".equalsIgnoreCase(make))
+        {
+            String knox = getProp(ctx, "ro.boot.warranty_bit");
+            if (knox == null || knox.length() == 0)
+            {
+                knox = getProp(ctx, "ro.warranty_bit");
+            }
+            return knox;
+        }
+        return "";
+    }
+
+    public static String getProp(Context ctx, String key)
+    {
+        String ret;
+        try
+        {
+            ClassLoader cl = ctx.getClassLoader();
+            Class SystemProperties = cl.loadClass("android.os.SystemProperties");
+            Class[] paramTypes = new Class[1];
+            paramTypes[0] = String.class;
+            Method get = SystemProperties.getMethod("get", paramTypes);
+            Object[] params = new Object[1];
+            params[0] = key;
+            ret = (String) get.invoke(SystemProperties, params);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            ret = "";
+        }
+        return ret;
+    }
+
+    public static boolean areTestKeysFalse(Context ctx, String model)
+    {
+        String[] modelIgnoresList = new String[]{"HW-01E", "Elite Power"};
+        for (String aModelIgnoresList : modelIgnoresList)
+        {
+            if (aModelIgnoresList.equalsIgnoreCase(model))
+            {
+                return true;
+            }
+        }
+        String buildDescription = getProp(ctx, "ro.build.description");
+        return !buildDescription.contains("test-keys");
     }
 
     @Override
@@ -204,7 +363,7 @@ public class BaseActivity extends ParentActivity {
         List<List<Object>> values = new ArrayList<>();
         String range = " ";
         if (type.equals("Calls")) {
-            range = "1.0 Call Logs!A:L";
+            range = "1.0.4 Call Logs!A:L";
             //range = "17.4.5.0!A:L";
             DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
             if (TextUtils.isEmpty(model.getCallee().trim())) {

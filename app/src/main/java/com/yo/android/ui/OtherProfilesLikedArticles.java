@@ -1,5 +1,6 @@
 package com.yo.android.ui;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
@@ -31,8 +33,6 @@ import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yo.android.R;
@@ -55,27 +55,44 @@ import java.util.ListIterator;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import se.emilsjolander.flipview.FlipView;
+import se.emilsjolander.flipview.OverFlipMode;
 
 /**
  * Created by root on 15/7/16.
  */
 public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeopleMagazineReflectListener {
 
+
+    @Inject
+    YoApi.YoService yoService;
+
+    @Bind(R.id.refreshContainer)
+    SwipeRefreshLayout swipeRefreshContainer;
+    @Bind(R.id.txtEmptyArticals)
+    TextView noArticals;
+    @Bind(R.id.flipView_container)
+    FrameLayout flipContainer;
+    @Bind(R.id.progress)
+    ProgressBar mProgress;
+    @Bind(R.id.tv_progress_text)
+    TextView tvProgressText;
+    @Bind(R.id.flip_view)
+    FlipView flipView;
+
+    public static boolean refreshing;
     private List<Articles> articlesList = new ArrayList<Articles>();
     private MyBaseAdapter myBaseAdapter;
     private static OtherProfilesLikedArticles listener;
-    @Inject
-    YoApi.YoService yoService;
-    private TextView noArticals;
-    private FrameLayout flipContainer;
-    private ProgressBar mProgress;
     private boolean isFollowing;
-    private TextView tvProgressText;
+    private Activity activity;
+
 
     public static OtherProfilesLikedArticles getListener() {
         return listener;
@@ -85,6 +102,11 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
         OtherProfilesLikedArticles.listener = listener;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activity = (Activity) context;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,16 +119,14 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.magazine_flip_fragment, container, false);
-
-        noArticals = (TextView) view.findViewById(R.id.txtEmptyArticals);
-        flipContainer = (FrameLayout) view.findViewById(R.id.flipView_container);
-        mProgress = (ProgressBar) view.findViewById(R.id.progress);
-        FlipView flipView = (FlipView) view.findViewById(R.id.flip_view);
-        myBaseAdapter = new MyBaseAdapter(getActivity());
+        ButterKnife.bind(this, view);
+        myBaseAdapter = new MyBaseAdapter(activity);
         flipView.setAdapter(myBaseAdapter);
 
+        swipeRefreshContainer.setEnabled(false);
+        swipeRefreshContainer.setRefreshing(false);
+
         flipContainer.setVisibility(View.GONE);
-        tvProgressText = (TextView) view.findViewById(R.id.tv_progress_text);
 
         return view;
 
@@ -122,6 +142,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
 
     /**
      * Gets the other Yo app user's liked articles
+     *
      * @param userID
      */
     private void loadLikedArticles(String userID) {
@@ -148,12 +169,12 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                             }
                         }
                         myBaseAdapter.addItems(articlesList);
-                    }finally {
-                        if(response != null && response.body() != null) {
+                    } finally {
+                        if (response != null && response.body() != null) {
                             try {
                                 response.body().clear();
                                 response = null;
-                            }catch (Exception e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
@@ -287,7 +308,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             }
             holder.magazineLike.setTag(position);
 
-            if (holder.articleTitle != null) {
+            /*if (holder.articleTitle != null) {
                 holder.fullImageTitle.setVisibility(View.GONE);
                 holder.blackMask.setVisibility(View.GONE);
                 holder.rlFullImageOptions.setVisibility(View.GONE);
@@ -314,9 +335,16 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                         }
                     }
                 });
+            }*/
+
+            if (holder.articleTitle != null) {
+                holder.articleTitle.setText(AphidLog.format("%s", data.getTitle()));
+            }
+            if (holder.articleShortDesc != null) {
+                holder.articleShortDesc.setText(Html.fromHtml(data.getSummary()));
             }
 
-            if (holder.articleShortDesc != null) {
+            /*if (holder.articleShortDesc != null) {
                 if (data.getSummary() != null && holder.articleShortDesc != null) {
                     holder.articleShortDesc.setMaxLines(1000);
                     holder.articleShortDesc
@@ -342,7 +370,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                         }
                     });
                 }
-            }
+            }*/
 
             holder.magazineLike.setOnCheckedChangeListener(null);
             if (Boolean.valueOf(data.getLiked())) {
@@ -540,11 +568,12 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                 final TextView textView1 = holder.articleShortDesc;
                 Glide.with(context)
                         .load(data.getImage_filename())
-                        .asBitmap()
+                        //.asBitmap()
                         .placeholder(R.drawable.magazine_backdrop)
                         .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                         .dontAnimate()
-                        .into(new SimpleTarget<Bitmap>() {
+                        .into(photoView);
+                        /*.into(new SimpleTarget<Bitmap>() {
                             @Override
                             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                                 int screenHeight = DeviceDimensionsHelper.getDisplayHeight(context);
@@ -568,7 +597,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
 
                                 }
                             }
-                        });
+                        });*/
             } else {
                 photoView.setImageResource(R.drawable.magazine_backdrop);
             }
@@ -665,7 +694,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                         notifyDataSetChanged();
                                     }
                                 } finally {
-                                    if(response != null && response.body() != null) {
+                                    if (response != null && response.body() != null) {
                                         response.body().close();
                                     }
                                 }
@@ -727,7 +756,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                                 notifyDataSetChanged();
                                             }
                                         } finally {
-                                            if(response != null && response.body() != null) {
+                                            if (response != null && response.body() != null) {
                                                 response.body().close();
                                             }
                                         }
@@ -823,6 +852,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
 
         /**
          * Adds the articles to the list
+         *
          * @param articlesList The list of articles
          */
         public void addItems(List<Articles> articlesList) {
@@ -839,6 +869,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
 
         /**
          * Performs operations after following or liking an article
+         *
          * @param data The articles list
          * @param type The type of operation whether it is follow or like
          */
@@ -887,9 +918,10 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
 
         /**
          * Updates the topic following
+         *
          * @param isFollowing isFollowing or not
-         * @param topic The articles object
-         * @param position The position
+         * @param topic       The articles object
+         * @param position    The position
          */
         public void updateTopic(boolean isFollowing, Articles topic, int position) {
             items.remove(position);
@@ -911,9 +943,10 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
 
         /**
          * Updates the articles
-         * @param isLiked isLiked or not
-         * @param articles The articles object
-         * @param position The position
+         *
+         * @param isLiked      isLiked or not
+         * @param articles     The articles object
+         * @param position     The position
          * @param articlePlace The article placement
          */
         public void updateArticle(boolean isLiked, Articles articles, int position, String articlePlace) {
@@ -962,7 +995,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 80 && resultCode == getActivity().RESULT_OK) {
+        if (requestCode == 80 && resultCode == activity.RESULT_OK) {
             if (data != null) {
                 Articles topic = data.getParcelableExtra("UpdatedTopic");
                 int pos = data.getIntExtra("Pos", 0);
@@ -970,7 +1003,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                 myBaseAdapter.updateTopic(isTopicFollowing, topic, pos);
             }
 
-        } else if (requestCode == 500 && resultCode == getActivity().RESULT_OK) {
+        } else if (requestCode == 500 && resultCode == activity.RESULT_OK) {
             if (data != null) {
                 Articles articles = data.getParcelableExtra("UpdatedArticle");
                 int pos = data.getIntExtra("Pos", 0);
@@ -984,6 +1017,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
 
     /**
      * Gets the list of cached articles
+     *
      * @return The list of cached articles
      */
     private List<Articles> getCachedMagazinesList() {
@@ -1013,6 +1047,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
 
     /**
      * Saved the list of articles in the cache
+     *
      * @param cachedMagazinesList The list of articles to be cached
      */
     private void saveCachedMagazinesList(List<Articles> cachedMagazinesList) {

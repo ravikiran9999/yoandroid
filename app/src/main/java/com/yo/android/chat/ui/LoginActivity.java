@@ -38,6 +38,7 @@ import com.yo.android.chat.ui.fragments.OTPFragment;
 import com.yo.android.model.CountryCode;
 import com.yo.android.model.Response;
 import com.yo.android.pjsip.SipHelper;
+import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.NewOTPActivity;
 import com.yo.android.ui.PlainActivity;
 import com.yo.android.ui.fragments.GeneralWebViewFragment;
@@ -64,7 +65,7 @@ import retrofit2.Callback;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends ParentActivity implements AdapterView.OnItemSelectedListener {
+public class LoginActivity extends BaseActivity implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "LoginActivity";
     private static final int READ_SMS_REQUEST_CODE_ASK_SMS_PERMISSIONSPERMISSIONS = 123;

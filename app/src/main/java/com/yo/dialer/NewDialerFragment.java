@@ -109,7 +109,7 @@ public class NewDialerFragment extends BaseFragment implements SharedPreferences
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        //setHasOptionsMenu(true);
         registerListeners();
 
         //For fetching call rates.
@@ -205,8 +205,7 @@ public class NewDialerFragment extends BaseFragment implements SharedPreferences
         this.menu = menu;
         searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
         Util.changeSearchProperties(menu);
-        //initializing for search
-        Util.prepareContactsSearch(getActivity(), menu, adapter, Constants.DAILER_FRAG, noSearchResult, null);
+
 
         //Handle search start and close events.
         handleSearchViewActions();
@@ -216,6 +215,9 @@ public class NewDialerFragment extends BaseFragment implements SharedPreferences
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        //initializing for search
+        Util.prepareContactsSearch(getActivity(), menu, adapter, Constants.DAILER_FRAG, noSearchResult, null);
+
         int itemId = item.getItemId();
         if (itemId == R.id.menu_clear_history) {
             showClearCallHistoryDialog();

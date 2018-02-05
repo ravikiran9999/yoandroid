@@ -140,7 +140,7 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
     @Override
     protected void onResume() {
         super.onResume();
-        if(searchView != null) {
+        if (searchView != null) {
             if (searchView.isIconified() || TextUtils.isEmpty(searchView.getQuery())) {
                 pageCount = 1;
                 callFindPeopleService(null);
@@ -191,11 +191,11 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
                         networkFailureText.setVisibility(View.GONE);
                     }
                 } finally {
-                    if(response != null && response.body() != null) {
+                    if (response != null && response.body() != null) {
                         try {
                             response.body().clear();
                             response = null;
-                        }catch (Exception e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -254,7 +254,7 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
      * Used to implement pagination
      */
     private void doPagination() {
-        isMoreLoading=true;
+        isMoreLoading = true;
         pageCount++;
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.getFindPeopleAPI(accessToken, pageCount, 30).enqueue(new Callback<List<FindPeople>>() {
@@ -269,10 +269,10 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
                     }
                     isMoreLoading = false;
                 } finally {
-                    if(response != null && response.body() != null) {
+                    if (response != null && response.body() != null) {
                         try {
                             response.body().clear();
-                        }catch (Exception e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -291,8 +291,8 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 8 && resultCode == RESULT_OK) {
-            if(data!= null) {
-                if("Following".equals(data.getStringExtra("FollowState"))) {
+            if (data != null) {
+                if ("Following".equals(data.getStringExtra("FollowState"))) {
                     findPeopleAdapter.getItem(pos).setIsFollowing("true");
                     if (!hasDestroyed()) {
                         findPeopleAdapter.notifyDataSetChanged();
@@ -310,14 +310,13 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
 
     /**
      * Searches in the list of Yo app users
+     *
      * @param menu
      */
     private void searchPeople(Menu menu) {
         final SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        MenuItem searchMenuItem;
 
-        searchMenuItem = menu.findItem(R.id.menu_search);
         searchView =
                 (SearchView) menu.findItem(R.id.menu_search).getActionView();
         searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
@@ -336,7 +335,9 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.i(TAG, "onQueryTextChange: " + newText);
-                callSearchingService(newText);
+                if (newText.length() >= 3) {
+                    callSearchingService(newText);
+                }
                 return true;
             }
         });
@@ -358,6 +359,7 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
 
     /**
      * Calls the service to get the list of Yo app users with the search text
+     *
      * @param newText The search text
      */
     private void callSearchingService(String newText) {
@@ -374,7 +376,7 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
             showProgressDialog();
             mProgressDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
-            if(call != null) {
+            if (call != null) {
                 call.cancel();
             }
             call = yoService.searchInFindPeople(accessToken, searchKey, 1, 100);
@@ -394,11 +396,11 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
                             llNoPeople.setVisibility(View.GONE);
                             networkFailureText.setVisibility(View.GONE);
                         } finally {
-                            if(response != null && response.body() != null) {
+                            if (response != null && response.body() != null) {
                                 try {
                                     response.body().clear();
                                     response = null;
-                                }catch (Exception e) {
+                                } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
@@ -445,7 +447,7 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
         findPeopleAdapter.clearAll();
         findPeopleAdapter.addItemsAll(originalList);
         lvFindPeople.setVisibility(View.VISIBLE);
-        if(originalList.size()> 0) {
+        if (originalList.size() > 0) {
             noData.setVisibility(View.GONE);
             llNoPeople.setVisibility(View.GONE);
             networkFailureText.setVisibility(View.GONE);

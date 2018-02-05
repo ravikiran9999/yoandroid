@@ -263,7 +263,6 @@ public class BottomTabsActivity extends BaseActivity {
                 try {
                     Util.closeSearchView(getMenu());
 
-
                     actionBarTitle.setText((dataList.get(position)).getTitle());
 
                     if (getFragment() instanceof MoreFragment) {
@@ -297,7 +296,6 @@ public class BottomTabsActivity extends BaseActivity {
                             ((DialerFragment) getFragment()).loadData();
                         }
                 }*/
-
 
                 if (lastFragmentPosition == 0) {
                     mLog.d(TAG, "Leaving Magazines tab");
@@ -787,8 +785,8 @@ public class BottomTabsActivity extends BaseActivity {
             menu = ((ChatFragment) getFragment()).getMenu();
         } else if (getFragment() instanceof NewContactsFragment) {
             menu = ((NewContactsFragment) getFragment()).getMenu();
-        } else if (getFragment() instanceof DialerFragment) {
-            menu = ((DialerFragment) getFragment()).getMenu();
+        } else if (getFragment() instanceof NewDialerFragment) {
+            menu = ((NewDialerFragment) getFragment()).getMenu();
         } else if (getFragment() instanceof MagazinesFragment) {
             menu = ((MagazinesFragment) getFragment()).getMenu();
         } else {

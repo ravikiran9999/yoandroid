@@ -126,7 +126,6 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
         super.onCreate(savedInstanceState);
 
 
-
         setHasOptionsMenu(true);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         EventBus.getDefault().register(this);
@@ -256,9 +255,16 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                         preferenceEndPoint.saveStringPreference(Constants.MAGAZINE_TAGS, TextUtils.join(",", followedTopicsIdsList));
                     }
                     topicNamesList = new ArrayList<String>();
-                    for (int i = 0; i < topicsList.size(); i++) {
+
+                    /*for (int i = 0; i < topicsList.size(); i++) {
                         topicNamesList.add(topicsList.get(i).getName());
+                    }*/
+
+                    // Improve performance
+                    for (Topics topics : topicsList) {
+                        topicNamesList.add(topics.getName());
                     }
+
                     mAdapter.clear();
                     mAdapter.addAll(topicNamesList);
                     mAdapter.notifyDataSetChanged();
@@ -266,11 +272,18 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     getActivity().invalidateOptionsMenu();
                     unSelectedTopics.clear();
 
-                    for (int i = 0; i < topicsList.size(); i++) {
+                    /*for (int i = 0; i < topicsList.size(); i++) {
                         if (!topicsList.get(i).isSelected()) {
                             unSelectedTopics.add(topicsList.get(i));
                         }
+                    }*/
+
+                    for(Topics topics : topicsList) {
+                        if(topics.isSelected()) {
+                            unSelectedTopics.add(topics);
+                        }
                     }
+
                 } finally {
                     if (response != null && response.body() != null) {
                         response.body().clear();
@@ -367,7 +380,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
         boolean renewalStatus = preferenceEndPoint.getBooleanPreference(Constants.MAGAZINE_LOCK, false);
         switch (item.getItemId()) {
             case R.id.menu_move_to_first:
-                mMagazineFlipArticlesFragment.getLandingCachedArticles();
+                //mMagazineFlipArticlesFragment.getLandingCachedArticles();
+                mMagazineFlipArticlesFragment.moveToFirst();
                 break;
             case R.id.menu_create_magazines:
                 if (!renewalStatus) {
@@ -497,7 +511,6 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     if (mMagazineFlipArticlesFragment != null) {
                         MagazineFlipArticlesFragment.lastReadArticle = 0;
                         mMagazineFlipArticlesFragment.getLandingCachedArticles();
-
                     }
                     return true;
                 }

@@ -1,5 +1,7 @@
 package com.yo.android.ui.fragments;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -13,6 +15,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.telephony.PhoneNumberUtils;
+import android.text.InputFilter;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -106,7 +109,6 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
 
     private static final int PICK_CONTACT_REQUEST = 100;
 
-    private ListView layout;
     private boolean isAlreadyShown;
 
     @Bind(R.id.no_search_results)
@@ -121,15 +123,24 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
     LinearLayout llTabsLayout;
     @Bind(R.id.no_contacts)
     TextView tvNoContacts;
+    @Bind(R.id.side_index)
+    ListView sideLayout;
 
     private boolean isAllContactsSelected = true;
     private boolean isSharedPreferenceShown;
     private SearchView searchView;
+    private Activity activity;
 
     private List<Contact> allContacts;
 
     public NewContactsFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activity = (Activity) context;
     }
 
     @Override
@@ -146,7 +157,6 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
         View view = inflater.inflate(R.layout.fragment_new_contacts, container, false);
         ButterKnife.bind(this, view);
         listView = (ListView) view.findViewById(R.id.lv_contacts);
-        layout = (ListView) view.findViewById(R.id.side_index);
         return view;
     }
 
@@ -271,8 +281,7 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
             @Override
             public void onFailure(Call<List<Contact>> call, Throwable t) {
                 dismissProgressDialog();
-                FragmentActivity activity = getActivity();
-                if (activity != null && allContacts.size() == 0) {
+                if (activity != null && allContacts != null && allContacts.size() == 0) {
                     tvNoContacts.setVisibility(View.VISIBLE);
                     tvNoContacts.setText(activity.getResources().getString(R.string.connectivity_network_settings));
                 }
@@ -291,7 +300,7 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
             contactsListAdapter.addItems(list);
             tvContactsCount.setText("CONTACTS " + "(" + contactsListAdapter.getCount() + ")");
             listView.setAdapter(contactsListAdapter);
-            Helper.displayIndex(getActivity(), layout, list, listView);
+            Helper.displayIndex(getActivity(), sideLayout, list, listView);
         }
     }
 
@@ -306,13 +315,15 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Util.prepareContactsSearch(activity, menu, contactsListAdapter, Constants.CONT_FRAG, noSearchResult, null);
+        searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
         MenuItem view = menu.findItem(R.id.menu_search);
         // Hide right side alphabets when search is opened.
         MenuItemCompat.setOnActionExpandListener(view, new MenuItemCompat.OnActionExpandListener() {
 
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-                layout.setVisibility(View.GONE);
+                sideLayout.setVisibility(View.GONE);
                 llTabsLayout.setVisibility(View.GONE);
                 return true;
             }
@@ -320,7 +331,7 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
             // Display All contacts or Yo contacts based on selection after closing search view
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                layout.setVisibility(View.VISIBLE);
+                sideLayout.setVisibility(View.VISIBLE);
                 llTabsLayout.setVisibility(View.VISIBLE);
                 getActivity().invalidateOptionsMenu();
                 if (isAllContactsSelected) {
@@ -335,8 +346,7 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
             }
         });
         //contactsListAdapter.updateItems(allContacts);
-        Util.prepareContactsSearch(getActivity(), menu, contactsListAdapter, Constants.CONT_FRAG, noSearchResult, null);
-        searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+
         if (item.getItemId() == R.id.invite) {
             Intent i = new Intent(Intent.ACTION_INSERT);
             i.setType(ContactsContract.Contacts.CONTENT_TYPE);
@@ -390,6 +400,18 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
+
+            sideLayout.setVisibility(View.VISIBLE);
+            llTabsLayout.setVisibility(View.VISIBLE);
+            getActivity().invalidateOptionsMenu();
+            if (isAllContactsSelected) {
+                loadAlphabetOrder(allContacts);
+                contactsListAdapter.updateItems(allContacts);
+            } else {
+                List<Contact> onlyYoUsers = filterYoContacts(allContacts);
+                updateYoUsers(onlyYoUsers);
+                contactsListAdapter.updateItems(onlyYoUsers);
+            }
 
             if (preferenceEndPoint != null) {
                 // Capture user id
@@ -496,7 +518,6 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
         String contactName = null;
         String contactPhoneNumber = null;
         // Get the name
-        FragmentActivity activity = getActivity();
         cursor = activity.getContentResolver().query(uri,
                 new String[]{ContactsContract.Contacts.DISPLAY_NAME},
                 null, null, null);
@@ -589,19 +610,4 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
         }
     }
 
-    private SpannableString spannableString(String textLabel) {
-        Typeface alexBrushRegular = getAlexBrushRegular();
-        TypefaceSpan alexBrushRegularSpan = new CustomTypefaceSpan("", alexBrushRegular);
-        final SpannableString text = new SpannableString(textLabel);
-        // Span to make text bold
-        //final StyleSpan bss = new StyleSpan(android.graphics.Typeface.BOLD);
-
-        text.setSpan(alexBrushRegularSpan, 0, textLabel.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        //text.setSpan(new RelativeSizeSpan(2f), 6, 9, 0); // set size
-        //text.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorPrimary)), 17, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        // make them also bold
-        //text.setSpan(bss, 17, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-
-        return text;
-    }
 }
