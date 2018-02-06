@@ -307,6 +307,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         textView.setMaxLines(maxLines);
                         textView.setEllipsize(TextUtils.TruncateAt.END);
                         // Re-assign text to ensure ellipsize is performed correctly.
+                        // Ellipsizing the article title once it is loaded
                         textView.setText(AphidLog.format("%s", data.getTitle()));
                     }
                 }
@@ -334,6 +335,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             textView.setMaxLines(maxLines);
                             textView.setEllipsize(TextUtils.TruncateAt.END);
                             // Re-assign text to ensure ellipsize is performed correctly.
+                            // Ellipsizing the article description once it is loaded
                             textView.setText(Html.fromHtml(data.getSummary()));
                         }
                     }
@@ -804,14 +806,16 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                     articleTitle.setMaxLines(maxLines);
                                     articleTitle.setEllipsize(TextUtils.TruncateAt.END);
                                     // Re-assign text to ensure ellipsize is performed correctly.
+                                    // Ellipsizing the article title once the article image is loaded
                                     articleTitle.setText(AphidLog.format("%s", data.getTitle()));
                                 } else if (maxLines == -1 && articleTitle.getHeight() > 0) {
                                     //Log.d("BaseAdapter", "Max lines inside else if" + maxLines);
                                     articleTitle.setMaxLines(1);
                                     articleTitle.setEllipsize(TextUtils.TruncateAt.END);
                                     // Re-assign text to ensure ellipsize is performed correctly.
+                                    // Ellipsizing the article title once the article image is loaded
                                     articleTitle.setText(AphidLog.format("%s", data.getTitle()));
-                                } else if (maxLines == -1 && articleTitle.getHeight() == 0) {
+                                } else if (maxLines == -1 && articleTitle.getHeight() == 0) { // Full screen article
                                     // Log.d("BaseAdapter", "Full screen image after options cut or not shown");
                                     if (fullImageTitle != null && articleTitle != null && blackMask != null && rlFullImageOptions != null) {
                                         fullImageTitle.setVisibility(View.VISIBLE);

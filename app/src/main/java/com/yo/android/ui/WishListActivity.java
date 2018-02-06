@@ -990,7 +990,7 @@ public class WishListActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 90 && resultCode == RESULT_OK) {
+        if (requestCode == 90 && resultCode == RESULT_OK) { // On coming back from the Topics Details screen
             if (data != null) {
                 Articles topic = data.getParcelableExtra("UpdatedTopic");
                 int pos = data.getIntExtra("Pos", 0);
@@ -998,7 +998,7 @@ public class WishListActivity extends BaseActivity {
                 myBaseAdapter.updateTopic(isTopicFollowing, topic, pos);
             }
 
-        } else if (requestCode == 500 && resultCode == RESULT_OK) {
+        } else if (requestCode == 500 && resultCode == RESULT_OK) { // On coming back from the Magazine Article Webview Detail screen
             if (data != null) {
                 Articles articles = data.getParcelableExtra("UpdatedArticle");
                 int pos = data.getIntExtra("Pos", 0);

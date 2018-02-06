@@ -36,6 +36,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by Rajesh Babu on 29/7/17.
  */
 
+/**
+ * The Outgoing call screen
+ */
 public class OutgoingCallActivity extends CallBaseActivity implements View.OnClickListener {
     private static final String TAG = OutgoingCallActivity.class.getSimpleName();
 
@@ -85,6 +88,9 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
     }
 
 
+    /**
+     * Initializes the views
+     */
     private void initViews() {
         mOutgoingCallHeader = findViewById(R.id.incoming_call_header);
         mAcceptedCallHeader = findViewById(R.id.received_call_header);
@@ -137,6 +143,9 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
         initCircularView();
     }
 
+    /**
+     * Sets border for the callee profile pic
+     */
     private void initCircularView() {
         calleImageView.setBorderColor(getResources().getColor(R.color.white));
         calleImageView.setBorderWidth(5);
@@ -145,6 +154,9 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
         acceptedCalleImageView.setBorderWidth(5);
     }
 
+    /**
+     * Registers the click listeners
+     */
     private void registerListerners() {
         callAcceptBtn.setOnClickListener(this);
         callRejectBtn.setOnClickListener(this);
@@ -158,6 +170,9 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
         floatingActionButton.setOnClickListener(this);
     }
 
+    /**
+     * Hides the mic and speaker
+     */
     private void hideAcceptAndMessage() {
         callAcceptBtn.setVisibility(View.GONE);
         callMessageBtn.setVisibility(View.GONE);

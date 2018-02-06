@@ -49,6 +49,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This adapter is used to display the Dialer Call Logs
+ */
 public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<CallLogsResult>>, CallLogsViewHolder> {
 
     private final PreferenceEndPoint mPrefs;
@@ -306,6 +309,11 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
         holder.setImageDrawable(tempImage);
     }
 
+    /**
+     * Gets the date in the required format
+     * @param mTime The date string
+     * @return The date in the required format as a String
+     */
     private String currentDate(@NonNull String mTime) {
         String mDate = null;
         try {
@@ -328,6 +336,11 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
         return mDate;
     }
 
+    /**
+     * Converts the date string to long millis
+     * @param dateString The date string
+     * @return The date string as long millis
+     */
     private long convertDateFormatLong(String dateString) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

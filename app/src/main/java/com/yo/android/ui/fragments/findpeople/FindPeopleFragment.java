@@ -97,6 +97,10 @@ public class FindPeopleFragment extends BaseFragment implements SwipeRefreshLayo
         return view;
     }
 
+    /**
+     * Calls the service to get the list of Yo app users
+     * @param swipeRefreshContainer The SwipeRefreshLayout object
+     */
     private void callFindPeopleService(final SwipeRefreshLayout swipeRefreshContainer) {
         if(swipeRefreshContainer != null) {
             swipeRefreshContainer.setRefreshing(false);
@@ -160,6 +164,9 @@ public class FindPeopleFragment extends BaseFragment implements SwipeRefreshLayo
         callFindPeopleService(swipeRefreshContainer);
     }
 
+    /**
+     * Refresh the Yo app users list
+     */
     public void refresh() {
         callFindPeopleService(null);
         //pageCount = 1;

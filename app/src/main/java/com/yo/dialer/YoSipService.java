@@ -319,6 +319,9 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         }
     }
 
+    /**
+     * Rejects the call
+     */
     public void rejectCall() {
         stopDefaultRingtone();
         DialerLogs.messageE(TAG, "rejectCall==" + yoCurrentCall);
@@ -328,6 +331,9 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         }
     }
 
+    /**
+     * Accepts the call
+     */
     public void acceptCall() {
         stopDefaultRingtone();
         try {
@@ -338,6 +344,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         }
     }
 
+    /**
+     * Make a call
+     * @param intent The intent
+     */
     private void makeCall(Intent intent) {
         if (!mHelper.isConnected()) {
             SipHelper.isAlreadyStarted = false;
@@ -406,6 +416,9 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     }
 
+    /**
+     * Triggers no answer
+     */
     private void triggerNoAnswerIfNotRespond() {
         Runnable runnable = new Runnable() {
             @Override
@@ -416,6 +429,9 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         mHandler.postDelayed(runnable, NO_ANSWER_TRIGGER_DURATION);
     }
 
+    /**
+     * Sends no answer
+     */
     private void sendNoAnswer() {
         DialerLogs.messageE(TAG, "YO====sendNoAnswer==" + isCallAccepted());
 
@@ -431,10 +447,20 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         }
     }
 
+    /**
+     * Starts the incoming call screen
+     * @param yoCall The yo call
+     */
     private void startInComingCallScreen(final YoCall yoCall) {
         showCallUI(yoCall, false, false);
     }
 
+    /**
+     * Shows the call UI
+     * @param yoCall
+     * @param isOutgongCall
+     * @param isPSTNCall
+     */
     private void showCallUI(YoCall yoCall, boolean isOutgongCall, boolean isPSTNCall) {
         Intent intent;
         DialerLogs.messageE(TAG, "YO====showCallUI== isOutgoingcall" + isOutgongCall);
@@ -498,6 +524,11 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         });
     }
 
+    /**
+     * Sends a notification whether Incoming or Outgoing call
+     * @param intent
+     * @param isOutgongCall
+     */
     private void sendNotification(Intent intent, boolean isOutgongCall) {
         Class classs = null;
         String title = null;
@@ -547,6 +578,9 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         checkNetworkLossRunnable = runnable;
     }
 
+    /**
+     * Reinvite to check callee status
+     */
     private void reInviteToCheckCalleStatus() {
 
         DialerLogs.messageE(TAG, "YO===Re-Inviting for the call to check active state " + yoCurrentCall);
@@ -572,6 +606,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         }
     }
 
+    /**
+     * Gets the call duration in secs
+     * @return
+     */
     public int getCallDurationInSec() {
         if (yoCurrentCall != null) {
             try {
@@ -619,6 +657,12 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         CallHelper.setMute(YoSipServiceHandler.getYoApp(), yoCurrentCall, flag);
     }
 
+    /**
+     * Call is disconnected
+     * @param code
+     * @param reason
+     * @param comment
+     */
     public void callDisconnected(String code, String reason, String comment) {
         if (getYoCurrentCall() == null && reason.equalsIgnoreCase("Registration request timeout")) {
             uploadGoogleSheet(code, reason, comment, 0, null, "");
@@ -657,6 +701,15 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         }
     }
 
+    /**
+     * Uploads the call details to the google sheet
+     * @param code
+     * @param reason
+     * @param comment
+     * @param callduration
+     * @param missedCallNumber
+     * @param dumpStringToUpload
+     */
     public void uploadGoogleSheet(String code, String reason, String comment, long callduration, String missedCallNumber, String dumpStringToUpload) {
         if (DialerConfig.UPLOAD_REPORTS_GOOGLE_SHEET) {
             try {
@@ -703,6 +756,9 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         }
     }
 
+    /**
+     * Call is accepted
+     */
     public void callAccepted() {
         //Callee accepted call so stop ringtone.
         stopDefaultRingtone();
@@ -755,6 +811,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         }
     };
 
+    /**
+     * Starts the default ringtone
+     * @param volume
+     */
     protected synchronized void startDefaultRingtone(int volume) {
 
         try {
@@ -776,6 +836,9 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         }
     }
 
+    /**
+     * Starts the ringtone
+     */
     protected synchronized void startRingtone() {
         mVibrator.vibrate(VIBRATOR_PATTERN, 0);
         try {
@@ -819,6 +882,9 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         }
     }
 
+    /**
+     * Stops the default ringtone
+     */
     protected synchronized void stopDefaultRingtone() {
 
         mVibrator.cancel();
@@ -845,6 +911,13 @@ public class YoSipService extends InjectedService implements IncomingCallListene
 
     }
 
+    /**
+     * Stores the call log
+     * @param mobileNumber
+     * @param callType
+     * @param callStarted
+     * @return
+     */
     private long storeCallLog(String mobileNumber, int callType, long callStarted) {
         long currentTime = System.currentTimeMillis();
         long callDuration = TimeUnit.MILLISECONDS.toSeconds(currentTime - callStarted);
@@ -882,6 +955,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         return callDuration;
     }
 
+    /**
+     * Handles the busy case
+     * @param yoCall
+     */
     public void handleBusy(YoCall yoCall) {
         if (yoCurrentCall != null) {
             try {
@@ -898,6 +975,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         }
     }
 
+    /**
+     * Sends busy status to incoming call
+     * @param yoCall
+     */
     public void sendBusyHereToIncomingCall(YoCall yoCall) {
         CallOpParam param = new CallOpParam(true);
         param.setStatusCode(pjsip_status_code.PJSIP_SC_BUSY_HERE);
@@ -924,6 +1005,9 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         return destination;
     }
 
+    /**
+     * Sends missed call notification
+     */
     public void sendMissedCallNotification() {
         Util.createNotification(this,
                 parseVoxUser(phoneNumber),

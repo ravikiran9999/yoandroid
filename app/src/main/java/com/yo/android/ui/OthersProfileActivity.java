@@ -28,6 +28,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * This activity contains the Other Profiles Magazines, Followers and Liked Articles tabs
+ */
 public class OthersProfileActivity extends BaseActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;

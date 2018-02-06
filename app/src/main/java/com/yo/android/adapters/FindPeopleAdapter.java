@@ -48,6 +48,10 @@ import retrofit2.Response;
 /**
  * Created by MYPC on 7/17/2016.
  */
+
+/**
+ * This adapter is used to show the list of Yo App users
+ */
 public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopleViewHolder> {
 
     private Context context;
@@ -100,7 +104,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .error(R.drawable.dynamic_profile)
                     .into(holder.getImvFindPeoplePic());
-        } else if (Settings.isTitlePicEnabled) {
+        } else if (Settings.isTitlePicEnabled) { // Showing the first character of the name as the profile pic
             if (item.getFirst_name() != null && item.getFirst_name().length() >= 1) {
                 String title = String.valueOf(item.getFirst_name().charAt(0)).toUpperCase();
                 Pattern p = Pattern.compile("^[a-zA-Z]");
@@ -140,7 +144,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
             public void onClick(View v) {
                 boolean renewalStatus = preferenceEndPoint.getBooleanPreference(Constants.MAGAZINE_LOCK, false);
                 if (!renewalStatus) {
-                    if (!"true".equals(item.getIsFollowing())) {
+                    if (!"true".equals(item.getIsFollowing())) { // Follow the Yo app user
                         ((BaseActivity) context).showProgressDialog();
                         String accessToken = preferenceEndPoint.getStringPreference("access_token");
                         yoService.followUsersAPI(accessToken, item.getId()).enqueue(new Callback<ResponseBody>() {
@@ -169,7 +173,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                                 isFollowingUser = false;
                             }
                         });
-                    } else {
+                    } else { // Unfollow the Yo app user
                         if (context != null) {
 
                             final AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -262,6 +266,11 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
         return super.hasData(findPeople, key);
     }
 
+    /**
+     * Loads the default avatar image
+     * @param holder The FindPeopleViewHolder
+     * @param item The FindPeople object
+     */
     private void loadAvatarImage(FindPeopleViewHolder holder, FindPeople item) {
         Drawable tempImage = mContext.getResources().getDrawable(R.drawable.dynamic_profile);
         LayerDrawable bgDrawable = (LayerDrawable) tempImage;

@@ -38,6 +38,13 @@ public class CallHelper {
     private static final String TAG = CallHelper.class.getSimpleName();
     public static String dumpString;
 
+    /**
+     * Used to make the call
+     * @param sipService The YoSipService instance
+     * @param yoAccount The account
+     * @param intent The intent
+     * @return YoCall object
+     */
     public static YoCall makeCall(YoSipService sipService, YoAccount yoAccount, Intent intent) {
         if (intent != null) {
             if (intent.hasExtra(CallExtras.CALLER_NO)) {
@@ -85,6 +92,10 @@ public class CallHelper {
         return intent.getStringExtra(CallExtras.CALLER_NO);
     }
 
+    /**
+     * Accepts the call
+     * @param yoCurrentCall The current call
+     */
     public static void accetpCall(YoCall yoCurrentCall) {
         if (yoCurrentCall != null) {
             CallOpParam call_param = new CallOpParam();
@@ -103,6 +114,10 @@ public class CallHelper {
     }
 
 
+    /**
+     * Rejects the call
+     * @param yoCurrentCall The current call
+     */
     public static void rejectCall(YoCall yoCurrentCall) {
         endCall(yoCurrentCall);
     }
@@ -125,6 +140,11 @@ public class CallHelper {
         }
     }
 
+    /**
+     * Gets the call dump
+     * @param yoCurrentCall The current call
+     * @return The call dump string
+     */
     public static String storeDump(YoCall yoCurrentCall) {
         String dumpString = "";
         try {
@@ -138,6 +158,10 @@ public class CallHelper {
         return dumpString;
     }
 
+    /**
+     * Saves the call dump string in a file
+     * @param text The call dump string
+     */
     public static void appendLog(String text) {
         File logFile = new File("sdcard/calldump.file");
         if (!logFile.exists()) {
@@ -158,6 +182,12 @@ public class CallHelper {
         }
     }
 
+    /**
+     * Mutes the call
+     * @param yoapp YoApp instance
+     * @param currentCall The current call
+     * @param mute mute or not
+     */
     public static void setMute(YoApp yoapp, YoCall currentCall, boolean mute) {
         DialerLogs.messageE(TAG, "setMute first line");
         if (yoapp != null) {
@@ -208,6 +238,12 @@ public class CallHelper {
         }
     }
 
+    /**
+     * Puts the call on Hold
+     * @param currentCall The current call
+     * @param preferenceEndPoint The PreferenceEndPoint instance
+     * @param phoneNumber The phone number
+     */
     public static void holdCall(YoCall currentCall, PreferenceEndPoint preferenceEndPoint, String phoneNumber) {
         if (currentCall != null) {
             CallOpParam prm = new CallOpParam(true);
@@ -232,6 +268,11 @@ public class CallHelper {
         }
     }
 
+    /**
+     * Unholds the call
+     * @param currentCall The current call
+     * @throws Exception
+     */
     public static void unHoldCall(YoCall currentCall) throws Exception {
         CallOpParam prm = new CallOpParam(true);
         prm.getOpt().setFlag(1);
@@ -249,6 +290,12 @@ public class CallHelper {
         }
     }
 
+    /**
+     * Uploads the data to the Google Sheet
+     * @param preferenceEndPoint The PreferenceEndPoint instance
+     * @param phoneNumber The phone number
+     * @param comments Comments
+     */
     public static void uploadToGoogleSheet(PreferenceEndPoint preferenceEndPoint, String phoneNumber, String comments) {
         if (DialerConfig.UPLOAD_REPORTS_GOOGLE_SHEET) {
             try {
@@ -278,6 +325,13 @@ public class CallHelper {
         }
     }
 
+    /**
+     * Uploads the balance failures to the Google Sheet
+     * @param preferenceEndPoint The PreferenceEndPoint instance
+     * @param phoneNumber The phone number
+     * @param name The name
+     * @param comments Comments
+     */
     public static void uploadToGoogleSheetBalanceFail(PreferenceEndPoint preferenceEndPoint, String phoneNumber, String name, String comments) {
         if (DialerConfig.UPLOAD_REPORTS_GOOGLE_SHEET) {
             try {
@@ -302,6 +356,13 @@ public class CallHelper {
         }
     }
 
+    /**
+     * Uploads the message sending failures to the Google Sheet
+     * @param preferenceEndPoint The PreferenceEndPoint instance
+     * @param phoneNumber The phone number
+     * @param name The name
+     * @param comments Comments
+     */
     public static void uploadToGoogleSheetMessageSentFail(PreferenceEndPoint preferenceEndPoint, String phoneNumber, String name, String comments) {
         if (DialerConfig.UPLOAD_REPORTS_GOOGLE_SHEET) {
             try {
