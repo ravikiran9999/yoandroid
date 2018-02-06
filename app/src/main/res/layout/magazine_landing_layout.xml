@@ -281,7 +281,7 @@
                     android:background="@color/white"
                     android:scaleType="centerCrop"
                     android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"></ImageView>
+                    android:layout_marginRight="5dp"/>
 
                 <Button
                     android:id="@+id/imv_magazine_follow_right"

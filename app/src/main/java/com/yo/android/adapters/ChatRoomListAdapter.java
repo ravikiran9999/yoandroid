@@ -65,7 +65,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
     public void bindView(int position, final ChatRoomViewHolder holder, final Room item) {
 
         if (item.getGroupName() == null) {
-            if (TextUtils.isEmpty(item.getFullName())) {
+            if (TextUtils.isEmpty(item.getFullName()) || TextUtils.isDigitsOnly(item.getFullName())) {
                 holder.getOpponentName().setText(Util.numberFromNexgeFormat(item.getMobileNumber()));
             } else {
                 holder.getOpponentName().setText(item.getFullName());

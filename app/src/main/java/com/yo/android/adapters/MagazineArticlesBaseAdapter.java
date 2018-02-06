@@ -285,7 +285,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             holder.magazineLike.setTag(position);
         }
 
-        if (holder.articleTitle != null) {
+        /*if (holder.articleTitle != null) {
             holder.fullImageTitle.setVisibility(View.GONE);
             holder.blackMask.setVisibility(View.GONE);
             holder.rlFullImageOptions.setVisibility(View.GONE);
@@ -312,9 +312,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     }
                 }
             });
-        }
+        }*/
 
-        if (holder.articleShortDesc != null) {
+        /*if (holder.articleShortDesc != null) {
             if (data.getSummary() != null && holder.articleShortDesc != null) {
                 holder.articleShortDesc.setMaxLines(1000);
                 holder.articleShortDesc
@@ -341,57 +341,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     }
                 });
 
-/*                ViewTreeObserver vto = holder.articleShortDesc.getViewTreeObserver();
-                textView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-                    @Override
-                    public void onLayoutChange(View v, int left, int top, int right, int bottom,
-                                               int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                        textView.removeOnLayoutChangeListener(this);
-                        float lineHeight = textView.getLineHeight();
-                        int maxLines = (int) (textView.getHeight() / lineHeight);
-                        if (textView.getLineCount() != maxLines) {
-                            textView.setLines(maxLines);
-                            textView.setEllipsize(TextUtils.TruncateAt.END);
-                            // Re-assign text to ensure ellipsize is performed correctly.
-                            textView.setText(Html.fromHtml(data.getSummary()));
-                        }
-                    }
-                });*/
-                /*vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        Log.d("BaseAdapter", "The short desc line count is " + shortDesc.getLineCount());
-                        //calculateHeight(shortDesc);
-                        *//*final Layout layout = shortDesc.getLayout();
-                        String contentToBeWrite = "";
-                        int start = 0;
-
-                        int height = shortDesc.getHeight();
-                        int scrollY = shortDesc.getScrollY();
-                        int firstVisibleLineNumber = layout.getLineForVertical(scrollY);
-                        int lastVisibleLineNumber = layout.getLineForVertical(scrollY + height);
-
-                        String content = shortDesc.getText().toString();
-                        Log.d("BaseAdapter", "lastVisibleLineNumber " + lastVisibleLineNumber);
-                        for (int i = 0; i < lastVisibleLineNumber-1; i++) {
-                            int end = layout.getLineEnd(i);
-
-                            contentToBeWrite = contentToBeWrite + content.substring(start, end);
-                            start = end + 1;
-                            Log.d("BaseAdapter", "contentToBeWrite " + contentToBeWrite);
-                        }
-                        shortDesc.setText(contentToBeWrite);*//*
-
-                        //shortDesc.setMaxLines(lastVisibleLineNumber);
-
-                        *//*if(lastVisibleLineNumber != 0 && shortDesc.getLineCount()>lastVisibleLineNumber){
-                            shortDesc.setLines(lastVisibleLineNumber);
-                        }*//*
-                    }
-                });*/
-                //doEllipsize(holder.articleShortDesc);
             }
-        }
+        }*/
 
         if (holder.magazineLike != null) {
             holder.magazineLike.setOnCheckedChangeListener(null);
@@ -726,70 +677,11 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     }*/
 
                     Glide.with(context)
-                            //.load(data.getImage_filename()())
                             .load(data.getS3_image_filename())
-                            //.asBitmap()
                             .placeholder(R.drawable.magazine_backdrop)
                             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                             .dontAnimate()
                             .into(photoView);
-                            /*.into(new SimpleTarget<Bitmap>() {
-                                @Override
-                                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                                    int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
-                                    Bitmap bmp = null;
-                                    if (resource != null) {
-                                        try {
-                                            //bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
-
-                                            *//*int width = BitmapScaler.getScreenWidth();
-                                            int height = BitmapScaler.getScreenHeight();
-                                            height = height / 4;*//*
-
-                                            Glide.clear(photoView);
-                                            Glide.with(context)
-                                                    //.load(data.getImage_filename())
-                                                    .load(data.getS3_image_filename())
-                                                    //.override(bmp.getWidth(), bmp.getHeight())
-                                                    .placeholder(R.drawable.magazine_backdrop)
-                                                    .crossFade()
-                                                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                                    .dontAnimate()
-                                                    .into(photoView);
-                                            int screenHeight = DeviceDimensionsHelper.getDisplayHeight(context);
-                                            //Log.d("BaseAdapter", "screenHeight " + screenHeight);
-                                       *//*int spaceForImage = screenHeight - 120;
-                                       Log.d("BaseAdapter", "spaceForImage" + spaceForImage);*//*
-                                            //Log.d("BaseAdapter", "bmp.getHeight()" + bmp.getHeight());
-
-                                            //int total = bmp.getHeight() + 120;
-                                            int total = photoView.getHeight() + 120;
-                                            Log.d("BaseAdapter", "total :" + total);
-
-                                            //if(bmp.getHeight() >= spaceForImage-30) {
-                                            //Log.d("BaseAdapter", "total" + total);
-
-                                            if (screenHeight - total <= 250) {
-
-                                                Log.d("BaseAdapter", "Full screen image : ");
-                                                if (fullImageTitle != null && articleTitle != null && blackMask != null && rlFullImageOptions != null) {
-                                                    fullImageTitle.setVisibility(View.VISIBLE);
-                                                    fullImageTitle.setText(articleTitle.getText().toString());
-                                                    blackMask.setVisibility(View.VISIBLE);
-                                                    rlFullImageOptions.setVisibility(View.VISIBLE);
-
-                                                }
-                                            }
-                                        } finally {
-                                            if (bmp != null) {
-                                                bmp.recycle();
-                                                bmp = null;
-                                            }
-                                        }
-
-                                    }
-                                }
-                            });*/
 
                     if (articleTitle != null) {
                         ViewTreeObserver vto1 = articleTitle.getViewTreeObserver();
@@ -827,33 +719,14 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                 }
                             }
                         });
+
+                        articleTitle.setText(AphidLog.format("%s", data.getTitle()));
                     }
 
                     if (textView != null) {
                         textView.setText(Html.fromHtml(data.getSummary()));
                     }
 
-                    /*if (textView != null) {
-                        ViewTreeObserver vto = textView.getViewTreeObserver();
-                        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                            private int maxLines = -1;
-
-                            @Override
-                            public void onGlobalLayout() {
-                                if (maxLines < 0 && textView.getHeight() > 0 && textView.getLineHeight() > 0) {
-                                 *//*   int height = textView.getHeight();
-                                    int lineHeight = textView.getLineHeight();
-                                    int lineCount = textView.getLineCount();
-                                    maxLines = height / lineHeight;
-                                    textView.setMaxLines(maxLines);
-                                    textView.setEllipsize(TextUtils.TruncateAt.END);*//*
-                                    // Re-assign text to ensure ellipsize is performed correctly.
-                                    textView.setText(Html.fromHtml(data.getSummary()));
-
-                                }
-                            }
-                        });
-                    }*/
                 }
             } else {
                 photoView.setImageResource(R.drawable.magazine_backdrop);
@@ -1045,7 +918,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 if (holder.rvSuggestions != null) {
                     ArrayList<Categories> addFourCategoriesList = new ArrayList<>();
                     for (Categories categories : MagazinesFragment.newCategoriesList) {
-                        if (addFourCategoriesList.size() <= 4 && categories.getTags() != null && categories.getTags().size() > 0) {
+                        if (addFourCategoriesList.size() < 4 && categories.getTags() != null && categories.getTags().size() > 0) {
                             if (!categories.getTags().get(0).isSelected()) {
                                 addFourCategoriesList.add(categories);
                             }
@@ -2796,38 +2669,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public void doEllipsize(final TextView tv) {
-        ViewTreeObserver vto = tv.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-
-            @SuppressWarnings("deprecation")
-            @Override
-            public void onGlobalLayout() {
-
-                ViewTreeObserver obs = tv.getViewTreeObserver();
-                obs.removeGlobalOnLayoutListener(this);
-
-                //int visibleLines = (tv.getHeight() - tv.getPaddingTop() - tv.getPaddingBottom())/tv.getLineHeight();
-                int height = tv.getHeight();
-                int scrollY = tv.getScrollY();
-                Layout layout = tv.getLayout();
-
-                int firstVisibleLineNumber = layout.getLineForVertical(scrollY);
-                int lastVisibleLineNumber = layout.getLineForVertical(scrollY + height);
-
-                for (int i = 0; i < lastVisibleLineNumber - 1; i++) {
-                    int lineEnd = layout.getLineEnd(i);
-
-                }
-                /*if (tv.getLineCount() > lastVisibleLineNumber) {
-                    tv.setMaxLines(lastVisibleLineNumber);
-                    tv.setEllipsize(TextUtils.TruncateAt.END);
-                }*/
-
-            }
-        });
     }
 
     @Override

@@ -21,6 +21,7 @@ import com.yo.android.model.Articles;
 import com.yo.android.model.LandingArticles;
 
 import java.lang.reflect.Type;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -213,7 +214,9 @@ public class MagazineDashboardHelper {
                     magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                     magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
                     magazineFlipArticlesFragment.getLandingCachedArticles();
-                    if (magazineFlipArticlesFragment.getActivity() != null) {
+                    if(t instanceof SocketTimeoutException) {
+                        Toast.makeText(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.getActivity().getResources().getString(R.string.socket_time_out), Toast.LENGTH_LONG).show();
+                    } else if (magazineFlipArticlesFragment.getActivity() != null) {
                         Toast.makeText(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.getActivity().getResources().getString(R.string.connectivity_network_settings), Toast.LENGTH_LONG).show();
                     }
                 }
@@ -371,7 +374,9 @@ public class MagazineDashboardHelper {
                     magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                     magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
                     magazineFlipArticlesFragment.getLandingCachedArticles();
-                    if (magazineFlipArticlesFragment.getActivity() != null) {
+                    if(t instanceof SocketTimeoutException) {
+                        Toast.makeText(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.getActivity().getResources().getString(R.string.socket_time_out), Toast.LENGTH_LONG).show();
+                    } else if (magazineFlipArticlesFragment.getActivity() != null) {
                         Toast.makeText(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.getActivity().getResources().getString(R.string.connectivity_network_settings), Toast.LENGTH_LONG).show();
                     }
                 }
@@ -435,18 +440,6 @@ public class MagazineDashboardHelper {
                     break;
                 case 401: // auto renewal failed. Please try again
                 case 403: // You should do auto renewal to access Magazines
-                    /*preferenceEndPoint.saveBooleanPreference(Constants.RENEWAL, false);
-                    if (id != DASHBOARD_ARTICLES_DAILY_SERVICE) {
-                        YODialogs.renewMagazine(activity, magazineFlipArticlesFragment, activity.getString(R.string.renewal_message), preferenceEndPoint);
-                    }
-                    removeArticlesFromCache(activity, preferenceEndPoint, "followed_cached_magazines");
-                    removeArticlesFromCache(activity, preferenceEndPoint, "random_cached_magazines");
-                    if (magazineFlipArticlesFragment.mProgress != null) {
-                        magazineFlipArticlesFragment.mProgress.setVisibility(View.GONE);
-                    }
-                    magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
-                    magazineFlipArticlesFragment.flipContainer.setVisibility(View.GONE);
-                    magazineFlipArticlesFragment.llNoArticles.setVisibility(View.VISIBLE);*/
                     renewMagazines(R.string.renewal_message, activity, id, preferenceEndPoint, magazineFlipArticlesFragment, totalArticles, unreadOtherFollowedArticles, followedArticlesList);
                     break;
                 case 702:

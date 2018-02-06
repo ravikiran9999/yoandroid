@@ -42,7 +42,6 @@ import retrofit2.Response;
  */
 public class GroupContactsActivity extends BaseActivity {
 
-    private GroupContactsListAdapter groupContactsListAdapter;
     @Bind(R.id.lv_app_contacts)
     ListView listView;
     @Bind(R.id.side_index)
@@ -60,6 +59,7 @@ public class GroupContactsActivity extends BaseActivity {
     @Named("login")
     PreferenceEndPoint loginPrefs;
 
+    private GroupContactsListAdapter groupContactsListAdapter;
     private String groupName;
     private Menu mMenu;
     List<Contact> contactsList = null;
@@ -124,19 +124,25 @@ public class GroupContactsActivity extends BaseActivity {
     }
 
     private void getYoAppUsers() {
-        /*List<Contact> contactList = new ArrayList<>();
+        List<Contact> contactList = new ArrayList<>();
         List<Contact> mContactsList = mContactsSyncManager.getContacts();
         if (!mContactsList.isEmpty()) {
-            for(Contact contact : mContactsList)
-                contactList.add(contact);
+            for (Contact contact : mContactsList) {
+                if (contact.isYoAppUser()) {
+                    contactList.add(contact);
+                }
+            }
             loadInAlphabeticalOrder(contactList);
+        } else {
+            listView.setVisibility(View.GONE);
+            textView.setVisibility(View.VISIBLE);
         }
 
-        if (mContactsList.isEmpty()) {
+        /*if (mContactsList.isEmpty()) {
             showProgressDialog();
         }*/
 
-        mContactsSyncManager.loadContacts(new Callback<List<Contact>>() {
+        /*mContactsSyncManager.loadContacts(new Callback<List<Contact>>() {
             @Override
             public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
                 List<Contact> contactList = new ArrayList<>();
@@ -183,7 +189,7 @@ public class GroupContactsActivity extends BaseActivity {
                 }
 
             }
-        });
+        });*/
     }
 
     @Override

@@ -418,7 +418,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     }
 
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -681,6 +680,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             }
         }
 
+    }
+
+    public void moveToFirst() {
+        if (myBaseAdapter.getCount() > 0) {
+            flipView.flipTo(0);
+        }
     }
 
     /**
@@ -1605,21 +1610,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             refreshing = false;
             swipeRefreshContainer.setEnabled(false);
             swipeRefreshContainer.setRefreshing(false);
-            //Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.unable_to_fetch_new_articles), Toast.LENGTH_LONG).show();
         }
-        /*List<String> cachedReadList = getReadArticleIds();
-        List<Articles> allArticles = myBaseAdapter.getAllItems();
-        if (allArticles != null) {
-            List<String> allArticlesIds = new ArrayList<>();
-            for (Articles articles : allArticles) {
-                if (articles != null)
-                    allArticlesIds.add(articles.getId());
-            }
-            List<String> unreadArticleIds = new ArrayList<>(allArticlesIds);
-            List<String> mCachedReadList = cachedReadList != null ? cachedReadList : new ArrayList<String>();
 
-            magazineDashboardHelper.getMoreDashboardArticles(this, yoService, preferenceEndPoint, mCachedReadList, unreadArticleIds, swipeRefreshContainer);
-        }*/
     }
 
     @Override

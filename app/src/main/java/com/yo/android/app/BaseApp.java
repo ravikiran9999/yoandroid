@@ -82,11 +82,11 @@ public class BaseApp extends MultiDexApplication {
         StrictMode.setVmPolicy(builder.build());
         builder.detectFileUriExposure();
 
-        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+        /*StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
                 .detectAll()
                 .penaltyLog()
                 //.penaltyDeath()
-                .build());
+                .build());*/
 
     }
 

@@ -20,6 +20,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -92,6 +94,8 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.yo.dialer.googlesheet.UploadCallDetails.PREF_ACCOUNT_NAME;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -415,7 +419,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                         if (activity != null) {
                             Util.cancelAllNotification(getActivity());
                             //  23	Data is missing in dialer screen once user logouts & login again  - Fixed
-                            //  CallLog.Calls.clearCallHistory(getActivity());
+                            CallLog.Calls.clearCallHistory(getActivity());
                         }
 
                         //Delete user from PJSIP
@@ -580,6 +584,10 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+    }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -784,9 +792,15 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
         // clear firebase cached rooms
         preferenceEndPoint.removePreference(Constants.FIRE_BASE_ROOMS);
+        preferenceEndPoint.removePreference(Constants.FIRE_BASE_ROOMS);
+
         // clear firebase userId
         preferenceEndPoint.removePreference(Constants.FIREBASE_USER_ID);
         // clear firebase authToken
         preferenceEndPoint.removePreference(Constants.FIREBASE_TOKEN);
+
+        //clear google sheet upload account name
+        preferenceEndPoint.removePreference(PREF_ACCOUNT_NAME);
+
     }
 }

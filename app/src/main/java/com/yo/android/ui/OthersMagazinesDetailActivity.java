@@ -253,7 +253,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
             }
             holder.magazineLike.setTag(position);
 
-            if (holder.articleTitle != null) {
+            /*if (holder.articleTitle != null) {
                 holder.fullImageTitle.setVisibility(View.GONE);
                 holder.blackMask.setVisibility(View.GONE);
                 holder.rlFullImageOptions.setVisibility(View.GONE);
@@ -308,7 +308,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                         }
                     });
                 }
-            }
+            }*/
 
             holder.magazineLike.setOnCheckedChangeListener(null);
             if (Boolean.valueOf(data.getLiked())) {
@@ -503,11 +503,14 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                 final TextView textView1 = holder.articleShortDesc;
                 Glide.with(context)
                         .load(data.getImage_filename())
-                        .asBitmap()
+                        //.asBitmap()
                         .placeholder(R.drawable.magazine_backdrop)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate()
-                        .into(new SimpleTarget<Bitmap>() {
+                        .into(photoView);
+                articleTitle.setText(AphidLog.format("%s", data.getTitle()));
+                textView1.setText(Html.fromHtml(data.getSummary()));
+                        /*.into(new SimpleTarget<Bitmap>() {
                             @Override
                             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                                 int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
@@ -526,8 +529,8 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
 
                                     int screenHeight = DeviceDimensionsHelper.getDisplayHeight(context);
                                     //Log.d("BaseAdapter", "screenHeight " + screenHeight);
-                                       /*int spaceForImage = screenHeight - 120;
-                                       Log.d("BaseAdapter", "spaceForImage" + spaceForImage);*/
+                                       *//*int spaceForImage = screenHeight - 120;
+                                       Log.d("BaseAdapter", "spaceForImage" + spaceForImage);*//*
                                     //Log.d("BaseAdapter", "bmp.getHeight()" + bmp.getHeight());
                                     int total = bmp.getHeight() + 50;
                                     //if(bmp.getHeight() >= spaceForImage-30) {
@@ -616,7 +619,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                     }
                                 }
                             }
-                        });
+                        });*/
             } else {
                 photoView.setImageResource(R.drawable.magazine_backdrop);
             }
