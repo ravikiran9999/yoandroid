@@ -278,6 +278,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                             textView.setMaxLines(maxLines);
                             textView.setEllipsize(TextUtils.TruncateAt.END);
                             // Re-assign text to ensure ellipsize is performed correctly.
+                            // Ellipsize the article title
                             textView.setText(AphidLog.format("%s", data.getTitle()));
                         }
                     }
@@ -305,6 +306,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                                 textView.setMaxLines(maxLines);
                                 textView.setEllipsize(TextUtils.TruncateAt.END);
                                 // Re-assign text to ensure ellipsize is performed correctly.
+                                // Ellipsize the article description
                                 textView.setText(Html.fromHtml(data.getSummary()));
                             }
                         }
@@ -534,7 +536,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                                         //if(bmp.getHeight() >= spaceForImage-30) {
                                         //Log.d("BaseAdapter", "total" + total);
 
-                                    if (screenHeight - total <= 250) {
+                                    if (screenHeight - total <= 250) { // Full screen article
 
                                         Log.d("BaseAdapter", "Full screen image");
                                         if (fullImageTitle != null && articleTitle != null && blackMask != null && rlFullImageOptions != null) {
@@ -576,14 +578,16 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                                                     articleTitle.setMaxLines(maxLines);
                                                     articleTitle.setEllipsize(TextUtils.TruncateAt.END);
                                                     // Re-assign text to ensure ellipsize is performed correctly.
+                                                    // Ellipsize the article title
                                                     articleTitle.setText(AphidLog.format("%s", data.getTitle()));
                                                 } else if(maxLines == -1 && articleTitle.getHeight() > 0) {
                                                     //Log.d("BaseAdapter", "Max lines inside else if" + maxLines);
                                                     articleTitle.setMaxLines(1);
                                                     articleTitle.setEllipsize(TextUtils.TruncateAt.END);
                                                     // Re-assign text to ensure ellipsize is performed correctly.
+                                                    // Ellipsize the article title
                                                     articleTitle.setText(AphidLog.format("%s", data.getTitle()));
-                                                } else if(maxLines == -1 && articleTitle.getHeight() == 0) {
+                                                } else if(maxLines == -1 && articleTitle.getHeight() == 0) { // Full screen article
                                                     // Log.d("BaseAdapter", "Full screen image after options cut or not shown");
                                                     if (fullImageTitle != null && articleTitle != null && blackMask != null && rlFullImageOptions != null) {
                                                         fullImageTitle.setVisibility(View.VISIBLE);
@@ -611,6 +615,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                                                     textView1.setMaxLines(maxLines);
                                                     textView1.setEllipsize(TextUtils.TruncateAt.END);
                                                     // Re-assign text to ensure ellipsize is performed correctly.
+                                                    // Ellipsize the article description
                                                     textView1.setText(Html.fromHtml(data.getSummary()));
                                                 }
                                             }
@@ -862,9 +867,9 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 2 && resultCode == RESULT_OK) {
+        if (requestCode == 2 && resultCode == RESULT_OK) { // On coming back from the article loading screen
             loadArticles();
-        } else if (requestCode == 3 && resultCode == RESULT_OK) {
+        } else if (requestCode == 3 && resultCode == RESULT_OK) { // On coming back from Edit Magazine screen
             if (data != null) {
                 editedTitle = data.getStringExtra("EditedTitle");
                 editedDesc = data.getStringExtra("EditedDesc");
@@ -872,7 +877,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                 getSupportActionBar().setTitle(editedTitle);
             }
 
-        } else if (requestCode == 100 && resultCode == RESULT_OK) {
+        } else if (requestCode == 100 && resultCode == RESULT_OK) { // On coming back from the Topic Detail screen
             if (data != null) {
                 Articles topic = data.getParcelableExtra("UpdatedTopic");
                 int pos = data.getIntExtra("Pos", 0);
@@ -880,7 +885,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                 myBaseAdapter.updateTopic(isTopicFollowing, topic, pos);
             }
 
-        } else if (requestCode == 500 && resultCode == RESULT_OK) {
+        } else if (requestCode == 500 && resultCode == RESULT_OK) { // On coming back from the Magazine Webview article detail screen
             if (data != null) {
                 Articles articles = data.getParcelableExtra("UpdatedArticle");
                 int pos = data.getIntExtra("Pos", 0);

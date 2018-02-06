@@ -62,6 +62,9 @@ import retrofit2.Response;
 import se.emilsjolander.flipview.FlipView;
 import se.emilsjolander.flipview.OverFlipMode;
 
+/**
+ * This fragment is used to display the magazine articles with flip in the Landing screen
+ */
 public class MagazineFlipArticlesFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, FlipView.OnFlipListener, FlipView.OnOverFlipListener {
 
     public static boolean refreshing;
@@ -178,7 +181,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 60 && resultCode == getActivity().RESULT_OK) {
+        if (requestCode == 60 && resultCode == getActivity().RESULT_OK) { // On coming back from Topics Detail screen
             if (data != null) {
                 Articles topic = data.getParcelableExtra("UpdatedTopic");
                 int pos = data.getIntExtra("Pos", 0);
@@ -189,7 +192,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 }
             }
 
-        } else if (requestCode == 500 && resultCode == getActivity().RESULT_OK) {
+        } else if (requestCode == 500 && resultCode == getActivity().RESULT_OK) { // On coming back from Magazine Webview Detail screen
             if (data != null) {
                 Articles articles = data.getParcelableExtra("UpdatedArticle");
                 int pos = data.getIntExtra("Pos", 0);
@@ -311,7 +314,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         }
 
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        if (tagIds != null) {
+        if (tagIds != null) { // Getting articles of the selected topic
             isSearch = true;
             yoService.getArticlesAPI(accessToken, tagIds).enqueue(callback);
             tvProgressText.setVisibility(View.GONE);
@@ -503,7 +506,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         }
 
         if (!isSearch) {
-            if (position > 0 && position % Constants.SUGGESTIONS_PAGE_FREQUENCY == 0) {
+            if (position > 0 && position % Constants.SUGGESTIONS_PAGE_FREQUENCY == 0) { // Showing the Suggestions Page at a particular frequency ie; 25
                 if (myBaseAdapter.getCount() > 0) {
                     try {
                         suggestionsPosition = position + 5;
@@ -568,6 +571,10 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         }
     }
 
+    /**
+     * Calls the service to get the articles service daily
+     * @param swipeRefreshContainer The SwipeRefreshLayout object
+     */
     private void callDailyArticlesService(final SwipeRefreshLayout swipeRefreshContainer) {
         getReadArticleIds();
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
@@ -744,7 +751,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                             try {
                                 Date currentDate = mdformat.parse(currentDateString);
                                 Date savedDate = mdformat.parse(savedDateString);
-                                if (currentDate.compareTo(savedDate) > 0) {
+                                if (currentDate.compareTo(savedDate) > 0) { // Comparing the saved dated to the current one. If it is later then calling the service to fetch new articles
                                     preferenceEndPoint.saveBooleanPreference(Constants.IS_ARTICLES_POSTED, true);
                                     callDailyArticlesService(null);
                                 }

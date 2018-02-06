@@ -219,6 +219,9 @@ public class NewDailerActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Loads the current balance
+     */
     private void loadCurrentBalance() {
         String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
         String[] balanceArray = balance.trim().split("");
@@ -430,6 +433,10 @@ public class NewDailerActivity extends BaseActivity {
         });
     }
 
+    /**
+     * Gets the country code prefix
+     * @return The country code prefix
+     */
     private String setCallRateText() {
         String cName = preferenceEndPoint.getStringPreference(Constants.COUNTRY_NAME, null);
         String cRate = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CALL_RATE, null);
@@ -521,6 +528,10 @@ public class NewDailerActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Alert used to show self number is being dialled
+     * @param message The message displayed to show that the self number is being dialled
+     */
     private void alertMessage(int message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(message)

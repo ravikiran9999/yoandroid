@@ -43,6 +43,14 @@ class UIHelper {
     };
 
 
+    /**
+     * Handles the call status
+     * @param context The context
+     * @param isIncoming isIncoming or not
+     * @param callStatus The call status
+     * @param tvCallStatus The call status text view
+     * @param connectionStatusTxtView The connection status text view
+     */
     public static void handleCallStatus(Context context, boolean isIncoming, final int callStatus, TextView tvCallStatus, final TextView connectionStatusTxtView) {
         connectionStatusTxtView.setVisibility(View.VISIBLE);
         tvCallStatus.setVisibility(View.VISIBLE);

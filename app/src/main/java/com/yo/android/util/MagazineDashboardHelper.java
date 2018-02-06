@@ -402,6 +402,11 @@ public class MagazineDashboardHelper {
         }
     }
 
+    /**
+     * The total list of articles containing the followed topic articles and random topic articles
+     * @param landingArticles The LandingArticles list
+     * @return The list of followed topic articles and random topic articles
+     */
     private List<Articles> getTotalArticles(LandingArticles landingArticles) {
         LinkedHashSet<LandingArticles> articlesHashSet = new LinkedHashSet<>();
         List<Articles> followedTopicArticles;

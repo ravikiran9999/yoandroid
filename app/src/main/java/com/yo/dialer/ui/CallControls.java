@@ -30,6 +30,12 @@ public class CallControls {
 
     private static CallControlsModel callControlsModel = new CallControlsModel();
 
+    /**
+     * Toggles Hold
+     * @param sipBinder The SipBinder instance
+     * @param v The View instance
+     * @return toggle hold on or off
+     */
     public static boolean toggleHold(SipBinder sipBinder, View v) {
         if (sipBinder != null && sipBinder.getYOHandler() != null) {
             if (v.getTag() != null) {
@@ -65,7 +71,12 @@ public class CallControls {
         }
     }
 
-
+    /**
+     * Toggles the Speaker
+     * @param am The AudioManager instance
+     * @param v The View instance
+     * @return toggles speaker on or off
+     */
     public static boolean toggleSpeaker(AudioManager am, View v) {
         if (v.getTag() != null) {
             Boolean flag = Boolean.valueOf(v.getTag().toString());
@@ -85,6 +96,12 @@ public class CallControls {
         return false;
     }
 
+    /**
+     * Toggles the mic
+     * @param sipBinder The SipBinder instance
+     * @param v The view instance
+     * @return toggles mic on or off
+     */
     public static boolean toggleMic(SipBinder sipBinder, View v) {
         if (sipBinder != null && sipBinder.getYOHandler() != null) {
             if (v.getTag() != null) {
@@ -107,6 +124,11 @@ public class CallControls {
         return false;
     }
 
+    /**
+     * Change the selected image
+     * @param v The View instance
+     * @param flag The boolean
+     */
     public static void changeSelection(View v, Boolean flag) {
         if (flag) {
             v.setBackgroundResource(R.drawable.mute_selector);
@@ -115,6 +137,12 @@ public class CallControls {
         }
     }
 
+    /**
+     * Loads full user profile pic
+     * @param context The context
+     * @param imagePath The path of the image
+     * @param fullImageLayout The layout
+     */
     public static void loadFullImage(Context context, String imagePath, final RelativeLayout fullImageLayout) {
         int myWidth = 512;
         int myHeight = 384;
@@ -133,6 +161,12 @@ public class CallControls {
         });
     }
 
+    /**
+     * Loads the current call mic settings
+     * @param sipBinder The SipBinder instance
+     * @param v The View instance
+     * @return The boolean
+     */
     public static boolean loadPrevMicSettings(SipBinder sipBinder, View v) {
         if (sipBinder != null && sipBinder.getYOHandler() != null) {
             if (v.getTag() != null) {
@@ -155,6 +189,12 @@ public class CallControls {
         return false;
     }
 
+    /**
+     * Loads the current call speaker settings
+     * @param am The AudioManager instance
+     * @param v The View instance
+     * @return The boolean
+     */
     public static boolean loadPrevSpeakerSettings(AudioManager am, View v) {
         if (v.getTag() != null) {
             Boolean flag = Boolean.valueOf(v.getTag().toString());
@@ -174,6 +214,11 @@ public class CallControls {
         return false;
     }
 
+    /**
+     * Toggles the speaker
+     * @param am The AudioManager instance
+     * @param v The View instance
+     */
     public static void toggleRecSpeaker(AudioManager am, View v) {
         changeSelection(v, true);
         v.setTag(true);
