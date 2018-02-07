@@ -61,7 +61,8 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
             //new NewImageRenderTask(mContext,item.getImage(),holder.getImageView()).execute();
             Glide.clear(holder.getImageView());
             Glide.with(mContext)
-                    .load(item.getImage())
+                    //.load(item.getImage())
+                    .load(item.getS3_image_filename())
                     .asBitmap()
                     .placeholder(R.drawable.magazine_backdrop)
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)

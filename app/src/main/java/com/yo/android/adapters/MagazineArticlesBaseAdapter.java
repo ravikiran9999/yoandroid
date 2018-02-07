@@ -31,8 +31,12 @@ import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -85,6 +89,8 @@ import retrofit2.Response;
  * The adapter for the Magazine landing screen articles
  */
 public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoReflectWishListActionsListener, MagazineOtherPeopleReflectListener, AutoReflectTopicsFollowActionsListener, NewSuggestionsAdapter.TopicSelectionListener {
+
+    private static final String TAG = MagazineArticlesBaseAdapter.class.getSimpleName();
 
     private Context context;
     private LayoutInflater inflater;
@@ -680,6 +686,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                             .dontAnimate()
                             .into(photoView);
+
 
                     if (articleTitle != null) {
                         articleTitle.setText(AphidLog.format("%s", data.getTitle()));
@@ -1424,7 +1431,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 if (!((BaseActivity) context).hasDestroyed()) {
                     //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
                     Glide.with(context)
-                            .load(data.getImage_filename())
+                            .load(data.getS3_image_filename())
                             .asBitmap()
                             .placeholder(R.drawable.magazine_backdrop)
                             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
@@ -1439,7 +1446,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                             bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
                                             Glide.clear(photoView);
                                             Glide.with(context)
-                                                    .load(data.getImage_filename())
+                                                    .load(data.getS3_image_filename())
                                                     .override(bmp.getWidth(), bmp.getHeight())
                                                     .placeholder(R.drawable.magazine_backdrop)
                                                     .crossFade()
@@ -1736,7 +1743,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 if (!((BaseActivity) context).hasDestroyed()) {
                     //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
                     Glide.with(context)
-                            .load(data.getImage_filename())
+                            .load(data.getS3_image_filename())
                             .asBitmap()
                             .placeholder(R.drawable.magazine_backdrop)
                             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
@@ -1751,7 +1758,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                             bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
                                             Glide.clear(photoView);
                                             Glide.with(context)
-                                                    .load(data.getImage_filename())
+                                                    .load(data.getS3_image_filename())
                                                     .override(bmp.getWidth(), bmp.getHeight())
                                                     .placeholder(R.drawable.magazine_backdrop)
                                                     .crossFade()
@@ -2057,7 +2064,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 if (!((BaseActivity) context).hasDestroyed()) {
                     //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
                     Glide.with(context)
-                            .load(data.getImage_filename())
+                            .load(data.getS3_image_filename())
                             .asBitmap()
                             .placeholder(R.drawable.magazine_backdrop)
                             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
@@ -2072,7 +2079,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                             bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
                                             Glide.clear(photoView);
                                             Glide.with(context)
-                                                    .load(data.getImage_filename())
+                                                    .load(data.getS3_image_filename())
                                                     .override(bmp.getWidth(), bmp.getHeight())
                                                     .placeholder(R.drawable.magazine_backdrop)
                                                     .crossFade()
@@ -2681,4 +2688,5 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             mToastFactory.newToast(context.getString(R.string.no_topics_selected), Toast.LENGTH_SHORT);
         }
     }
+
 }

@@ -11,7 +11,6 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -19,7 +18,6 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
 import com.firebase.client.Query;
-import com.google.gson.Gson;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
@@ -34,19 +32,12 @@ import com.yo.android.chat.notification.pojo.UserData;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.di.InjectedService;
 import com.yo.android.model.ChatMessage;
-import com.yo.android.model.ChatMessageReceived;
 import com.yo.android.model.NotificationCountReset;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
-import com.yo.android.util.Util;
-import com.yo.android.voip.VoipConstants;
 import com.yo.dialer.CallExtras;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -55,9 +46,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import de.greenrobot.event.EventBus;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class FirebaseService extends InjectedService {
 
@@ -110,7 +98,6 @@ public class FirebaseService extends InjectedService {
         //if (isRunning && count == 0) {
         if (isRunning) {
             //count = 1;
-            Log.i(TAG, "Service running");
             Intent service = new Intent(this, com.yo.dialer.YoSipService.class);
             service.setAction(CallExtras.REGISTER);
             startService(service);
@@ -135,6 +122,7 @@ public class FirebaseService extends InjectedService {
         return null;
     }
 
+    // Firebase listeners to fetch chat rooms
     private void getAllRooms() {
         String firebaseToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
         if(!firebaseToken.equalsIgnoreCase("")) {
@@ -162,7 +150,6 @@ public class FirebaseService extends InjectedService {
 
                 @Override
                 public void onCancelled(FirebaseError firebaseError) {
-                    //Toast.makeText(getApplicationContext(), firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                     initRoomCount = 0;
                 }
             };
@@ -175,6 +162,7 @@ public class FirebaseService extends InjectedService {
     }
 
 
+    // Firebase callback listeners
     public void getChatMessageList(String roomId) {
         try {
             authReference = fireBaseHelper.authWithCustomToken(context, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN), null);
@@ -184,8 +172,6 @@ public class FirebaseService extends InjectedService {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     try {
-                        //ChatMessageReceived chatMessageReceived = dataSnapshot.getValue(ChatMessageReceived.class);
-                        //ChatMessage chatMessage = Util.convertToChatMessage(chatMessageReceived);
                         ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
 
                         String userId = loginPrefs.getStringPreference(Constants.PHONE_NUMBER);
@@ -375,7 +361,6 @@ public class FirebaseService extends InjectedService {
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        //Toast.makeText(context, "FirebaseService killed", Toast.LENGTH_LONG).show();
     }
 
     public void onEventMainThread(NotificationCountReset count) {

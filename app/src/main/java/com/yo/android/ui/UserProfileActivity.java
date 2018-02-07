@@ -228,7 +228,6 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                             Firebase roomInfo = authReference.child(Constants.ROOMS).child(firebaseRoomId).child(Constants.ROOM_INFO);
                             roomInfo.addListenerForSingleValueEvent(this);
                             roomInfo.keepSynced(true);
-                            //new GroupMembersTask().execute(roomName, firebaseRoomId);
                             profileCall.setVisibility(View.GONE);
                         }
                     }
@@ -245,6 +244,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
 
     }
 
+    // initialize circular border for images
     private void initCircularView() {
         profileImage.setBorderColor(getResources().getColor(R.color.white));
         profileImage.setBorderWidth(5);
@@ -348,17 +348,8 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     }
 
     private void removeYoUserFromPhoneNumber(String countrycode, String phoneNo, TextView profileNumber) {
-        String phoneNumber = phoneNo;
-        if (phoneNumber != null && phoneNumber.contains(Constants.YO_USER)) {
-            // Todo this logic is not executed
-            /*try {
-                phoneNumber = phoneNumber.substring(phoneNumber.indexOf(Constants.YO_USER) + 6, phoneNumber.length() - 1);
-                String finalNumber = countrycode == null ? phoneNumber : countrycode + phoneNumber;
-                profileNumber.setText(finalNumber);
-            } catch (StringIndexOutOfBoundsException e) {
-            }*/
-        } else if (phoneNumber != null) {
-            String finalNumber = countrycode == null ? phoneNumber : countrycode + phoneNumber;
+        if (phoneNo != null) {
+            String finalNumber = countrycode == null ? phoneNo : countrycode + phoneNo;
             profileNumber.setText(checkPlusSign(finalNumber));
         }
     }
@@ -384,6 +375,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         }
     }
 
+    // call user from profile
     @OnClick(R.id.profile_call)
     public void callUser() {
         //do nothing...
@@ -392,6 +384,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         }
     }
 
+    // navigate to chat screen on clicking message icon
     @OnClick(R.id.profile_message)
     public void messageUser() {
         if (contact != null && contact.isYoAppUser()) {
@@ -401,10 +394,11 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 navigateToChatScreen(contact);
             }
         } else {
-            Toast.makeText(this, "Invite friends need to implement.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.invite_friends_need_to_implement, Toast.LENGTH_SHORT).show();
         }
     }
 
+    // need to implement profile pic change
     /*@OnClick(R.id.profile_image)
     void changeProfilePic() {
         cameraIntent.showDialog();
@@ -417,6 +411,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         startActivityForResult(subjectIntent, GROUP_SUBJECT_REQUEST);
     }
 
+    // navigate to chat screen for selected user
     private void navigateToChatScreen(Contact contact) {
         Intent intent = new Intent(this, ChatActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -489,6 +484,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         firebaseError.getMessage();
     }
 
+    // load group users in alphabetical order
     private void loadAlphabetOrder(@NonNull List<GroupMembers> list) {
         try {
             Collections.sort(list, new Comparator<GroupMembers>() {
@@ -518,6 +514,13 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         }
     }
 
+    /**
+     * check whether name and phonenumber are same or not
+     *
+     * @param name
+     * @param phoneNumber
+     * @return true or false
+     */
     private boolean isSame(String name, String phoneNumber) {
         if (TextUtils.isDigitsOnly(name) && TextUtils.isDigitsOnly(phoneNumber)) {
             return name.equalsIgnoreCase(phoneNumber);
@@ -530,6 +533,12 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         }
     }
 
+    /**
+     *
+     * @param nexgeFormat
+     * @param phoneNumber
+     * @return number from nexge format
+     */
     private String numberFromNexgeFormat(String nexgeFormat, String phoneNumber) {
         String number = nexgeFormat != null ? nexgeFormat : phoneNumber;
         return Util.numberFromNexgeFormat(number);
@@ -593,6 +602,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         startActivityForResult(i, PICK_CONTACT_REQUEST);
     }
 
+    // contact mapper
     private Contact contactMapper(UserProfile userProfile) {
         contact = new Contact();
         contact.setPhoneNo(userProfile.getMobileNumber());
@@ -730,6 +740,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         }
     }
 
+    // Check runtime permissions
     private void checkForPermissions() {
         ActivityCompat.requestPermissions(this, new String[]{"android.permission.WRITE_CONTACTS"}, WRITE_CONTACT_PERMISSIONS);
     }
@@ -746,7 +757,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                     android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
                     builder.setMessage(getString(R.string.add_contact_message))
                             .setTitle(getString(R.string.important_title_message));
-                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             ActivityCompat.requestPermissions(UserProfileActivity.this, new String[]{Manifest.permission.WRITE_CONTACTS}, WRITE_CONTACT_PERMISSIONS);
                         }

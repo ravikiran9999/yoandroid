@@ -159,14 +159,14 @@ public class TopicsDetailActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
-        handler = new Handler();
+        /*handler = new Handler();
         handler.postDelayed(new Runnable() {
 
             @Override
             public void run() {
                 clearGlideMemory(TopicsDetailActivity.this);
             }
-        }, 10000);
+        }, 10000);*/
     }
 
     public void onPause() {

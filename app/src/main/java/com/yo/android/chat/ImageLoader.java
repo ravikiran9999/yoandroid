@@ -35,9 +35,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
-/**
- * Created by rajesh on 1/10/16.
- */
 public class ImageLoader {
 
     public interface ImageDownloadListener {
@@ -84,8 +81,6 @@ public class ImageLoader {
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    //listener.onDownlaoded(null);
-                    //Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
             });
@@ -93,100 +88,61 @@ public class ImageLoader {
     }
 
 
-    /*static CustomTransformation transformation = new CustomTransformation() {
-        private String fileName;
-        private String folderName;
-
-        @Override
-        public void setFileName(String file) {
-            this.fileName = file;
-        }
-
-        @Override
-        public void setFolderName(String folderName) {
-            this.folderName = folderName;
-        }
-
-        @Override
-        public Bitmap transform(Bitmap source) {
-            int targetWidth = 800;
-            double aspectRatio = (double) source.getHeight() / (double) source.getWidth();
-            int targetHeight = (int) (targetWidth * aspectRatio);
-            Bitmap result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false);
-
-            String filepath = CompressImage.getFilename(new File(fileName).getName(), folderName);
-            try {
-                FileOutputStream out = new FileOutputStream(filepath);
-                result.compress(Bitmap.CompressFormat.JPEG, 80, out);
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-
-            if (result != source) {
-                source.recycle();
-            }
-
-            return result;
-        }
-
-        @Override
-        public String key() {
-            return "transformation" + " desiredWidth";
-        }
-    };*/
-
     private static void getImageHeightAndWidth(Context context, final File file, ImageView imageView, final ProgressBar progressBar) {
-        //NewImageCompress.getImage(context, file, imageView, progressBar);
         oldImageProcess(context, file, imageView, progressBar);
 
     }
 
     private static void oldImageProcess(Context context, File file, ImageView imageView, final ProgressBar progressBar) {
-        float ratio = 1;
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        int maxWidth = display.getWidth() * 2 / 3;
+        try {
+            float ratio = 1;
+            progressBar.setVisibility(View.VISIBLE);
+            WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            int maxWidth = display.getWidth() * 2 / 3;
 
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(file.getAbsolutePath(), options);
-        int height = options.outHeight;
-        int width = options.outWidth;
-        ratio = (float) width / maxWidth;
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+            int height = options.outHeight;
+            int width = options.outWidth;
+            ratio = (float) width / maxWidth;
 
-        if (height > width) {
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            height = display.getWidth() * 2 / 3;
-        } else {
-            height = (int) (height / ratio);
+            if (height > width) {
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                height = display.getWidth() * 2 / 3;
+            } else {
+                height = (int) (height / ratio);
+            }
+
+            width = maxWidth;
+
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
+            layoutParams.setMargins(5, 5, 5, 5);
+            imageView.setLayoutParams(layoutParams);
+
+            Glide.with(context)
+                    .load(file)
+                    .listener(new RequestListener<File, GlideDrawable>() {
+                        @Override
+                        public boolean onException(Exception e, File model, Target<GlideDrawable> target, boolean isFirstResource) {
+                            progressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(GlideDrawable resource, File model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                            progressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
+                    .priority(Priority.HIGH)
+                    .dontAnimate()
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(imageView);
+        } catch (Exception e) {
+            progressBar.setVisibility(View.GONE);
         }
-
-        width = maxWidth;
-
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
-        layoutParams.setMargins(5, 5, 5, 5);
-        imageView.setLayoutParams(layoutParams);
-
-        Glide.with(context)
-                .load(file)
-                .listener(new RequestListener<File, GlideDrawable>() {
-                    @Override
-                    public boolean onException(Exception e, File model, Target<GlideDrawable> target, boolean isFirstResource) {
-                        progressBar.setVisibility(View.GONE);
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(GlideDrawable resource, File model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                        progressBar.setVisibility(View.GONE);
-                        return false;
-                    }
-                })
-                .priority(Priority.HIGH)
-                .dontAnimate()
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .into(imageView);
     }
 }

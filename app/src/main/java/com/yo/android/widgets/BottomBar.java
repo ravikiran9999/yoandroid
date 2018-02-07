@@ -1,4 +1,4 @@
-package com.greyhound.mobile.consumer.widgets;
+package com.yo.android.widgets;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
@@ -11,7 +11,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.greyhound.mobile.consumer.R;
+import com.yo.android.R;
 
 
 public class BottomBar extends LinearLayout {
@@ -79,13 +79,13 @@ public class BottomBar extends LinearLayout {
 
     private void flipTabColorState(TextView tabTextView, boolean isSelected) {
         tabTextView.setTextColor(ContextCompat.getColor(getContext(), isSelected?
-                R.color.gh_blue : R.color.font_gh_gray));
+                R.color.colorPrimary : R.color.tab_grey));
         tabTextView.setEnabled(!isSelected);
 
         Drawable compoundDrawable = tabTextView.getCompoundDrawables()[1];
         if (isSelected) {
             compoundDrawable.setColorFilter(
-                    ContextCompat.getColor(getContext(), R.color.gh_blue), PorterDuff.Mode.SRC_IN);
+                    ContextCompat.getColor(getContext(), R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
         }
         else {
             compoundDrawable.setColorFilter(null);

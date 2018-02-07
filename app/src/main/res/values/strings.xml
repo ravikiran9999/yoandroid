@@ -38,6 +38,11 @@
     <string name="format_message">Message %1$s</string>
     <string name="format_call">Call %1$s</string>
     <string name="format_add">Add to contacts</string>
+    <string name="message_not_sent">Message not sent</string>
+    <string name="online">online</string>
+    <string name="offline">offline</string>
+    <string name="invite_friends_need_to_implement">Invite friends need to implement.</string>
+    <string name="select_atleast_one_contact">Atleast one contact should be selected</string>
 
     <plurals name="copy_message">
         <item quantity="one">Message Copied</item>
@@ -288,7 +293,7 @@
     <string name="transfer_balance_error_message">Transfter balance is under maintenance, please check after some time</string>
     <string name="phone_number_with_code_plus">+%1$s%2$s</string>
     <string name="more_than_hundred_error">You can\'t transfer more than 200 at a time.</string>
-
+    <string name="fail_to_load_balance">Failed to load balance</string>
 
     <string name="invalid_request">Invalid Request.</string>
     <string name="insufficient_amount">Insufficient amount.</string>
