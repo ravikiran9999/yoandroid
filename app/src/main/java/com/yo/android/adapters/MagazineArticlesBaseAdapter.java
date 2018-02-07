@@ -243,7 +243,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
             holder.articleFollowRight = UI.findViewById(layout, R.id.imv_magazine_follow_right);
 
-            //holder.lvSuggestions = UI.findViewById(layout, R.id.lv_suggestions);
             if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                 holder.lvSuggestions = (ListView) layout.findViewById(R.id.lv_suggestions);
             } else {
@@ -290,65 +289,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         if (holder.magazineLike != null) {
             holder.magazineLike.setTag(position);
         }
-
-        /*if (holder.articleTitle != null) {
-            holder.fullImageTitle.setVisibility(View.GONE);
-            holder.blackMask.setVisibility(View.GONE);
-            holder.rlFullImageOptions.setVisibility(View.GONE);
-            holder.articleTitle
-                    .setText(AphidLog.format("%s", data.getTitle()));
-
-            final TextView textView = holder.articleTitle;
-
-            ViewTreeObserver vto = textView.getViewTreeObserver();
-            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                private int maxLines = -1;
-
-                @Override
-                public void onGlobalLayout() {
-                    if (maxLines < 0 && textView.getHeight() > 0 && textView.getLineHeight() > 0) {
-                        int height = textView.getHeight();
-                        int lineHeight = textView.getLineHeight();
-                        maxLines = height / lineHeight;
-                        textView.setMaxLines(maxLines);
-                        textView.setEllipsize(TextUtils.TruncateAt.END);
-                        // Re-assign text to ensure ellipsize is performed correctly.
-                        // Ellipsizing the article title once it is loaded
-                        textView.setText(AphidLog.format("%s", data.getTitle()));
-                    }
-                }
-            });
-        }*/
-
-        /*if (holder.articleShortDesc != null) {
-            if (data.getSummary() != null && holder.articleShortDesc != null) {
-                holder.articleShortDesc.setMaxLines(1000);
-                holder.articleShortDesc
-                        .setText(Html.fromHtml(data.getSummary()));
-                //Log.d("BaseAdapter", "The text size is " + holder.articleShortDesc.getTextSize());
-                final TextView textView = holder.articleShortDesc;
-
-                ViewTreeObserver vto = textView.getViewTreeObserver();
-                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    private int maxLines = -1;
-
-                    @Override
-                    public void onGlobalLayout() {
-                        if (maxLines < 0 && textView.getHeight() > 0 && textView.getLineHeight() > 0) {
-                            int height = textView.getHeight();
-                            int lineHeight = textView.getLineHeight();
-                            maxLines = height / lineHeight;
-                            textView.setMaxLines(maxLines);
-                            textView.setEllipsize(TextUtils.TruncateAt.END);
-                            // Re-assign text to ensure ellipsize is performed correctly.
-                            // Ellipsizing the article description once it is loaded
-                            textView.setText(Html.fromHtml(data.getSummary()));
-                        }
-                    }
-                });
-
-            }
-        }*/
 
         if (holder.magazineLike != null) {
             holder.magazineLike.setOnCheckedChangeListener(null);

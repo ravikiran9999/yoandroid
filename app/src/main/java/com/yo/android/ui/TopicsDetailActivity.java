@@ -144,6 +144,16 @@ public class TopicsDetailActivity extends BaseActivity {
 
             }
         });
+
+        // clear glide for every 10 seconds
+        /*handler = new Handler();
+        handler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                clearGlideMemory(TopicsDetailActivity.this);
+            }
+        }, 10000);*/
     }
 
     private void failureError(Throwable t) {
@@ -159,14 +169,6 @@ public class TopicsDetailActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
-        /*handler = new Handler();
-        handler.postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                clearGlideMemory(TopicsDetailActivity.this);
-            }
-        }, 10000);*/
     }
 
     public void onPause() {
