@@ -21,6 +21,10 @@ import com.yo.android.ui.DeviceDimensionsHelper;
 /**
  * Created by creatives on 7/9/2016.
  */
+
+/**
+ * This adapter is used to display the My Magazines
+ */
 public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, OwnMagazineViewHolder> {
 
     public CreateMagazinesAdapter(Context context) {
@@ -43,8 +47,8 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
 
         holder.getTextViewDesc().setText(item.getDescription());
 
-        if(position != 0) {
-            if(!TextUtils.isEmpty(item.getImage())) {
+        if(position != 0) { // Other than the first position
+            if(!TextUtils.isEmpty(item.getImage())) { // Image url is not null
 
                 Glide.with(mContext)
                         .load(item.getImage())
@@ -79,7 +83,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                         });
 
             } else {
-                if(item.getArticlesCount() == 0) {
+                if(item.getArticlesCount() == 0) { // Image url is null and no articles are present
                     Glide.with(mContext)
                             .load(R.drawable.ic_default_magazine)
                             .fitCenter()
@@ -87,7 +91,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                             .dontAnimate()
                             .into(holder.getImageView());
-                } else {
+                } else { // Image url is null and articles are present
                     Glide.with(mContext)
                             .load(R.drawable.magazine_backdrop)
                             .fitCenter()
@@ -106,8 +110,8 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
             params.leftMargin = 10;
             params.rightMargin = 10;
             holder.getTextView().setLayoutParams(params);
-        } else if(position == 0 && !"+ New Magazine".equalsIgnoreCase(item.getName())) {
-            if(!TextUtils.isEmpty(item.getImage())) {
+        } else if(position == 0 && !"+ New Magazine".equalsIgnoreCase(item.getName())) { // First position but not the New Magazine text(applies when searching)
+            if(!TextUtils.isEmpty(item.getImage())) { // Image url is not null
 
                 Glide.with(mContext)
                         .load(item.getImage())
@@ -142,7 +146,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                         });
 
             } else {
-                if(item.getArticlesCount() == 0) {
+                if(item.getArticlesCount() == 0) { // Image url is null and no articles are present
                     Glide.with(mContext)
                             .load(R.drawable.ic_default_magazine)
                             .fitCenter()
@@ -150,7 +154,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                             .dontAnimate()
                             .into(holder.getImageView());
-                } else {
+                } else { // Image url is null and articles are present
                     Glide.with(mContext)
                             .load(R.drawable.magazine_backdrop)
                             .fitCenter()
@@ -168,7 +172,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
             params.leftMargin = 10;
             params.rightMargin = 10;
             holder.getTextView().setLayoutParams(params);
-        } else {
+        } else { // First position and is New Magazine text
 
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);

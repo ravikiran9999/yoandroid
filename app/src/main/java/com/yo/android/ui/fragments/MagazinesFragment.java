@@ -72,6 +72,10 @@ import retrofit2.Response;
 /**
  * Created by creatives on 6/27/2016.
  */
+
+/**
+ * This fragment is used to show the Magazines Search and attaches the fragment to load the magazine articles
+ */
 public class MagazinesFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
 
     @Bind(R.id.no_search_results)

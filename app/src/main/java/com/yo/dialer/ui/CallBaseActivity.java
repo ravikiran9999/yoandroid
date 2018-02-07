@@ -164,6 +164,9 @@ class CallBaseActivity extends BaseActivity {
         EventBus.getDefault().register(this);
     }
 
+    /**
+     * Register for call actions
+     */
     private void registerForcallActions() {
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         IntentFilter mIntentFilter = new IntentFilter();
@@ -198,6 +201,9 @@ class CallBaseActivity extends BaseActivity {
         CallControls.toggleRecSpeaker(am, v);
     }
 
+    /**
+     * Rejects the call
+     */
     protected void rejectCall() {
         if (sipBinder != null && sipBinder.getYOHandler() != null) {
             isCallStopped = true;
@@ -249,11 +255,21 @@ class CallBaseActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Loads the callee phone number
+     * @param callePhoneNumberTxt The callee phone number text view
+     * @param phoneNumber The callee phone number
+     */
     protected void loadCallePhoneNumber(TextView callePhoneNumberTxt, String phoneNumber) {
         callePhoneNumberTxt.setText("+" + phoneNumber);
         DialerLogs.messageI(TAG, "YO====loadCallePhoneNumber====" + phoneNumber);
     }
 
+    /**
+     * Loads the callee name
+     * @param textView The callee name text view
+     * @param name The callee name
+     */
     protected void loadCalleeName(TextView textView, String name) {
 
         if (!TextUtils.isEmpty(name)) {
@@ -268,6 +284,11 @@ class CallBaseActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Loads the callee image
+     * @param imageView The callee image view
+     * @param imagePath The callee image path
+     */
     protected void loadCalleImage(ImageView imageView, String imagePath) {
         try {
             Glide.with(CallBaseActivity.this).load(imagePath)
@@ -282,15 +303,26 @@ class CallBaseActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Loads the full image
+     * @param imagePath The image path
+     */
     protected void loadFullImage(String imagePath) {
         CallControls.loadFullImage(this, imagePath, fullImageLayout);
     }
 
+    /**
+     * Loads the user name and image
+     */
     protected void loadUserDetails() {
         loadCalleImage(calleImageView, calleImageUrl);
         loadCalleeName(calleNameTxt, calleName);
     }
 
+    /**
+     * Called when the call is disconnected
+     * @param reason
+     */
     public void callDisconnected(String reason) {
         mHandler.removeCallbacks(UIHelper.getDurationRunnable(CallBaseActivity.this));
         SipHelper.isAlreadyStarted = false;
@@ -309,11 +341,18 @@ class CallBaseActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Call is accepted
+     */
     public void callAccepted() {
         DialerLogs.messageI(TAG, "Call Accepted");
         changeToAcceptedCallUI();
     }
 
+    /**
+     * Updates the call status
+     * @param callStatus The call status
+     */
     public void updateWithCallStatus(final int callStatus) {
         //User- > CallExtras.StatusCode.PJSIP_INV_STATE_CONFIRMED
         DialerLogs.messageI(TAG, "CallExtras.StatusCode -> updateWithCallStatus " + callStatus);
@@ -341,6 +380,9 @@ class CallBaseActivity extends BaseActivity {
         finish();
     }
 
+    /**
+     * Changes the UI to accepted call UI
+     */
     protected void changeToAcceptedCallUI() {
         DialerLogs.messageI(TAG, "YO====changeToAcceptedCallUI====");
         //to increase the volume
@@ -382,6 +424,9 @@ class CallBaseActivity extends BaseActivity {
         //}
     }
 
+    /**
+     * Shows End call and Message buttons
+     */
     private void showEndAndMessage() {
         callAcceptBtn.setVisibility(View.GONE);
         callSpeakerBtn.setVisibility(View.GONE);
@@ -391,6 +436,9 @@ class CallBaseActivity extends BaseActivity {
         callMessageBtn.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Loads the current call settings
+     */
     protected void loadPreviousSettings() {
         CallControlsModel callControlsModel = CallControls.getCallControlsModel();
         if (callControlsModel != null) {
@@ -424,6 +472,9 @@ class CallBaseActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Updates the type of call text
+     */
     protected void updateCallType() {
         if (isPstn) {
             tvCallType.setText(getResources().getString(R.string.pstn_call));

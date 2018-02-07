@@ -159,6 +159,10 @@ public class YoSipServiceHandler implements SipServicesListener {
         return withNexgeSettings();
     }
 
+    /**
+     * Loads with Nexge Settings
+     * @return The SipProperties
+     */
     private SipProperties withNexgeSettings() {
         String username = preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME, null);
         String password = preferenceEndPoint.getStringPreference(Constants.PASSWORD, null);
@@ -179,6 +183,10 @@ public class YoSipServiceHandler implements SipServicesListener {
                 .build();
     }
 
+    /**
+     * Loads with PJSIP Settings
+     * @return The SipProperties
+     */
     private SipProperties withPJSIPSettings() {
         String username = "866";  //Second user 867
         String password = "pw866"; //Second user pw867
@@ -199,6 +207,10 @@ public class YoSipServiceHandler implements SipServicesListener {
                 .build();
     }
 
+    /**
+     * Deletes the Sip account
+     * @param account The account
+     */
     public void deleteAccount(YoAccount account) {
         DialerLogs.messageI(TAG, "UN-REGISTER ACCOUNT===========");
         instance = null;
@@ -208,6 +220,9 @@ public class YoSipServiceHandler implements SipServicesListener {
     }
 
 
+    /**
+     * Cancels the call notification
+     */
     public void cancelCallNotification() {
         if (mContext != null) {
             ((YoSipService) mContext).cancelCallNotification();

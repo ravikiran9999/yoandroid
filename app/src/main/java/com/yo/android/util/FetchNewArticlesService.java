@@ -56,7 +56,7 @@ public class FetchNewArticlesService extends Service {
         preferenceEndPoint.saveBooleanPreference(Constants.IS_ARTICLES_POSTED, false);
         preferenceEndPoint.saveBooleanPreference(Constants.STARTING_SERVICE, true);
         int currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY); //Current hour
-        if (currentHour == 1) {
+        if (currentHour == 1) { // 1 am
             //showTrayNotification();
             preferenceEndPoint.saveBooleanPreference(Constants.IS_SERVICE_RUNNING, true);
             de.greenrobot.event.EventBus.getDefault().post(Constants.START_FETCHING_ARTICLES_ACTION);

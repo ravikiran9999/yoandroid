@@ -30,6 +30,10 @@ import retrofit2.Response;
 /**
  * Created by creatives on 9/6/2016.
  */
+
+/**
+ * This adapter is used to display the Suggestions page in the Landing screen
+ */
 public class SuggestionsAdapter extends AbstractBaseAdapter<Topics, SuggestionsViewHolder> {
 
     private Context context;

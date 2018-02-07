@@ -131,10 +131,14 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
         btnPost.setOnClickListener(this);
     }
 
+    /**
+     * Loads the url depending
+     * @param webview The Webview
+     */
     private void loadOrPostUrl(WebView webview) {
         url = etUrl.getText().toString();
         tag = atvMagazineTag.getText().toString();
-        if (!TextUtils.isEmpty(url.trim()) && !TextUtils.isEmpty(tag.trim())) {
+        if (!TextUtils.isEmpty(url.trim()) && !TextUtils.isEmpty(tag.trim())) { // Url is not empty then load the url
 
             isInvalidUrl = false;
 
@@ -143,7 +147,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                     url = "http://" + url;
                 }
                 if (Patterns.WEB_URL.matcher(url).matches()) {
-                    webview.loadUrl(url);
+                    webview.loadUrl(url); // Load the url
                 } else {
                     Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
                     mToastFactory.showToast("Please enter a valid url");
@@ -168,7 +172,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                     });
                 }
             }
-        } else if (TextUtils.isEmpty(url.trim())) {
+        } else if (TextUtils.isEmpty(url.trim())) { // If the url is empty
             Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
             mToastFactory.showToast("Please enter a url");
             //btnPost.setVisibility(View.INVISIBLE);
@@ -177,7 +181,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                     etUrl.requestFocus();
                 }
             });
-        } else {
+        } else { // If the tag is empty
             Util.hideKeyboard(LoadMagazineActivity.this, atvMagazineTag);
             mToastFactory.showToast("Please enter a tag");
             //btnPost.setVisibility(View.INVISIBLE);
@@ -192,18 +196,18 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
 
-        if (((Button) v).getText().equals("Load")) {
+        if (((Button) v).getText().equals("Load")) { // Button text is Load
             loadOrPostUrl(webview);
-        } else {
+        } else { // Button text is Post
 
             String accessToken = preferenceEndPoint.getStringPreference("access_token");
-            if (!TextUtils.isEmpty(url.trim()) && !TextUtils.isEmpty(tag.trim())) {
+            if (!TextUtils.isEmpty(url.trim()) && !TextUtils.isEmpty(tag.trim())) { // Url is not empty then post the url
                 if (magazineId != null) {
-                    addStoryToExistingMagazine(accessToken);
+                    addStoryToExistingMagazine(accessToken); // Add story to existing magazine
                 } else {
-                    createMagazineWithStory(accessToken);
+                    createMagazineWithStory(accessToken); // Create a new magazine with the new story
                 }
-            } else if (TextUtils.isEmpty(url.trim())) {
+            } else if (TextUtils.isEmpty(url.trim())) { // Url is empty
                 Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
                 mToastFactory.showToast("Please enter a url");
                 //btnPost.setVisibility(View.INVISIBLE);
@@ -212,7 +216,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                         etUrl.requestFocus();
                     }
                 });
-            } else {
+            } else { // Tag is empty
                 Util.hideKeyboard(LoadMagazineActivity.this, atvMagazineTag);
                 mToastFactory.showToast("Please enter a tag");
                 //btnPost.setVisibility(View.INVISIBLE);

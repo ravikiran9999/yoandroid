@@ -87,7 +87,7 @@ public class CreateMagazineActivity extends BaseActivity implements SwipeRefresh
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 OwnMagazine ownMagazine = (OwnMagazine) parent.getItemAtPosition(position);
-                if (position == 0 && "+ New Magazine".equalsIgnoreCase(ownMagazine.getName())) {
+                if (position == 0 && "+ New Magazine".equalsIgnoreCase(ownMagazine.getName())) { // The first position and is New Magazine text
                     Intent intent = new Intent(CreateMagazineActivity.this, NewMagazineActivity.class);
                     // Activity is started with requestCode 2
                     startActivityForResult(intent, 2);
@@ -129,6 +129,10 @@ public class CreateMagazineActivity extends BaseActivity implements SwipeRefresh
         });
     }
 
+    /**
+     * Creates the magazine
+     * @param swipeRefreshContainer
+     */
     private void createMagazine(final SwipeRefreshLayout swipeRefreshContainer) {
         if(swipeRefreshContainer != null) {
             swipeRefreshContainer.setRefreshing(false);

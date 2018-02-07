@@ -27,6 +27,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by Rajesh Babu Polamarasetti on 22/7/17.
  */
 
+/**
+ * The Incoming Call screen
+ */
+
 public class IncomingCallActivity extends CallBaseActivity implements View.OnClickListener {
     private static final String TAG = InComingCallActivity.class.getSimpleName();
 
@@ -62,11 +66,9 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
 
     }
 
-
-    private void readIntentValues() {
-
-    }
-
+    /**
+     * Initializes the views
+     */
     private void initViews() {
         mAcceptedCallHeader = findViewById(R.id.received_call_header);
         mInComingHeader = findViewById(R.id.incoming_call_header);
@@ -115,6 +117,9 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
         initCircularView();
     }
 
+    /**
+     * Sets border for the callee profile pic
+     */
     private void initCircularView() {
         calleImageView.setBorderColor(getResources().getColor(R.color.white));
         calleImageView.setBorderWidth(5);
@@ -123,11 +128,17 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
         acceptedCalleImageView.setBorderWidth(5);
     }
 
+    /**
+     * Hides the mic and speaker
+     */
     private void hideMicAndSpeaker() {
         callMicBtn.setVisibility(View.GONE);
         callSpeakerBtn.setVisibility(View.GONE);
     }
 
+    /**
+     * Registers the click listeners
+     */
     private void registerListerners() {
         callAcceptBtn.setOnClickListener(this);
         callRejectBtn.setOnClickListener(this);
@@ -170,21 +181,23 @@ public class IncomingCallActivity extends CallBaseActivity implements View.OnCli
         }
     }
 
+    /**
+     * Change the UI to accepted call UI
+     */
     private void changeToAcceptCallUI() {
         mInComingHeader.setVisibility(View.GONE);
         changeToAcceptedCallUI();
     }
 
+    /**
+     * Accept the call
+     */
     protected void acceptCall() {
         if (sipBinder != null && sipBinder.getYOHandler() != null) {
             sipBinder.getYOHandler().acceptCall();
         } else {
             DialerLogs.messageE(TAG, "YO====sipBinder == null && sipBinder.getYOHandler() ==NULL");
         }
-    }
-
-    private void showYoChat(String calleeYOUsername) {
-
     }
 
     @Override

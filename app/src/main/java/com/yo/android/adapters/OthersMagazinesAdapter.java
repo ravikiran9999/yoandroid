@@ -26,6 +26,10 @@ import java.util.List;
 /**
  * Created by creatives on 7/19/2016.
  */
+
+/**
+ * This adapter is used to display the Others Profile Magazines
+ */
 public class OthersMagazinesAdapter extends BaseAdapter {
     private Context mContext;
     private List<OwnMagazine> ownMagazineList;
@@ -35,6 +39,10 @@ public class OthersMagazinesAdapter extends BaseAdapter {
         this.ownMagazineList = new ArrayList<>();
     }
 
+    /**
+     * Adds the items to the existing list
+     * @param ownMagazineList
+     */
     public void addItems(final List<OwnMagazine> ownMagazineList) {
         this.ownMagazineList.clear();
         this.ownMagazineList.addAll(ownMagazineList);
@@ -72,7 +80,7 @@ public class OthersMagazinesAdapter extends BaseAdapter {
         TextView textViewDesc = (TextView) convertView.findViewById(R.id.tv_desc);
         textViewDesc.setText(ownMagazineList.get(position).getDescription());
 
-            if (!TextUtils.isEmpty(ownMagazineList.get(position).getImage())) {
+            if (!TextUtils.isEmpty(ownMagazineList.get(position).getImage())) { // Image url is not empty
 
                 Glide.with(mContext)
                         .load(ownMagazineList.get(position).getImage())
@@ -82,7 +90,7 @@ public class OthersMagazinesAdapter extends BaseAdapter {
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(imageView);
 
-            } else {
+            } else { // Image url is empty
                 if(ownMagazineList.get(position).getArticlesCount() == 0) {
                     Glide.with(mContext)
                             .load(R.drawable.ic_default_magazine)
@@ -110,6 +118,12 @@ public class OthersMagazinesAdapter extends BaseAdapter {
         return convertView;
     }
 
+    /**
+     * Updates the magazine
+     * @param ownMagazine The OwnMagazine object
+     * @param position The position to be updated in the list
+     * @param isMagazineDeleted isMagazineDeleted or not
+     */
     public void updateMagazine(OwnMagazine ownMagazine, int position, boolean isMagazineDeleted) {
         if(isMagazineDeleted) {
             ownMagazineList.remove(position);

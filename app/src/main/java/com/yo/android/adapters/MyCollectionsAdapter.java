@@ -26,6 +26,10 @@ import java.util.List;
 /**
  * Created by creatives on 7/9/2016.
  */
+
+/**
+ * This adapter is used to show the My Collections screen
+ */
 public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCollectionsViewHolder> {
 
     private boolean contextualMenuEnable;
@@ -47,7 +51,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
     @Override
     public void bindView(int position, final MyCollectionsViewHolder holder, final Collections item) {
 
-        if (position == 0 && "Follow more topics".equalsIgnoreCase(item.getName())) {
+        if (position == 0 && "Follow more topics".equalsIgnoreCase(item.getName())) { // First position and is the Follow more topics text
 
             Glide.with(mContext)
                     .load(R.color.grey_divider)
@@ -57,7 +61,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
                     .dontAnimate()
                     .into(holder.getImageView());
 
-        } else if (!TextUtils.isEmpty(item.getImage())) {
+        } else if (!TextUtils.isEmpty(item.getImage())) { // Image url is not empty
             //new NewImageRenderTask(mContext,item.getImage(),holder.getImageView()).execute();
             Glide.clear(holder.getImageView());
             Glide.with(mContext)
@@ -92,7 +96,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
                             }
                         }
                     });
-        } else {
+        } else { // Not first position and not having image url
             Glide.clear(holder.getImageView());
             if(item.getArticlesCount() == 0) {
                 Glide.with(mContext)
@@ -160,6 +164,10 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
         this.contextualMenuEnable = enable;
     }
 
+    /**
+     * Gets the selected items in the list
+     * @return The selected items
+     */
     public List<Collections> getSelectedItems() {
         List<Collections> list = new ArrayList<>();
         for (Collections collections : mList) {
