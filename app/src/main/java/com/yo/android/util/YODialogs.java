@@ -317,7 +317,7 @@ public class YODialogs {
                 dialog.dismiss();
                 if (fragment != null && fragment instanceof MagazineFlipArticlesFragment) {
                     ((MagazineFlipArticlesFragment) fragment).llNoArticles.setVisibility(View.GONE);
-                    ((MagazineFlipArticlesFragment) fragment).loadArticles(null, true);
+                    ((MagazineFlipArticlesFragment) fragment).magazinesServicesUsecase.loadArticles(null, true, activity, ((MagazineFlipArticlesFragment) fragment));
 
                 }
 

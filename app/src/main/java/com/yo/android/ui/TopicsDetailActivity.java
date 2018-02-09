@@ -173,7 +173,9 @@ public class TopicsDetailActivity extends BaseActivity {
 
     public void onPause() {
         super.onPause();
-        handler.removeCallbacksAndMessages(null);
+        if(handler != null) {
+            handler.removeCallbacksAndMessages(null);
+        }
     }
 
     private class MyBaseAdapter extends BaseAdapter {

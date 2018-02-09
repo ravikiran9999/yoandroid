@@ -11,6 +11,7 @@ import com.yo.android.usecase.AddTopicsUsecase;
 import com.yo.android.usecase.AppLogglyUsecase;
 import com.yo.android.usecase.ChatNotificationUsecase;
 import com.yo.android.usecase.DenominationsUsecase;
+import com.yo.android.usecase.MagazinesServicesUsecase;
 import com.yo.android.usecase.NotificationUsecase;
 import com.yo.android.usecase.PackageDenominationsUsecase;
 import com.yo.android.usecase.RandomTopicsUsecase;
@@ -267,7 +268,8 @@ import dagger.Provides;
                 AddTopicsUsecase.class,
                 RandomTopicsUsecase.class,
                 AppLogglyUsecase.class,
-                NotificationUsecase.class
+                NotificationUsecase.class,
+                MagazinesServicesUsecase.class
         },
         includes = {
                 AppModule.class,

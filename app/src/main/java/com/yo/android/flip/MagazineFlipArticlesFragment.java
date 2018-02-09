@@ -11,7 +11,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -35,6 +34,7 @@ import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.NewFollowMoreTopicsActivity;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.usecase.AddTopicsUsecase;
+import com.yo.android.usecase.MagazinesServicesUsecase;
 import com.yo.android.util.ArticlesComparator;
 import com.yo.android.util.Constants;
 import com.yo.android.util.MagazineDashboardHelper;
@@ -93,31 +93,24 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     @Bind(R.id.tv_progress_text)
     public TextView tvProgressText;
 
-
     @Inject
     YoApi.YoService yoService;
     @Inject
     AddTopicsUsecase addTopicsUsecase;
     @Inject
     ConnectivityHelper mHelper;
+    @Inject
+    public MagazinesServicesUsecase magazinesServicesUsecase;
 
     public static int suggestionsPosition = 0;
-
     public static int lastReadArticle = 0;
-
-
     public boolean isSearch;
-    private int pageCount = 1;
-    private boolean isArticlesEndReached;
     private List<String> readArticleIds;
-    private LinkedHashSet<List<String>> articlesIdsHashSet = new LinkedHashSet<>();
     public static int currentFlippedPosition;
-    private MagazineDashboardHelper magazineDashboardHelper;
+    public MagazineDashboardHelper magazineDashboardHelper;
     private String followedTopicId;
-    private static int articleCountThreshold = 2000;
     private Context mContext;
-    //private boolean isFetchArticlesPosted;
-    private Handler handler;
+    Handler handler;
 
     @SuppressLint("ValidFragment")
     public MagazineFlipArticlesFragment(MagazineTopicsSelectionFragment fragment) {
@@ -142,7 +135,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         View view = inflater.inflate(R.layout.magazine_flip_fragment, container, false);
         ButterKnife.bind(this, view);
 
-        myBaseAdapter = new MagazineArticlesBaseAdapter(getActivity(), preferenceEndPoint, yoService, mToastFactory, this, addTopicsUsecase);
+        myBaseAdapter = new MagazineArticlesBaseAdapter(getActivity(), preferenceEndPoint, yoService, mToastFactory, this, addTopicsUsecase, magazinesServicesUsecase);
         flipView.setAdapter(myBaseAdapter);
         flipView.setOnFlipListener(this);
         flipView.setOnOverFlipListener(this);
@@ -158,16 +151,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             updateCalled = 1;
             update();
         }
-
-        // clear glide for every 10 seconds
-        /*handler = new Handler();
-        handler.postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                clearGlideMemory(mContext);
-            }
-        }, 10000);*/
 
         return view;
     }
@@ -219,22 +202,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        Log.d("FlipArticlesFragment", "In onPause()");
-    }
-
-    @Override
-    public void onOptionsMenuClosed(Menu menu) {
-        super.onOptionsMenuClosed(menu);
-        Log.d("FlipArticlesFragment", "In onOptionsMenuClosed()");
-    }
-
-    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mLog.d("onActivityCreated", "In onActivityCreated");
-        //loadArticles(null, false);
         followMoreTopics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -262,77 +232,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         });*/
     }
 
-    /**
-     * Loading articles
-     *
-     * @param tagIds The topic ids
-     */
-    public void loadArticles(List<String> tagIds, boolean renewal) {
-
-        if (!mHelper.isConnected()) {
-
-            Type type1 = new TypeToken<List<Articles>>() {
-            }.getType();
-            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-            if (getActivity() != null) {
-                String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
-                String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
-
-                List<Articles> cachedMagazinesList = new ArrayList<>();
-
-                if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) || !TextUtils.isEmpty(sharedRandomCachedMagazines)) {
-                    if (mProgress != null) {
-                        mProgress.setVisibility(View.GONE);
-                    }
-                    tvProgressText.setVisibility(View.GONE);
-                    myBaseAdapter.clear();
-                    if (!TextUtils.isEmpty(sharedFollowedCachedMagazines)) {
-                        String cachedMagazines = sharedFollowedCachedMagazines;
-                        List<Articles> cachedFollowedMagazinesList = new Gson().fromJson(cachedMagazines, type1);
-                        cachedMagazinesList.addAll(cachedFollowedMagazinesList);
-                    }
-
-                    if (!TextUtils.isEmpty(sharedRandomCachedMagazines)) {
-                        String cachedMagazines = sharedRandomCachedMagazines;
-                        List<Articles> cachedRandomMagazinesList = new Gson().fromJson(cachedMagazines, type1);
-                        cachedMagazinesList.addAll(cachedRandomMagazinesList);
-                    }
-
-                    myBaseAdapter.addItems(cachedMagazinesList);
-                    flipView.flipTo(lastReadArticle);
-                    articlesRootLayout.setVisibility(View.VISIBLE);
-                    networkFailureText.setVisibility(View.GONE);
-                    return;
-                }
-            }
-        } else {
-            articlesRootLayout.setVisibility(View.VISIBLE);
-            networkFailureText.setVisibility(View.GONE);
-        }
-
-        if (mProgress != null) {
-            mProgress.setVisibility(View.VISIBLE);
-        }
-
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        if (tagIds != null) { // Getting articles of the selected topic
-            isSearch = true;
-            yoService.getArticlesAPI(accessToken, tagIds).enqueue(callback);
-            tvProgressText.setVisibility(View.GONE);
-        } else {
-
-            isSearch = false;
-            flipContainer.setVisibility(View.GONE);
-            tvProgressText.setVisibility(View.VISIBLE);
-
-            List<String> readArticlesList = new ArrayList<>();
-            List<String> unreadArticlesList = new ArrayList<>();
-            magazineDashboardHelper.getDashboardArticles(this, yoService, preferenceEndPoint, readArticlesList, unreadArticlesList, renewal);
-
-        }
-    }
-
-    private Callback<List<Articles>> callback = new Callback<List<Articles>>() {
+    public Callback<List<Articles>> callback = new Callback<List<Articles>>() {
         @Override
         public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
             if (!isAdded()) {
@@ -367,10 +267,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     if (llNoArticles != null) {
                         llNoArticles.setVisibility(View.GONE);
                         flipContainer.setVisibility(View.VISIBLE);
-/*                        if (myBaseAdapter.getCount() > 0) {
-                            Random r = new Random();
-                            suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
-                        }*/
                     }
                 }
             } else {
@@ -443,7 +339,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             flipContainer.setVisibility(View.GONE);
             llNoArticles.setVisibility(View.VISIBLE);
         }
-        //getLandingCachedArticles();
     }
 
 
@@ -460,7 +355,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                         }
                         updateArticlesAfterFollowTopic(followedTopicId);
                     } else if (!magazineRenewal) {
-                        loadArticles(null, false);
+                        magazinesServicesUsecase.loadArticles(null, false, getActivity(), this);
                     }
                 }
             } else {
@@ -521,7 +416,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
         currentFlippedPosition = position;
 
-        //if (MagazineDashboardHelper.currentReadArticles != 0 || currentFlippedPosition == MagazineDashboardHelper.request * 100) {
         if ((MagazineDashboardHelper.currentReadArticles != 0 || currentFlippedPosition % 100 == 0) && !isSearch) {
             getReadArticleIds();
             String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
@@ -568,7 +462,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.unable_to_fetch_new_articles), Toast.LENGTH_LONG).show();
             }
         } else if (Constants.RENEWAL.equalsIgnoreCase(action)) {
-            loadArticles(null, true);
+            magazinesServicesUsecase.loadArticles(null, true, getActivity(), this);
         }
     }
 
@@ -729,16 +623,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                     if (llNoArticles != null) {
                         llNoArticles.setVisibility(View.GONE);
                         flipContainer.setVisibility(View.VISIBLE);
-/*                        if (myBaseAdapter.getCount() > 0) {
-                            try {
-                                Random r = new Random();
-                                //suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
-                                suggestionsPosition = r.nextInt((suggestionsPosition + 30) - suggestionsPosition) + suggestionsPosition;
-                                myBaseAdapter.getAllItems().add(suggestionsPosition, new Articles());
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }*/
                     }
 
                     if (mHelper.isConnected()) {
@@ -775,10 +659,8 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 }
                 return;
             } else {
-                //flipContainer.setVisibility(View.GONE);
-                //llNoArticles.setVisibility(View.VISIBLE);
 
-                loadArticles(null, false);
+                magazinesServicesUsecase.loadArticles(null, false, getActivity(), this);
             }
         }
     }
@@ -863,13 +745,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         if (llNoArticles != null) {
             llNoArticles.setVisibility(View.GONE);
             flipContainer.setVisibility(View.VISIBLE);
-/*            if (myBaseAdapter.getCount() > 0) {
-                Random r = new Random();
-                //suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
-                suggestionsPosition = r.nextInt((suggestionsPosition + 30) - suggestionsPosition) + suggestionsPosition;
-                myBaseAdapter.getAllItems().add(suggestionsPosition, new Articles());
-                myBaseAdapter.notifyDataSetChanged();
-            }*/
         }
     }
 
@@ -951,13 +826,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             if (llNoArticles != null) {
                 llNoArticles.setVisibility(View.GONE);
                 flipContainer.setVisibility(View.VISIBLE);
-/*                if (myBaseAdapter.getCount() > 0) {
-                    Random r = new Random();
-                    //suggestionsPosition = r.nextInt(myBaseAdapter.getCount() - 0) + 0;
-                    suggestionsPosition = r.nextInt((suggestionsPosition + 30) - suggestionsPosition) + suggestionsPosition;
-                    myBaseAdapter.getAllItems().add(suggestionsPosition, new Articles());
-                    myBaseAdapter.notifyDataSetChanged();
-                }*/
             }
         }
     }
@@ -1015,7 +883,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 }
             }
         } else {
-            List<Articles> cachedMagazinesList = getCachedMagazinesList();
+            List<Articles> cachedMagazinesList = magazinesServicesUsecase.getCachedMagazinesList(getActivity());
             if (cachedMagazinesList != null) {
                 unreadArticles.addAll(cachedMagazinesList);
             }
@@ -1029,7 +897,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             }
         }
 
-        List<Articles> cachedMagazinesList = getCachedMagazinesList();
+        List<Articles> cachedMagazinesList = magazinesServicesUsecase.getCachedMagazinesList(getActivity());
         if (cachedMagazinesList != null) {
             List<Articles> tempList = cachedMagazinesList;
             for (int i = 0; i < cachedMagazinesList.size(); i++) {
@@ -1041,7 +909,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             }
 
             cachedMagazinesList = tempList;
-            saveCachedMagazinesList(cachedMagazinesList);
+            magazinesServicesUsecase.saveCachedMagazinesList(cachedMagazinesList, getActivity());
 
             List<Articles> emptyUpdatedArticles = new ArrayList<>();
             List<Articles> notEmptyUpdatedArticles = new ArrayList<>();
@@ -1408,13 +1276,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 }
             }
         } else {
-           /* if (totalOtherUnreadArticles.size() > positionToAdd) {
-                totalOtherUnreadArticles.addAll(positionToAdd, randomTopicArticles);
-            } else {
-                if (totalOtherUnreadArticles.size() > 0) {
-                    totalOtherUnreadArticles.addAll(totalOtherUnreadArticles.size() - 1, randomTopicArticles);
-                }
-            }*/
             if (totalOtherUnreadArticles.size() > 0) {
                 if (followedUnreadTopicArticles1.isEmpty()) {
                     if (totalOtherUnreadArticles.size() > positionToAdd) {
@@ -1431,7 +1292,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 } else {
                     totalOtherUnreadArticles.addAll(totalOtherUnreadArticles.size() - 1, randomTopicArticles);
                 }
-                //totalOtherUnreadArticles.addAll(totalOtherUnreadArticles.size() - 1, randomTopicArticles);
             }
         }
 
@@ -1450,157 +1310,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         }
 
         handleMoreDashboardResponse(totalOtherUnreadArticles, false, true);
-        deleteExtraArticlesFromCache();
-    }
-
-    /**
-     * Getting the list of cached articles
-     *
-     * @return cached articles list
-     */
-    private List<Articles> getCachedMagazinesList() {
-        Type type1 = new TypeToken<List<Articles>>() {
-        }.getType();
-        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-
-        List<Articles> cachedMagazinesList = new ArrayList<>();
-        if (getActivity() != null) {
-            String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
-            String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
-
-            if (!TextUtils.isEmpty(sharedFollowedCachedMagazines)) {
-                String cachedMagazines = sharedFollowedCachedMagazines;
-                List<Articles> cachedFollowedMagazinesList = new Gson().fromJson(cachedMagazines, type1);
-                cachedMagazinesList.addAll(cachedFollowedMagazinesList);
-            }
-            if (!TextUtils.isEmpty(sharedRandomCachedMagazines)) {
-                String cachedMagazines = sharedRandomCachedMagazines;
-                List<Articles> cachedRandomMagazinesList = new Gson().fromJson(cachedMagazines, type1);
-                cachedMagazinesList.addAll(cachedRandomMagazinesList);
-            }
-        }
-
-        return cachedMagazinesList;
-    }
-
-    /**
-     * Saving the list of cached articles
-     *
-     * @param cachedMagazinesList The cached articles list
-     */
-    private void saveCachedMagazinesList(List<Articles> cachedMagazinesList) {
-        List<Articles> followedTopicArticles = new ArrayList<>();
-        List<Articles> randomTopicArticles = new ArrayList<>();
-        for (Articles articles : cachedMagazinesList) {
-            if ("true".equals(articles.getTopicFollowing())) {
-                followedTopicArticles.add(articles);
-            } else {
-                randomTopicArticles.add(articles);
-            }
-        }
-
-        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        if (getActivity() != null) {
-            SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
-            editor.putString("followed_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(followedTopicArticles)));
-            editor.putString("random_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(randomTopicArticles)));
-            editor.commit();
-        }
-    }
-
-    /**
-     * Deleting extra articles from the cache if the cache exceeds the limit
-     */
-    private void deleteExtraArticlesFromCache() {
-
-        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        if (getActivity() != null) {
-            Log.d("FlipArticlesFragment", "Deleting extra articles from the cache");
-            String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
-            String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
-
-            List<Articles> cachedFollowedMagazinesList = new ArrayList<>();
-            List<Articles> cachedRandomMagazinesList = new ArrayList<>();
-            if (!TextUtils.isEmpty(sharedFollowedCachedMagazines) || !TextUtils.isEmpty(sharedRandomCachedMagazines)) {
-
-                Type type = new TypeToken<List<Articles>>() {
-                }.getType();
-
-                if (!TextUtils.isEmpty(sharedFollowedCachedMagazines)) {
-                    String cachedMagazines = sharedFollowedCachedMagazines;
-                    cachedFollowedMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                }
-                if (!TextUtils.isEmpty(sharedRandomCachedMagazines)) {
-                    String cachedMagazines = sharedRandomCachedMagazines;
-                    cachedRandomMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                }
-
-                List<Articles> emptyUpdatedArticles = new ArrayList<>();
-                List<Articles> notEmptyUpdatedArticles = new ArrayList<>();
-                for (Articles updatedArticles : cachedFollowedMagazinesList) {
-                    if (!TextUtils.isEmpty(updatedArticles.getUpdated())) {
-                        notEmptyUpdatedArticles.add(updatedArticles);
-                    } else {
-                        emptyUpdatedArticles.add(updatedArticles);
-                    }
-                }
-                Collections.sort(notEmptyUpdatedArticles, new ArticlesComparator());
-                notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
-                cachedFollowedMagazinesList = notEmptyUpdatedArticles;
-
-                List<Articles> emptyUpdatedArticles1 = new ArrayList<>();
-                List<Articles> notEmptyUpdatedArticles1 = new ArrayList<>();
-                for (Articles updatedArticles : cachedRandomMagazinesList) {
-                    if (!TextUtils.isEmpty(updatedArticles.getUpdated())) {
-                        notEmptyUpdatedArticles1.add(updatedArticles);
-                    } else {
-                        emptyUpdatedArticles1.add(updatedArticles);
-                    }
-                }
-                Collections.sort(notEmptyUpdatedArticles1, new ArticlesComparator());
-                notEmptyUpdatedArticles1.addAll(emptyUpdatedArticles1);
-                cachedRandomMagazinesList = notEmptyUpdatedArticles1;
-
-                int totalCachedSize = cachedFollowedMagazinesList.size() + cachedRandomMagazinesList.size();
-
-                if (totalCachedSize > articleCountThreshold) {
-                    int extraArticlesCount = totalCachedSize - articleCountThreshold;
-                    int cachedRandomSize = cachedRandomMagazinesList.size();
-                    int cachedFollowedSize = cachedFollowedMagazinesList.size();
-                    if (cachedRandomSize <= extraArticlesCount) {
-                        //Delete all the random articles
-                        if (getActivity() != null) {
-                            magazineDashboardHelper.removeArticlesFromCache(getActivity(), preferenceEndPoint, "random_cached_magazines");
-                        }
-                        // Then get the remaining articles count after deleting the random articles
-                        int remainingArticlesCount = extraArticlesCount - cachedRandomSize;
-                        // Move to followed articles list
-                        if (cachedFollowedSize <= remainingArticlesCount) {
-                            // Delete all the followed articles
-                            if (getActivity() != null) {
-                                magazineDashboardHelper.removeArticlesFromCache(getActivity(), preferenceEndPoint, "followed_cached_magazines");
-                            }
-                        } else {
-                            // Delete the articles equal to the remaining articles count
-                            cachedFollowedMagazinesList.subList(0, remainingArticlesCount).clear();
-                            if (getActivity() != null) {
-                                SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
-                                editor.putString("followed_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(cachedFollowedMagazinesList)));
-                                editor.commit();
-                            }
-                        }
-                    } else {
-                        // Delete the articles equal to the extra articles count
-                        cachedRandomMagazinesList.subList(0, extraArticlesCount).clear();
-                        if (getActivity() != null) {
-                            SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
-                            editor.putString("random_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(cachedRandomMagazinesList)));
-                            editor.commit();
-                        }
-                    }
-                }
-            }
-        }
+        magazinesServicesUsecase.deleteExtraArticlesFromCache(getActivity(), magazineDashboardHelper);
     }
 
     private void refreshedArticles() {

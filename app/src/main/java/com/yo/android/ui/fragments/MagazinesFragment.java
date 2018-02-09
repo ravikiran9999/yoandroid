@@ -45,6 +45,7 @@ import com.yo.android.ui.FollowingsActivity;
 import com.yo.android.ui.MagazineActivity;
 import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.WishListActivity;
+import com.yo.android.usecase.MagazinesServicesUsecase;
 import com.yo.android.util.Constants;
 import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
@@ -104,6 +105,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     private boolean isEventLogged;
     private Activity activity;
     private MagazineFlipArticlesFragment mMagazineFlipArticlesFragment;
+    @Inject
+    MagazinesServicesUsecase magazinesServicesUsecase;
 
 
     public MagazineFlipArticlesFragment getmMagazineFlipArticlesFragment() {
@@ -502,7 +505,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     tagIds.add(topicId);
                     if (mMagazineFlipArticlesFragment != null) {
                         MagazineFlipArticlesFragment.lastReadArticle = 0;
-                        mMagazineFlipArticlesFragment.loadArticles(tagIds, false);
+                        magazinesServicesUsecase.loadArticles(tagIds, false, getActivity(), mMagazineFlipArticlesFragment);
                     }
 
                     return;
@@ -547,7 +550,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                         tagIds.add(topicId);
                         if (mMagazineFlipArticlesFragment != null) {
                             MagazineFlipArticlesFragment.lastReadArticle = 0;
-                            mMagazineFlipArticlesFragment.loadArticles(tagIds, false);
+                            magazinesServicesUsecase.loadArticles(tagIds, false, getActivity(), mMagazineFlipArticlesFragment);
                         }
                         mAdapter.clear();
                     }
