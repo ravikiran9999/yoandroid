@@ -51,6 +51,8 @@ import retrofit2.Callback;
 
 public class NewCreditAccountFragment extends BaseFragment {
 
+    private static final String BALL_CLIP_ROTATE = "BallClipRotateMultipleIndicator";
+
     @Bind(R.id.avi_first)
     protected AVLoadingIndicatorView aviFirst;
     @Bind(R.id.avi_second)
@@ -128,17 +130,17 @@ public class NewCreditAccountFragment extends BaseFragment {
     }
 
     private void showDenominationAVLoader() {
-        aviFirst.setIndicator("BallClipRotateMultipleIndicator");
+        aviFirst.setIndicator(BALL_CLIP_ROTATE);
         aviFirst.setIndicatorColor(getResources().getColor(R.color.colorPrimaryDark));
         giveFirst.setAlpha(0.5f);
         giveFirst.setClickable(false);
 
-        aviSecond.setIndicator("BallClipRotateMultipleIndicator");
+        aviSecond.setIndicator(BALL_CLIP_ROTATE);
         aviSecond.setIndicatorColor(getResources().getColor(R.color.colorPrimaryDark));
         giveSecond.setAlpha(0.5f);
         giveSecond.setClickable(false);
 
-        aviThird.setIndicator("BallClipRotateMultipleIndicator");
+        aviThird.setIndicator(BALL_CLIP_ROTATE);
         aviThird.setIndicatorColor(getResources().getColor(R.color.colorPrimaryDark));
         giveThird.setAlpha(0.5f);
         giveThird.setClickable(false);
@@ -343,7 +345,7 @@ public class NewCreditAccountFragment extends BaseFragment {
                 if (activity != null) {
                     namePhoneText.setText(activity.getString(R.string.unknown));
                 } else {
-                    namePhoneText.setText("Unknown");
+                    namePhoneText.setText(activity.getString(R.string.unknown));
                 }
             }
 
@@ -503,6 +505,12 @@ public class NewCreditAccountFragment extends BaseFragment {
         closeActivityAddBalance(resultCode, data);
     }
 
+    /**
+     * Navigate to transfer balance screen
+     * @param availableBalance
+     * @param transferAmount
+     * @param userType
+     */
     private void navigateToTransferBalance(String availableBalance, String transferAmount, boolean userType) {
 
         Intent intent = new Intent(activity, TransferBalanceActivity.class);
@@ -614,11 +622,6 @@ public class NewCreditAccountFragment extends BaseFragment {
         });
     }
 
-    private String getCurrentAvailableBalance() {
-        String availableBalance = String.valueOf(mBalanceHelper.removeCurrencyCode(mBalanceHelper.getCurrentBalance()));
-        return String.format(getResources().getString(R.string.currency_code_with_denomination), currencySymbol, availableBalance);
-    }
-
     private void showAlertDialog(String titleMsg, String contentMsg) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -670,11 +673,16 @@ public class NewCreditAccountFragment extends BaseFragment {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 closeActivityAddBalance(Activity.RESULT_CANCELED, null);
-                CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, "", "", "Failed to load balance");
+                CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, "", "", activity.getResources().getString(R.string.fail_to_load_balance));
             }
         });
     }
 
+    /**
+     * validation for entered number shouldn't be all zeros
+     * @param mEnteredAmount
+     * @return
+     */
     private boolean isValid(String mEnteredAmount) {
         switch (mEnteredAmount) {
             case ONE_ZERO:

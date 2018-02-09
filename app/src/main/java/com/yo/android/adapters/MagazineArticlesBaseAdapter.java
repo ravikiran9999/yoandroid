@@ -30,8 +30,12 @@ import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -79,6 +83,8 @@ import retrofit2.Response;
  * The adapter for the Magazine landing screen articles
  */
 public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoReflectWishListActionsListener, MagazineOtherPeopleReflectListener, AutoReflectTopicsFollowActionsListener, NewSuggestionsAdapter.TopicSelectionListener {
+
+    private static final String TAG = MagazineArticlesBaseAdapter.class.getSimpleName();
 
     private Context context;
     private LayoutInflater inflater;
@@ -228,7 +234,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
             holder.articleFollowRight = UI.findViewById(layout, R.id.imv_magazine_follow_right);
 
-            //holder.lvSuggestions = UI.findViewById(layout, R.id.lv_suggestions);
             if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                 holder.lvSuggestions = (ListView) layout.findViewById(R.id.lv_suggestions);
             } else {
@@ -275,65 +280,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         if (holder.magazineLike != null) {
             holder.magazineLike.setTag(position);
         }
-
-        /*if (holder.articleTitle != null) {
-            holder.fullImageTitle.setVisibility(View.GONE);
-            holder.blackMask.setVisibility(View.GONE);
-            holder.rlFullImageOptions.setVisibility(View.GONE);
-            holder.articleTitle
-                    .setText(AphidLog.format("%s", data.getTitle()));
-
-            final TextView textView = holder.articleTitle;
-
-            ViewTreeObserver vto = textView.getViewTreeObserver();
-            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                private int maxLines = -1;
-
-                @Override
-                public void onGlobalLayout() {
-                    if (maxLines < 0 && textView.getHeight() > 0 && textView.getLineHeight() > 0) {
-                        int height = textView.getHeight();
-                        int lineHeight = textView.getLineHeight();
-                        maxLines = height / lineHeight;
-                        textView.setMaxLines(maxLines);
-                        textView.setEllipsize(TextUtils.TruncateAt.END);
-                        // Re-assign text to ensure ellipsize is performed correctly.
-                        // Ellipsizing the article title once it is loaded
-                        textView.setText(AphidLog.format("%s", data.getTitle()));
-                    }
-                }
-            });
-        }*/
-
-        /*if (holder.articleShortDesc != null) {
-            if (data.getSummary() != null && holder.articleShortDesc != null) {
-                holder.articleShortDesc.setMaxLines(1000);
-                holder.articleShortDesc
-                        .setText(Html.fromHtml(data.getSummary()));
-                //Log.d("BaseAdapter", "The text size is " + holder.articleShortDesc.getTextSize());
-                final TextView textView = holder.articleShortDesc;
-
-                ViewTreeObserver vto = textView.getViewTreeObserver();
-                vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    private int maxLines = -1;
-
-                    @Override
-                    public void onGlobalLayout() {
-                        if (maxLines < 0 && textView.getHeight() > 0 && textView.getLineHeight() > 0) {
-                            int height = textView.getHeight();
-                            int lineHeight = textView.getLineHeight();
-                            maxLines = height / lineHeight;
-                            textView.setMaxLines(maxLines);
-                            textView.setEllipsize(TextUtils.TruncateAt.END);
-                            // Re-assign text to ensure ellipsize is performed correctly.
-                            // Ellipsizing the article description once it is loaded
-                            textView.setText(Html.fromHtml(data.getSummary()));
-                        }
-                    }
-                });
-
-            }
-        }*/
 
         if (holder.magazineLike != null) {
             holder.magazineLike.setOnCheckedChangeListener(null);
@@ -673,6 +619,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                             .dontAnimate()
                             .into(photoView);
+
 
                     if (articleTitle != null) {
                         ViewTreeObserver vto1 = articleTitle.getViewTreeObserver();
@@ -1453,7 +1400,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 if (!((BaseActivity) context).hasDestroyed()) {
                     //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
                     Glide.with(context)
-                            .load(data.getImage_filename())
+                            .load(data.getS3_image_filename())
                             .asBitmap()
                             .placeholder(R.drawable.magazine_backdrop)
                             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
@@ -1468,7 +1415,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                             bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
                                             Glide.clear(photoView);
                                             Glide.with(context)
-                                                    .load(data.getImage_filename())
+                                                    .load(data.getS3_image_filename())
                                                     .override(bmp.getWidth(), bmp.getHeight())
                                                     .placeholder(R.drawable.magazine_backdrop)
                                                     .crossFade()
@@ -1765,7 +1712,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 if (!((BaseActivity) context).hasDestroyed()) {
                     //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
                     Glide.with(context)
-                            .load(data.getImage_filename())
+                            .load(data.getS3_image_filename())
                             .asBitmap()
                             .placeholder(R.drawable.magazine_backdrop)
                             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
@@ -1780,7 +1727,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                             bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
                                             Glide.clear(photoView);
                                             Glide.with(context)
-                                                    .load(data.getImage_filename())
+                                                    .load(data.getS3_image_filename())
                                                     .override(bmp.getWidth(), bmp.getHeight())
                                                     .placeholder(R.drawable.magazine_backdrop)
                                                     .crossFade()
@@ -2086,7 +2033,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 if (!((BaseActivity) context).hasDestroyed()) {
                     //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
                     Glide.with(context)
-                            .load(data.getImage_filename())
+                            .load(data.getS3_image_filename())
                             .asBitmap()
                             .placeholder(R.drawable.magazine_backdrop)
                             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
@@ -2101,7 +2048,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                                             bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
                                             Glide.clear(photoView);
                                             Glide.with(context)
-                                                    .load(data.getImage_filename())
+                                                    .load(data.getS3_image_filename())
                                                     .override(bmp.getWidth(), bmp.getHeight())
                                                     .placeholder(R.drawable.magazine_backdrop)
                                                     .crossFade()
@@ -2710,4 +2657,5 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             mToastFactory.newToast(context.getString(R.string.no_topics_selected), Toast.LENGTH_SHORT);
         }
     }
+
 }

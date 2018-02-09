@@ -140,7 +140,6 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
             } else {
                 noResults.setText(getString(R.string.no_contacts_found));
                 noResults.setVisibility(View.VISIBLE);
-                //mToastFactory.newToast(getString(R.string.room_id_not_created), Toast.LENGTH_SHORT);
             }
 
         }
@@ -179,6 +178,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         itemClick(position);
     }
 
+    // selected contact to perform action
     private void itemClick(int position) {
         Contact contact;
         try {
@@ -191,12 +191,11 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
 
             if (position == 0 && contact.getNexgieUserName() == null && contact.getPhoneNo() == null && contact.getFirebaseRoomId() == null && activity != null) {
                 startActivityForResult(new Intent(activity, CreateGroupActivity.class), CREATE_GROUP_RESULT);
-                /*Intent intent = new Intent(activity, CreateGroupActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivityForResult(intent, CREATE_GROUP_RESULT);*/
             } else if (activity != null && contact.getNexgieUserName() != null && forwardChatMessages != null && contact.isYoAppUser()) {
+                // forward chat message to selected user
                 ChatActivity.start(activity, contact, forwardChatMessages);
             } else if (activity != null && contact.getNexgieUserName() != null && contact.isYoAppUser()) {
+                // share article with selected user
                 ChatActivity.start(activity, contact, share);
             }
         } catch (NullPointerException | IndexOutOfBoundsException e) {
@@ -204,6 +203,9 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         }
     }
 
+    /**
+     * Display yo app contacts only
+     */
     private void getYoAppUsers() {
 
         final List<Contact> contacts = mContactsSyncManager.getContacts();
@@ -226,12 +228,15 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
                 if (contacts.isEmpty()) {
                     noResults.setText(getString(R.string.no_contacts_found));
                     noResults.setVisibility(View.VISIBLE);
-                    //mToastFactory.newToast(getString(R.string.room_id_not_created), Toast.LENGTH_SHORT);
                 }
             }
         });
     }
 
+    /**
+     * Sort contacts in alphabetical order
+     * @param contactList
+     */
     private void loadInAlphabeticalOrder(@NonNull List<Contact> contactList) {
         String newGroupTxt = "";
         if (activity != null) {
@@ -292,6 +297,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     }
 
 
+    // show progressbar
     @Override
     public void showProgressDialog() {
         if (getView() != null) {
@@ -307,6 +313,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
         }
     }
 
+    // dismiss progressbar
     @Override
     public void dismissProgressDialog() {
         if (getView() != null) {

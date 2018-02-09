@@ -3,17 +3,12 @@ package com.yo.android.util;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.BuildConfig;
@@ -31,13 +26,10 @@ import javax.inject.Singleton;
 
 import butterknife.ButterKnife;
 
-/**
- * Created by Ramesh on 13/7/16.
- */
 @Singleton
 public class FireBaseHelper {
 
-    private static final String TAG = "FireBaseHelper";
+    private static final String TAG = FireBaseHelper.class.getSimpleName();
     private Map<String, ChatMessage> map = new HashMap<>();
     private Context mContext;
     private FirebaseAuth firebaseAuth;
@@ -68,6 +60,7 @@ public class FireBaseHelper {
         return map.get(roomId);
     }
 
+    // unauth from firebase
     public void unauth() {
         if (ref != null) {
             ref.unauth();
@@ -75,6 +68,7 @@ public class FireBaseHelper {
         }
     }
 
+    // Generate firebase custom token
     public Firebase authWithCustomToken(final Context context, final String authToken, ApiCallback<Firebase> firebaseApiCallback) {
         mContext = context;
         //Url from Firebase dashboard
@@ -132,7 +126,6 @@ public class FireBaseHelper {
 
                         }
                     });
-                    //Toast.makeText(context, "Login un Succeeded!", Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
@@ -144,6 +137,8 @@ public class FireBaseHelper {
     public void unbind() {
         ButterKnife.bind((Activity) mContext);
     }
+
+    // This logic need to be used on updating firebase
 
     /*public Firebase authWithNewCustomToken(final Context context, final String authToken) {
         firebaseAuth = FirebaseAuth.getInstance();

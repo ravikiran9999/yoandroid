@@ -34,13 +34,10 @@ import com.yo.android.model.NotificationCountReset;
 import com.yo.android.model.Room;
 import com.yo.android.model.Share;
 import com.yo.android.photo.util.ColorGenerator;
-import com.yo.android.pjsip.SipBinder;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -65,11 +62,9 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
     private Contact mContact;
     private String groupName;
     private String chatRoomId;
+
     @Bind(R.id.progress_layout)
     RelativeLayout progressLayout;
-
-    private SipBinder sipBinder;
-
 
     private TextView customTitle;
     public TextView chatUserStatus;
@@ -186,7 +181,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                                     String message = new Gson().toJson(args);
                                     appLogglyUsecase.sendAlertsToLoggly(Constants.CHAT_MODULE, message, Constants.CRITICAL, 808);
                                 }
-                                //callUserChat(args, userChatFragment);
                             } finally {
                                 if (response != null && response.body() != null) {
                                     try {
@@ -213,7 +207,6 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                     args.putString(Constants.FIREBASE_OPPONENT_USER_ID, contact.getFirebaseUserId());
                     args.putString(Constants.CHAT_ROOM_ID, firebaseRoomId);
                     args.putString(Constants.OPPONENT_CONTACT_IMAGE, contact.getImage());
-                    //args.putParcelable(Constants.CONTACT, contact);
                     if (firebaseRoomId != null && !TextUtils.isEmpty(firebaseRoomId)) {
                         callUserChat(args, userChatFragment);
                     } else {
@@ -254,6 +247,8 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
             } else {
                 mToastFactory.showToast(R.string.chat_room_id_error);
                 String message = new Gson().toJson(args);
+
+                // send chat error message to loggly
                 appLogglyUsecase.sendAlertsToLoggly(Constants.CHAT_MODULE, message, Constants.CRITICAL, 808);
             }
         }
@@ -353,7 +348,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         }
     }
 
-
+    // navigate to user profile on selecting title view
     @Override
     public void onClick(View v) {
         String opponentTrim = null;
@@ -425,6 +420,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
     }
 
 
+    // load user profile image or first letter of name
     private Drawable loadAvatarImage(ImageView imageview, boolean isgroup) {
         if (imageview.getTag() != null) {
             return (Drawable) imageview.getTag(Settings.imageTag);
@@ -467,16 +463,17 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
         customTitle.setText(groupSubject.getUpdatedSubject());
     }
 
+    // display firebase user online/offline status
     @Override
     public void updateUserStatus(final boolean value) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (value) {
-                    chatUserStatus.setText("online");
+                    chatUserStatus.setText(R.string.online);
                     chatUserStatus.setVisibility(View.VISIBLE);
                 } else {
-                    chatUserStatus.setText("offline");
+                    chatUserStatus.setText(R.string.offline);
                     chatUserStatus.setVisibility(View.GONE);
                 }
             }
@@ -484,6 +481,11 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
 
     }
 
+    /**
+     *
+     * @param opponent
+     * @return phone number only
+     */
     private String removeYoUser(String opponent) {
         if (opponent != null && opponent.contains(Constants.YO_USER)) {
             try {

@@ -502,7 +502,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                 final RelativeLayout rlFullImageOptions = holder.rlFullImageOptions;
                 final TextView textView1 = holder.articleShortDesc;
                 Glide.with(context)
-                        .load(data.getImage_filename())
+                        .load(data.getS3_image_filename())
                         //.asBitmap()
                         .placeholder(R.drawable.magazine_backdrop)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
