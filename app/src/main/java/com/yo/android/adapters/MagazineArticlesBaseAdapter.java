@@ -26,7 +26,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
@@ -63,19 +62,14 @@ import com.yo.android.util.Constants;
 import com.yo.android.util.MagazineOtherPeopleReflectListener;
 import com.yo.android.util.Util;
 import com.yo.android.video.InAppVideoActivity;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
-
-import javax.inject.Inject;
-
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -91,8 +85,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     public static AutoReflectWishListActionsListener reflectListener;
     public static MagazineOtherPeopleReflectListener mListener;
     public static AutoReflectTopicsFollowActionsListener reflectTopicsFollowActionsListener;
-
-
     private List<Articles> items;
     PreferenceEndPoint preferenceEndPoint;
     YoApi.YoService yoService;
@@ -107,7 +99,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     AddTopicsUsecase mAddTopicsUsecase;
 
     private static AutoReflectWishListActionsListener reflectListenerTemp;
-
 
     public MagazineArticlesBaseAdapter(Context context,
                                        PreferenceEndPoint preferenceEndPoint,
