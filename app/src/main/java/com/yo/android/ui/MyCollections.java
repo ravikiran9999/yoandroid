@@ -56,6 +56,8 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
     protected TextView noSearchFound;
     @Bind(R.id.swipeContainer)
     protected SwipeRefreshLayout swipeRefreshContainer;
+    @Bind(R.id.network_failure)
+    TextView networkFailureText;
 
     @Inject
     YoApi.YoService yoService;
@@ -64,14 +66,10 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
 
-    @Bind(R.id.network_failure)
-    TextView networkFailureText;
-
     protected SearchView searchView;
     MyCollectionsAdapter myCollectionsAdapter;
     private boolean contextualMenu;
     private int initialVisiblePosition;
-
     public boolean isNetworkFailure;
 
 
@@ -533,21 +531,6 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                         if (response == null || response.body() == null) {
                             return;
                         }
-
-                    /*if (!TextUtils.isEmpty(finalSearchText.trim())) {
-                        for (int i = 0; i < response.body().size(); i++) {
-                            if (response.body().get(i).getName().contains(finalSearchText)) {
-                                collectionsList.addAll(response.body());
-                                myCollectionsAdapter.clearAll();
-                                myCollectionsAdapter.addItems(collectionsList);
-                                break;
-                            }
-                        }
-                    } else {
-                        collectionsList.addAll(response.body());
-                        myCollectionsAdapter.clearAll();
-                        myCollectionsAdapter.addItems(collectionsList);
-                    }*/
 
                         collectionsList.addAll(response.body());
                         myCollectionsAdapter.clearAll();

@@ -2,11 +2,7 @@ package com.yo.android.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.SparseBooleanArray;
@@ -24,20 +20,17 @@ import android.widget.TextView;
 import com.yo.android.R;
 import com.yo.android.chat.ImageLoader;
 import com.yo.android.chat.firebase.ContactsSyncManager;
-import com.yo.android.helpers.Helper;
 import com.yo.android.helpers.UserChatViewHolder;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
 import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.util.Constants;
 import com.yo.android.util.DateUtil;
-import com.yo.android.util.Util;
 
 import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import github.ankushsachdeva.emojicon.EmojiconTextView;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
 import static com.yo.android.util.Util.ServerTimeStamp;
@@ -56,11 +49,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
     private ContactsSyncManager mContactsSyncManager;
     private LayoutInflater inflater;
-
-    /*public UserChatAdapter(Activity context) {
-        super(context);
-        this.context = context.getBaseContext();
-    }*/
 
     public UserChatAdapter(Activity context, String userId, String type,
                            ContactsSyncManager mContactsSyncManager) {
@@ -89,7 +77,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
     // Item checked on selection
     public void selectedView(int position, boolean value) {
         if (value)
-
             mSelectedItemsIds.put(position, value);
         else
             mSelectedItemsIds.delete(position);
@@ -311,13 +298,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         return secretChatPlaceholder;
     }
 
-    private boolean isValidMobile(String phone) {
-        try {
-            return android.util.Patterns.PHONE.matcher(phone).matches();
-        } catch (NullPointerException e) {
-            return false;
-        }
-    }
 
     @Override
     public View getHeaderView(int position, View convertView, ViewGroup parent) {
@@ -361,10 +341,6 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
         return 0;
     }
 
-    public void UpdateItem(ChatMessage message) {
-        getAllItems().add(message);
-        notifyDataSetChanged();
-    }
 
     public class HeaderViewHolder {
         @Bind(R.id.time_stamp_text)

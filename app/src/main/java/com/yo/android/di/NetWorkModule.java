@@ -72,9 +72,9 @@ public class NetWorkModule {
         //
         OkHttpClient defaultHttpClient = builder
                 //.addInterceptor(interceptor)
-                .connectTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
 
                 //Commented below code as Getting OOM : Created an issue in
                 // https://github.com/square/okhttp/issues/2781

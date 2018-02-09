@@ -159,14 +159,15 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             update();
         }
 
-        handler = new Handler();
+        // clear glide for every 10 seconds
+        /*handler = new Handler();
         handler.postDelayed(new Runnable() {
 
             @Override
             public void run() {
                 clearGlideMemory(mContext);
             }
-        }, 10000);
+        }, 10000);*/
 
         return view;
     }

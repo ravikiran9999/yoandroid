@@ -32,8 +32,6 @@ import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -48,19 +46,13 @@ import com.yo.android.util.ArticlesComparator;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -617,106 +609,11 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 final RelativeLayout rlFullImageOptions = holder.rlFullImageOptions;
                 final TextView textView1 = holder.articleShortDesc;
                 Glide.with(context)
-                        .load(data.getImage_filename())
-                        .asBitmap()
+                        .load(data.getS3_image_filename())
                         .placeholder(R.drawable.magazine_backdrop)
                         .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                         .dontAnimate()
                         .into(photoView);
-
-                        /*.into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                                int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
-                                Bitmap bmp = null;
-                                if (resource != null) {
-                                    try {
-                                    bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
-                                    Glide.with(context)
-                                            .load(data.getImage_filename())
-                                            .override(bmp.getWidth(), bmp.getHeight())
-                                            .placeholder(R.drawable.magazine_backdrop)
-                                            .crossFade()
-                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                            .dontAnimate()
-                                            .into(photoView);
-
-                                    int screenHeight = DeviceDimensionsHelper.getDisplayHeight(context);
-                                    //Log.d("BaseAdapter", "screenHeight " + screenHeight);
-                                       *//*int spaceForImage = screenHeight - 120;
-                                       Log.d("BaseAdapter", "spaceForImage" + spaceForImage);*//*
-                                    //Log.d("BaseAdapter", "bmp.getHeight()" + bmp.getHeight());
-                                    int total = bmp.getHeight() + 50;
-                                    //if(bmp.getHeight() >= spaceForImage-30) {
-                                    //Log.d("BaseAdapter", "total" + total);
-                                    if (screenHeight - total <= 250) {
-
-                                        Log.d("BaseAdapter", "Full screen image");
-                                        if (fullImageTitle != null && articleTitle != null && blackMask != null && rlFullImageOptions != null) {
-                                            fullImageTitle.setVisibility(View.VISIBLE);
-                                            fullImageTitle.setText(articleTitle.getText().toString());
-                                            blackMask.setVisibility(View.VISIBLE);
-                                            rlFullImageOptions.setVisibility(View.VISIBLE);
-
-                                        }
-                                    } else {
-                                        fullImageTitle.setVisibility(View.GONE);
-                                        blackMask.setVisibility(View.GONE);
-                                        rlFullImageOptions.setVisibility(View.GONE);
-                                        articleTitle
-                                                .setText(AphidLog.format("%s", data.getTitle()));
-                                        textView1.setMaxLines(1000);
-                                        textView1
-                                                .setText(Html.fromHtml(data.getSummary()));
-                                    }
-                                    }finally {
-                                        if(bmp != null) {
-                                            bmp.recycle();
-                                            bmp = null;
-                                        }
-                                    }
-
-                                    *//*if(articleTitle != null) {
-                                        ViewTreeObserver vto1 = articleTitle.getViewTreeObserver();
-                                        vto1.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                                            private int maxLines = -1;
-
-                                            @Override
-                                            public void onGlobalLayout() {
-                                                //Log.d("BaseAdapter", "Second Title " + data.getTitle() + " max lines " + maxLines + " textView.getHeight() " + textView.getHeight() + " textView.getLineHeight() " + textView.getLineHeight());
-                                                if (maxLines < 0 && articleTitle.getHeight() > 0 && articleTitle.getLineHeight() > 0) {
-                                                    //Log.d("BaseAdapter", "Max lines inside if" + maxLines);
-                                                    int height = articleTitle.getHeight();
-                                                    int lineHeight = articleTitle.getLineHeight();
-                                                    maxLines = height / lineHeight;
-                                                    articleTitle.setMaxLines(maxLines);
-                                                    articleTitle.setEllipsize(TextUtils.TruncateAt.END);
-                                                    // Re-assign text to ensure ellipsize is performed correctly.
-                                                    articleTitle.setText(AphidLog.format("%s", data.getTitle()));
-                                                } else if(maxLines == -1 && articleTitle.getHeight() > 0) {
-                                                    //Log.d("BaseAdapter", "Max lines inside else if" + maxLines);
-                                                    articleTitle.setMaxLines(1);
-                                                    articleTitle.setEllipsize(TextUtils.TruncateAt.END);
-                                                    // Re-assign text to ensure ellipsize is performed correctly.
-                                                    articleTitle.setText(AphidLog.format("%s", data.getTitle()));
-                                                } else if(maxLines == -1 && articleTitle.getHeight() == 0) {
-                                                    // Log.d("BaseAdapter", "Full screen image after options cut or not shown");
-                                                    if (fullImageTitle != null && articleTitle != null && blackMask != null && rlFullImageOptions != null) {
-                                                        fullImageTitle.setVisibility(View.VISIBLE);
-                                                        fullImageTitle.setText(articleTitle.getText().toString());
-                                                        blackMask.setVisibility(View.VISIBLE);
-                                                        rlFullImageOptions.setVisibility(View.VISIBLE);
-
-                                                    }
-                                                }
-                                            }
-                                        });
-                                    }*//*
-
-
-                                }
-                            }
-                        });*/
 
                 if(articleTitle != null) {
                     articleTitle.setText(AphidLog.format("%s", data.getTitle()));

@@ -514,6 +514,7 @@ public class BaseActivity extends ParentActivity {
         }
     }
 
+    // clear glide memory
     public void clearGlideMemory(Context context) {
         Glide glide = Glide.get(context);
         glide.clearMemory();

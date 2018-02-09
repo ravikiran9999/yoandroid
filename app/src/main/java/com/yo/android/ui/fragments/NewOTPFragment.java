@@ -241,7 +241,6 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
             @Override
             public void onResponse(Call<OTPResponse> call, Response<OTPResponse> response) {
                 //dismissProgressDialog();
-                FragmentActivity activity = getActivity();
                 try {
                     if (response.isSuccessful()) {
                         preferenceEndPoint.saveBooleanPreference(Constants.SESSION_EXPIRE, false);
@@ -272,7 +271,6 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
             @Override
             public void onFailure(Call<OTPResponse> call, Throwable t) {
                 dismissProgressDialog();
-                FragmentActivity activity = getActivity();
                 if (activity != null) {
                     if (!mHelper.isConnected() || t instanceof SocketTimeoutException) {
                         mToastFactory.showToast(activity.getResources().getString(R.string.connectivity_network_settings));
@@ -452,40 +450,6 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
             nextBtn.performClick();
         }
     }
-
-    public void showOTPConfirmationDialog(final String otp) {
-        try {
-            if (getActivity() == null) {
-                mLog.e("OTPFragment", "showOTPConfirmationDialog: activity is already destroyed");
-                return;
-            }
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle("YoApp");
-            builder.setMessage("We are detected your PIN : " + otp);
-            builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    //etOtp.setText(otp);
-                    nextBtn.setText(getActivity().getString(R.string.otp_button_submit));
-                    //Auto click
-                    nextBtn.performClick();
-                }
-            });
-            builder.setCancelable(false);
-            builder.setNegativeButton("Skip", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    reSendTextBtn.setText("Resend");
-                    dialog.dismiss();
-                }
-            });
-            AlertDialog dialog = builder.create();
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.show();
-        } catch (Exception e) {
-        }
-    }
-
 
     private Runnable runnable = new Runnable() {
         @Override

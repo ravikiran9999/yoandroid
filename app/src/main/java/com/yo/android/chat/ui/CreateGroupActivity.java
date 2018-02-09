@@ -21,6 +21,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.orion.android.common.util.ToastFactory;
+import com.orion.android.common.util.ToastFactoryImpl;
 import com.yo.android.R;
 import com.yo.android.adapters.SelectedContactsAdapter;
 import com.yo.android.api.YoApi;
@@ -56,12 +58,10 @@ import retrofit2.Response;
 
 public class CreateGroupActivity extends BaseActivity implements View.OnClickListener, TextWatcher {
 
-    private ArrayList<Contact> selectedContactsArrayList;
-    private String mGroupName;
-
-
     private static final int REQUEST_SELECTED_CONTACTS = 3;
 
+    private ArrayList<Contact> selectedContactsArrayList;
+    private String mGroupName;
     public static List<Contact> ContactsArrayList;
     File imgFile;
 
@@ -79,7 +79,8 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
     PreferenceEndPoint loginPrefs;
     @Inject
     ImagePickHelper cameraIntent;
-
+    @Inject
+    ToastFactory mToastFactory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +122,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                 createGroup(mGroupName);
             } else {
                 Util.hideKeyboard(this, getCurrentFocus());
-                Toast.makeText(this, getString(R.string.enter_group_name), Toast.LENGTH_SHORT).show();
+                mToastFactory.showToast(R.string.enter_group_name);
             }
 
         } else if (item.getItemId() == android.R.id.home) {
@@ -130,6 +131,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
         return true;
     }
 
+    // Navigate to GroupContactsActivity for contact selection
     @Override
     public void onClick(View v) {
         mGroupName = groupName.getText().toString();
@@ -156,7 +158,6 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                     try {
                         String imagePath = ImagePickHelper.mFileTemp.getPath();
                         imgFile = new File(imagePath);
-                        //new ImageLoader(groupImage, imgFile, this).execute();
                         Glide.with(this)
                                 .load(imgFile.getAbsoluteFile())
                                 .priority(Priority.IMMEDIATE)
@@ -199,6 +200,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
         }
     }
 
+    // Group creation
     private void createGroup(String groupName) {
 
         if (!selectedContactsArrayList.isEmpty()) {
@@ -245,7 +247,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                             updateCache(body1);
                             finish();
                         } else {
-                            Toast.makeText(CreateGroupActivity.this, getResources().getString(R.string.group_creation_error), Toast.LENGTH_SHORT).show();
+                            mToastFactory.showToast(R.string.group_creation_error);
                         }
                         dismissProgressDialog();
                     } finally {
@@ -266,7 +268,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
             });
         } else {
             Util.hideKeyboard(this, getCurrentFocus());
-            Toast.makeText(this, "Atleast one contact should be selected", Toast.LENGTH_SHORT).show();
+            mToastFactory.showToast(R.string.select_atleast_one_contact);
         }
     }
 
@@ -310,7 +312,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+        // before text change
     }
 
     @Override
@@ -324,8 +326,6 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void afterTextChanged(Editable s) {
-
+       // after text change
     }
-
-
 }

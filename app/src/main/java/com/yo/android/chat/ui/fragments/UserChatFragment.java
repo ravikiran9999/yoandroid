@@ -100,7 +100,6 @@ import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
-
 import static com.yo.android.util.Util.copyFile;
 
 /**
@@ -211,17 +210,12 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
         chatForwards = bundle.getParcelableArrayList(Constants.CHAT_FORWARD);
         share = bundle.getParcelable(Constants.CHAT_SHARE);
-        //mLog.e(TAG, "Firebase token reading from pref " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
         authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN), null);
 
         chatMessageArray = new ArrayList<>();
         setHasOptionsMenu(true);
 
-
-        //checkFirebaseUserStatus(authReference, opponentFirebaseUserId);
-
-
-        alarmManager();
+        //alarmManager();
     }
 
     @Override
@@ -240,11 +234,9 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         roomType = getArguments().getString(Constants.TYPE);
         listView.setDivider(null);
         listView.setDividerHeight(0);
-        //listView.setOnItemClickListener(this);
         chatMessageHashMap = new HashMap<>();
         userChatAdapter = new UserChatAdapter(getActivity(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER), roomType, mContactsSyncManager);
         listView.setAdapter(userChatAdapter);
-        //listView.smoothScrollToPosition(userChatAdapter.getCount());
         setSmoothScrollPosition(userChatAdapter, listView);
         listView.setVerticalScrollBarEnabled(true);
         listView.setClipToPadding(false);
@@ -259,6 +251,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         send.setOnClickListener(this);
         popup.setSizeForSoftKeyboard();
         cameraView.setOnClickListener(this);
+
         //If the emoji popup is dismissed, change emojiButton to smiley icon
         popup.setOnDismissListener(new PopupWindow.OnDismissListener() {
 
@@ -578,8 +571,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
+    // View user profile on selecting menu option item
     private void viewContact() {
-
         if (roomType != null) {
             UserProfileActivity.startGroup(getActivity(), childRoomId, roomType, opponentImg, opponentName, Constants.FROM_CHAT_ROOMS);
         } else if (opponentNumber != null && opponentNumber.contains(Constants.YO_USER)) {
@@ -597,6 +590,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
+    /**
+     *  create chat message object
+     *
+     * @param message
+     * @param userId
+     * @param type
+     */
     private void sendChatMessage(@NonNull final String message, @NonNull String userId, @NonNull String type) {
         long timestamp = System.currentTimeMillis();
         int msgId = (int) timestamp;
@@ -625,7 +625,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         if (roomExist == 0 && TextUtils.isEmpty(childRoomId)) {
             if (roomCreationProgress == 0) {
                 roomCreationProgress = 1;
-                //createRoom(message, chatMessage);
             }
         } else {
             chatMessage.setRoomId(childRoomId);
@@ -633,6 +632,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
+
+    // send chat message object to firebase database
     private void sendChatMessage(final ChatMessage chatMessage) {
         try {
 
@@ -651,7 +652,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 if (!chatMessageHashMap.keySet().contains(chatMessage.getMsgID())) {
                     chatMessageArray.add(chatMessage);
                     userChatAdapter.addItems(chatMessageArray);
-                    //listView.smoothScrollToPosition(userChatAdapter.getCount() - 1);
                     setSmoothScrollPosition(userChatAdapter, listView);
                     chatMessageHashMap.put(chatMessage.getMsgID(), chatMessageArray);
                 }
@@ -697,13 +697,13 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                                 Log.i(TAG, "firebaseToken :: " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN));
                                 Log.i(TAG, "firebase User Id :: " + preferenceEndPoint.getStringPreference(Constants.FIREBASE_USER_ID));
                             }
-                            Toast.makeText(activity, "Message not sent", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, activity.getString(R.string.message_not_sent), Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         chatMessage.setMessageKey(firebase.getKey());
                         chatMessage.setSent(1);
 
-                        if (activity instanceof ChatActivity && !((ChatActivity) activity).chatUserStatus.getText().equals("online")) {
+                        if (activity instanceof ChatActivity && !((ChatActivity) activity).chatUserStatus.getText().equals(activity.getString(R.string.online))) {
                             Log.i(TAG, ((ChatActivity) activity).chatUserStatus.getText().toString());
                             chatNotificationUsecase.pushChatMessage(chatMessage);
                         }
@@ -720,14 +720,15 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
+    // register firebase listeners
     private void registerChildEventListener(Query chatRoomReference) {
         if (!isChildEventListenerAdd) {
-            //isChildEventListenerAdd = Boolean.TRUE;
             chatRoomReference.addChildEventListener(this);
             chatRoomReference.keepSynced(true);
         }
     }
 
+    // Capture image using camera
     private void takePicture() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         try {
@@ -751,7 +752,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             intent.putExtra("return-data", true);
             startActivityForResult(intent, ADD_IMAGE_CAPTURE);
         } catch (ActivityNotFoundException e) {
-            mLog.w(TAG, e);
+            // catch exception
         }
     }
 
@@ -795,7 +796,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     }
 
     private void addSelectPicture(Uri targetUri) {
-        //Uri targetUri = data.getData();
         String[] filePathColumn = {MediaStore.Images.Media.DATA};
         try {
             Cursor cursor = getActivity().getContentResolver().query(targetUri,
@@ -853,6 +853,11 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
+    /**
+     * update chat view with local image
+     *
+     * @param mPartyPicUri
+     */
     @NonNull
     private void updateChatWithLocalImage(String mPartyPicUri) {
         ChatMessage message = new ChatMessage();
@@ -953,18 +958,21 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     }
 
+    /**
+     * wrap chat image object
+     *
+     * @param chatMessage
+     * @param imagePathName
+     */
     private void sendImage(ChatMessage chatMessage, @NonNull String imagePathName) {
 
         String userId = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         long timestamp = System.currentTimeMillis();
-        //int msgId = (int) timestamp;
-        //ChatMessage chatMessage = new ChatMessage();
         chatMessage.setType(Constants.IMAGE);
         chatMessage.setTime(timestamp);
         chatMessage.setImagePath(imagePathName);
         chatMessage.setSenderID(userId);
         chatMessage.setMessageKey(DummyMsgKey);
-        //chatMessage.setMsgID(msgId);
         chatMessage.setRoomId(childRoomId);
         chatMessage.setVoxUserName(preferenceEndPoint.getStringPreference(Constants.VOX_USER_NAME));
         chatMessage.setYouserId(preferenceEndPoint.getStringPreference(Constants.USER_ID));
@@ -989,6 +997,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
      https://github.com/firebase/quickstart-android/issues/176
      */
 
+    // new child is added
     @Override
     public void onChildAdded(com.firebase.client.DataSnapshot dataSnapshot, String s) {
         try {
@@ -1014,6 +1023,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
+    // on change in child
     @Override
     public void onChildChanged(com.firebase.client.DataSnapshot dataSnapshot, String s) {
         ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
@@ -1026,7 +1036,6 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
                 }
                 userChatAdapter.addItems(chatMessageArray);
                 setSmoothScrollPosition(userChatAdapter, listView);
-                //listView.smoothScrollToPosition(userChatAdapter.getCount() - 1);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1067,6 +1076,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         // this method will be triggered on child moved
     }
 
+    // this method will be triggered on cancel
     @Override
     public void onCancelled(FirebaseError firebaseError) {
         firebaseError.getMessage();
@@ -1130,6 +1140,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
+    // change emoji keyboard icon
     private void changeEmojiKeyboardIcon(ImageView iconToBeChanged, int drawableResourceId) {
         iconToBeChanged.setImageResource(drawableResourceId);
     }
@@ -1165,13 +1176,15 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         AlarmManager manager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
         int interval = 2 * 60 * 1000; // 2 minutes interval
 
-        manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
+        if (manager != null) {
+            manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
+        }
     }
 
+    // smooth scroll to last item
     private void setSmoothScrollPosition(UserChatAdapter chatAdapter, StickyListHeadersListView listView) {
         listView.setVerticalScrollBarEnabled(false);
         int count = chatAdapter.getCount() - 1;
-        //Log.i(TAG, String.valueOf(count));
         listView.setSelection(count);
     }
 
