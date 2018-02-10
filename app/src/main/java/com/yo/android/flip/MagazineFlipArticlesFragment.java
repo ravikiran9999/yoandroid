@@ -412,7 +412,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         super.onDestroyView();
         try {
             clearGlideMemory(mContext);
-            handler.removeCallbacksAndMessages(null);
+            if(handler != null) {
+                handler.removeCallbacksAndMessages(null);
+            }
         } finally {
 
         }

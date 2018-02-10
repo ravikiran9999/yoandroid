@@ -624,6 +624,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
                     Glide.with(context)
                             .load(data.getS3_image_filename())
+                            .thumbnail(0.1f)
                             .placeholder(R.drawable.magazine_backdrop)
                             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                             .dontAnimate()
