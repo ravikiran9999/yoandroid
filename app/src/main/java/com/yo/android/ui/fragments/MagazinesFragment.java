@@ -45,8 +45,10 @@ import com.yo.android.ui.FollowingsActivity;
 import com.yo.android.ui.MagazineActivity;
 import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.WishListActivity;
+import com.yo.android.usecase.MagazinesFlipArticlesUsecase;
 import com.yo.android.usecase.MagazinesServicesUsecase;
 import com.yo.android.util.Constants;
+import com.yo.android.util.MagazineDashboardHelper;
 import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
 import com.yo.android.util.YODialogs;
@@ -107,6 +109,9 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     private MagazineFlipArticlesFragment mMagazineFlipArticlesFragment;
     @Inject
     MagazinesServicesUsecase magazinesServicesUsecase;
+    @Inject
+    public MagazinesFlipArticlesUsecase magazinesFlipArticlesUsecase;
+    MagazineDashboardHelper magazineDashboardHelper;
 
 
     public MagazineFlipArticlesFragment getmMagazineFlipArticlesFragment() {
@@ -120,6 +125,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
     public MagazinesFragment() {
         // Required empty public constructor
+        magazineDashboardHelper = new MagazineDashboardHelper();
     }
 
     @Override
@@ -517,7 +523,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 public boolean onClose() {
                     if (mMagazineFlipArticlesFragment != null) {
                         MagazineFlipArticlesFragment.lastReadArticle = 0;
-                        mMagazineFlipArticlesFragment.getLandingCachedArticles();
+                        magazinesFlipArticlesUsecase.getLandingCachedArticles(getActivity(), mMagazineFlipArticlesFragment.myBaseAdapter, mMagazineFlipArticlesFragment, magazineDashboardHelper );
                     }
                     return true;
                 }
@@ -717,7 +723,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 }
                 preferenceEndPoint.saveStringPreference(Constants.MAGAZINE_TAGS, TextUtils.join(",", followedTopicsIdsList));
                 if (followedTopicsIdsList.isEmpty()) {
-                    mMagazineFlipArticlesFragment.getLandingCachedArticles();
+                    magazinesFlipArticlesUsecase.getLandingCachedArticles(getActivity(), mMagazineFlipArticlesFragment.myBaseAdapter, mMagazineFlipArticlesFragment, magazineDashboardHelper );
                 }
             }
 

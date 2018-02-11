@@ -41,6 +41,7 @@ import com.yo.android.usecase.AddTopicsUsecase;
 import com.yo.android.usecase.MagazinesServicesUsecase;
 import com.yo.android.util.AutoReflectTopicsFollowActionsListener;
 import com.yo.android.util.AutoReflectWishListActionsListener;
+import com.yo.android.util.Constants;
 import com.yo.android.util.MagazineOtherPeopleReflectListener;
 import com.yo.android.video.InAppVideoActivity;
 import java.util.ArrayList;
@@ -306,7 +307,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     .setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            mMagazinesServicesUsecase.navigateToArticleWebView(magazineFlipArticlesFragment, context, data, position);
+                            mMagazinesServicesUsecase.navigateToArticleWebView(context, data, position);
                         }
                     });
         }
@@ -329,7 +330,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     if (videoUrl != null && !TextUtils.isEmpty(videoUrl)) {
                         InAppVideoActivity.start((Activity) context, videoUrl, data.getTitle());
                     } else {
-                        mMagazinesServicesUsecase.navigateToArticleWebView(magazineFlipArticlesFragment, context, data, position);
+                        mMagazinesServicesUsecase.navigateToArticleWebView(context, data, position);
                     }
                 }
             });
@@ -380,7 +381,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             llArticleInfo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mMagazinesServicesUsecase.navigateToArticleWebView(magazineFlipArticlesFragment, context, data, position);
+                    mMagazinesServicesUsecase.navigateToArticleWebView(context, data, position);
                 }
             });
         }
@@ -547,12 +548,12 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     @Override
     public void updateFollowOrLikesStatus(Articles data, String type) {
-        mMagazinesServicesUsecase.autoReflectStatus(data, type, allArticles, context, this);
+       autoReflectStatus(data, type, allArticles, context, this);
     }
 
     @Override
     public void updateMagazineStatus(Articles data, String follow) {
-        mMagazinesServicesUsecase.autoReflectStatus(data, follow, allArticles, context, this);
+       autoReflectStatus(data, follow, allArticles, context, this);
     }
 
     @Override
@@ -629,7 +630,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             photoView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mMagazinesServicesUsecase.navigateToArticleWebView(magazineFlipArticlesFragment, context, data, position);
+                    mMagazinesServicesUsecase.navigateToArticleWebView(context, data, position);
                 }
             });
         }
@@ -1341,6 +1342,57 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             });
         } else {
             mToastFactory.newToast(context.getString(R.string.no_topics_selected), Toast.LENGTH_SHORT);
+        }
+    }
+
+    /**
+     * Updates the Follow and Like status of the articles
+     *
+     * @param data The articles object
+     * @param type Whether it is Follow or Like
+     */
+    public void autoReflectStatus(Articles data, String type, List<Articles> allArticles, Context context, MagazineArticlesBaseAdapter magazineArticlesBaseAdapter) {
+        if (data != null) {
+
+            if (Constants.FOLLOW_EVENT.equals(type)) {
+                for (Articles article : allArticles) {
+                    if (data.getId() != null && data.getId().equals(article.getId())) {
+                        article.setIsFollowing(data.getIsFollowing());
+                        article.setIsFollow(data.isFollow());
+                        if (!((BaseActivity) context).hasDestroyed()) {
+                            magazineArticlesBaseAdapter.notifyDataSetChanged();
+                        }
+                        break;
+                    }
+                }
+            } else {
+                allArticles = magazineArticlesBaseAdapter.getAllItems();
+                for (Articles article : allArticles) {
+                    if (data.getId() != null && data.getId().equals(article.getId())) {
+                        article.setLiked(data.getLiked());
+                        article.setIsChecked(data.isChecked());
+                        if (!((BaseActivity) context).hasDestroyed()) {
+                            magazineArticlesBaseAdapter.notifyDataSetChanged();
+                        }
+
+                        List<Articles> cachedMagazinesList = mMagazinesServicesUsecase.getCachedMagazinesList(context);
+
+                        if (cachedMagazinesList != null) {
+                            List<Articles> tempList = cachedMagazinesList;
+                            for (int i = 0; i < cachedMagazinesList.size(); i++) {
+                                if (data.getId().equals(tempList.get(i).getId())) {
+                                    tempList.get(i).setLiked(data.getLiked());
+                                }
+                            }
+                            cachedMagazinesList = tempList;
+
+                            mMagazinesServicesUsecase.saveCachedMagazinesList(cachedMagazinesList, context);
+                        }
+                        break;
+                    }
+
+                }
+            }
         }
     }
 

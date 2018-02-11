@@ -35,6 +35,7 @@ import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.BitmapScaler;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.DeviceDimensionsHelper;
+import com.yo.android.ui.MyCollectionDetails;
 import com.yo.android.ui.OtherProfilesLikedArticles;
 import com.yo.android.ui.TopicsDetailActivity;
 import com.yo.android.util.ArticlesComparator;
@@ -62,7 +63,7 @@ import retrofit2.Response;
 
 public class MagazinesServicesUsecase {
 
-    public static final String TAG = AddTopicsUsecase.class.getSimpleName();
+    public static final String TAG = MagazinesServicesUsecase.class.getSimpleName();
     @Inject
     YoApi.YoService yoService;
 
@@ -313,13 +314,15 @@ public class MagazinesServicesUsecase {
         }
     }
 
-    public void navigateToArticleWebView(MagazineFlipArticlesFragment magazineFlipArticlesFragment, Context context, Articles data, int position) {
+    public void navigateToArticleWebView(Context context, Articles data, int position) {
         Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
         intent.putExtra("Title", data.getTitle());
         intent.putExtra("Image", data.getUrl());
         intent.putExtra("Article", data);
         intent.putExtra("Position", position);
-        magazineFlipArticlesFragment.startActivityForResult(intent, 500);
+        if (context instanceof Activity) {
+            ((Activity) context).startActivityForResult(intent, 500);
+        }
     }
 
     public void onShareClick(View v, Articles data) {
@@ -369,7 +372,7 @@ public class MagazinesServicesUsecase {
      *
      * @param data The articles object
      * @param type Whether it is Follow or Like
-     */
+     *//*
     public void autoReflectStatus(Articles data, String type, List<Articles> allArticles, Context context, MagazineArticlesBaseAdapter magazineArticlesBaseAdapter) {
         if (data != null) {
 
@@ -413,7 +416,7 @@ public class MagazinesServicesUsecase {
                 }
             }
         }
-    }
+    }*/
 
     /**
      * Loading articles

@@ -4,9 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
@@ -17,7 +14,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -38,13 +34,12 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.api.YoApi;
-import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.helpers.MagazinePreferenceEndPoint;
 import com.yo.android.model.Articles;
 import com.yo.android.model.MagazineArticles;
+import com.yo.android.usecase.MagazinesServicesUsecase;
 import com.yo.android.util.ArticlesComparator;
 import com.yo.android.util.Constants;
-import com.yo.android.util.Util;
 
 import java.lang.reflect.Type;
 import java.net.SocketTimeoutException;
@@ -62,8 +57,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import se.emilsjolander.flipview.FlipView;
-
-import static com.yo.android.R.id.date;
 
 /**
  * This activity is used to display the articles of a followed topic
@@ -88,20 +81,18 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
     private FlipView flipView;
     private List<Articles> cachedArticlesList = new ArrayList<>();
     private Context context;
+    @Inject
+    MagazinesServicesUsecase magazinesServicesUsecase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_collection_details);
-
         context = this;
-
         flipView = (FlipView) findViewById(R.id.flip_view);
         tvNoArticles = (TextView) findViewById(R.id.tv_no_articles);
         myBaseAdapter = new MyBaseAdapter(this);
         flipView.setAdapter(myBaseAdapter);
-
-
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         flipView.setOnFlipListener(this);
@@ -112,9 +103,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
         type = intent.getStringExtra("Type");
 
         String title = topicName;
-
         getSupportActionBar().setTitle(title);
-
         articlesList.clear();
 
         readArticleIds = new ArrayList<>();
@@ -123,59 +112,10 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
         flipView.setVisibility(View.VISIBLE);
 
         if ("Tag".equals(type)) {
-            String accessToken = preferenceEndPoint.getStringPreference("access_token");
             List<String> tagIds = new ArrayList<String>();
             tagIds.add(topicId);
 
-            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-            List<Articles> cachedTopicMagazinesList = new ArrayList<Articles>();
-            List<Articles> cachedMagazinesList = getCachedMagazinesList();
-
-            if (cachedMagazinesList != null) {
-                for (Articles article : cachedMagazinesList) {
-                    if (article.getTopicId().equals(topicId)) {
-                        cachedTopicMagazinesList.add(article);
-                    }
-                }
-            }
-
-            cachedArticlesList.addAll(cachedTopicMagazinesList);
-            List<Articles> tempArticlesList = new ArrayList<Articles>(cachedArticlesList);
-            String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("read_article_ids", "");
-            if (!TextUtils.isEmpty(readCachedIds)) {
-                Type type1 = new TypeToken<List<String>>() {
-                }.getType();
-                String cachedIds = readCachedIds;
-                List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
-
-
-                for (Articles article : cachedArticlesList) {
-                    for (String artId : cachedReadList) {
-                        if (article.getId().equals(artId)) {
-                            tempArticlesList.remove(article);
-                            break;
-                        }
-                    }
-                }
-            }
-            cachedArticlesList = tempArticlesList;
-            List<Articles> emptyUpdatedArticles = new ArrayList<>();
-            List<Articles> notEmptyUpdatedArticles = new ArrayList<>();
-            for (Articles updatedArticles : cachedArticlesList) {
-                if (!TextUtils.isEmpty(updatedArticles.getUpdated())) {
-                    notEmptyUpdatedArticles.add(updatedArticles);
-                } else {
-                    emptyUpdatedArticles.add(updatedArticles);
-                }
-            }
-            Collections.sort(notEmptyUpdatedArticles, new ArticlesComparator());
-            Collections.reverse(notEmptyUpdatedArticles);
-            notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
-            cachedArticlesList = notEmptyUpdatedArticles;
-            LinkedHashSet<Articles> hashSet = new LinkedHashSet<>();
-            hashSet.addAll(cachedArticlesList);
-            cachedArticlesList = new ArrayList<Articles>(hashSet);
-            myBaseAdapter.addItems(cachedArticlesList);
+            displayUnreadCachedMagazines();
 
             /*if (cachedArticlesList.size() == 0) {
                 tvNoArticles.setVisibility(View.VISIBLE);
@@ -191,54 +131,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             getRemainingArticlesInTopics(existingArticleIds);
         } else {
 
-            String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-            List<Articles> cachedTopicMagazinesList = new ArrayList<Articles>();
-            List<Articles> cachedMagazinesList = getCachedMagazinesList();
-
-            if (cachedMagazinesList != null) {
-                for (Articles article : cachedMagazinesList) {
-                    if (article.getTopicId().equals(topicId)) {
-                        cachedTopicMagazinesList.add(article);
-                    }
-                }
-            }
-
-            cachedArticlesList.addAll(cachedTopicMagazinesList);
-            List<Articles> tempArticlesList = new ArrayList<Articles>(cachedArticlesList);
-            String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("read_article_ids", "");
-            if (!TextUtils.isEmpty(readCachedIds)) {
-                Type type1 = new TypeToken<List<String>>() {
-                }.getType();
-                String cachedIds = readCachedIds;
-                List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
-
-                for (Articles article : cachedArticlesList) {
-                    for (String artId : cachedReadList) {
-                        if (article.getId().equals(artId)) {
-                            tempArticlesList.remove(article);
-                            break;
-                        }
-                    }
-                }
-            }
-            cachedArticlesList = tempArticlesList;
-            List<Articles> emptyUpdatedArticles = new ArrayList<>();
-            List<Articles> notEmptyUpdatedArticles = new ArrayList<>();
-            for (Articles updatedArticles : cachedArticlesList) {
-                if (!TextUtils.isEmpty(updatedArticles.getUpdated())) {
-                    notEmptyUpdatedArticles.add(updatedArticles);
-                } else {
-                    emptyUpdatedArticles.add(updatedArticles);
-                }
-            }
-            Collections.sort(notEmptyUpdatedArticles, new ArticlesComparator());
-            Collections.reverse(notEmptyUpdatedArticles);
-            notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
-            cachedArticlesList = notEmptyUpdatedArticles;
-            LinkedHashSet<Articles> hashSet = new LinkedHashSet<>();
-            hashSet.addAll(cachedArticlesList);
-            cachedArticlesList = new ArrayList<>(hashSet);
-            myBaseAdapter.addItems(cachedArticlesList);
+            displayUnreadCachedMagazines();
             /*if (cachedArticlesList.size() == 0) {
                 tvNoArticles.setVisibility(View.VISIBLE);
                 flipView.setVisibility(View.GONE);
@@ -251,6 +144,58 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             List<String> existingArticleIds = checkCachedMagazines();
             getRemainingArticlesInMagazine(existingArticleIds);
         }
+    }
+
+    private void displayUnreadCachedMagazines() {
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        List<Articles> cachedTopicMagazinesList = new ArrayList<Articles>();
+        List<Articles> cachedMagazinesList = magazinesServicesUsecase.getCachedMagazinesList(this);
+
+        if (cachedMagazinesList != null) {
+            for (Articles article : cachedMagazinesList) {
+                if (article.getTopicId().equals(topicId)) {
+                    cachedTopicMagazinesList.add(article);
+                }
+            }
+        }
+
+        cachedArticlesList.addAll(cachedTopicMagazinesList);
+        List<Articles> tempArticlesList = new ArrayList<Articles>(cachedArticlesList);
+        String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("read_article_ids", "");
+        if (!TextUtils.isEmpty(readCachedIds)) {
+            Type type1 = new TypeToken<List<String>>() {
+            }.getType();
+            String cachedIds = readCachedIds;
+            List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
+
+
+            for (Articles article : cachedArticlesList) {
+                for (String artId : cachedReadList) {
+                    if (article.getId().equals(artId)) {
+                        tempArticlesList.remove(article);
+                        break;
+                    }
+                }
+            }
+        }
+        cachedArticlesList = tempArticlesList;
+        List<Articles> emptyUpdatedArticles = new ArrayList<>();
+        List<Articles> notEmptyUpdatedArticles = new ArrayList<>();
+        for (Articles updatedArticles : cachedArticlesList) {
+            if (!TextUtils.isEmpty(updatedArticles.getUpdated())) {
+                notEmptyUpdatedArticles.add(updatedArticles);
+            } else {
+                emptyUpdatedArticles.add(updatedArticles);
+            }
+        }
+        Collections.sort(notEmptyUpdatedArticles, new ArticlesComparator());
+        Collections.reverse(notEmptyUpdatedArticles);
+        notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
+        cachedArticlesList = notEmptyUpdatedArticles;
+        LinkedHashSet<Articles> hashSet = new LinkedHashSet<>();
+        hashSet.addAll(cachedArticlesList);
+        cachedArticlesList = new ArrayList<Articles>(hashSet);
+        myBaseAdapter.addItems(cachedArticlesList);
     }
 
     @Override
@@ -431,69 +376,9 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                     if (isChecked) {
-                        showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                dismissProgressDialog();
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
-                                }
-                                if (MagazineArticlesBaseAdapter.mListener != null) {
-                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
-                                }
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                                mToastFactory.showToast("You have liked the article " + data.getTitle());
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                dismissProgressDialog();
-                                Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                            }
-                        });
+                        likeMyCollectionArticles(data);
                     } else {
-                        showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                dismissProgressDialog();
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
-                                }
-                                if (MagazineArticlesBaseAdapter.mListener != null) {
-                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
-                                }
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                                mToastFactory.showToast("You have unliked the article " + data.getTitle());
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                dismissProgressDialog();
-                                Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                            }
-                        });
+                        unlikeMyCollectionArticles(data);
                     }
                 }
             });
@@ -513,69 +398,9 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                     if (isChecked) {
-                        showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                dismissProgressDialog();
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
-                                }
-                                if (MagazineArticlesBaseAdapter.mListener != null) {
-                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
-                                }
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                                mToastFactory.showToast("You have liked the article " + data.getTitle());
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                dismissProgressDialog();
-                                Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                            }
-                        });
+                        likeMyCollectionArticles(data);
                     } else {
-                        showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                dismissProgressDialog();
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
-                                }
-                                if (MagazineArticlesBaseAdapter.mListener != null) {
-                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
-                                }
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                                mToastFactory.showToast("You have unliked the article " + data.getTitle());
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                dismissProgressDialog();
-                                Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                            }
-                        });
+                        unlikeMyCollectionArticles(data);
                     }
                 }
             });
@@ -588,12 +413,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                     .setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                            intent.putExtra("Title", data.getTitle());
-                            intent.putExtra("Image", data.getUrl());
-                            intent.putExtra("Article", data);
-                            intent.putExtra("Position", position);
-                            startActivityForResult(intent, 500);
+                            magazinesServicesUsecase.navigateToArticleWebView(context, data, position);
                         }
                     });
 
@@ -602,7 +422,6 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
             photoView.setImageResource(R.drawable.magazine_backdrop);
             if (data.getImage_filename() != null) {
-                //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
                 final TextView fullImageTitle = holder.fullImageTitle;
                 final TextView articleTitle = holder.articleTitle;
                 final ImageView blackMask = holder.blackMask;
@@ -630,12 +449,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             photoView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                    intent.putExtra("Title", data.getTitle());
-                    intent.putExtra("Image", data.getUrl());
-                    intent.putExtra("Article", data);
-                    intent.putExtra("Position", position);
-                    startActivityForResult(intent, 500);
+                    magazinesServicesUsecase.navigateToArticleWebView(context, data, position);
                 }
             });
 
@@ -646,10 +460,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    Intent intent = new Intent(context, CreateMagazineActivity.class);
-                    intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
-                    startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
+                    magazinesServicesUsecase.onAddClick(context, data);
                 }
             });
 
@@ -657,12 +468,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (data.getImage_filename() != null) {
-                        new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
-                    } else {
-                        String summary = Html.fromHtml(data.getSummary()).toString();
-                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, null);
-                    }
+                   magazinesServicesUsecase.onShareClick(v, data);
                 }
             });
 
@@ -670,10 +476,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             add1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    Intent intent = new Intent(context, CreateMagazineActivity.class);
-                    intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
-                    startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
+                    magazinesServicesUsecase.onAddClick(context, data);
                 }
             });
 
@@ -681,12 +484,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             share1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (data.getImage_filename() != null) {
-                        new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
-                    } else {
-                        String summary = Html.fromHtml(data.getSummary()).toString();
-                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, null);
-                    }
+                    magazinesServicesUsecase.onShareClick(v, data);
                 }
             });
 
@@ -699,65 +497,13 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             }
 
             final ViewHolder finalHolder = holder;
-            holder.articleFollow.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!"true".equals(data.getIsFollowing())) {
-                        ((BaseActivity) context).showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                try {
-                                    ((BaseActivity) context).dismissProgressDialog();
-                                    finalHolder.articleFollow.setText("Following");
-                                    finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                                    data.setIsFollowing("true");
-                                    if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                        MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
-                                    }
-                                    if (MagazineArticlesBaseAdapter.mListener != null) {
-                                        MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.FOLLOW_EVENT);
-                                    }
-                                    if (!((BaseActivity) context).hasDestroyed()) {
-                                        notifyDataSetChanged();
-                                    }
-                                } finally {
-                                    if(response != null && response.body() != null) {
-                                        response.body().close();
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                finalHolder.articleFollow.setText("Follow");
-                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                                data.setIsFollowing("false");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-
-                            }
-                        });
-                    } else {
-                        showUnFollowConfirmationDialog(data, finalHolder);
-                    }
-                }
-            });
 
             LinearLayout llArticleInfo = (LinearLayout) layout.findViewById(R.id.ll_article_info);
             if (llArticleInfo != null) {
                 llArticleInfo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                        intent.putExtra("Title", data.getTitle());
-                        intent.putExtra("Image", data.getUrl());
-                        intent.putExtra("Article", data);
-                        intent.putExtra("Position", position);
-                        startActivityForResult(intent, 500);
+                        magazinesServicesUsecase.navigateToArticleWebView(context, data, position);
                     }
                 });
             }
@@ -775,88 +521,72 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             return layout;
         }
 
-        /**
-         * Shows the unfollow confirmation dialog
-         *
-         * @param data        The articles object
-         * @param finalHolder The ViewHolder object
-         */
+       /* private void naviagateToMagazineWebView(Articles data, int position) {
+            Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
+            intent.putExtra("Title", data.getTitle());
+            intent.putExtra("Image", data.getUrl());
+            intent.putExtra("Article", data);
+            intent.putExtra("Position", position);
+            startActivityForResult(intent, 500);
+        }*/
 
-        private void showUnFollowConfirmationDialog(final Articles data, final ViewHolder finalHolder) {
+        private void unlikeMyCollectionArticles(final Articles data) {
+            showProgressDialog();
+            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    handleLikeUnlikeMyCollectionSuccess(data, false, "false", "You have unliked the article ");
+                }
 
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    handleLikeUnlikeMyCollectionFailure(data, true, "true", "Error while unliking article ");
+                }
+            });
+        }
 
-            if (context != null) {
-
-                final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-                LayoutInflater layoutInflater = LayoutInflater.from(context);
-                final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
-                builder.setView(view);
-
-                Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
-                Button noBtn = (Button) view.findViewById(R.id.no_btn);
-
-
-                final AlertDialog alertDialog = builder.create();
-                alertDialog.setCancelable(false);
-                alertDialog.show();
-
-                yesBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        alertDialog.dismiss();
-                        ((BaseActivity) context).showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                                                                                            @Override
-                                                                                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                                                                                try {
-                                                                                                    ((BaseActivity) context).dismissProgressDialog();
-                                                                                                    finalHolder.articleFollow.setText("Follow");
-                                                                                                    finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                                                                                                    data.setIsFollowing("false");
-                                                                                                    if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                                                                                        MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
-                                                                                                    }
-                                                                                                    if (MagazineArticlesBaseAdapter.mListener != null) {
-                                                                                                        MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
-                                                                                                    }
-                                                                                                    if (!((BaseActivity) context).hasDestroyed()) {
-                                                                                                        notifyDataSetChanged();
-                                                                                                    }
-                                                                                                }finally {
-                                                                                                    if(response != null && response.body() != null) {
-                                                                                                        response.body().close();
-                                                                                                    }
-                                                                                                }
-                                                                                            }
-
-                                                                                            @Override
-                                                                                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                                                                                ((BaseActivity) context).dismissProgressDialog();
-                                                                                                finalHolder.articleFollow.setText("Following");
-                                                                                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                                                                                                data.setIsFollowing("true");
-                                                                                                if (!((BaseActivity) context).hasDestroyed()) {
-                                                                                                    notifyDataSetChanged();
-                                                                                                }
-                                                                                            }
-                                                                                        }
-
-                        );
-                    }
-                });
-
-
-                noBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        alertDialog.dismiss();
-                    }
-                });
+        private void handleLikeUnlikeMyCollectionFailure(Articles data, boolean isChecked, String setLiked, String toastMsg) {
+            dismissProgressDialog();
+            Toast.makeText(context, toastMsg + data.getTitle(), Toast.LENGTH_LONG).show();
+            data.setIsChecked(isChecked);
+            data.setLiked(setLiked);
+            if (!((BaseActivity) context).hasDestroyed()) {
+                notifyDataSetChanged();
             }
         }
 
+        private void likeMyCollectionArticles(final Articles data) {
+            showProgressDialog();
+            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    handleLikeUnlikeMyCollectionSuccess(data, true, "true", "You have liked the article ");
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    handleLikeUnlikeMyCollectionFailure(data, false, "false", "Error while liking article ");
+                }
+            });
+        }
+
+        private void handleLikeUnlikeMyCollectionSuccess(final Articles data, boolean isChecked, String setLiked, String toastMsg) {
+            dismissProgressDialog();
+            data.setIsChecked(isChecked);
+            data.setLiked(setLiked);
+            if (MagazineArticlesBaseAdapter.reflectListener != null) {
+                MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
+            }
+            if (MagazineArticlesBaseAdapter.mListener != null) {
+                MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
+            }
+            if (!((BaseActivity) context).hasDestroyed()) {
+                notifyDataSetChanged();
+            }
+            mToastFactory.showToast(toastMsg + data.getTitle());
+        }
 
         /**
          * Adds the articles to the list
@@ -936,14 +666,12 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             case R.id.menu_follow_magazine:
                 if ("Tag".equals(type)) {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
                     LayoutInflater layoutInflater = LayoutInflater.from(context);
                     final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
                     builder.setView(view);
 
                     Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
                     Button noBtn = (Button) view.findViewById(R.id.no_btn);
-
 
                     final AlertDialog alertDialog = builder.create();
                     alertDialog.setCancelable(false);
@@ -960,23 +688,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                             yoService.removeTopicsAPI(accessToken, topicIds).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                                    try {
-                                        dismissProgressDialog();
-
-                                        if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
-                                            MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(topicId, Constants.FOLLOW_TOPIC_EVENT);
-                                        }
-
-                                        Intent intent = new Intent();
-                                        setResult(6, intent);
-                                        finish();
-                                    } finally {
-                                        if(response != null && response.body() != null) {
-                                            response.body().close();
-                                        }
-                                    }
-
+                                    handleUnfollowTopicOrMagazine(response);
                                 }
 
                                 @Override
@@ -988,7 +700,6 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                         }
                     });
 
-
                     noBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -999,14 +710,11 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 } else {
 
                     final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
                     LayoutInflater layoutInflater = LayoutInflater.from(context);
                     final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
                     builder.setView(view);
-
                     Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
                     Button noBtn = (Button) view.findViewById(R.id.no_btn);
-
 
                     final AlertDialog alertDialog = builder.create();
                     alertDialog.setCancelable(false);
@@ -1021,21 +729,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                             yoService.unfollowMagazineAPI(topicId, accessToken).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    try {
-                                        dismissProgressDialog();
-
-                                        if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
-                                            MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(topicId, Constants.FOLLOW_TOPIC_EVENT);
-                                        }
-
-                                        Intent intent = new Intent();
-                                        setResult(6, intent);
-                                        finish();
-                                    } finally {
-                                        if(response != null && response.body() != null) {
-                                            response.body().close();
-                                        }
-                                    }
+                                    handleUnfollowTopicOrMagazine(response);
                                 }
 
                                 @Override
@@ -1066,6 +760,24 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
         }
         return true;
+    }
+
+    private void handleUnfollowTopicOrMagazine(Response<ResponseBody> response) {
+        try {
+            dismissProgressDialog();
+
+            if (MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener != null) {
+                MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(topicId, Constants.FOLLOW_TOPIC_EVENT);
+            }
+
+            Intent intent = new Intent();
+            setResult(6, intent);
+            finish();
+        } finally {
+            if(response != null && response.body() != null) {
+                response.body().close();
+            }
+        }
     }
 
     @Override
@@ -1121,7 +833,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             editor.putString("read_article_ids", new Gson().toJson(new LinkedHashSet<String>(articlesList)));
             editor.commit();
 
-            List<Articles> cachedMagazinesList = getCachedMagazinesList();
+            List<Articles> cachedMagazinesList = magazinesServicesUsecase.getCachedMagazinesList(this);
 
             List<Articles> tempArticlesList = new ArrayList<Articles>(cachedMagazinesList);
             String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(this, userId).getString("read_article_ids", "");
@@ -1141,7 +853,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 cachedMagazinesList = tempArticlesList;
             }
 
-            saveCachedMagazinesList(cachedMagazinesList);
+            magazinesServicesUsecase.saveCachedMagazinesList(cachedMagazinesList, this);
         }
 
     }
@@ -1154,7 +866,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
     private List<String> checkCachedMagazines() {
         List<String> existingArticleIds = new ArrayList<>();
 
-        List<Articles> cachedMagazinesList = getCachedMagazinesList();
+        List<Articles> cachedMagazinesList = magazinesServicesUsecase.getCachedMagazinesList(this);
 
         if (cachedMagazinesList != null) {
             for (Articles article : cachedMagazinesList) {
@@ -1197,52 +909,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                             }
                         }
                     }
-                    List<Articles> tempArticlesList = new ArrayList<Articles>(articlesList);
-                    String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-                    String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("read_article_ids", "");
-                    if (!TextUtils.isEmpty(readCachedIds)) {
-                        Type type1 = new TypeToken<List<String>>() {
-                        }.getType();
-                        String cachedIds = readCachedIds;
-                        List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
-
-
-                        for (Articles article : articlesList) {
-                            for (String artId : cachedReadList) {
-                                if (article.getId().equals(artId)) {
-                                    tempArticlesList.remove(article);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    articlesList = tempArticlesList;
-
-                    List<Articles> emptyUpdatedArticles = new ArrayList<>();
-                    List<Articles> notEmptyUpdatedArticles = new ArrayList<>();
-                    for (Articles updatedArticles : articlesList) {
-                        if (!TextUtils.isEmpty(updatedArticles.getUpdated())) {
-                            notEmptyUpdatedArticles.add(updatedArticles);
-                        } else {
-                            emptyUpdatedArticles.add(updatedArticles);
-                        }
-                    }
-                    Collections.sort(notEmptyUpdatedArticles, new ArticlesComparator());
-                    Collections.reverse(notEmptyUpdatedArticles);
-                    notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
-                    articlesList = notEmptyUpdatedArticles;
-
-                    /*for (Articles a : articlesList) {
-                        Log.d("MyCollectionDetails", "The sorted list is " + a.getId() + " updated " + a.getUpdated());
-                    }*/
-                    myBaseAdapter.addItems(articlesList);
-                    if (articlesList.size() == 0) {
-                        tvNoArticles.setVisibility(View.VISIBLE);
-                        flipView.setVisibility(View.GONE);
-                    } else {
-                        tvNoArticles.setVisibility(View.GONE);
-                        flipView.setVisibility(View.VISIBLE);
-                    }
+                    getUnreadArticlesAndSort();
                 } else {
                     if (cachedArticlesList.size() == 0) {
                         tvNoArticles.setVisibility(View.VISIBLE);
@@ -1259,6 +926,55 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 }
             }
         });
+    }
+
+    private void getUnreadArticlesAndSort() {
+        List<Articles> tempArticlesList = new ArrayList<Articles>(articlesList);
+        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
+        String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("read_article_ids", "");
+        if (!TextUtils.isEmpty(readCachedIds)) {
+            Type type1 = new TypeToken<List<String>>() {
+            }.getType();
+            String cachedIds = readCachedIds;
+            List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
+
+
+            for (Articles article : articlesList) {
+                for (String artId : cachedReadList) {
+                    if (article.getId().equals(artId)) {
+                        tempArticlesList.remove(article);
+                        break;
+                    }
+                }
+            }
+        }
+        articlesList = tempArticlesList;
+
+        List<Articles> emptyUpdatedArticles = new ArrayList<>();
+        List<Articles> notEmptyUpdatedArticles = new ArrayList<>();
+        for (Articles updatedArticles : articlesList) {
+            if (!TextUtils.isEmpty(updatedArticles.getUpdated())) {
+                notEmptyUpdatedArticles.add(updatedArticles);
+            } else {
+                emptyUpdatedArticles.add(updatedArticles);
+            }
+        }
+        Collections.sort(notEmptyUpdatedArticles, new ArticlesComparator());
+        Collections.reverse(notEmptyUpdatedArticles);
+        notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
+        articlesList = notEmptyUpdatedArticles;
+
+                    /*for (Articles a : articlesList) {
+                        Log.d("MyCollectionDetails", "The sorted list is " + a.getId() + " updated " + a.getUpdated());
+                    }*/
+        myBaseAdapter.addItems(articlesList);
+        if (articlesList.size() == 0) {
+            tvNoArticles.setVisibility(View.VISIBLE);
+            flipView.setVisibility(View.GONE);
+        } else {
+            tvNoArticles.setVisibility(View.GONE);
+            flipView.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
@@ -1290,50 +1006,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                             }
                         }
                     }
-                    List<Articles> tempArticlesList = new ArrayList<Articles>(articlesList);
-                    String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-                    String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("read_article_ids", "");
-                    if (!TextUtils.isEmpty(readCachedIds)) {
-                        Type type1 = new TypeToken<List<String>>() {
-                        }.getType();
-                        String cachedIds = readCachedIds;
-                        List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
-
-
-                        for (Articles article : articlesList) {
-                            for (String artId : cachedReadList) {
-                                if (article.getId().equals(artId)) {
-                                    tempArticlesList.remove(article);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    articlesList = tempArticlesList;
-                    List<Articles> emptyUpdatedArticles = new ArrayList<>();
-                    List<Articles> notEmptyUpdatedArticles = new ArrayList<>();
-                    for (Articles updatedArticles : articlesList) {
-                        if (!TextUtils.isEmpty(updatedArticles.getUpdated())) {
-                            notEmptyUpdatedArticles.add(updatedArticles);
-                        } else {
-                            emptyUpdatedArticles.add(updatedArticles);
-                        }
-                    }
-                    Collections.sort(notEmptyUpdatedArticles, new ArticlesComparator());
-                    Collections.reverse(notEmptyUpdatedArticles);
-                    notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
-                    articlesList = notEmptyUpdatedArticles;
-                    /*for (Articles a : articlesList) {
-                        Log.d("MyCollectionDetails", "The sorted list is " + a.getId() + " updated " + a.getUpdated());
-                    }*/
-                    myBaseAdapter.addItems(articlesList);
-                    if (articlesList.size() == 0) {
-                        tvNoArticles.setVisibility(View.VISIBLE);
-                        flipView.setVisibility(View.GONE);
-                    } else {
-                        tvNoArticles.setVisibility(View.GONE);
-                        flipView.setVisibility(View.VISIBLE);
-                    }
+                    getUnreadArticlesAndSort();
                 } else {
                     if (cachedArticlesList.size() == 0) {
                         tvNoArticles.setVisibility(View.VISIBLE);
@@ -1360,58 +1033,5 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
         }
         tvNoArticles.setVisibility(View.VISIBLE);
         flipView.setVisibility(View.GONE);
-    }
-
-
-    /**
-     * Gets the cached articles list
-     *
-     * @return The list of cached articles
-     */
-    private List<Articles> getCachedMagazinesList() {
-        Type type1 = new TypeToken<List<Articles>>() {
-        }.getType();
-        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        List<Articles> cachedMagazinesList = new ArrayList<>();
-        if (this != null) {
-            String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(this, userId).getString("followed_cached_magazines", "");
-            String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(this, userId).getString("random_cached_magazines", "");
-
-            if (!TextUtils.isEmpty(sharedFollowedCachedMagazines)) {
-                String cachedMagazines = sharedFollowedCachedMagazines;
-                List<Articles> cachedFollowedMagazinesList = new Gson().fromJson(cachedMagazines, type1);
-                cachedMagazinesList.addAll(cachedFollowedMagazinesList);
-            }
-            if (!TextUtils.isEmpty(sharedRandomCachedMagazines)) {
-                String cachedMagazines = sharedRandomCachedMagazines;
-                List<Articles> cachedRandomMagazinesList = new Gson().fromJson(cachedMagazines, type1);
-                cachedMagazinesList.addAll(cachedRandomMagazinesList);
-            }
-        }
-
-        return cachedMagazinesList;
-    }
-
-    /**
-     * Saves the list of cached articles
-     *
-     * @param cachedMagazinesList The articles to cache
-     */
-    private void saveCachedMagazinesList(List<Articles> cachedMagazinesList) {
-        List<Articles> followedTopicArticles = new ArrayList<>();
-        List<Articles> randomTopicArticles = new ArrayList<>();
-        for (Articles articles : cachedMagazinesList) {
-            if ("true".equals(articles.getTopicFollowing())) {
-                followedTopicArticles.add(articles);
-            } else {
-                randomTopicArticles.add(articles);
-            }
-        }
-
-        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(this, userId);
-        editor.putString("followed_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(followedTopicArticles)));
-        editor.putString("random_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(randomTopicArticles)));
-        editor.commit();
     }
 }

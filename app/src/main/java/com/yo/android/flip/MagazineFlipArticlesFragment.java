@@ -34,6 +34,7 @@ import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.NewFollowMoreTopicsActivity;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.usecase.AddTopicsUsecase;
+import com.yo.android.usecase.MagazinesFlipArticlesUsecase;
 import com.yo.android.usecase.MagazinesServicesUsecase;
 import com.yo.android.util.ArticlesComparator;
 import com.yo.android.util.Constants;
@@ -101,11 +102,13 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     ConnectivityHelper mHelper;
     @Inject
     public MagazinesServicesUsecase magazinesServicesUsecase;
+    @Inject
+    public MagazinesFlipArticlesUsecase magazinesFlipArticlesUsecase;
 
     public static int suggestionsPosition = 0;
     public static int lastReadArticle = 0;
     public boolean isSearch;
-    private List<String> readArticleIds;
+    public List<String> readArticleIds;
     public static int currentFlippedPosition;
     public MagazineDashboardHelper magazineDashboardHelper;
     private String followedTopicId;
@@ -272,7 +275,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             } else {
                 flipContainer.setVisibility(View.VISIBLE);
                 llNoArticles.setVisibility(View.GONE);
-                getLandingCachedArticles();
+                magazinesFlipArticlesUsecase.getLandingCachedArticles(getActivity(), myBaseAdapter, MagazineFlipArticlesFragment.this, magazineDashboardHelper);
             }
 
         }
@@ -295,7 +298,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                         networkFailureText.setVisibility(View.GONE);
                         flipContainer.setVisibility(View.GONE);
                         llNoArticles.setVisibility(View.VISIBLE);
-                        getLandingCachedArticles();
+                        magazinesFlipArticlesUsecase.getLandingCachedArticles(getActivity(), myBaseAdapter, MagazineFlipArticlesFragment.this, magazineDashboardHelper);
                     }
 
                 }
@@ -308,7 +311,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         super.onDestroyView();
         try {
             clearGlideMemory(mContext);
-            handler.removeCallbacksAndMessages(null);
+            if(handler != null) {
+                handler.removeCallbacksAndMessages(null);
+            }
         } finally {
 
         }
@@ -329,7 +334,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
         boolean magazineRenewal = preferenceEndPoint.getBooleanPreference(Constants.MAGAZINE_LOCK, false);
         if (!magazineRenewal) {
-            getLandingCachedArticles();
+            magazinesFlipArticlesUsecase.getLandingCachedArticles(getActivity(), myBaseAdapter, MagazineFlipArticlesFragment.this, magazineDashboardHelper);
         } else {
             YODialogs.addBalance(getActivity(), getActivity().getString(R.string.no_sufficient_bal_wallet), preferenceEndPoint);
             tvProgressText.setVisibility(View.GONE);
@@ -353,7 +358,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                         if (mProgress != null) {
                             mProgress.setVisibility(View.GONE);
                         }
-                        updateArticlesAfterFollowTopic(followedTopicId);
+                        magazinesFlipArticlesUsecase.updateArticlesAfterFollowTopic(followedTopicId, myBaseAdapter, getActivity(), magazineDashboardHelper, this);
                     } else if (!magazineRenewal) {
                         magazinesServicesUsecase.loadArticles(null, false, getActivity(), this);
                     }
@@ -363,7 +368,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 if (llNoArticles != null) {
                     flipContainer.setVisibility(View.VISIBLE);
                     llNoArticles.setVisibility(View.GONE);
-                    getLandingCachedArticles();
+                    magazinesFlipArticlesUsecase.getLandingCachedArticles(getActivity(), myBaseAdapter, MagazineFlipArticlesFragment.this, magazineDashboardHelper);
                 }
             }
             if (getParentFragment() instanceof MagazinesFragment) {
@@ -381,7 +386,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         lastReadArticle = 0;
         boolean magazineRenewal = preferenceEndPoint.getBooleanPreference(Constants.MAGAZINE_LOCK, false);
         if (!magazineRenewal) {
-            getLandingCachedArticles();
+            magazinesFlipArticlesUsecase.getLandingCachedArticles(getActivity(), myBaseAdapter, MagazineFlipArticlesFragment.this, magazineDashboardHelper);
         } else {
             YODialogs.addBalance(getActivity(), getActivity().getString(R.string.no_sufficient_bal_wallet), preferenceEndPoint);
         }
@@ -417,7 +422,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         currentFlippedPosition = position;
 
         if ((MagazineDashboardHelper.currentReadArticles != 0 || currentFlippedPosition % 100 == 0) && !isSearch) {
-            getReadArticleIds();
+            magazinesFlipArticlesUsecase.getReadArticleIds(getActivity(), this, myBaseAdapter);
             String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
             if (getActivity() != null) {
                 String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("read_article_ids", "");
@@ -448,7 +453,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     public void onEventMainThread(String action) {
         followedTopicId = action;
         if (Constants.OTHERS_MAGAZINE_ACTION.equals(action) || Constants.TOPIC_NOTIFICATION_ACTION.equals(action) || Constants.TOPIC_FOLLOWING_ACTION.equals(action)) {
-            updateArticlesAfterFollowTopic(followedTopicId);
+            magazinesFlipArticlesUsecase.updateArticlesAfterFollowTopic(followedTopicId, myBaseAdapter, getActivity(), magazineDashboardHelper, this);
         } else if (Constants.START_FETCHING_ARTICLES_ACTION.equals(action)) {
             //isFetchArticlesPosted = true;
             if (mHelper.isConnected()) {
@@ -457,7 +462,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 SimpleDateFormat mdformat = new SimpleDateFormat("yyyy / MM / dd ");
                 String savedDate = mdformat.format(calendar.getTime());
                 preferenceEndPoint.saveStringPreference(Constants.SAVED_TIME, savedDate);
-                callDailyArticlesService(null);
+                magazinesFlipArticlesUsecase.callDailyArticlesService(null, getActivity(), myBaseAdapter, this, magazineDashboardHelper);
             } else {
                 Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.unable_to_fetch_new_articles), Toast.LENGTH_LONG).show();
             }
@@ -469,7 +474,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     /**
      * Calls the service to get the articles service daily
      * @param swipeRefreshContainer The SwipeRefreshLayout object
-     */
+     *//*
     private void callDailyArticlesService(final SwipeRefreshLayout swipeRefreshContainer) {
         getReadArticleIds();
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
@@ -508,7 +513,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 }
             }
         }
-    }
+    }*/
 
     /**
      * Removing the read articles
@@ -516,7 +521,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
     public void removeReadArticles() {
 
         if (currentFlippedPosition > 0) {
-            getReadArticleIds();
+            magazinesFlipArticlesUsecase.getReadArticleIds(getActivity(), this, myBaseAdapter);
 
             if (getActivity() != null) {
                 String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
@@ -583,9 +588,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         }
     }
 
-    /**
+/*    *//**
      * Getting the cached articles
-     */
+     *//*
     public void getLandingCachedArticles() {
         isSearch = false;
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
@@ -663,11 +668,11 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 magazinesServicesUsecase.loadArticles(null, false, getActivity(), this);
             }
         }
-    }
+    }*/
 
-    /**
+/*    *//**
      * Getting the read article ids
-     */
+     *//*
     private List<String> getReadArticleIds() {
         List<String> articlesList1 = null;
 
@@ -710,7 +715,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             }
         }
         return articlesList1;
-    }
+    }*/
 
     /**
      * Handling the dashboard response
@@ -834,7 +839,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
      * Updating the articles after following a topic
      *
      * @param topicId The topic id
-     */
+     *//*
     public void updateArticlesAfterFollowTopic(String topicId) {
         List<Articles> articlesList = myBaseAdapter.getAllItems();
         List<Articles> unreadArticles = new ArrayList<>();
@@ -976,13 +981,13 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     }
 
-    /**
+    *//**
      * Sorting after following a topic
      *
      * @param totalArticles               The total articles
      * @param unreadOtherFollowedArticles The unread other followed articles
      * @param followedArticlesList        The followed articles list
-     */
+     *//*
     public void performSortingAfterFollow(List<Articles> totalArticles, List<Articles> unreadOtherFollowedArticles, List<Articles> followedArticlesList) {
         List<Articles> followedTopicArticles = new ArrayList<>();
         List<Articles> randomTopicArticles = new ArrayList<>();
@@ -1087,9 +1092,9 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         myBaseAdapter.notifyDataSetChanged();
     }
 
-    /**
+    *//**
      * Updating the articles after the daily service to fetch the new articles
-     */
+     *//*
     public void updateArticlesAfterDailyService(final SwipeRefreshLayout swipeRefreshContainer) {
         List<Articles> articlesList = myBaseAdapter.getAllItems();
         List<Articles> unreadArticles = new ArrayList<>();
@@ -1176,12 +1181,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     }
 
-    /**
+  /**
      * Sorting the articles after the daily service to fetch the new articles
      *
      * @param totalArticles               The total articles
      * @param unreadOtherFollowedArticles The unread other followed articles
-     */
+     *//**//**//**//*
     public void performSortingAfterDailyService(List<Articles> totalArticles, List<Articles> unreadOtherFollowedArticles) {
         List<Articles> followedTopicArticles = new ArrayList<>();
         List<Articles> randomTopicArticles = new ArrayList<>();
@@ -1311,12 +1316,12 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
         handleMoreDashboardResponse(totalOtherUnreadArticles, false, true);
         magazinesServicesUsecase.deleteExtraArticlesFromCache(getActivity(), magazineDashboardHelper);
-    }
+    }*/
 
     private void refreshedArticles() {
         Log.d("FlipArticlesFragment", "Calling pull to refresh to load articles refreshedArticles");
         if (mHelper.isConnected() && !isSearch) {
-            callDailyArticlesService(swipeRefreshContainer);
+            magazinesFlipArticlesUsecase.callDailyArticlesService(swipeRefreshContainer, getActivity(), myBaseAdapter, this, magazineDashboardHelper);
         } else {
             refreshing = false;
             swipeRefreshContainer.setEnabled(false);
