@@ -19,6 +19,7 @@ import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.helpers.MagazinePreferenceEndPoint;
 import com.yo.android.model.Articles;
 import com.yo.android.model.LandingArticles;
+import com.yo.android.usecase.MagazinesFlipArticlesUsecase;
 
 import java.lang.reflect.Type;
 import java.net.SocketTimeoutException;
@@ -26,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,6 +42,8 @@ public class MagazineDashboardHelper {
     private static final int MORE_DASHBOARD_ARTICLES = 2;
     private static final int DASHBOARD_ARTICLES_AFTER_FOLLOW = 3;
     private static final int DASHBOARD_ARTICLES_DAILY_SERVICE = 4;
+    @Inject
+    public MagazinesFlipArticlesUsecase magazinesFlipArticlesUsecase;
 
     /**
      * Gets the dashboard articles
@@ -91,7 +96,7 @@ public class MagazineDashboardHelper {
                     } else {
                         magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                         magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
-                        magazineFlipArticlesFragment.getLandingCachedArticles();
+                        magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
                     }
 
                 }
@@ -195,7 +200,7 @@ public class MagazineDashboardHelper {
                     } else {
                         magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                         magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
-                        magazineFlipArticlesFragment.getLandingCachedArticles();
+                        magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
                     }
 
                 }
@@ -213,7 +218,7 @@ public class MagazineDashboardHelper {
                     magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                     magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                     magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
-                    magazineFlipArticlesFragment.getLandingCachedArticles();
+                    magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
                     if(t instanceof SocketTimeoutException) {
                         Toast.makeText(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.getActivity().getResources().getString(R.string.socket_time_out), Toast.LENGTH_LONG).show();
                     } else if (magazineFlipArticlesFragment.getActivity() != null) {
@@ -285,7 +290,7 @@ public class MagazineDashboardHelper {
                     } else {
                         magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                         magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
-                        magazineFlipArticlesFragment.getLandingCachedArticles();
+                        magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
                     }
                 }
 
@@ -297,7 +302,7 @@ public class MagazineDashboardHelper {
                     magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                     magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                     magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
-                    magazineFlipArticlesFragment.getLandingCachedArticles();
+                    magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
                     if (magazineFlipArticlesFragment.getActivity() != null) {
                         Toast.makeText(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.getActivity().getResources().getString(R.string.connectivity_network_settings), Toast.LENGTH_LONG).show();
                     }
@@ -356,7 +361,7 @@ public class MagazineDashboardHelper {
                     } else {
                         magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                         magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
-                        magazineFlipArticlesFragment.getLandingCachedArticles();
+                        magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
                     }
 
                 }
@@ -373,7 +378,7 @@ public class MagazineDashboardHelper {
                     magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                     magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                     magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
-                    magazineFlipArticlesFragment.getLandingCachedArticles();
+                    magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
                     if(t instanceof SocketTimeoutException) {
                         Toast.makeText(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.getActivity().getResources().getString(R.string.socket_time_out), Toast.LENGTH_LONG).show();
                     } else if (magazineFlipArticlesFragment.getActivity() != null) {
@@ -459,13 +464,13 @@ public class MagazineDashboardHelper {
                     }
                     magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                     magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
-                    magazineFlipArticlesFragment.getLandingCachedArticles();
+                    magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
                     break;
             }
         } else {
             magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
             magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
-            magazineFlipArticlesFragment.getLandingCachedArticles();
+            magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
         }
     }
 
@@ -497,12 +502,12 @@ public class MagazineDashboardHelper {
     }
 
     private void addMoreDashboardArticlesAfterFollow(MagazineFlipArticlesFragment articlesFragment, List<Articles> totalArticles, List<Articles> unreadOtherFollowedArticles, final List<Articles> followedArticlesList) {
-        articlesFragment.performSortingAfterFollow(totalArticles, unreadOtherFollowedArticles, followedArticlesList);
+        magazinesFlipArticlesUsecase.performSortingAfterFollow(totalArticles, unreadOtherFollowedArticles, followedArticlesList, articlesFragment.myBaseAdapter);
         articlesFragment.handleMoreDashboardResponse(totalArticles, true, false);
     }
 
     private void addDashboardArticlesForDailyService(MagazineFlipArticlesFragment articlesFragment, List<Articles> totalArticles, List<Articles> unreadOtherFollowedArticles) {
-        articlesFragment.performSortingAfterDailyService(totalArticles, unreadOtherFollowedArticles);
+        magazinesFlipArticlesUsecase.performSortingAfterDailyService(totalArticles, unreadOtherFollowedArticles, articlesFragment.myBaseAdapter, articlesFragment.getActivity(), articlesFragment, MagazineDashboardHelper.this);
         //articlesFragment.handleMoreDashboardResponse(totalArticles, false);
     }
 

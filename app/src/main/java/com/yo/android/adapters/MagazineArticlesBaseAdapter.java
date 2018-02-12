@@ -1,21 +1,16 @@
 package com.yo.android.adapters;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.text.Layout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -26,64 +21,33 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ToastFactory;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.api.ApiCallback;
 import com.yo.android.api.YoApi;
-import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
-import com.yo.android.helpers.MagazinePreferenceEndPoint;
 import com.yo.android.model.Articles;
 import com.yo.android.model.Categories;
 import com.yo.android.model.Topics;
 import com.yo.android.ui.BaseActivity;
-import com.yo.android.ui.BitmapScaler;
-import com.yo.android.ui.CreateMagazineActivity;
-import com.yo.android.ui.DeviceDimensionsHelper;
 import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.NewFollowMoreTopicsActivity;
-import com.yo.android.ui.OtherProfilesLikedArticles;
-import com.yo.android.ui.TopicsDetailActivity;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.usecase.AddTopicsUsecase;
+import com.yo.android.usecase.MagazinesServicesUsecase;
 import com.yo.android.util.AutoReflectTopicsFollowActionsListener;
 import com.yo.android.util.AutoReflectWishListActionsListener;
 import com.yo.android.util.Constants;
 import com.yo.android.util.MagazineOtherPeopleReflectListener;
-import com.yo.android.util.Util;
 import com.yo.android.video.InAppVideoActivity;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
-
-import javax.inject.Inject;
-
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * The adapter for the Magazine landing screen articles
@@ -97,8 +61,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     public static AutoReflectWishListActionsListener reflectListener;
     public static MagazineOtherPeopleReflectListener mListener;
     public static AutoReflectTopicsFollowActionsListener reflectTopicsFollowActionsListener;
-
-
     private List<Articles> items;
     PreferenceEndPoint preferenceEndPoint;
     YoApi.YoService yoService;
@@ -111,13 +73,13 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     private List<Articles> getAllArticles;
     private NewSuggestionsAdapter newSuggestionsAdapter;
     AddTopicsUsecase mAddTopicsUsecase;
+    MagazinesServicesUsecase mMagazinesServicesUsecase;
 
     private static AutoReflectWishListActionsListener reflectListenerTemp;
 
-
     public MagazineArticlesBaseAdapter(Context context,
                                        PreferenceEndPoint preferenceEndPoint,
-                                       YoApi.YoService yoService, ToastFactory mToastFactory, MagazineFlipArticlesFragment magazineFlipArticlesFragment, AddTopicsUsecase addTopicsUsecase) {
+                                       YoApi.YoService yoService, ToastFactory mToastFactory, MagazineFlipArticlesFragment magazineFlipArticlesFragment, AddTopicsUsecase addTopicsUsecase, MagazinesServicesUsecase magazinesServicesUsecase) {
         inflater = LayoutInflater.from(context);
         this.context = context;
         mListener = this;
@@ -132,6 +94,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         reflectTopicsFollowActionsListener = this;
         reflectListenerTemp = this;
         mAddTopicsUsecase = addTopicsUsecase;
+        mMagazinesServicesUsecase = magazinesServicesUsecase;
     }
 
     public static void initListener() {
@@ -180,14 +143,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
             holder = new ViewHolder();
 
-            holder.topLayout = UI.
-                    findViewById(layout, R.id.rl_left);
-
-            holder.middleLayout = UI.
-                    findViewById(layout, R.id.ll_bottom_layout);
-            holder.bottomLayout = UI.
-                    findViewById(layout, R.id.ll_article_info);
-
             holder.articleTitle = UI.
                     findViewById(layout, R.id.tv_article_title);
 
@@ -202,8 +157,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
             holder.magazineShare = UI.findViewById(layout, R.id.imv_magazine_share);
 
-            holder.articleFollow = UI.findViewById(layout, R.id.imv_magazine_follow);
-
             holder.articleTitleTop = UI.
                     findViewById(layout, R.id.tv_article_title_top);
 
@@ -214,8 +167,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             holder.magazineAddTop = UI.findViewById(layout, R.id.imv_magazine_add_top);
 
             holder.magazineShareTop = UI.findViewById(layout, R.id.imv_magazine_share_top);
-
-            holder.articleFollowTop = UI.findViewById(layout, R.id.imv_magazine_follow_top);
 
             holder.articleTitleLeft = UI.
                     findViewById(layout, R.id.tv_article_title_left);
@@ -307,123 +258,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     Log.d("MagazineBaseAdapter", "Title and liked... " + data.getTitle() + " " + Boolean.valueOf(data.getLiked()));
 
                     if (isChecked) {
-                        ((BaseActivity) context).showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                                ((BaseActivity) context).dismissProgressDialog();
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                                if (OtherProfilesLikedArticles.getListener() != null) {
-                                    OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
-                                }
-                                mToastFactory.showToast("You have liked the article " + data.getTitle());
-
-                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                                if (cachedMagazinesList != null) {
-                                    List<Articles> tempList = cachedMagazinesList;
-                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(tempList.get(i).getId())) {
-                                            tempList.get(i).setLiked("true");
-                                        }
-                                    }
-
-                                    cachedMagazinesList = tempList;
-
-                                    saveCachedMagazinesList(cachedMagazinesList);
-                                }
-
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                mToastFactory.showToast("Error while liking article " + data.getTitle());
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-
-                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                                if (cachedMagazinesList != null) {
-                                    List<Articles> tempList = cachedMagazinesList;
-                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(tempList.get(i).getId())) {
-                                            tempList.get(i).setLiked("false");
-                                        }
-                                    }
-
-                                    cachedMagazinesList = tempList;
-
-                                    saveCachedMagazinesList(cachedMagazinesList);
-                                }
-                            }
-                        });
+                        mMagazinesServicesUsecase.likeArticles(MagazineArticlesBaseAdapter.this, context, data, mToastFactory);
                     } else {
-                        ((BaseActivity) context).showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                if (OtherProfilesLikedArticles.getListener() != null) {
-                                    OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
-                                }
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-
-                                mToastFactory.showToast("You have un-liked the article " + data.getTitle());
-
-                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                                if (cachedMagazinesList != null) {
-                                    List<Articles> tempList = cachedMagazinesList;
-                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(tempList.get(i).getId())) {
-                                            tempList.get(i).setLiked("false");
-                                        }
-                                    }
-
-                                    cachedMagazinesList = tempList;
-
-                                    saveCachedMagazinesList(cachedMagazinesList);
-                                }
-
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                Toast.makeText(context, "Error while un liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-
-                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                                if (cachedMagazinesList != null) {
-                                    List<Articles> tempList = cachedMagazinesList;
-                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(tempList.get(i).getId())) {
-                                            tempList.get(i).setLiked("true");
-                                        }
-                                    }
-
-                                    cachedMagazinesList = tempList;
-
-                                    saveCachedMagazinesList(cachedMagazinesList);
-                                }
-                            }
-                        });
+                        mMagazinesServicesUsecase.unlikeArticles(MagazineArticlesBaseAdapter.this, context, data, mToastFactory);
                     }
                 }
             });
@@ -446,134 +283,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     Log.d("MagazineBaseAdapter", "Title and liked... " + data.getTitle() + " " + Boolean.valueOf(data.getLiked()));
 
                     if (isChecked) {
-                        ((BaseActivity) context).showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                try {
-                                    ((BaseActivity) context).dismissProgressDialog();
-                                    data.setIsChecked(true);
-                                    data.setLiked("true");
-                                    if (!((BaseActivity) context).hasDestroyed()) {
-                                        notifyDataSetChanged();
-                                    }
-                                    if (OtherProfilesLikedArticles.getListener() != null) {
-                                        OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
-                                    }
-                                    mToastFactory.showToast("You have liked the article " + data.getTitle());
+                        mMagazinesServicesUsecase.likeArticles(MagazineArticlesBaseAdapter.this, context, data, mToastFactory);
 
-                                    List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                                    if (cachedMagazinesList != null) {
-                                        List<Articles> tempList = cachedMagazinesList;
-                                        for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                            if (data.getId().equals(tempList.get(i).getId())) {
-                                                tempList.get(i).setLiked("true");
-                                            }
-                                        }
-
-                                        cachedMagazinesList = tempList;
-
-                                        saveCachedMagazinesList(cachedMagazinesList);
-                                    }
-                                } finally {
-                                    if (response != null && response.body() != null) {
-                                        response.body().close();
-                                    }
-                                }
-
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                mToastFactory.showToast("Error while liking article " + data.getTitle());
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-
-                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                                if (cachedMagazinesList != null) {
-                                    List<Articles> tempList = cachedMagazinesList;
-                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(tempList.get(i).getId())) {
-                                            tempList.get(i).setLiked("false");
-                                        }
-                                    }
-
-                                    cachedMagazinesList = tempList;
-
-                                    saveCachedMagazinesList(cachedMagazinesList);
-                                }
-                            }
-                        });
                     } else {
-                        ((BaseActivity) context).showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                try {
-                                    ((BaseActivity) context).dismissProgressDialog();
-                                    data.setIsChecked(false);
-                                    data.setLiked("false");
-                                    if (OtherProfilesLikedArticles.getListener() != null) {
-                                        OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
-                                    }
-                                    if (!((BaseActivity) context).hasDestroyed()) {
-                                        notifyDataSetChanged();
-                                    }
-
-                                    mToastFactory.showToast("You have un-liked the article " + data.getTitle());
-
-                                    List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                                    if (cachedMagazinesList != null) {
-                                        List<Articles> tempList = cachedMagazinesList;
-                                        for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                            if (data.getId().equals(tempList.get(i).getId())) {
-                                                tempList.get(i).setLiked("false");
-                                            }
-                                        }
-
-                                        cachedMagazinesList = tempList;
-
-                                        saveCachedMagazinesList(cachedMagazinesList);
-                                    }
-                                } finally {
-                                    if (response != null && response.body() != null) {
-                                        response.body().close();
-                                    }
-                                }
-
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                Toast.makeText(context, "Error while un liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-
-                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                                if (cachedMagazinesList != null) {
-                                    List<Articles> tempList = cachedMagazinesList;
-                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(tempList.get(i).getId())) {
-                                            tempList.get(i).setLiked("true");
-                                        }
-                                    }
-
-                                    cachedMagazinesList = tempList;
-
-                                    saveCachedMagazinesList(cachedMagazinesList);
-                                }
-                            }
-                        });
+                        mMagazinesServicesUsecase.unlikeArticles(MagazineArticlesBaseAdapter.this, context, data, mToastFactory);
                     }
                 }
             });
@@ -594,12 +307,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     .setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                            intent.putExtra("Title", data.getTitle());
-                            intent.putExtra("Image", data.getUrl());
-                            intent.putExtra("Article", data);
-                            intent.putExtra("Position", position);
-                            magazineFlipArticlesFragment.startActivityForResult(intent, 500);
+                            mMagazinesServicesUsecase.navigateToArticleWebView(context, data, position);
                         }
                     });
         }
@@ -610,71 +318,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
             photoView.setImageResource(R.drawable.magazine_backdrop);
             if (data.getImage_filename() != null) {
-                if (!((BaseActivity) context).hasDestroyed()) {
-                    //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
-                    final TextView fullImageTitle = holder.fullImageTitle;
-                    final TextView articleTitle = holder.articleTitle;
-                    final ImageView blackMask = holder.blackMask;
-                    final RelativeLayout rlFullImageOptions = holder.rlFullImageOptions;
-                    final TextView textView = holder.articleShortDesc;
-
-                    /*if("597695a01645e9120c620243".equals(data.getId())) {
-                        data.setImage_filename("http://yowatsup.com/newfilename.jpg");
-                    }*/
-
-                    Glide.with(context)
-                            .load(data.getS3_image_filename())
-                            .placeholder(R.drawable.magazine_backdrop)
-                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                            .dontAnimate()
-                            .into(photoView);
-
-
-                    if (articleTitle != null) {
-                        ViewTreeObserver vto1 = articleTitle.getViewTreeObserver();
-                        vto1.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                            private int maxLines = -1;
-
-                            @Override
-                            public void onGlobalLayout() {
-                                if (maxLines < 0 && articleTitle.getHeight() > 0 && articleTitle.getLineHeight() > 0) {
-                                    //Log.d("BaseAdapter", "Max lines inside if" + maxLines);
-                                    int height = articleTitle.getHeight();
-                                    int lineHeight = articleTitle.getLineHeight();
-                                    maxLines = height / lineHeight;
-                                    articleTitle.setMaxLines(maxLines);
-                                    articleTitle.setEllipsize(TextUtils.TruncateAt.END);
-                                    // Re-assign text to ensure ellipsize is performed correctly.
-                                    // Ellipsizing the article title once the article image is loaded
-                                    articleTitle.setText(AphidLog.format("%s", data.getTitle()));
-                                } else if (maxLines == -1 && articleTitle.getHeight() > 0) {
-                                    //Log.d("BaseAdapter", "Max lines inside else if" + maxLines);
-                                    articleTitle.setMaxLines(1);
-                                    articleTitle.setEllipsize(TextUtils.TruncateAt.END);
-                                    // Re-assign text to ensure ellipsize is performed correctly.
-                                    // Ellipsizing the article title once the article image is loaded
-                                    articleTitle.setText(AphidLog.format("%s", data.getTitle()));
-                                } else if (maxLines == -1 && articleTitle.getHeight() == 0) { // Full screen article
-                                    // Log.d("BaseAdapter", "Full screen image after options cut or not shown");
-                                    if (fullImageTitle != null && articleTitle != null && blackMask != null && rlFullImageOptions != null) {
-                                        fullImageTitle.setVisibility(View.VISIBLE);
-                                        fullImageTitle.setText(articleTitle.getText().toString());
-                                        blackMask.setVisibility(View.VISIBLE);
-                                        rlFullImageOptions.setVisibility(View.VISIBLE);
-
-                                    }
-                                }
-                            }
-                        });
-
-                        articleTitle.setText(AphidLog.format("%s", data.getTitle()));
-                    }
-
-                    if (textView != null) {
-                        textView.setText(Html.fromHtml(data.getSummary()));
-                    }
-
-                }
+                mMagazinesServicesUsecase.handleImageLoading(holder, context, data, photoView);
             } else {
                 photoView.setImageResource(R.drawable.magazine_backdrop);
             }
@@ -686,30 +330,8 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     if (videoUrl != null && !TextUtils.isEmpty(videoUrl)) {
                         InAppVideoActivity.start((Activity) context, videoUrl, data.getTitle());
                     } else {
-                        Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                        intent.putExtra("Title", data.getTitle());
-                        intent.putExtra("Image", data.getUrl());
-                        intent.putExtra("Article", data);
-                        intent.putExtra("Position", position);
-                        magazineFlipArticlesFragment.startActivityForResult(intent, 500);
+                        mMagazinesServicesUsecase.navigateToArticleWebView(context, data, position);
                     }
-                }
-            });
-        }
-
-        Button followMoreTopics = (Button) layout.findViewById(R.id.btn_magazine_follow_topics);
-        if (followMoreTopics != null) {
-            followMoreTopics.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent;
-                    if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
-                        intent = new Intent(context, FollowMoreTopicsActivity.class);
-                    } else {
-                        intent = new Intent(context, NewFollowMoreTopicsActivity.class);
-                    }
-                    intent.putExtra("From", "Magazines");
-                    context.startActivity(intent);
                 }
             });
         }
@@ -719,11 +341,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, CreateMagazineActivity.class);
-                    intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
-                    if (context instanceof Activity) {
-                        ((Activity) context).startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
-                    }
+                    mMagazinesServicesUsecase.onAddClick(context, data);
                 }
             });
         }
@@ -733,12 +351,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (data.getImage_filename() != null) {
-                        new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
-                    } else {
-                        String summary = Html.fromHtml(data.getSummary()).toString();
-                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, null);
-                    }
+                    mMagazinesServicesUsecase.onShareClick(v, data);
                 }
             });
         }
@@ -748,11 +361,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, CreateMagazineActivity.class);
-                    intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
-                    if (context instanceof Activity) {
-                        ((Activity) context).startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
-                    }
+                    mMagazinesServicesUsecase.onAddClick(context, data);
                 }
             });
         }
@@ -762,30 +371,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (data.getImage_filename() != null) {
-                        new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
-                    } else {
-                        String summary = Html.fromHtml(data.getSummary()).toString();
-                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, null);
-                    }
-                }
-            });
-        }
-
-        if (holder.articleFollow != null) {
-            if ("true".equals(data.getIsFollowing())) {
-                holder.articleFollow.setText("Following");
-                holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-            } else {
-                holder.articleFollow.setText("Follow");
-                holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            }
-
-            final ViewHolder finalHolder = holder;
-            holder.articleFollow.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    followArticle(data, finalHolder, finalHolder.articleFollow);
+                    mMagazinesServicesUsecase.onShareClick(v, data);
                 }
             });
         }
@@ -795,12 +381,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             llArticleInfo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                    intent.putExtra("Title", data.getTitle());
-                    intent.putExtra("Image", data.getUrl());
-                    intent.putExtra("Article", data);
-                    intent.putExtra("Position", position);
-                    magazineFlipArticlesFragment.startActivityForResult(intent, 500);
+                    mMagazinesServicesUsecase.navigateToArticleWebView(context, data, position);
                 }
             });
         }
@@ -812,10 +393,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 holder.tvTopicName.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(context, TopicsDetailActivity.class);
-                        intent.putExtra("Topic", data);
-                        intent.putExtra("Position", position);
-                        magazineFlipArticlesFragment.startActivityForResult(intent, 60);
+                        mMagazinesServicesUsecase.navigateToTopicDetails(magazineFlipArticlesFragment, context, data, position);
                     }
                 });
             } else {
@@ -918,204 +496,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         return layout;
     }
 
-    private void calculateHeight(TextView shortDesc) {
-        int height = shortDesc.getHeight();
-        int scrollY = shortDesc.getScrollY();
-        Layout layout = shortDesc.getLayout();
-
-        int firstVisibleLineNumber = layout.getLineForVertical(scrollY);
-        int lastVisibleLineNumber = layout.getLineForVertical(scrollY + height);
-        Log.d("BaseAdapter", "The lastVisibleLineNumber is " + lastVisibleLineNumber);
-
-        /*int start = shortDesc.getLayout().getLineStart(lastVisibleLineNumber - 1); //start position
-        int end = shortDesc.getLayout().getLineEnd(lastVisibleLineNumber - 1); //last visible position*/
-
-        String displayedText = shortDesc.getText().toString().substring(0, layout.getLineEnd(lastVisibleLineNumber - 1));
-        Log.d("BaseAdapter", "The displayedText is " + displayedText);
-        shortDesc.setText(displayedText + "..." + "\n");
-    }
-
-    /**
-     * Used to follow an article
-     *
-     * @param data        The Articles object
-     * @param finalHolder The view holder object
-     * @param follow      The follow button
-     */
-    private void followArticle(final Articles data, final ViewHolder finalHolder, final Button follow) {
-        if (!"true".equals(data.getIsFollowing())) {
-            ((BaseActivity) context).showProgressDialog();
-            String accessToken = preferenceEndPoint.getStringPreference("access_token");
-            yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    try {
-                        ((BaseActivity) context).dismissProgressDialog();
-                        follow.setText("Following");
-                        follow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                        data.setIsFollowing("true");
-                        if (OtherProfilesLikedArticles.getListener() != null) {
-                            OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.FOLLOW_EVENT);
-                        }
-                        if (!((BaseActivity) context).hasDestroyed()) {
-                            notifyDataSetChanged();
-                        }
-                        Type type = new TypeToken<List<Articles>>() {
-                        }.getType();
-                        String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
-                        List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                        if (cachedMagazinesList != null) {
-                            for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                    cachedMagazinesList.get(i).setIsFollowing("true");
-                                }
-                            }
-
-                            preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                        }
-                    } finally {
-                        if (response != null && response.body() != null) {
-                            response.body().close();
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    ((BaseActivity) context).dismissProgressDialog();
-                    follow.setText("Follow");
-                    follow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                    data.setIsFollowing("false");
-                    if (!((BaseActivity) context).hasDestroyed()) {
-                        notifyDataSetChanged();
-                    }
-                    Type type = new TypeToken<List<Articles>>() {
-                    }.getType();
-                    String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
-                    List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                    if (cachedMagazinesList != null) {
-                        for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                            if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                cachedMagazinesList.get(i).setIsFollowing("false");
-                            }
-                        }
-
-                        preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                    }
-
-                }
-            });
-        } else {
-            showUnFollowConfirmationDialog(data, finalHolder, follow);
-        }
-    }
-
-    /**
-     * Shows unfollow confirmation dialog
-     *
-     * @param data        The articles object
-     * @param finalHolder The view holder object
-     * @param follow      The follow button
-     */
-    private void showUnFollowConfirmationDialog(final Articles data, final ViewHolder finalHolder, final Button follow) {
-
-
-        if (context != null) {
-
-            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-            LayoutInflater layoutInflater = LayoutInflater.from(context);
-            final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
-            builder.setView(view);
-
-            Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
-            Button noBtn = (Button) view.findViewById(R.id.no_btn);
-
-
-            final AlertDialog alertDialog = builder.create();
-            alertDialog.setCancelable(false);
-            alertDialog.show();
-
-            yesBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    alertDialog.dismiss();
-                    ((BaseActivity) context).showProgressDialog();
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                    yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                                                                                        @Override
-                                                                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                                                                            try {
-                                                                                                ((BaseActivity) context).dismissProgressDialog();
-                                                                                                follow.setText("Follow");
-                                                                                                follow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                                                                                                data.setIsFollowing("false");
-                                                                                                if (OtherProfilesLikedArticles.getListener() != null) {
-                                                                                                    OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.FOLLOW_EVENT);
-                                                                                                }
-                                                                                                if (!((BaseActivity) context).hasDestroyed()) {
-                                                                                                    notifyDataSetChanged();
-                                                                                                }
-                                                                                                Type type = new TypeToken<List<Articles>>() {
-                                                                                                }.getType();
-                                                                                                String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
-                                                                                                List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                                                                                                if (cachedMagazinesList != null) {
-                                                                                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                                                                                        if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                                                                                            cachedMagazinesList.get(i).setIsFollowing("false");
-                                                                                                        }
-                                                                                                    }
-
-                                                                                                    preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                                                                                }
-                                                                                            } finally {
-                                                                                                if (response != null && response.body() != null) {
-                                                                                                    response.body().close();
-                                                                                                }
-                                                                                            }
-                                                                                        }
-
-                                                                                        @Override
-                                                                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                                                                            ((BaseActivity) context).dismissProgressDialog();
-                                                                                            follow.setText("Following");
-                                                                                            follow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                                                                                            data.setIsFollowing("true");
-                                                                                            if (!((BaseActivity) context).hasDestroyed()) {
-                                                                                                notifyDataSetChanged();
-                                                                                            }
-                                                                                            Type type = new TypeToken<List<Articles>>() {
-                                                                                            }.getType();
-                                                                                            String cachedMagazines = preferenceEndPoint.getStringPreference("cached_magazines", null);
-                                                                                            List<Articles> cachedMagazinesList = new Gson().fromJson(cachedMagazines, type);
-                                                                                            if (cachedMagazinesList != null) {
-                                                                                                for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                                                                                    if (data.getId().equals(cachedMagazinesList.get(i).getId())) {
-                                                                                                        cachedMagazinesList.get(i).setIsFollowing("true");
-                                                                                                    }
-                                                                                                }
-
-                                                                                                preferenceEndPoint.saveStringPreference("cached_magazines", new Gson().toJson(cachedMagazinesList));
-                                                                                            }
-                                                                                        }
-                                                                                    }
-
-                    );
-                }
-            });
-
-
-            noBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    alertDialog.dismiss();
-                }
-            });
-        }
-    }
-
-
     /**
      * Adds the items to the list
      *
@@ -1168,63 +548,12 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     @Override
     public void updateFollowOrLikesStatus(Articles data, String type) {
-        autoReflectStatus(data, type);
-    }
-
-    /**
-     * Updates the Follow and Like status of the articles
-     *
-     * @param data The articles object
-     * @param type Whether it is Follow or Like
-     */
-    private void autoReflectStatus(Articles data, String type) {
-        if (data != null) {
-
-            if (Constants.FOLLOW_EVENT.equals(type)) {
-                for (Articles article : allArticles) {
-                    if (data.getId() != null && data.getId().equals(article.getId())) {
-                        article.setIsFollowing(data.getIsFollowing());
-                        article.setIsFollow(data.isFollow());
-                        if (!((BaseActivity) context).hasDestroyed()) {
-                            notifyDataSetChanged();
-                        }
-                        break;
-                    }
-                }
-            } else {
-                allArticles = getAllItems();
-                for (Articles article : allArticles) {
-                    if (data.getId() != null && data.getId().equals(article.getId())) {
-                        article.setLiked(data.getLiked());
-                        article.setIsChecked(data.isChecked());
-                        if (!((BaseActivity) context).hasDestroyed()) {
-                            notifyDataSetChanged();
-                        }
-
-                        List<Articles> cachedMagazinesList = getCachedMagazinesList();
-
-                        if (cachedMagazinesList != null) {
-                            List<Articles> tempList = cachedMagazinesList;
-                            for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                if (data.getId().equals(tempList.get(i).getId())) {
-                                    tempList.get(i).setLiked(data.getLiked());
-                                }
-                            }
-                            cachedMagazinesList = tempList;
-
-                            saveCachedMagazinesList(cachedMagazinesList);
-                        }
-                        break;
-                    }
-
-                }
-            }
-        }
+       autoReflectStatus(data, type, allArticles, context, this);
     }
 
     @Override
     public void updateMagazineStatus(Articles data, String follow) {
-        autoReflectStatus(data, follow);
+       autoReflectStatus(data, follow, allArticles, context, this);
     }
 
     @Override
@@ -1280,123 +609,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                     if (isChecked) {
-                        ((BaseActivity) context).showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                ((BaseActivity) context).dismissProgressDialog();
-
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                                if (OtherProfilesLikedArticles.getListener() != null) {
-                                    OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
-                                }
-                                mToastFactory.showToast("You have liked the article " + data.getTitle());
-
-                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                                if (cachedMagazinesList != null) {
-                                    List<Articles> tempList = cachedMagazinesList;
-                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(tempList.get(i).getId())) {
-                                            tempList.get(i).setLiked("true");
-                                        }
-                                    }
-
-                                    cachedMagazinesList = tempList;
-
-                                    saveCachedMagazinesList(cachedMagazinesList);
-                                }
-
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                mToastFactory.showToast("Error while liking article " + data.getTitle());
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-
-                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                                if (cachedMagazinesList != null) {
-                                    List<Articles> tempList = cachedMagazinesList;
-                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(tempList.get(i).getId())) {
-                                            tempList.get(i).setLiked("false");
-                                        }
-                                    }
-
-                                    cachedMagazinesList = tempList;
-
-                                    saveCachedMagazinesList(cachedMagazinesList);
-                                }
-                            }
-                        });
+                        mMagazinesServicesUsecase.likeArticles(MagazineArticlesBaseAdapter.this, context, data, mToastFactory);
                     } else {
-                        ((BaseActivity) context).showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                if (OtherProfilesLikedArticles.getListener() != null) {
-                                    OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
-                                }
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
+                        mMagazinesServicesUsecase.unlikeArticles(MagazineArticlesBaseAdapter.this, context, data, mToastFactory);
 
-                                mToastFactory.showToast("You have un-liked the article " + data.getTitle());
-
-                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                                if (cachedMagazinesList != null) {
-                                    List<Articles> tempList = cachedMagazinesList;
-                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(tempList.get(i).getId())) {
-                                            tempList.get(i).setLiked("false");
-                                        }
-                                    }
-
-                                    cachedMagazinesList = tempList;
-
-                                    saveCachedMagazinesList(cachedMagazinesList);
-                                }
-
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                Toast.makeText(context, "Error while un liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-
-                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                                if (cachedMagazinesList != null) {
-                                    List<Articles> tempList = cachedMagazinesList;
-                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(tempList.get(i).getId())) {
-                                            tempList.get(i).setLiked("true");
-                                        }
-                                    }
-
-                                    cachedMagazinesList = tempList;
-
-                                    saveCachedMagazinesList(cachedMagazinesList);
-                                }
-                            }
-                        });
                     }
                 }
             });
@@ -1406,41 +622,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             final ImageView photoView = holder.articlePhotoTop;
             photoView.setImageResource(R.drawable.magazine_backdrop);
             if (data.getImage_filename() != null) {
-                if (!((BaseActivity) context).hasDestroyed()) {
-                    //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
-                    Glide.with(context)
-                            .load(data.getS3_image_filename())
-                            .asBitmap()
-                            .placeholder(R.drawable.magazine_backdrop)
-                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                            .dontAnimate()
-                            .into(new SimpleTarget<Bitmap>() {
-                                @Override
-                                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                                    int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
-                                    Bitmap bmp = null;
-                                    if (resource != null) {
-                                        try {
-                                            bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
-                                            Glide.clear(photoView);
-                                            Glide.with(context)
-                                                    .load(data.getS3_image_filename())
-                                                    .override(bmp.getWidth(), bmp.getHeight())
-                                                    .placeholder(R.drawable.magazine_backdrop)
-                                                    .crossFade()
-                                                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                                    .dontAnimate()
-                                                    .into(photoView);
-                                        } finally {
-                                            if (bmp != null) {
-                                                bmp.recycle();
-                                                bmp = null;
-                                            }
-                                        }
-                                    }
-                                }
-                            });
-                }
+                mMagazinesServicesUsecase.loadImageFromS3(context, data, photoView);
             } else {
                 photoView.setImageResource(R.drawable.magazine_backdrop);
             }
@@ -1448,12 +630,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             photoView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                    intent.putExtra("Title", data.getTitle());
-                    intent.putExtra("Image", data.getUrl());
-                    intent.putExtra("Article", data);
-                    intent.putExtra("Position", position);
-                    magazineFlipArticlesFragment.startActivityForResult(intent, 500);
+                    mMagazinesServicesUsecase.navigateToArticleWebView(context, data, position);
                 }
             });
         }
@@ -1463,11 +640,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, CreateMagazineActivity.class);
-                    intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
-                    if (context instanceof Activity) {
-                        ((Activity) context).startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
-                    }
+                    mMagazinesServicesUsecase.onAddClick(context, data);
                 }
             });
         }
@@ -1477,30 +650,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (data.getImage_filename() != null) {
-                        new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
-                    } else {
-                        String summary = Html.fromHtml(data.getSummary()).toString();
-                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, null);
-                    }
-                }
-            });
-        }
-
-        if (holder.articleFollowTop != null) {
-            if ("true".equals(data.getIsFollowing())) {
-                holder.articleFollowTop.setText("Following");
-                holder.articleFollowTop.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-            } else {
-                holder.articleFollowTop.setText("Follow");
-                holder.articleFollowTop.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            }
-
-            final ViewHolder finalHolder = holder;
-            holder.articleFollowTop.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    followArticle(data, finalHolder, finalHolder.articleFollowTop);
+                    mMagazinesServicesUsecase.onShareClick(v, data);
                 }
             });
         }
@@ -1529,10 +679,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 holder.tvTopicNameTop.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(context, TopicsDetailActivity.class);
-                        intent.putExtra("Topic", data);
-                        intent.putExtra("Position", position);
-                        magazineFlipArticlesFragment.startActivityForResult(intent, 60);
+                        mMagazinesServicesUsecase.navigateToTopicDetails(magazineFlipArticlesFragment, context, data, position);
                     }
                 });
             } else {
@@ -1563,13 +710,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             holder.articleTitleLeft.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                    intent.putExtra("Title", data.getTitle());
-                    intent.putExtra("Image", data.getUrl());
-                    intent.putExtra("Article", data);
-                    intent.putExtra("Position", position);
-                    intent.putExtra("ArticlePlacement", "left");
-                    magazineFlipArticlesFragment.startActivityForResult(intent, 500);
+                    mMagazinesServicesUsecase.navigateFromLeftRightArticleToWebView(magazineFlipArticlesFragment, context, data, position, "left");
                 }
             });
         }
@@ -1590,124 +731,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                     if (isChecked) {
-                        ((BaseActivity) context).showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                likeUnlikeErrorMessage(response);
-                                ((BaseActivity) context).dismissProgressDialog();
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                                if (OtherProfilesLikedArticles.getListener() != null) {
-                                    OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
-                                }
-                                mToastFactory.showToast("You have liked the article " + data.getTitle());
-
-                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                                if (cachedMagazinesList != null) {
-                                    List<Articles> tempList = cachedMagazinesList;
-                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(tempList.get(i).getId())) {
-                                            tempList.get(i).setLiked("true");
-                                        }
-                                    }
-
-                                    cachedMagazinesList = tempList;
-
-                                    saveCachedMagazinesList(cachedMagazinesList);
-                                }
-
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                mToastFactory.showToast("Error while liking article " + data.getTitle());
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-
-                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                                if (cachedMagazinesList != null) {
-                                    List<Articles> tempList = cachedMagazinesList;
-                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(tempList.get(i).getId())) {
-                                            tempList.get(i).setLiked("false");
-                                        }
-                                    }
-
-                                    cachedMagazinesList = tempList;
-
-                                    saveCachedMagazinesList(cachedMagazinesList);
-                                }
-                            }
-                        });
+                        mMagazinesServicesUsecase.likeArticles(MagazineArticlesBaseAdapter.this, context, data, mToastFactory);
                     } else {
-                        ((BaseActivity) context).showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                likeUnlikeErrorMessage(response);
-                                ((BaseActivity) context).dismissProgressDialog();
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                if (OtherProfilesLikedArticles.getListener() != null) {
-                                    OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
-                                }
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-
-                                mToastFactory.showToast("You have un-liked the article " + data.getTitle());
-
-                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                                if (cachedMagazinesList != null) {
-                                    List<Articles> tempList = cachedMagazinesList;
-                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(tempList.get(i).getId())) {
-                                            tempList.get(i).setLiked("false");
-                                        }
-                                    }
-
-                                    cachedMagazinesList = tempList;
-
-                                    saveCachedMagazinesList(cachedMagazinesList);
-                                }
-
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                Toast.makeText(context, "Error while un liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-
-                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                                if (cachedMagazinesList != null) {
-                                    List<Articles> tempList = cachedMagazinesList;
-                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(tempList.get(i).getId())) {
-                                            tempList.get(i).setLiked("true");
-                                        }
-                                    }
-
-                                    cachedMagazinesList = tempList;
-
-                                    saveCachedMagazinesList(cachedMagazinesList);
-                                }
-                            }
-                        });
+                        mMagazinesServicesUsecase.unlikeArticles(MagazineArticlesBaseAdapter.this, context, data, mToastFactory);
                     }
                 }
             });
@@ -1718,41 +744,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             photoView.setVisibility(View.VISIBLE);
             photoView.setImageResource(R.drawable.magazine_backdrop);
             if (data.getImage_filename() != null) {
-                if (!((BaseActivity) context).hasDestroyed()) {
-                    //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
-                    Glide.with(context)
-                            .load(data.getS3_image_filename())
-                            .asBitmap()
-                            .placeholder(R.drawable.magazine_backdrop)
-                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                            .dontAnimate()
-                            .into(new SimpleTarget<Bitmap>() {
-                                @Override
-                                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                                    int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
-                                    Bitmap bmp = null;
-                                    if (resource != null) {
-                                        try {
-                                            bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
-                                            Glide.clear(photoView);
-                                            Glide.with(context)
-                                                    .load(data.getS3_image_filename())
-                                                    .override(bmp.getWidth(), bmp.getHeight())
-                                                    .placeholder(R.drawable.magazine_backdrop)
-                                                    .crossFade()
-                                                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                                    .dontAnimate()
-                                                    .into(photoView);
-                                        } finally {
-                                            if (bmp != null) {
-                                                bmp.recycle();
-                                                bmp = null;
-                                            }
-                                        }
-                                    }
-                                }
-                            });
-                }
+                mMagazinesServicesUsecase.loadImageFromS3(context, data, photoView);
             } else {
                 photoView.setImageResource(R.drawable.magazine_backdrop);
             }
@@ -1760,13 +752,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             photoView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                    intent.putExtra("Title", data.getTitle());
-                    intent.putExtra("Image", data.getUrl());
-                    intent.putExtra("Article", data);
-                    intent.putExtra("Position", position);
-                    intent.putExtra("ArticlePlacement", "left");
-                    magazineFlipArticlesFragment.startActivityForResult(intent, 500);
+                    mMagazinesServicesUsecase.navigateFromLeftRightArticleToWebView(magazineFlipArticlesFragment, context, data, position, "left");
                 }
             });
         }
@@ -1777,11 +763,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, CreateMagazineActivity.class);
-                    intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
-                    if (context instanceof Activity) {
-                        ((Activity) context).startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
-                    }
+                    mMagazinesServicesUsecase.onAddClick(context, data);
                 }
             });
         }
@@ -1792,31 +774,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (data.getImage_filename() != null) {
-                        new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
-                    } else {
-                        String summary = Html.fromHtml(data.getSummary()).toString();
-                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, null);
-                    }
-                }
-            });
-        }
-
-        if (holder.articleFollowLeft != null) {
-
-            if ("true".equals(data.getIsFollowing())) {
-                holder.articleFollowLeft.setText("Following");
-                holder.articleFollowLeft.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-            } else {
-                holder.articleFollowLeft.setText("Follow");
-                holder.articleFollowLeft.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            }
-
-            final ViewHolder finalHolder = holder;
-            holder.articleFollowLeft.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    followArticle(data, finalHolder, finalHolder.articleFollowLeft);
+                    mMagazinesServicesUsecase.onShareClick(v, data);
                 }
             });
         }
@@ -1828,11 +786,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 holder.tvTopicNameLeft.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(context, TopicsDetailActivity.class);
-                        intent.putExtra("Topic", data);
-                        intent.putExtra("Position", position);
-                        intent.putExtra("ArticlePlacement", "left");
-                        magazineFlipArticlesFragment.startActivityForResult(intent, 60);
+                        mMagazinesServicesUsecase.navigateFromLeftRightToTopicsDetail(magazineFlipArticlesFragment, context, data, position, "left");
                     }
                 });
             } else {
@@ -1886,13 +840,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             holder.articleTitleRight.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                    intent.putExtra("Title", data.getTitle());
-                    intent.putExtra("Image", data.getUrl());
-                    intent.putExtra("Article", data);
-                    intent.putExtra("Position", position);
-                    intent.putExtra("ArticlePlacement", "right");
-                    magazineFlipArticlesFragment.startActivityForResult(intent, 500);
+                    mMagazinesServicesUsecase.navigateFromLeftRightArticleToWebView(magazineFlipArticlesFragment, context, data, position, "right");
                 }
             });
         }
@@ -1913,122 +861,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                     if (isChecked) {
-                        ((BaseActivity) context).showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                                if (OtherProfilesLikedArticles.getListener() != null) {
-                                    OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
-                                }
-                                mToastFactory.showToast("You have liked the article " + data.getTitle());
-
-                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                                if (cachedMagazinesList != null) {
-                                    List<Articles> tempList = cachedMagazinesList;
-                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(tempList.get(i).getId())) {
-                                            tempList.get(i).setLiked("true");
-                                        }
-                                    }
-
-                                    cachedMagazinesList = tempList;
-
-                                    saveCachedMagazinesList(cachedMagazinesList);
-                                }
-
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                mToastFactory.showToast("Error while liking article " + data.getTitle());
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-
-                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                                if (cachedMagazinesList != null) {
-                                    List<Articles> tempList = cachedMagazinesList;
-                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(tempList.get(i).getId())) {
-                                            tempList.get(i).setLiked("false");
-                                        }
-                                    }
-
-                                    cachedMagazinesList = tempList;
-
-                                    saveCachedMagazinesList(cachedMagazinesList);
-                                }
-                            }
-                        });
+                        mMagazinesServicesUsecase.likeArticles(MagazineArticlesBaseAdapter.this, context, data, mToastFactory);
                     } else {
-                        ((BaseActivity) context).showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                if (OtherProfilesLikedArticles.getListener() != null) {
-                                    OtherProfilesLikedArticles.getListener().updateOtherPeopleStatus(data, Constants.LIKE_EVENT);
-                                }
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-
-                                mToastFactory.showToast("You have un-liked the article " + data.getTitle());
-
-                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                                if (cachedMagazinesList != null) {
-                                    List<Articles> tempList = cachedMagazinesList;
-                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(tempList.get(i).getId())) {
-                                            tempList.get(i).setLiked("false");
-                                        }
-                                    }
-
-                                    cachedMagazinesList = tempList;
-
-                                    saveCachedMagazinesList(cachedMagazinesList);
-                                }
-
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                Toast.makeText(context, "Error while un liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-
-                                List<Articles> cachedMagazinesList = getCachedMagazinesList();
-                                if (cachedMagazinesList != null) {
-                                    List<Articles> tempList = cachedMagazinesList;
-                                    for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                        if (data.getId().equals(tempList.get(i).getId())) {
-                                            tempList.get(i).setLiked("true");
-                                        }
-                                    }
-
-                                    cachedMagazinesList = tempList;
-
-                                    saveCachedMagazinesList(cachedMagazinesList);
-                                }
-                            }
-                        });
+                        mMagazinesServicesUsecase.unlikeArticles(MagazineArticlesBaseAdapter.this, context, data, mToastFactory);
                     }
                 }
             });
@@ -2039,41 +874,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             photoView.setVisibility(View.VISIBLE);
             photoView.setImageResource(R.drawable.magazine_backdrop);
             if (data.getImage_filename() != null) {
-                if (!((BaseActivity) context).hasDestroyed()) {
-                    //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
-                    Glide.with(context)
-                            .load(data.getS3_image_filename())
-                            .asBitmap()
-                            .placeholder(R.drawable.magazine_backdrop)
-                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                            .dontAnimate()
-                            .into(new SimpleTarget<Bitmap>() {
-                                @Override
-                                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                                    int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
-                                    Bitmap bmp = null;
-                                    if (resource != null) {
-                                        try {
-                                            bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
-                                            Glide.clear(photoView);
-                                            Glide.with(context)
-                                                    .load(data.getS3_image_filename())
-                                                    .override(bmp.getWidth(), bmp.getHeight())
-                                                    .placeholder(R.drawable.magazine_backdrop)
-                                                    .crossFade()
-                                                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                                    .dontAnimate()
-                                                    .into(photoView);
-                                        } finally {
-                                            if (bmp != null) {
-                                                bmp.recycle();
-                                                bmp = null;
-                                            }
-                                        }
-                                    }
-                                }
-                            });
-                }
+                mMagazinesServicesUsecase.loadImageFromS3(context, data, photoView);
             } else {
                 photoView.setImageResource(R.drawable.magazine_backdrop);
             }
@@ -2081,13 +882,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             photoView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                    intent.putExtra("Title", data.getTitle());
-                    intent.putExtra("Image", data.getUrl());
-                    intent.putExtra("Article", data);
-                    intent.putExtra("Position", position);
-                    intent.putExtra("ArticlePlacement", "right");
-                    magazineFlipArticlesFragment.startActivityForResult(intent, 500);
+                    mMagazinesServicesUsecase.navigateFromLeftRightArticleToWebView(magazineFlipArticlesFragment, context, data, position, "right");
                 }
             });
         }
@@ -2098,11 +893,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, CreateMagazineActivity.class);
-                    intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
-                    if (context instanceof Activity) {
-                        ((Activity) context).startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
-                    }
+                    mMagazinesServicesUsecase.onAddClick(context, data);
                 }
             });
         }
@@ -2113,31 +904,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (data.getImage_filename() != null) {
-                        new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
-                    } else {
-                        String summary = Html.fromHtml(data.getSummary()).toString();
-                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, null);
-                    }
-                }
-            });
-        }
-
-        if (holder.articleFollowRight != null) {
-
-            if ("true".equals(data.getIsFollowing())) {
-                holder.articleFollowRight.setText("Following");
-                holder.articleFollowRight.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-            } else {
-                holder.articleFollowRight.setText("Follow");
-                holder.articleFollowRight.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            }
-
-            final ViewHolder finalHolder = holder;
-            holder.articleFollowRight.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    followArticle(data, finalHolder, finalHolder.articleFollowRight);
+                    mMagazinesServicesUsecase.onShareClick(v, data);
                 }
             });
         }
@@ -2149,11 +916,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 holder.tvTopicNameRight.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(context, TopicsDetailActivity.class);
-                        intent.putExtra("Topic", data);
-                        intent.putExtra("Position", position);
-                        intent.putExtra("ArticlePlacement", "right");
-                        magazineFlipArticlesFragment.startActivityForResult(intent, 60);
+                        mMagazinesServicesUsecase.navigateFromLeftRightToTopicsDetail(magazineFlipArticlesFragment, context, data, position, "right");
                     }
                 });
             } else {
@@ -2280,7 +1043,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         notifyDataSetChanged();
                     }
 
-                    List<Articles> cachedMagazinesList = getCachedMagazinesList();
+                    List<Articles> cachedMagazinesList = mMagazinesServicesUsecase.getCachedMagazinesList(context);
 
                     if (cachedMagazinesList != null) {
                         List<Articles> tempList = cachedMagazinesList;
@@ -2291,7 +1054,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         }
                         cachedMagazinesList = tempList;
 
-                        saveCachedMagazinesList(cachedMagazinesList);
+                        mMagazinesServicesUsecase.saveCachedMagazinesList(cachedMagazinesList, context);
                     }
                 }
 
@@ -2347,10 +1110,10 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             }
 
             if (allArticles.size() == 0) {
-                magazineFlipArticlesFragment.loadArticles(null, false);
+                mMagazinesServicesUsecase.loadArticles(null, false, context, magazineFlipArticlesFragment);
             }
 
-            List<Articles> cachedMagazinesList = getCachedMagazinesList();
+            List<Articles> cachedMagazinesList = mMagazinesServicesUsecase.getCachedMagazinesList(context);
 
             if (cachedMagazinesList != null) {
                 List<Articles> tempList = new ArrayList<>();
@@ -2362,7 +1125,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 }
                 cachedMagazinesList.removeAll(tempList);
 
-                saveCachedMagazinesList(cachedMagazinesList);
+                mMagazinesServicesUsecase.saveCachedMagazinesList(cachedMagazinesList, context);
             }
         }
 
@@ -2371,11 +1134,11 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     /**
      * The View Holder class
      */
-    private static class ViewHolder {
+    public static class ViewHolder {
 
-        private TextView articleTitle;
+        public TextView articleTitle;
 
-        private TextView articleShortDesc;
+        public TextView articleShortDesc;
 
         private ImageView articlePhoto;
 
@@ -2384,8 +1147,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         private ImageView magazineAdd;
 
         private ImageView magazineShare;
-
-        private Button articleFollow;
 
         private TextView articleTitleTop;
 
@@ -2396,8 +1157,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         private ImageView magazineAddTop;
 
         private ImageView magazineShareTop;
-
-        private Button articleFollowTop;
 
         private TextView articleTitleLeft;
 
@@ -2443,11 +1202,11 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         private TextView articleSummaryRight;
 
-        private TextView fullImageTitle;
+        public TextView fullImageTitle;
 
-        private ImageView blackMask;
+        public ImageView blackMask;
 
-        private RelativeLayout rlFullImageOptions;
+        public RelativeLayout rlFullImageOptions;
 
         private CheckBox fullImageMagazineLike;
 
@@ -2456,12 +1215,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         private ImageView fullImageMagazineShare;
 
         private Button doneButton;
-
-
-        private RelativeLayout topLayout;
-        private LinearLayout middleLayout; //like, add and share
-        private LinearLayout bottomLayout;
-
     }
 
     /**
@@ -2528,12 +1281,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
      */
     public List<Articles> getAllItems() {
         getAllArticles = new ArrayList<>(items);
-        /*if (getAllArticles.size() >= 2) {
-            getAllArticles.add(1, secondArticle);
-        }
-        if (getAllArticles.size() >= 3) {
-            getAllArticles.add(2, thirdArticle);
-        }*/
         getAllArticles.add(secondArticle);
         getAllArticles.add(thirdArticle);
         return getAllArticles;
@@ -2547,75 +1294,6 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
     public void removeItems(List<Articles> articlesList) {
         items.removeAll(articlesList);
         notifyDataSetChanged();
-    }
-
-    /**
-     * Gets the cached magazines list
-     *
-     * @return The list of articles
-     */
-    private List<Articles> getCachedMagazinesList() {
-        Type type1 = new TypeToken<List<Articles>>() {
-        }.getType();
-        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        List<Articles> cachedMagazinesList = new ArrayList<>();
-        if (context != null) {
-            String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("followed_cached_magazines", "");
-            String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("random_cached_magazines", "");
-
-            if (!TextUtils.isEmpty(sharedFollowedCachedMagazines)) {
-                String cachedMagazines = sharedFollowedCachedMagazines;
-                List<Articles> cachedFollowedMagazinesList = new Gson().fromJson(cachedMagazines, type1);
-                cachedMagazinesList.addAll(cachedFollowedMagazinesList);
-            }
-            if (!TextUtils.isEmpty(sharedRandomCachedMagazines)) {
-                String cachedMagazines = sharedRandomCachedMagazines;
-                List<Articles> cachedRandomMagazinesList = new Gson().fromJson(cachedMagazines, type1);
-                cachedMagazinesList.addAll(cachedRandomMagazinesList);
-            }
-        }
-
-        return cachedMagazinesList;
-    }
-
-    /**
-     * Saves the cached magazines list
-     *
-     * @param cachedMagazinesList The list of articles to be cached
-     */
-    private void saveCachedMagazinesList(List<Articles> cachedMagazinesList) {
-        List<Articles> followedTopicArticles = new ArrayList<>();
-        List<Articles> randomTopicArticles = new ArrayList<>();
-        for (Articles articles : cachedMagazinesList) {
-            if ("true".equals(articles.getTopicFollowing())) {
-                followedTopicArticles.add(articles);
-            } else {
-                randomTopicArticles.add(articles);
-            }
-        }
-
-        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        if (context != null) {
-            SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(context, userId);
-            editor.putString("followed_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(followedTopicArticles)));
-            editor.putString("random_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(randomTopicArticles)));
-            editor.commit();
-        }
-    }
-
-    private void likeUnlikeErrorMessage(Response<ResponseBody> response) {
-        try {
-            int code = (new JSONObject(response.body().string())).getInt("code");
-            if (code == 422) {
-                mToastFactory.showToast(R.string.like_unlike_error_message);
-                return;
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -2664,6 +1342,57 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             });
         } else {
             mToastFactory.newToast(context.getString(R.string.no_topics_selected), Toast.LENGTH_SHORT);
+        }
+    }
+
+    /**
+     * Updates the Follow and Like status of the articles
+     *
+     * @param data The articles object
+     * @param type Whether it is Follow or Like
+     */
+    public void autoReflectStatus(Articles data, String type, List<Articles> allArticles, Context context, MagazineArticlesBaseAdapter magazineArticlesBaseAdapter) {
+        if (data != null) {
+
+            if (Constants.FOLLOW_EVENT.equals(type)) {
+                for (Articles article : allArticles) {
+                    if (data.getId() != null && data.getId().equals(article.getId())) {
+                        article.setIsFollowing(data.getIsFollowing());
+                        article.setIsFollow(data.isFollow());
+                        if (!((BaseActivity) context).hasDestroyed()) {
+                            magazineArticlesBaseAdapter.notifyDataSetChanged();
+                        }
+                        break;
+                    }
+                }
+            } else {
+                allArticles = magazineArticlesBaseAdapter.getAllItems();
+                for (Articles article : allArticles) {
+                    if (data.getId() != null && data.getId().equals(article.getId())) {
+                        article.setLiked(data.getLiked());
+                        article.setIsChecked(data.isChecked());
+                        if (!((BaseActivity) context).hasDestroyed()) {
+                            magazineArticlesBaseAdapter.notifyDataSetChanged();
+                        }
+
+                        List<Articles> cachedMagazinesList = mMagazinesServicesUsecase.getCachedMagazinesList(context);
+
+                        if (cachedMagazinesList != null) {
+                            List<Articles> tempList = cachedMagazinesList;
+                            for (int i = 0; i < cachedMagazinesList.size(); i++) {
+                                if (data.getId().equals(tempList.get(i).getId())) {
+                                    tempList.get(i).setLiked(data.getLiked());
+                                }
+                            }
+                            cachedMagazinesList = tempList;
+
+                            mMagazinesServicesUsecase.saveCachedMagazinesList(cachedMagazinesList, context);
+                        }
+                        break;
+                    }
+
+                }
+            }
         }
     }
 
