@@ -7,12 +7,16 @@ ext.supportRecyclerViewVersion = '25.0.0'
 buildscript {
     repositories {
         jcenter()
+        google()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.3'
-        classpath 'com.google.gms:google-services:3.0.0'
+        classpath 'com.google.gms:google-services:3.1.1'
         classpath "com.android.tools.build:gradle-experimental:0.7.0-alpha4"
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+
+        // firebase performance monitoring
+        classpath 'com.google.firebase:firebase-plugins:1.1.5'
 
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7'
         // NOTE: Do not place your application dependencies here; they belong
@@ -23,6 +27,8 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        mavenCentral()
+        google()
     }
 }
 
