@@ -160,14 +160,14 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
         }
 
         // clear glide for every 10 seconds
-        /*handler = new Handler();
+        handler = new Handler();
         handler.postDelayed(new Runnable() {
 
             @Override
             public void run() {
                 clearGlideMemory(mContext);
             }
-        }, 10000);*/
+        }, 10000);
 
         return view;
     }
@@ -1058,12 +1058,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             Collections.reverse(notEmptyUpdatedArticles);
             notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
             followedArticlesList = notEmptyUpdatedArticles;
-
-            for (Articles a : followedArticlesList) {
-                if (a != null) {
-                    Log.d("MyCollectionDetails", "The sorted list is " + a.getId() + " updated " + a.getUpdated());
-                }
-            }
 
             int positionToAdd = 10;
 

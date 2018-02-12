@@ -631,7 +631,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                             .into(photoView);
 
 
-                    if (articleTitle != null) {
+                    /*if (articleTitle != null) {
                         ViewTreeObserver vto1 = articleTitle.getViewTreeObserver();
                         vto1.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                             private int maxLines = -1;
@@ -669,8 +669,11 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                         });
 
                         articleTitle.setText(AphidLog.format("%s", data.getTitle()));
-                    }
+                    }*/
 
+                    if(articleTitle != null) {
+                        articleTitle.setText(AphidLog.format("%s", data.getTitle()));
+                    }
                     if (textView != null) {
                         textView.setText(Html.fromHtml(data.getSummary()));
                     }
