@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/light_gray">
+
+    <LinearLayout
+        android:id="@+id/profile_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/profile_background"
+        android:orientation="vertical">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_pic"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:src="@drawable/default_avatar_40"
+            app:civ_fill_color="@color/gray"
+            app:civ_border_color="@color/gray"
+            app:civ_border_width="2dp" />
+
+        <TextView
+            android:id="@+id/profile_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:padding="15dp"
+            android:text="Yo!"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+        <FrameLayout
+            android:id="@+id/change_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#44000000"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/add_change_photo_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:drawablePadding="5dp"
+                android:drawableRight="@drawable/ic_more_camera"
+                android:elevation="7dp"
+                android:padding="10dp"
+                android:text="Change Picture"
+                android:textColor="@color/white" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <include
+        layout="@layout/activity_settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/profile_layout"
+        android:elevation="16dp" />
+
+</RelativeLayout>

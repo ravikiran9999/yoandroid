@@ -1,0 +1,308 @@
+apply plugin: 'com.android.application'
+
+// firebase performance monitor
+apply plugin: 'com.google.firebase.firebase-perf'
+
+//apply plugin: 'android-apt'
+
+
+android {
+    signingConfigs {
+        devconfig {
+            keyAlias 'yoapp'
+            keyPassword '123456'
+            storeFile file('config/yoapp-dev.jks')
+            storePassword '123456'
+        }
+        stageconfig {
+            keyAlias 'yoappstage'
+            keyPassword 'yow@tsup'
+            storeFile file('config/yo-app-stage.jks')
+            storePassword '123456'
+        }
+    }
+    compileSdkVersion 25
+    flavorDimensions "versionCode"
+    buildToolsVersion '26.0.2'
+    useLibrary 'org.apache.http.legacy'
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+    // Enabling multidex support.
+    defaultConfig {
+        applicationId "com.yowatsup"
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 5
+        versionName "1.0.4.4"
+
+        // annotationProcess issue in latest gradle
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath false
+            }
+        }
+
+        buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+        buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
+        buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
+        buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
+        buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "false"
+        buildConfigField "boolean", "NEW_OTP_SCREEN", "true"
+        buildConfigField "boolean", "NEW_CONTACTS_SCREEN", "true"
+        buildConfigField "boolean", "NEW_DIALER", "true"
+        multiDexEnabled true
+    }
+    productFlavors {
+
+        dev {
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "false"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+            buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
+            buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "false"
+            buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
+            buildConfigField "boolean", "NEW_OTP_SCREEN", "true"
+            buildConfigField "boolean", "NEW_CONTACTS_SCREEN", "true"
+            buildConfigField "boolean", "NEW_YO_CREDIT_SCREEN", "true"
+            buildConfigField "boolean", "NEW_FOLLOW_MORE_TOPICS", "true"
+            buildConfigField "String", "BASE_URL", "\"http://34.198.165.8/\""
+            buildConfigField "String", "CLIENT_ID", "\"22878964b4ec1de00626c4b88c81d177eafb4869523dad8b52eb7909e7d8f076\""
+            buildConfigField "String", "CLIENT_SECRET", "\"f0f79dfe87ed1eca3d77c48d0b1f48eedc690a6ae2f02ec777fd1b0456ad1870\""
+            buildConfigField "String", "STORAGE_BUCKET", "\"gs://yowatsup-4342.appspot.com\""
+            buildConfigField "String", "FIREBASE_URL", "\"https://yowatsup-4342.firebaseio.com/\""
+            minSdkVersion 17
+        }
+
+        stage {
+            applicationIdSuffix ".stage"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+            buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
+            buildConfigField "String", "RELEASE_USER_TYPE_END", "\"D\""
+
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+            buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "false"
+            buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
+            buildConfigField "boolean", "NEW_OTP_SCREEN", "true"
+            buildConfigField "boolean", "NEW_CONTACTS_SCREEN", "true"
+            buildConfigField "boolean", "NEW_YO_CREDIT_SCREEN", "true"
+            buildConfigField "boolean", "NEW_FOLLOW_MORE_TOPICS", "true"
+
+            buildConfigField "String", "BASE_URL", "\"http://34.198.165.8/\""
+            buildConfigField "String", "CLIENT_ID", "\"22878964b4ec1de00626c4b88c81d177eafb4869523dad8b52eb7909e7d8f076\""
+            buildConfigField "String", "CLIENT_SECRET", "\"f0f79dfe87ed1eca3d77c48d0b1f48eedc690a6ae2f02ec777fd1b0456ad1870\""
+            buildConfigField "String", "STORAGE_BUCKET", "\"gs://yo-production.appspot.com\""
+            buildConfigField "String", "FIREBASE_URL", "\"https://yo-production.firebaseio.com/\""
+
+            //Same as Dev
+            /*buildConfigField "String", "BASE_URL", "\"http://34.198.165.8/\""
+            buildConfigField "String", "CLIENT_ID", "\"22878964b4ec1de00626c4b88c81d177eafb4869523dad8b52eb7909e7d8f076\""
+            buildConfigField "String", "CLIENT_SECRET", "\"f0f79dfe87ed1eca3d77c48d0b1f48eedc690a6ae2f02ec777fd1b0456ad1870\""
+            buildConfigField "String", "STORAGE_BUCKET", "\"gs://yowatsup-4342.appspot.com\""
+            buildConfigField "String", "FIREBASE_URL", "\"https://yowatsup-4342.firebaseio.com/\""*/
+        }
+
+        production {
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
+            buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
+            buildConfigField "String", "RELEASE_USER_TYPE_END", "\"D\""
+
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+            buildConfigField "boolean", "INTERNAL_MTUITY_RELEASE", "false"
+            buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
+            buildConfigField "boolean", "NEW_OTP_SCREEN", "true"
+            buildConfigField "boolean", "NEW_CONTACTS_SCREEN", "true"
+            buildConfigField "boolean", "NEW_YO_CREDIT_SCREEN", "true"
+            buildConfigField "boolean", "NEW_FOLLOW_MORE_TOPICS", "true"
+
+            buildConfigField "String", "BASE_URL", "\"http://34.198.165.8/\""
+            buildConfigField "String", "CLIENT_ID", "\"22878964b4ec1de00626c4b88c81d177eafb4869523dad8b52eb7909e7d8f076\""
+            buildConfigField "String", "CLIENT_SECRET", "\"f0f79dfe87ed1eca3d77c48d0b1f48eedc690a6ae2f02ec777fd1b0456ad1870\""
+            buildConfigField "String", "STORAGE_BUCKET", "\"gs://yowatsup-release.appspot.com\""
+            buildConfigField "String", "FIREBASE_URL", "\"https://yowatsup-release.firebaseio.com/\""
+
+        }
+
+        enhancement {
+            buildConfigField "boolean", "AWS_LOGS_ENABLE", "true"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
+            buildConfigField "String", "RELEASE_USER_TYPE", "\"yowltuser\""
+            buildConfigField "String", "RELEASE_USER_TYPE_END", "\"D\""
+            buildConfigField "String", "BASE_URL", "\"http://34.225.28.188/\""
+
+            // Remove
+            buildConfigField "String", "CLIENT_ID", "\"22878964b4ec1de00626c4b88c81d177eafb4869523dad8b52eb7909e7d8f076\""
+            buildConfigField "String", "CLIENT_SECRET", "\"f0f79dfe87ed1eca3d77c48d0b1f48eedc690a6ae2f02ec777fd1b0456ad1870\""
+
+            //enhancement
+            /*buildConfigField "String", "CLIENT_ID", "\"385e29bdabe89c20ec32cae501b556554a8ece1605142b58ab6966cfee0635be\""
+            buildConfigField "String", "CLIENT_SECRET", "\"5262628e450e5e356561753f712196d678acc0a994058935bc2dcbc351aa2fee\""*/
+
+            buildConfigField "String", "STORAGE_BUCKET", "\"gs://enhancement-94ccd.appspot.com\""
+            buildConfigField "String", "FIREBASE_URL", "\"https://enhancement-94ccd.firebaseio.com\""
+            buildConfigField "boolean", "NEW_YO_CREDIT_SCREEN", "true"
+            buildConfigField "boolean", "NEW_FOLLOW_MORE_TOPICS", "true"
+            minSdkVersion 18
+        }
+
+    }
+    buildTypes {
+        release {
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //signingConfig signingConfigs.config
+            productFlavors.dev.signingConfig signingConfigs.devconfig
+            productFlavors.stage.signingConfig signingConfigs.stageconfig
+            productFlavors.enhancement.signingConfig signingConfigs.devconfig
+        }
+
+    }
+    lintOptions {
+        abortOnError false
+    }
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE-FIREBASE.txt'
+    }
+
+    aaptOptions {
+        cruncherEnabled = false
+    }
+}
+
+repositories {
+
+    maven { url "https://jitpack.io" }
+}
+ext {
+    permissionsDispatcherVersion = '2.1.2'
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(include: ['*.so'], dir: 'libs')
+
+    // detect memory leaks
+    //debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+
+    //Support libs
+    compile "com.android.support:appcompat-v7:${supportAppcompatVersion}"
+    compile "com.android.support:design:${supportDesignVersion}"
+    compile "com.android.support:cardview-v7:${supportCardViewVersion}"
+    compile "com.android.support:recyclerview-v7:${supportRecyclerViewVersion}"
+
+    compile project(':flip')
+    compile project(':tagview')
+    compile project(':yowatsuppjsip2.7')
+    compile project(':emojilib')
+    compile project(':topsnackbar')
+
+    compile "com.android.support:support-v4:${supportAppcompatVersion}"
+    compile "com.android.support:palette-v7:${supportAppcompatVersion}"
+    compile group: 'com.googlecode.libphonenumber', name: 'libphonenumber', version: '8.5.1'
+    compile "com.github.hotchemi:permissionsdispatcher:${permissionsDispatcherVersion}"
+    annotationProcessor "com.github.hotchemi:permissionsdispatcher-processor:${permissionsDispatcherVersion}"
+
+    //For uploading data to google sheet
+    //https://developers.google.com/sheets/api/quickstart/android
+    compile('com.google.api-client:google-api-client-android:1.22.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+    compile('com.google.apis:google-api-services-sheets:v4-rev483-1.22.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+
+    compile 'com.wang.avi:library:2.1.3'
+    compile 'com.j256.ormlite:ormlite-core:4.48'
+    compile 'com.j256.ormlite:ormlite-android:4.48'
+
+    // firebase
+    compile 'com.google.firebase:firebase-messaging:11.8.0'
+    compile 'com.google.firebase:firebase-auth:11.8.0'
+    compile 'com.google.firebase:firebase-database:11.8.0'
+    compile 'com.google.firebase:firebase-storage:11.8.0'
+    compile 'com.firebase:firebase-client-android:2.5.2'
+    compile 'com.firebase:firebase-jobdispatcher:0.5.1'
+    // firebase performance monitor
+    compile 'com.google.firebase:firebase-perf:11.8.0'
+
+    // dragger
+    compile 'com.squareup.dagger:dagger:1.2.2'
+    provided 'com.squareup.dagger:dagger-compiler:1.2.2'
+    annotationProcessor 'com.squareup.dagger:dagger-compiler:1.2.2'
+
+    compile 'de.greenrobot:eventbus:2.4.0'
+    compile 'com.google.code.gson:gson:2.6.2'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.3.0'
+
+    //Butter knife - view injector
+    compile 'com.jakewharton:butterknife:7.0.1'
+    annotationProcessor 'com.jakewharton:butterknife:7.0.1'
+
+    compile 'com.amazonaws:aws-android-sdk-core:2.2.18'
+    compile 'com.amazonaws:aws-android-sdk-cognito:2.2.18'
+    compile 'com.amazonaws:aws-android-sdk-s3:2.2.18'
+    compile 'se.emilsjolander:stickylistheaders:2.7.0'
+    compile 'com.github.chrisbanes:PhotoView:1.2.6'
+    compile 'de.hdodenhof:circleimageview:2.0.0'
+
+    // Glide
+    compile 'com.github.bumptech.glide:glide:3.5.2'
+
+    //compile 'com.github.bumptech.glide:glide:4.5.0'
+    //annotationProcessor 'com.github.bumptech.glide:compiler:4.5.0'
+
+    compile 'se.emilsjolander:android-flipview:1.1.0'
+    compile 'com.android.support:multidex:1.0.1'
+    compile 'me.grantland:autofittextview:0.2.1'
+    compile 'com.isseiaoki:simplecropview:1.1.4'
+    compile 'com.flurry.android:analytics:7.0.0@aar'
+    compile 'com.google.android.gms:play-services-auth:11.8.0'
+    compile 'pub.devrel:easypermissions:0.3.0'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support:support-v4:25.2.0'
+    testCompile 'junit:junit:4.12'
+
+}
+apply plugin: 'com.google.gms.google-services'
+
+public Properties getAwsProperties() {
+    Properties props = new Properties()
+    File propsFile = new File("gradle.properties");
+    props.load(propsFile.newDataInputStream());
+    return props;
+}
+
+def releasePath = file("${rootDir}/apks")
+def publish = project.tasks.create("publishAll")
+android.applicationVariants.all { variant ->
+//    if (variant.buildType.name != 'release') {
+    def n = 0
+    def task = project.tasks.create("publish${variant.name}Apk", Copy)
+    task.from(variant.outputs[0].outputFile)
+//       def file = variant.outputs[0].outputFile
+    task.into(releasePath)
+//    baseName
+
+    def name = variant.baseName.replace("-debug", "").replace("-sms", "_SMS");//.toUpperCase();
+    name = name.substring(0, 1).toUpperCase() + name.substring(1)
+    def oldName = "app-${variant.productFlavors.name}-${variant.buildType.name}.apk";
+    def newFollow = "Yo_App_Android_${name}_V${android.defaultConfig.versionName}.apk";
+    println("base name- " + name)
+    println("flavor name- " + variant.productFlavors.name)
+    task.rename({ String fileName ->
+        n = n + 1
+        println("file name- " + newFollow)
+        fileName - fileName + newFollow
+        // fileName - '.apk' + n + 'test.apk'
+    })
+//Yo_App_Android_V
+    task.dependsOn variant.assemble
+    publish.dependsOn task
+//    }
+}

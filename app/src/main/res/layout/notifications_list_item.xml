@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:padding="@dimen/xxsmall_padding">
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/imv_notification_type"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/imv_notification_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="16dp"
+        android:background="@drawable/ic_follow_notification" />
+
+    <TextView
+        android:id="@+id/tv_notification_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="16dp"
+        android:layout_toRightOf="@+id/imv_notification_type"
+        android:text="Gabrielle Becker is now following you"
+        android:textColor="@color/black" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imv_people"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/tv_notification_desc"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="16dp"
+        android:layout_toRightOf="@+id/imv_notification_type"
+        android:background="@drawable/ic_contacts"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tv_notification_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imv_people"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="16dp"
+        android:layout_toRightOf="@+id/imv_notification_type"
+        android:drawableLeft="@drawable/ic_time_notification"
+        android:drawablePadding="5dp"
+        tools:text="20 minutes ago" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_below="@+id/tv_notification_time"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/imv_notification_type"
+        android:background="@color/grey_divider" />
+
+
+</RelativeLayout>

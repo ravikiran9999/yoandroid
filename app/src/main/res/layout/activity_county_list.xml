@@ -1,0 +1,95 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/side_index"
+            android:layout_toStartOf="@+id/side_index"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/no_search_results"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center_horizontal"
+                android:padding="30dp"
+                android:text="@string/no_result_found"
+                android:textColor="@color/black"
+                android:visibility="gone" />
+
+            <ProgressBar
+                android:id="@+id/progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:progressTint="@color/colorAccent"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/no_contacts"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/no_contacts_found"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tv_recent_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:padding="2dp"
+                android:text="@string/recent_county_code"
+                android:textColor="@color/black"
+                android:visibility="gone" />
+
+            <com.yo.android.chat.ui.NonScrollListView
+                android:id="@+id/lv_app_contacts_recent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:divider="@android:color/transparent"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:padding="2dp"
+                android:text="@string/all_county_code"
+                android:textColor="@color/black" />
+
+            <com.yo.android.chat.ui.NonScrollListView
+                android:id="@+id/lv_app_contacts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:divider="@android:color/transparent" />
+
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/side_index"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:background="@android:color/white"
+            android:divider="@android:color/transparent"
+            android:gravity="center_horizontal"
+            android:orientation="vertical" />
+    </LinearLayout>
+</ScrollView>

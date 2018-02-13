@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/DialpadKeyButtonStyle"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout style="@style/DialpadKeyInternalLayoutStyle">
+        <!-- Note in the referenced styles that we assign hard widths to these components
+             because we want them to line up vertically when we arrange them in an MxN grid -->
+        <TextView
+            android:id="@+id/dialpad_key_number"
+            style="@style/DialpadKeyNumberStyle"
+            android:text="0" />
+
+        <TextView
+            android:id="@+id/dialpad_key_letters"
+            style="@style/DialpadKeyLettersStyle" />
+    </LinearLayout>
+</FrameLayout>

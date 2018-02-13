@@ -1,0 +1,78 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="15dp"
+    tools:context="com.yo.android.chat.ui.fragments.OTPFragment">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:src="@drawable/app_logo" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="25dp"
+        android:text="An SMS with PIN would be sent to this number for verification"
+        android:textColor="@android:color/white" />
+
+    <EditText
+        android:id="@+id/et_country_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/white"
+        android:cursorVisible="false"
+        android:drawableEnd="@drawable/arrow"
+        android:drawableRight="@drawable/arrow"
+        android:ems="10"
+        android:focusableInTouchMode="false"
+        android:imeOptions="actionDone"
+        android:padding="13dp"
+        android:singleLine="true" />
+
+
+    <EditText
+        android:id="@+id/et_enter_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/white"
+        android:ems="10"
+        android:hint="Enter mobile number"
+        android:imeOptions="actionDone"
+        android:inputType="phone|number"
+        android:padding="13dp"
+        android:singleLine="true" />
+
+
+    <Button
+        android:id="@+id/email_sign_in_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/resend_bcgrnd"
+        android:text="@string/next"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tc_link"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/small_padding"
+        android:gravity="center"
+        android:text="@string/tc"
+        android:textColor="@color/white"
+        android:textSize="@dimen/xxsmall_textsize" />
+
+</LinearLayout>

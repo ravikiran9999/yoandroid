@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorPrimary">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp">
+
+        <LinearLayout
+            android:id="@+id/urlLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:gravity="bottom" >
+
+
+        <EditText
+            android:id="@+id/et_enter_url"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="10dp"
+            android:hint="Enter url"
+            android:inputType="textUri"
+            android:paddingLeft="10dp"
+            android:drawableLeft="@drawable/ic_magazine_search_url"
+            android:drawablePadding="10dp"
+            android:singleLine="true"
+            android:background="@android:color/white"/>android:layout_toLeftOf="@+id/imv_magazine_post"
+
+
+        <ImageView
+            android:id="@+id/imv_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_magazine_close"
+            android:paddingLeft="10dp"
+            android:paddingBottom="10dp"
+            android:paddingRight="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tagLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:gravity="bottom"
+            android:layout_below="@+id/urlLayout">
+
+        <AutoCompleteTextView
+            android:id="@+id/atv_enter_tag"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toLeftOf="@+id/imv_magazine_post"
+            android:hint="Enter magazine tag"
+            android:paddingLeft="10dp"
+            android:drawablePadding="8dp"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/et_enter_url"
+            android:singleLine="true"
+            android:background="@android:color/white"
+            android:drawableLeft="@drawable/ic_magazine_tag"/>android:layout_toLeftOf="@+id/imv_magazine_post"
+
+
+        <Button
+            android:id="@+id/imv_magazine_post"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/ic_magazine_follow"
+            android:gravity="center"
+            android:text="Load"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:layout_below="@+id/imv_close"
+            android:layout_marginRight="10dp"
+            />android:layout_alignBaseline="@+id/atv_enter_tag"
+        </LinearLayout>
+    </RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/grey_divider"/>
+
+    <WebView
+        android:id="@+id/webview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/magazine_search_box"/>android:layout_weight="1"
+
+</LinearLayout>

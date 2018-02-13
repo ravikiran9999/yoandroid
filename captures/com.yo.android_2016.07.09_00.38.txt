@@ -1,0 +1,33 @@
+Applications Memory Usage (kB):
+Uptime: 11743231 Realtime: 21124873
+
+** MEMINFO in pid 30298 [com.yo.android] **
+                         Shared  Private     Heap     Heap     Heap
+                   Pss    Dirty    Dirty     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------
+       Native     4155     1328     4112     6964     6884       79
+       Dalvik    11711    11536    11348    17847    16204     1643
+       Cursor        0        0        0                           
+       Ashmem        2        4        0                           
+    Other dev     6403      440      992                           
+     .so mmap     1126     2928      280                           
+    .jar mmap        0        0        0                           
+    .apk mmap      329        0        0                           
+    .ttf mmap       22        0        0                           
+    .dex mmap     5868      412       76                           
+   Other mmap       67        8       36                           
+      Unknown     1185      120     1180                           
+        TOTAL    30868    16776    18024    24811    23088     1722
+ 
+ Objects
+               Views:      166         ViewRootImpl:        1
+         AppContexts:        3           Activities:        1
+              Assets:        3        AssetManagers:        3
+       Local Binders:       11        Proxy Binders:       13
+    Death Recipients:        0
+     OpenSSL Sockets:        1
+ 
+ SQL
+                heap:        0          MEMORY_USED:        0
+  PAGECACHE_OVERFLOW:        0          MALLOC_SIZE:        0
+ 

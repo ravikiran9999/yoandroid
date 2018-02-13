@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:flipview="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <se.emilsjolander.flipview.FlipView
+        android:id="@+id/flip_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        flipview:orientation="vertical"
+        flipview:overFlipMode="rubber_band" />
+
+    <TextView
+        android:id="@+id/tv_no_articles"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="There are no articles"
+        android:textColor="@color/tab_grey"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
+</FrameLayout>

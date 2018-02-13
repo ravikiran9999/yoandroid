@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/DialpadKeyButtonStyle"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout style="@style/DialpadKeyInternalLayoutStyle">
+
+
+        <ImageView
+            android:id="@+id/btnMessage"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_message"
+            android:text="Dial" />
+    </LinearLayout>
+</FrameLayout>

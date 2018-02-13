@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_search"
+        android:icon="@drawable/ic_search_white_36dp"
+        android:title="@string/search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always|collapseActionView" />
+
+    <item
+        android:id="@+id/menu_move_to_first"
+        android:icon="@drawable/move_to_top_icon"
+        android:title="@string/move_to_top"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_find_people"
+        android:title="@string/find_people"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_wish_list"
+        android:title="@string/liked_articles"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_my_collections"
+        android:title="@string/my_topics"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_create_magazines"
+        android:title="@string/my_magazines"
+        app:showAsAction="never" />
+
+
+    <item
+        android:id="@+id/menu_followers"
+        android:title="@string/followers"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_followings"
+        android:title="@string/followings"
+        app:showAsAction="never" />
+
+</menu>

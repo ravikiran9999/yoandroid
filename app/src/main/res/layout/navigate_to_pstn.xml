@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:gravity="left|center"
+        android:paddingBottom="10dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
+        android:text="@string/paid_call"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+
+    <TextView
+        android:id="@+id/dialog_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dialog_title"
+        android:layout_marginLeft="10dp"
+        android:gravity="left|center"
+        android:paddingBottom="10dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
+        android:text="@string/calle_not_online"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="normal" />
+
+
+    <RelativeLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dialog_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:gravity="left|center"
+        android:paddingBottom="10dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="10dp">
+
+        <TextView
+            android:id="@+id/txt_call_rate_title"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="5dp"
+            android:text="@string/call_rate"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/txt_call_rate"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_toRightOf="@+id/txt_call_rate_title"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:textColor="@color/colorPrimary"
+            android:textSize="14sp"
+            tool:text="$2.00" />
+
+        <TextView
+            android:id="@+id/txt_balance_title"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_below="@id/txt_call_rate"
+            android:gravity="center_vertical"
+            android:paddingLeft="5dp"
+            android:text="@string/your_credit_balance"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/txt_balance"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_below="@id/txt_call_rate"
+            android:layout_toRightOf="@+id/txt_balance_title"
+            android:gravity="center_vertical"
+            android:paddingLeft="5dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="14sp" />
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:id="@+id/buttons_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout"
+        android:layout_margin="10dp"
+        android:gravity="right"
+        android:orientation="horizontal">
+
+
+        <Button
+            android:id="@+id/no_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:elevation="0dp"
+            android:text="@string/no"
+            android:textColor="@color/colorAccent" />
+
+        <Button
+            android:id="@+id/yes_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:elevation="0dp"
+            android:text="@string/yes"
+            android:textColor="@color/colorAccent" />
+
+        <Button
+            android:id="@+id/add_balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:elevation="0dp"
+            android:text="@string/add_balance_caps"
+            android:textColor="@color/colorAccent" />
+    </LinearLayout>
+
+
+</RelativeLayout>

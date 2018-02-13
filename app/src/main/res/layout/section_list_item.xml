@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.cunoraz.tagview.TagView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tagview="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tag_group"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants"
+    android:focusable="false"
+    android:layout_margin="20dp"
+    tagview:lineMargin="5dp"
+    tagview:tagMargin="5dp"
+    tagview:textPaddingLeft="5dp"
+    tagview:textPaddingTop="2dp"
+    tagview:textPaddingRight="5dp"
+    tagview:textPaddingBottom="2dp" />

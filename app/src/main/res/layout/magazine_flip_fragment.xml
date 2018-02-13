@@ -1,0 +1,120 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:flipview="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/network_failure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:padding="30dp"
+        android:text="@string/connectivity_network_settings"
+        android:textColor="@color/black"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/server_failure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:padding="30dp"
+        android:text="@string/socket_time_out"
+        android:textColor="@color/black"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:id="@+id/article_root_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/ll_no_articles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/txtEmptyArticals"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="You have not selected any topics. Please select them by clicking on Follow More Topics button."
+                android:textColor="@color/tab_grey"
+                android:textSize="18sp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btn_magazine_follow_topics"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/button_border"
+                android:gravity="center"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="Follow More Topics"
+                android:textAllCaps="false"
+                android:textColor="@color/tab_grey"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/imv_empty_magazines"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_empty_magazines" />
+        </LinearLayout>
+
+
+        <FrameLayout
+            android:id="@+id/flipView_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/refreshContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <se.emilsjolander.flipview.FlipView
+                    android:id="@+id/flip_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    flipview:orientation="vertical"
+                    flipview:overFlipMode="rubber_band" />
+            </android.support.v4.widget.SwipeRefreshLayout>
+        </FrameLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <ProgressBar
+                android:id="@+id/progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/tv_progress_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/progress"
+                android:text="Loading Articles..."
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="visible" />
+        </RelativeLayout>
+    </FrameLayout>
+
+</FrameLayout>

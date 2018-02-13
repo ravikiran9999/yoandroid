@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="balance_txt_size">12sp</dimen>
+    <dimen name="xsmall_textsize">12sp</dimen>
+    <dimen name="article_textsize">18sp</dimen>
+    <dimen name="article_title_textsize">20sp</dimen>
+
+    <!--dialer call button-->
+    <dimen name="call_button_padding">12dp</dimen>
+</resources>

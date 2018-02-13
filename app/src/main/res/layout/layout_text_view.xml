@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/textViewSender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="100dp"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        tool:text="Hi I am text" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="100dp"
+        android:layout_below="@+id/textViewSender"
+        android:textColor="@color/black"
+        tool:text="Hi I am text" />
+
+    <TextView
+        android:id="@+id/time_stamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_toEndOf="@+id/textView"
+        android:layout_toRightOf="@+id/textView"
+        android:padding="3dp"
+        android:textColor="@color/black"
+        android:textSize="8sp"
+        tool:text="8:18" />
+
+    <ImageView
+        android:id="@+id/tick"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/textView"
+        android:layout_toEndOf="@+id/time_stamp"
+        android:layout_toRightOf="@+id/time_stamp"
+        android:padding="3dp"
+
+        android:src="@drawable/sent" />
+</RelativeLayout>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/frame_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include layout="@layout/dialer_incoming_call_header" />
+
+            <include layout="@layout/dialer_received_call_header" />
+
+        </FrameLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/full_image_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/btnRejectCall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="40dp"
+                android:layout_marginLeft="40dp"
+                android:src="@drawable/ic_incoming_disconnect_call" />
+
+            <ImageView
+                android:id="@+id/btnAcceptCall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="40dp"
+                android:src="@drawable/ic_call" />
+
+            <ImageView
+                android:id="@+id/btnSpeaker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="40dp"
+                android:layout_marginLeft="40dp"
+                android:alpha="0.5"
+                android:padding="3dp"
+                android:src="@drawable/ic_speakeron_dailing"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/btnEndCall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="40dp"
+                android:src="@drawable/ic_disconnect"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/btnMICOff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="40dp"
+                android:layout_marginRight="40dp"
+                android:padding="3dp"
+                android:src="@drawable/ic_mute_dailing"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/btnMessageIncoming"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="40dp"
+                android:layout_marginRight="40dp"
+                android:src="@drawable/ic_sms_to_incoming_call" />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:src="@drawable/ic_volume_control"
+        android:theme="@style/FabTheme"
+        app:layout_anchor="@id/frame_layout"
+        app:layout_anchorGravity="bottom|right|end" />
+
+</android.support.design.widget.CoordinatorLayout>

@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.yo.android">
+
+    <uses-permission android:name="com.android.vending.BILLING" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.USE_SIP" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <!-- Required to register a SyncStatusObserver to display a "syncing..." progress indicator. -->
+    <uses-permission android:name="android.permission.READ_SYNC_STATS" />
+    <!-- Required to enable our SyncAdapter after it's created. -->
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <!-- Required because we're manually creating a new account. -->
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- Pjsip needs this permission. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- NETWORK STATE CHANGE LISTNER PERMISSIONS -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <uses-permission android:name="android.permission.ACCESS_SUPERUSER" />
+
+    <uses-feature
+        android:name="android.hardware.sip.voip"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.wifi"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.microphone"
+        android:required="false" />
+
+    <application
+        android:name=".app.BaseApp"
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <!--
+        <activity
+            android:name="org.pjsip.pjsua2.app.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        -->
+        <activity
+            android:name=".ui.SplashScreenActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- uncomment below lines to enable notifications -->
+        <service
+            android:name=".chat.notification.PushNotificationService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".chat.notification.MyInstanceIDListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.UpdateProfileActivity"
+            android:configChanges="screenLayout|screenSize|locale|keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.OthersProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.ShowPhotoActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/PhotoAppTheme" />
+        <activity
+            android:name=".ui.NavigationDrawerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.BottomTabsActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".ui.NewDailerActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".chat.ui.ChatActivity"
+            android:configChanges="screenLayout|screenSize|locale|keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".chat.ui.LoginActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.DialerActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".voip.InComingCallActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/yo_app_call"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:taskAffinity=".incoming"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="com.yo.dialer.ui.IncomingCallActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:label="@string/yo_app_call"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".voip.OutGoingCallActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/yo_app_call"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:taskAffinity=".outgoing"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="com.yo.dialer.ui.OutgoingCallActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:label="@string/yo_app_call"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:taskAffinity=".outgoing"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.UserProfileActivity"
+            android:label="@string/user_profile"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.MoreSettingsActivity"
+            android:label="@string/settings_label"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Switch"
+            android:windowSoftInputMode="stateHidden" />
+
+        <!-- <service android:name=".voip.SipService" /> -->
+
+        <activity
+            android:name=".chat.ui.SignupActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".flip.MagazineArticleDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".chat.ui.fragments.AppContactsActivity"
+            android:configChanges="screenLayout|screenSize|locale|keyboardHidden|orientation"
+            android:label="@string/select_contact"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait">
+
+            <intent-filter android:label="@string/app_name">
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/*" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.FollowMoreTopicsActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".ui.NewMagazineActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
+        <activity
+            android:name=".ui.LoadMagazineActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".chat.ui.CreateGroupActivity"
+            android:configChanges="screenLayout|screenSize|locale|keyboardHidden|orientation"
+            android:label="@string/new_group"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".chat.ui.GroupContactsActivity"
+            android:label="@string/select_contact"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.CountryListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.CreateMagazineActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.MyCollections"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.MyCollectionDetails"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.UserCreatedMagazineActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.CreatedMagazineDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.EditMagazineActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
+        <activity
+            android:name=".ui.FindPeopleActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.FollowersActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.WishListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.PhoneBookActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.PhoneChatActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.CallLogDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.fragments.InviteActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.AccountDetailsActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- SMS Receiver -->
+        <receiver android:name=".voip.IncomingSmsReceiver">
+            <intent-filter android:priority="99999">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".voip.PhoneStateReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".networkmanager.NetworkStateListener">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".ui.FollowingsActivity"
+            android:screenOrientation="portrait" />
+
+        <service
+            android:name=".chat.firebase.FirebaseService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <activity
+            android:name=".crop.MainImageCropActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+        <activity
+            android:name=".ui.OthersMagazinesDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.TabsHeaderActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".inapp.UnManageInAppPurchaseActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.Translucent" />
+        <activity
+            android:name=".ui.NotificationsActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+
+        <provider
+            android:name=".provider.YoAppContactProvider"
+            android:authorities="com.yo.android.provider.contacts"
+            android:exported="false" />
+        <!--
+             This service implements our SyncAdapter. It needs to be exported, so that the system
+                sync framework can access it.
+        -->
+        <service
+            android:name=".sync.SyncService"
+            android:exported="true">
+
+            <!--
+            This intent filter is required. It allows the system to launch our sync service
+            as needed.
+            -->
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <!-- This points to a required XML file which describes our SyncAdapter. -->
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+
+        <!--
+        This implements the account we'll use as an attachment point for our SyncAdapter. Since
+        our SyncAdapter doesn't need to authenticate the current user (it just fetches a public RSS
+        feed), this account's implementation is largely empty.
+
+        It's also possible to attach a SyncAdapter to an existing account provided by another
+        package. In that case, this element could be omitted here.
+        -->
+        <service android:name=".sync.accounts.GenericAccountService">
+
+            <!-- Required filter used by the system to launch our account service. -->
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <!-- This points to an XMLfile which describes our account service. -->
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+        <!-- <service android:name=".pjsip.YoSipService" /> -->
+
+        <activity
+            android:name=".ui.TopicsDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.TransferBalanceSelectContactActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.TransferBalanceActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
+        <activity android:name=".chat.ui.CustomWindow" />
+
+        <service
+            android:name=".util.FetchNewArticlesService"
+            android:enabled="true"
+            android:exported="true" />
+        <service android:name=".util.ReCreateService" />
+        <!--
+        <service
+            android:name=".chat.firebase.ListenerJobService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
+            </intent-filter>
+        </service>
+        -->
+
+        <receiver android:name=".app.RestartServiceReceiver">
+            <intent-filter>
+                <action android:name="YouWillNeverKillMe" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".networkmanager.StartServiceAtBootReceiver"
+            android:enabled="true"
+            android:exported="false"
+            android:label="StartServiceAtBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".chat.ui.CountryCodeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Switch" />
+        <activity
+            android:name=".ui.YoBalanceDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".video.InAppVideoActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="InAppVideoActivity"
+            android:screenOrientation="sensor"
+            android:theme="@style/YoutubeTheme" />
+        <activity
+            android:name=".ui.PlainActivity"
+            android:label=""
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name=".ui.NewOTPActivity"
+            android:screenOrientation="portrait" />
+
+        <service android:name="com.yo.services.BackgroundServices" />
+        <service android:name="com.yo.dialer.YoSipService" />
+
+        <meta-data
+            android:name="firebase_performance_logcat_enabled"
+            android:value="true" />
+
+        <activity
+            android:name=".ui.EditGroupSubjectActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.NewFollowMoreTopicsActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".ui.MagazineActivity" />
+    </application>
+
+</manifest>

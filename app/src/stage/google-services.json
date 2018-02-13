@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "547485826998",
+    "firebase_url": "https://yo-production.firebaseio.com",
+    "project_id": "yo-production",
+    "storage_bucket": "yo-production.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:547485826998:android:5e9fd7bb07b64c8d",
+        "android_client_info": {
+          "package_name": "com.yowatsup.android.stage"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "547485826998-k30ap36796tfdmpa8hegbtcidpm19va2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9Y1KocDyQQm77hnEOYRKIrqkweIMOKiA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

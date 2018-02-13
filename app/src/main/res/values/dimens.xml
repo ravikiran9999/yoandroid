@@ -1,0 +1,102 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- Length of dialpad's shadows in dialer. -->
+    <dimen name="shadow_length">10dp</dimen>
+    <dimen name="floating_action_button_width">100dp</dimen>
+    <dimen name="floating_action_button_height">100dp</dimen>
+    <dimen name="floating_action_button_margin_bottom">10dp</dimen>
+    <!-- Zero key should have less space between self and text because "+" is smaller -->
+    <dimen name="dialpad_zero_key_number_margin_bottom">1dp</dimen>
+    <dimen name="dialpad_symbol_margin_bottom">13dp</dimen>
+
+    <!-- The bottom row of the dialpad is slightly taller to account for the dial button -->
+    <dimen name="dialpad_bottom_key_height">65dp</dimen>
+    <dimen name="dialpad_key_plus_size">18sp</dimen>
+    <dimen name="dialpad_horizontal_padding">5dp</dimen>
+    <dimen name="dialpad_digits_text_size">44sp</dimen>
+    <dimen name="dialpad_digits_text_min_size">34sp</dimen>
+    <dimen name="dialpad_digits_height">64dp</dimen>
+    <dimen name="dialpad_digits_padding">16dp</dimen>
+    <dimen name="dialpad_digits_menu_left_padding">2dp</dimen>
+    <dimen name="dialpad_digits_menu_right_padding">8dp</dimen>
+    <dimen name="dialpad_center_margin">3dp</dimen>
+    <dimen name="dialpad_button_margin">2dp</dimen>
+    <dimen name="dialpad_voicemail_icon_padding_top">2dp</dimen>
+    <dimen name="dialpad_key_button_translate_y">100dp</dimen>
+    <dimen name="dialpad_overflow_margin">8dp</dimen>
+    <dimen name="dialpad_space_above_keys">14dp</dimen>
+    <!-- Text dimensions for dialpad keys -->
+    <dimen name="dialpad_key_numbers_size">36sp</dimen>
+    <dimen name="dialpad_key_letters_size">12sp</dimen>
+    <dimen name="dialpad_key_pound_size">23sp</dimen>
+    <dimen name="dialpad_key_star_size">36sp</dimen>
+    <dimen name="dialpad_key_height">64dp</dimen>
+    <dimen name="dialpad_key_number_margin_bottom">3dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="three_grid_unit">24dp</dimen>
+    <dimen name="one_and_a_half_grid_unit">12dp</dimen>
+    <dimen name="photo_width">110dp</dimen>
+    <dimen name="photo_height">110dp</dimen>
+    <dimen name="magazine_image_height">150dp</dimen>
+    <dimen name="text_size_m">20sp</dimen>
+    <dimen name="text_size_s">16sp</dimen>
+    <dimen name="button_height">48dp</dimen>
+    <dimen name="image_popup_height">200dp</dimen>
+
+    <!-- Android stuff -->
+    <dimen name="tablayout_height">48dp</dimen>
+    <dimen name="header_full_height">320dp</dimen>
+
+    <!-- General padding -->
+    <dimen name="xxxxxsmall_padding">2dp</dimen>
+    <dimen name="xxxxsmall_padding">3dp</dimen>
+    <dimen name="xxxsmall_padding">4dp</dimen>
+    <dimen name="xxsmall_padding">5dp</dimen>
+    <dimen name="xsmall_padding">10dp</dimen>
+    <dimen name="small_padding">15dp</dimen>
+    <dimen name="medium_padding">20dp</dimen>
+    <dimen name="xmedium_padding">25dp</dimen>
+    <dimen name="large_padding">40dp</dimen>
+    <dimen name="xlarge_padding">55dp</dimen>
+
+    <!-- General margin -->
+    <dimen name="xxsmall_margin">2dp</dimen>
+    <dimen name="xsmall_margin">5dp</dimen>
+    <dimen name="small_margin">10dp</dimen>
+    <dimen name="medium_margin">15dp</dimen>
+    <dimen name="large_margin">20dp</dimen>
+    <dimen name="xlarge_margin">25dp</dimen>
+    <dimen name="xxlarge_margin">35dp</dimen>
+    <dimen name="xxxlarge_margin">70dp</dimen>
+
+    <dimen name="small_margin_negative">-10dp</dimen>
+
+    <!-- Fonts -->
+    <dimen name="xxxxxlarge_textsize">50sp</dimen>
+    <dimen name="xxxxlarge_textsize">40sp</dimen>
+    <dimen name="xxxlarge_textsize">36sp</dimen>
+    <dimen name="xxlarge_textsize">30sp</dimen>
+    <dimen name="xlarge_textsize">24sp</dimen>
+    <dimen name="large_textsize">20sp</dimen>
+    <dimen name="medium_textsize">18sp</dimen>
+    <dimen name="small_textsize">16sp</dimen>
+    <dimen name="xsmall_textsize">14sp</dimen>
+    <dimen name="xxsmall_textsize">12sp</dimen>
+    <dimen name="xxxsmall_textsize">10sp</dimen>
+    <dimen name="xxxxsmall_textsize">9sp</dimen>
+    <dimen name="xxxxxsmall_textsize">8sp</dimen>
+    <dimen name="xxxxxxsmall_textsize">7sp</dimen>
+
+    <dimen name="header_height">272dp</dimen>
+    <dimen name="pin_content_layout_padding">40dp</dimen>
+    <dimen name="pin_label_margin">10dp</dimen>
+    <dimen name="pin_min_width">32dp</dimen>
+    <dimen name="balance_txt_size">14sp</dimen>
+    <dimen name="d5">5dp</dimen>
+    <dimen name="d2">2dp</dimen>
+
+</resources>
