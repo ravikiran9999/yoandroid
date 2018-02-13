@@ -229,7 +229,7 @@ public class MagazinesServicesUsecase {
                     .into(photoView);
 
 
-            if (articleTitle != null) {
+            /*if (articleTitle != null) {
                 ViewTreeObserver vto1 = articleTitle.getViewTreeObserver();
                 vto1.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     private int maxLines = -1;
@@ -266,6 +266,10 @@ public class MagazinesServicesUsecase {
                     }
                 });
 
+
+            }*/
+
+            if(articleTitle != null) {
                 articleTitle.setText(AphidLog.format("%s", data.getTitle()));
             }
 

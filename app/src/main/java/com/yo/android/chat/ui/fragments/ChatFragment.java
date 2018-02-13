@@ -38,6 +38,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.flurry.android.FlurryAgent;
+import com.google.firebase.perf.metrics.AddTrace;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -355,6 +356,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         }
     }
 
+    @AddTrace(name = "isRoomsExistTrace", enabled = true)
     public void isRoomsExist(final SwipeRefreshLayout swipeRefreshContainer) {
         try {
             refreshProgress(swipeRefreshContainer);
