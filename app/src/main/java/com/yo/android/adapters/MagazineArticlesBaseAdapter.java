@@ -317,7 +317,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             final ImageView photoView = holder.articlePhoto;
 
             photoView.setImageResource(R.drawable.magazine_backdrop);
-            if (data.getImage_filename() != null) {
+            if (data.getS3_image_filename() != null) {
                 mMagazinesServicesUsecase.handleImageLoading(holder, context, data, photoView);
             } else {
                 photoView.setImageResource(R.drawable.magazine_backdrop);

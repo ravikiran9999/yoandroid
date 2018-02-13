@@ -36,6 +36,7 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 import com.flurry.android.FlurryAgent;
 import com.google.firebase.perf.metrics.AddTrace;
@@ -364,7 +365,10 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 Firebase authReference = fireBaseHelper.authWithCustomToken(activity, loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN), null);
                 String firebaseUserId = loginPrefs.getStringPreference(Constants.FIREBASE_USER_ID);
                 if (!firebaseUserId.isEmpty()) {
-                    authReference.child(Constants.USERS).child(firebaseUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+
+                    Query firebaseUserRooms = authReference.child(Constants.USERS).child(firebaseUserId);
+
+                    firebaseUserRooms.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -549,7 +553,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 databaseReference = dataSnapshot1.getRef();
                 if (!roomIdList.contains(roomId)) {
                     Firebase memberReference = dataSnapshot1.getRef().getRoot().child(Constants.ROOMS).child(roomId);
-                    com.firebase.client.Query query = memberReference.child(Constants.ROOM_INFO).orderByChild("status");
+                    Query query = memberReference.child(Constants.ROOM_INFO).orderByChild("status");
 
                     query.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
