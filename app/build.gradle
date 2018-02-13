@@ -1,5 +1,11 @@
 apply plugin: 'com.android.application'
-apply plugin: 'android-apt'
+
+// firebase performance monitor
+apply plugin: 'com.google.firebase.firebase-perf'
+
+//apply plugin: 'android-apt'
+
+
 android {
     signingConfigs {
         devconfig {
@@ -16,7 +22,8 @@ android {
         }
     }
     compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    flavorDimensions "versionCode"
+    buildToolsVersion '26.0.2'
     useLibrary 'org.apache.http.legacy'
     dexOptions {
         javaMaxHeapSize "4g"
@@ -28,6 +35,14 @@ android {
         targetSdkVersion 25
         versionCode 5
         versionName "1.0.4.4"
+
+        // annotationProcess issue in latest gradle
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath false
+            }
+        }
+
         buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
         buildConfigField "boolean", "CHANGE_SIP_FORMAT", "true"
         buildConfigField "boolean", "DISABLE_ADD_BALANCE", "false"
@@ -87,7 +102,7 @@ android {
         }
 
         production {
-            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
             buildConfigField "String", "RELEASE_USER_TYPE_END", "\"D\""
 
@@ -184,12 +199,12 @@ dependencies {
     compile project(':yowatsuppjsip2.7')
     compile project(':emojilib')
     compile project(':topsnackbar')
-    //Butter knife - view injector
+
     compile "com.android.support:support-v4:${supportAppcompatVersion}"
     compile "com.android.support:palette-v7:${supportAppcompatVersion}"
     compile group: 'com.googlecode.libphonenumber', name: 'libphonenumber', version: '8.5.1'
     compile "com.github.hotchemi:permissionsdispatcher:${permissionsDispatcherVersion}"
-    apt "com.github.hotchemi:permissionsdispatcher-processor:${permissionsDispatcherVersion}"
+    annotationProcessor "com.github.hotchemi:permissionsdispatcher-processor:${permissionsDispatcherVersion}"
 
     //For uploading data to google sheet
     //https://developers.google.com/sheets/api/quickstart/android
@@ -211,14 +226,24 @@ dependencies {
     compile 'com.google.firebase:firebase-storage:11.8.0'
     compile 'com.firebase:firebase-client-android:2.5.2'
     compile 'com.firebase:firebase-jobdispatcher:0.5.1'
+    // firebase performance monitor
+    compile 'com.google.firebase:firebase-perf:11.8.0'
 
+    // dragger
     compile 'com.squareup.dagger:dagger:1.2.2'
+    provided 'com.squareup.dagger:dagger-compiler:1.2.2'
+    annotationProcessor 'com.squareup.dagger:dagger-compiler:1.2.2'
+
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.3.0'
+
+    //Butter knife - view injector
     compile 'com.jakewharton:butterknife:7.0.1'
+    annotationProcessor 'com.jakewharton:butterknife:7.0.1'
+
     compile 'com.amazonaws:aws-android-sdk-core:2.2.18'
     compile 'com.amazonaws:aws-android-sdk-cognito:2.2.18'
     compile 'com.amazonaws:aws-android-sdk-s3:2.2.18'
@@ -242,7 +267,7 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:support-v4:25.2.0'
     testCompile 'junit:junit:4.12'
-    provided 'com.squareup.dagger:dagger-compiler:1.2.2'
+
 }
 apply plugin: 'com.google.gms.google-services'
 

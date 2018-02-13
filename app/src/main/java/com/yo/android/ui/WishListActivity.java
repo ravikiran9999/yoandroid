@@ -28,8 +28,6 @@ import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.yo.android.R;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.flip.MagazineArticleDetailsActivity;
@@ -484,7 +482,8 @@ public class WishListActivity extends BaseActivity {
                 final TextView textView1 = holder.articleShortDesc;
                 Glide.with(context)
                         .load(data.getImage_filename())
-                        .asBitmap()
+                        .thumbnail(0.1f)
+                        //.asBitmap()
                         .placeholder(R.drawable.magazine_backdrop)
                         .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                         .dontAnimate()

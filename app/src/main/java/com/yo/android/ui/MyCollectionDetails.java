@@ -429,6 +429,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 final TextView textView1 = holder.articleShortDesc;
                 Glide.with(context)
                         .load(data.getS3_image_filename())
+                        .thumbnail(0.1f)
                         .placeholder(R.drawable.magazine_backdrop)
                         .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                         .dontAnimate()
