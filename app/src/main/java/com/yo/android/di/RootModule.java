@@ -13,6 +13,7 @@ import com.yo.android.usecase.ChatNotificationUsecase;
 import com.yo.android.usecase.DenominationsUsecase;
 import com.yo.android.usecase.MagazinesFlipArticlesUsecase;
 import com.yo.android.usecase.MagazinesServicesUsecase;
+import com.yo.android.usecase.MyCollectionsDetailsUsecase;
 import com.yo.android.usecase.NotificationUsecase;
 import com.yo.android.usecase.PackageDenominationsUsecase;
 import com.yo.android.usecase.RandomTopicsUsecase;
@@ -271,7 +272,8 @@ import dagger.Provides;
                 AppLogglyUsecase.class,
                 NotificationUsecase.class,
                 MagazinesServicesUsecase.class,
-                MagazinesFlipArticlesUsecase.class
+                MagazinesFlipArticlesUsecase.class,
+                MyCollectionsDetailsUsecase.class
         },
         includes = {
                 AppModule.class,

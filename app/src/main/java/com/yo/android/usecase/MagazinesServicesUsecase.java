@@ -367,12 +367,15 @@ public class MagazinesServicesUsecase {
         magazineFlipArticlesFragment.startActivityForResult(intent, 500);
     }
 
+
     /**
      * Updates the Follow and Like status of the articles
-     *
      * @param data The articles object
      * @param type Whether it is Follow or Like
-     *//*
+     * @param allArticles
+     * @param context
+     * @param magazineArticlesBaseAdapter
+     */
     public void autoReflectStatus(Articles data, String type, List<Articles> allArticles, Context context, MagazineArticlesBaseAdapter magazineArticlesBaseAdapter) {
         if (data != null) {
 
@@ -416,7 +419,7 @@ public class MagazinesServicesUsecase {
                 }
             }
         }
-    }*/
+    }
 
     /**
      * Loading articles
