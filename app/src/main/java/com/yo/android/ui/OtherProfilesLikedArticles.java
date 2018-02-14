@@ -1,10 +1,8 @@
 package com.yo.android.ui;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -12,11 +10,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -27,29 +23,23 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.yo.android.R;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
-import com.yo.android.flip.MagazineArticleDetailsActivity;
-import com.yo.android.helpers.MagazinePreferenceEndPoint;
 import com.yo.android.model.Articles;
+import com.yo.android.usecase.MagazinesServicesUsecase;
+import com.yo.android.usecase.OthersProfileLikedArticlesUsecase;
 import com.yo.android.util.AutoReflectWishListActionsListener;
 import com.yo.android.util.Constants;
 import com.yo.android.util.OtherPeopleMagazineReflectListener;
-import com.yo.android.util.Util;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -57,42 +47,40 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import se.emilsjolander.flipview.FlipView;
-import se.emilsjolander.flipview.OverFlipMode;
 
 /**
  * Created by root on 15/7/16.
  */
-public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeopleMagazineReflectListener {
 
+/**
+ * This class is used to display the Other Yo app users Liked Articles
+ */
+public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeopleMagazineReflectListener {
 
     @Inject
     YoApi.YoService yoService;
-
     @Bind(R.id.refreshContainer)
     SwipeRefreshLayout swipeRefreshContainer;
     @Bind(R.id.txtEmptyArticals)
-    TextView noArticals;
+    public TextView noArticals;
     @Bind(R.id.flipView_container)
-    FrameLayout flipContainer;
+    public FrameLayout flipContainer;
     @Bind(R.id.progress)
-    ProgressBar mProgress;
+    public ProgressBar mProgress;
     @Bind(R.id.tv_progress_text)
-    TextView tvProgressText;
+    public TextView tvProgressText;
     @Bind(R.id.flip_view)
-    FlipView flipView;
+    public FlipView flipView;
 
-    public static boolean refreshing;
-    private List<Articles> articlesList = new ArrayList<Articles>();
-    private MyBaseAdapter myBaseAdapter;
+    public List<Articles> articlesList = new ArrayList<Articles>();
+    public MyBaseAdapter myBaseAdapter;
     private static OtherProfilesLikedArticles listener;
-    private boolean isFollowing;
     private Activity activity;
-
+    @Inject
+    OthersProfileLikedArticlesUsecase othersProfileLikedArticlesUsecase;
+    @Inject
+    MagazinesServicesUsecase magazinesServicesUsecase;
 
     public static OtherProfilesLikedArticles getListener() {
         return listener;
@@ -112,7 +100,6 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         listener = this;
-
     }
 
     @Override
@@ -122,14 +109,10 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
         ButterKnife.bind(this, view);
         myBaseAdapter = new MyBaseAdapter(activity);
         flipView.setAdapter(myBaseAdapter);
-
         swipeRefreshContainer.setEnabled(false);
         swipeRefreshContainer.setRefreshing(false);
-
         flipContainer.setVisibility(View.GONE);
-
         return view;
-
     }
 
     @Override
@@ -137,69 +120,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
         super.onViewCreated(view, savedInstanceState);
 
         String userID = getActivity().getIntent().getStringExtra(Constants.USER_ID);
-        loadLikedArticles(userID);
-    }
-
-    /**
-     * Gets the other Yo app user's liked articles
-     *
-     * @param userID
-     */
-    private void loadLikedArticles(String userID) {
-        articlesList.clear();
-        myBaseAdapter.addItems(articlesList);
-        mProgress.setVisibility(View.VISIBLE);
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.getOtherProfilesLikedArticlesAPI(accessToken, userID).enqueue(new Callback<List<Articles>>() {
-            @Override
-            public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
-                if (mProgress != null) {
-                    mProgress.setVisibility(View.GONE);
-                }
-                tvProgressText.setVisibility(View.GONE);
-                if (!response.body().isEmpty()) {
-                    try {
-                        for (int i = 0; i < response.body().size(); i++) {
-                            flipContainer.setVisibility(View.VISIBLE);
-                            if (noArticals != null) {
-                                noArticals.setVisibility(View.GONE);
-                            }
-                            if (!"...".equalsIgnoreCase(response.body().get(i).getSummary())) {
-                                articlesList.add(response.body().get(i));
-                            }
-                        }
-                        myBaseAdapter.addItems(articlesList);
-                    } finally {
-                        if (response != null && response.body() != null) {
-                            try {
-                                response.body().clear();
-                                response = null;
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                } else {
-                    flipContainer.setVisibility(View.GONE);
-                    if (noArticals != null) {
-                        noArticals.setVisibility(View.VISIBLE);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Articles>> call, Throwable t) {
-                if (mProgress != null) {
-                    mProgress.setVisibility(View.GONE);
-                }
-                tvProgressText.setVisibility(View.GONE);
-                flipContainer.setVisibility(View.GONE);
-                if (noArticals != null) {
-                    noArticals.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
+        othersProfileLikedArticlesUsecase.loadLikedArticles(userID, this);
     }
 
     @Override
@@ -279,8 +200,6 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                 holder.magazineAdd = UI.findViewById(layout, R.id.imv_magazine_add);
 
                 holder.magazineShare = UI.findViewById(layout, R.id.imv_magazine_share);
-
-                holder.articleFollow = UI.findViewById(layout, R.id.imv_magazine_follow);
 
                 holder.tvTopicName = UI.findViewById(layout, R.id.imv_magazine_topic);
 
@@ -385,72 +304,10 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             holder.magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
                     if (isChecked) {
-                        showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                dismissProgressDialog();
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
-                                }
-                                if (MagazineArticlesBaseAdapter.mListener != null) {
-                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
-                                }
-                                mToastFactory.showToast("You have liked the article " + data.getTitle());
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                dismissProgressDialog();
-                                Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                            }
-                        });
+                        othersProfileLikedArticlesUsecase.likeMyCollectionArticles(data, context, myBaseAdapter);
                     } else {
-                        showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                dismissProgressDialog();
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
-                                }
-                                if (MagazineArticlesBaseAdapter.mListener != null) {
-                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
-                                }
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                                mToastFactory.showToast("You have unliked the article " + data.getTitle());
-
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                dismissProgressDialog();
-                                Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                            }
-                        });
+                        othersProfileLikedArticlesUsecase.unlikeMyCollectionArticles(data, context, myBaseAdapter);
                     }
                 }
             });
@@ -468,72 +325,10 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             holder.fullImageMagazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
                     if (isChecked) {
-                        showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                dismissProgressDialog();
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
-                                }
-                                if (MagazineArticlesBaseAdapter.mListener != null) {
-                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
-                                }
-                                mToastFactory.showToast("You have liked the article " + data.getTitle());
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                dismissProgressDialog();
-                                Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                            }
-                        });
+                        othersProfileLikedArticlesUsecase.likeMyCollectionArticles(data, context, myBaseAdapter);
                     } else {
-                        showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                dismissProgressDialog();
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
-                                }
-                                if (MagazineArticlesBaseAdapter.mListener != null) {
-                                    MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
-                                }
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                                mToastFactory.showToast("You have unliked the article " + data.getTitle());
-
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                dismissProgressDialog();
-                                Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                            }
-                        });
+                        othersProfileLikedArticlesUsecase.unlikeMyCollectionArticles(data, context, myBaseAdapter);
                     }
                 }
             });
@@ -546,12 +341,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                     .setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                            intent.putExtra("Title", data.getTitle());
-                            intent.putExtra("Image", data.getUrl());
-                            intent.putExtra("Article", data);
-                            intent.putExtra("Position", position);
-                            startActivityForResult(intent, 500);
+                            magazinesServicesUsecase.navigateToArticleWebView(context, data, position);
                         }
                     });
 
@@ -622,12 +412,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             photoView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                    intent.putExtra("Title", data.getTitle());
-                    intent.putExtra("Image", data.getUrl());
-                    intent.putExtra("Article", data);
-                    intent.putExtra("Position", position);
-                    startActivityForResult(intent, 500);
+                    magazinesServicesUsecase.navigateToArticleWebView(context, data, position);
                 }
             });
 
@@ -639,10 +424,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    Intent intent = new Intent(getActivity(), CreateMagazineActivity.class);
-                    intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
-                    startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
+                    magazinesServicesUsecase.onAddClick(context, data);
                 }
             });
 
@@ -650,142 +432,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (data.getImage_filename() != null) {
-                        new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
-                    } else {
-                        String summary = Html.fromHtml(data.getSummary()).toString();
-                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, null);
-                    }
-                }
-            });
-            if ("true".equals(data.getIsFollowing())) {
-                holder.articleFollow.setText("Following");
-                holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                isFollowing = true;
-            } else {
-                holder.articleFollow.setText("Follow");
-                holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                isFollowing = false;
-            }
-
-            final ViewHolder finalHolder = holder;
-            holder.articleFollow.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!"true".equals(data.getIsFollowing())) {
-                        ((BaseActivity) context).showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                try {
-                                    ((BaseActivity) context).dismissProgressDialog();
-                                    finalHolder.articleFollow.setText("Following");
-                                    finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                                    data.setIsFollowing("true");
-                                    if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                        MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
-                                    }
-                                    if (MagazineArticlesBaseAdapter.mListener != null) {
-                                        MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.FOLLOW_EVENT);
-                                    }
-                                    isFollowing = true;
-                                    if (!((BaseActivity) context).hasDestroyed()) {
-                                        notifyDataSetChanged();
-                                    }
-                                } finally {
-                                    if (response != null && response.body() != null) {
-                                        response.body().close();
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                finalHolder.articleFollow.setText("Follow");
-                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                                data.setIsFollowing("false");
-                                isFollowing = false;
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-
-                            }
-                        });
-                    } else {
-
-
-                        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-                        LayoutInflater layoutInflater = LayoutInflater.from(context);
-                        final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
-                        builder.setView(view);
-
-                        Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
-                        Button noBtn = (Button) view.findViewById(R.id.no_btn);
-
-
-                        final AlertDialog alertDialog = builder.create();
-                        alertDialog.setCancelable(false);
-                        alertDialog.show();
-
-                        yesBtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                alertDialog.dismiss();
-                                showProgressDialog();
-                                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                                ((BaseActivity) context).showProgressDialog();
-                                yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                                    @Override
-                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                        try {
-                                            ((BaseActivity) context).dismissProgressDialog();
-                                            finalHolder.articleFollow.setText("Follow");
-                                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                                            data.setIsFollowing("false");
-                                            if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                                MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
-                                            }
-                                            if (MagazineArticlesBaseAdapter.mListener != null) {
-                                                MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.FOLLOW_EVENT);
-                                            }
-                                            isFollowing = false;
-                                            if (!((BaseActivity) context).hasDestroyed()) {
-                                                notifyDataSetChanged();
-                                            }
-                                        } finally {
-                                            if (response != null && response.body() != null) {
-                                                response.body().close();
-                                            }
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                        ((BaseActivity) context).dismissProgressDialog();
-                                        finalHolder.articleFollow.setText("Following");
-                                        finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                                        data.setIsFollowing("true");
-                                        isFollowing = true;
-                                        if (!((BaseActivity) context).hasDestroyed()) {
-                                            notifyDataSetChanged();
-                                        }
-
-                                    }
-                                });
-                            }
-                        });
-
-
-                        noBtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                alertDialog.dismiss();
-                            }
-                        });
-                    }
+                    magazinesServicesUsecase.onShareClick(v, data);
                 }
             });
 
@@ -794,12 +441,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                 llArticleInfo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                        intent.putExtra("Title", data.getTitle());
-                        intent.putExtra("Image", data.getUrl());
-                        intent.putExtra("Article", data);
-                        intent.putExtra("Position", position);
-                        startActivityForResult(intent, 500);
+                        magazinesServicesUsecase.navigateToArticleWebView(context, data, position);
                     }
                 });
             }
@@ -808,10 +450,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             add1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    Intent intent = new Intent(getActivity(), CreateMagazineActivity.class);
-                    intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
-                    startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
+                    magazinesServicesUsecase.onAddClick(context, data);
                 }
             });
 
@@ -819,12 +458,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             share1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (data.getImage_filename() != null) {
-                        new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
-                    } else {
-                        String summary = Html.fromHtml(data.getSummary()).toString();
-                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, null);
-                    }
+                    magazinesServicesUsecase.onShareClick(v, data);
                 }
             });
 
@@ -896,7 +530,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                 notifyDataSetChanged();
                             }
 
-                            List<Articles> cachedMagazinesList = getCachedMagazinesList();
+                            List<Articles> cachedMagazinesList = magazinesServicesUsecase.getCachedMagazinesList(getActivity());
                             if (cachedMagazinesList != null) {
                                 List<Articles> tempList = cachedMagazinesList;
                                 for (int i = 0; i < cachedMagazinesList.size(); i++) {
@@ -907,7 +541,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
 
                                 cachedMagazinesList = tempList;
 
-                                saveCachedMagazinesList(cachedMagazinesList);
+                                magazinesServicesUsecase.saveCachedMagazinesList(cachedMagazinesList, getActivity());
                             }
                             break;
                         }
@@ -974,8 +608,6 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
 
         private ImageView magazineShare;
 
-        private Button articleFollow;
-
         private TextView tvTopicName;
 
         private TextView fullImageTitle;
@@ -1012,61 +644,6 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                 myBaseAdapter.updateArticle(isLiked, articles, pos, articlePlace);
             }
 
-        }
-    }
-
-    /**
-     * Gets the list of cached articles
-     *
-     * @return The list of cached articles
-     */
-    private List<Articles> getCachedMagazinesList() {
-        Type type1 = new TypeToken<List<Articles>>() {
-        }.getType();
-        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        List<Articles> cachedMagazinesList = new ArrayList<>();
-
-        if (getActivity() != null) {
-            String sharedFollowedCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("followed_cached_magazines", "");
-            String sharedRandomCachedMagazines = MagazinePreferenceEndPoint.getInstance().getPref(getActivity(), userId).getString("random_cached_magazines", "");
-
-            if (!TextUtils.isEmpty(sharedFollowedCachedMagazines)) {
-                String cachedMagazines = sharedFollowedCachedMagazines;
-                List<Articles> cachedFollowedMagazinesList = new Gson().fromJson(cachedMagazines, type1);
-                cachedMagazinesList.addAll(cachedFollowedMagazinesList);
-            }
-            if (!TextUtils.isEmpty(sharedRandomCachedMagazines)) {
-                String cachedMagazines = sharedRandomCachedMagazines;
-                List<Articles> cachedRandomMagazinesList = new Gson().fromJson(cachedMagazines, type1);
-                cachedMagazinesList.addAll(cachedRandomMagazinesList);
-            }
-        }
-
-        return cachedMagazinesList;
-    }
-
-    /**
-     * Saved the list of articles in the cache
-     *
-     * @param cachedMagazinesList The list of articles to be cached
-     */
-    private void saveCachedMagazinesList(List<Articles> cachedMagazinesList) {
-        List<Articles> followedTopicArticles = new ArrayList<>();
-        List<Articles> randomTopicArticles = new ArrayList<>();
-        for (Articles articles : cachedMagazinesList) {
-            if ("true".equals(articles.getTopicFollowing())) {
-                followedTopicArticles.add(articles);
-            } else {
-                randomTopicArticles.add(articles);
-            }
-        }
-
-        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        if (getActivity() != null) {
-            SharedPreferences.Editor editor = MagazinePreferenceEndPoint.getInstance().get(getActivity(), userId);
-            editor.putString("followed_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(followedTopicArticles)));
-            editor.putString("random_cached_magazines", new Gson().toJson(new LinkedHashSet<Articles>(randomTopicArticles)));
-            editor.commit();
         }
     }
 }

@@ -220,8 +220,6 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
                 holder.magazineShare = UI.findViewById(layout, R.id.imv_magazine_share);
 
-                holder.articleFollow = UI.findViewById(layout, R.id.imv_magazine_follow);
-
                 holder.tvTopicName = UI.findViewById(layout, R.id.imv_magazine_topic);
 
                 holder.fullImageTitle = UI.findViewById(layout, R.id.tv_full_image_title_top);
@@ -435,14 +433,6 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 }
             });
 
-            if ("true".equals(data.getIsFollowing())) {
-                holder.articleFollow.setText("Following");
-                holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-            } else {
-                holder.articleFollow.setText("Follow");
-                holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            }
-
             final ViewHolder finalHolder = holder;
 
             LinearLayout llArticleInfo = (LinearLayout) layout.findViewById(R.id.ll_article_info);
@@ -512,8 +502,6 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
         private ImageView magazineAdd;
 
         private ImageView magazineShare;
-
-        private Button articleFollow;
 
         private TextView tvTopicName;
 
