@@ -275,9 +275,9 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
-                        othersMagazineDetailsUsecase.likeMyCollectionArticles(data, context, myBaseAdapter);
+                        othersMagazineDetailsUsecase.likeOthersMagazineArticles(data, context, myBaseAdapter);
                     } else {
-                        othersMagazineDetailsUsecase.unlikeMyCollectionArticles(data, context, myBaseAdapter);
+                        othersMagazineDetailsUsecase.unlikeOthersMagazineArticles(data, context, myBaseAdapter);
                     }
                 }
             });
@@ -296,9 +296,9 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
-                        othersMagazineDetailsUsecase.likeMyCollectionArticles(data, context, myBaseAdapter);
+                        othersMagazineDetailsUsecase.likeOthersMagazineArticles(data, context, myBaseAdapter);
                     } else {
-                        othersMagazineDetailsUsecase.unlikeMyCollectionArticles(data, context, myBaseAdapter);
+                        othersMagazineDetailsUsecase.unlikeOthersMagazineArticles(data, context, myBaseAdapter);
                     }
                 }
             });

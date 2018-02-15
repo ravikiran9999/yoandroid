@@ -40,6 +40,9 @@ import retrofit2.Response;
  * Created by ec on 12/2/18.
  */
 
+/**
+ * This is the helper class that handles the service calls and other specific utility methods of the MyCollectionDetails class
+ */
 public class MyCollectionsDetailsUsecase {
 
     public static final String TAG = MyCollectionsDetailsUsecase.class.getSimpleName();
@@ -57,6 +60,12 @@ public class MyCollectionsDetailsUsecase {
     @Inject
     protected ToastFactory mToastFactory;
 
+    /**
+     * Displays the unread cached magazines
+     * @param context The Context
+     * @param topicId The topic id
+     * @param myBaseAdapter The {@link MyCollectionDetails.MyBaseAdapter} object
+     */
     public void displayUnreadCachedMagazines(Context context, String topicId, MyCollectionDetails.MyBaseAdapter myBaseAdapter) {
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         List<Articles> cachedTopicMagazinesList = new ArrayList<Articles>();
@@ -109,6 +118,12 @@ public class MyCollectionsDetailsUsecase {
         myBaseAdapter.addItems(cachedArticlesList);
     }
 
+    /**
+     * Calls the service to unlike the article
+     * @param data The Articles object
+     * @param context The Context
+     * @param myBaseAdapter The {@link MyCollectionDetails.MyBaseAdapter} object
+     */
     public void unlikeMyCollectionArticles(final Articles data, final Context context, final MyCollectionDetails.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
@@ -125,6 +140,15 @@ public class MyCollectionsDetailsUsecase {
         });
     }
 
+    /**
+     * Handles the like or unlike failure response
+     * @param data The Articles object
+     * @param isChecked isChecked or not
+     * @param setLiked whether liked or unliked
+     * @param toastMsg The msg displayed in the toast
+     * @param context The Context
+     * @param myBaseAdapter The {@link MyCollectionDetails.MyBaseAdapter} object
+     */
     private void handleLikeUnlikeMyCollectionFailure(Articles data, boolean isChecked, String setLiked, String toastMsg, Context context, MyCollectionDetails.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).dismissProgressDialog();
         Toast.makeText(context, toastMsg + data.getTitle(), Toast.LENGTH_LONG).show();
@@ -135,6 +159,12 @@ public class MyCollectionsDetailsUsecase {
         }
     }
 
+    /**
+     * Calls the service to like the article
+     * @param data The Articles object
+     * @param context The Context
+     * @param myBaseAdapter The {@link MyCollectionDetails.MyBaseAdapter} object
+     */
     public void likeMyCollectionArticles(final Articles data, final Context context, final MyCollectionDetails.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
@@ -151,6 +181,15 @@ public class MyCollectionsDetailsUsecase {
         });
     }
 
+    /**
+     * Handles the like or unlike success response
+     * @param data The Articles object
+     * @param isChecked isChecked or not
+     * @param setLiked whether liked or unliked
+     * @param toastMsg The msg displayed in the toast
+     * @param context The Context
+     * @param myBaseAdapter The {@link MyCollectionDetails.MyBaseAdapter} object
+     */
     private void handleLikeUnlikeMyCollectionSuccess(final Articles data, boolean isChecked, String setLiked, String toastMsg, final Context context, final MyCollectionDetails.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).dismissProgressDialog();
         data.setIsChecked(isChecked);
@@ -171,6 +210,9 @@ public class MyCollectionsDetailsUsecase {
      * Gets the remaining articles of the topic
      *
      * @param existingArticles The list of existing article ids
+     * @param myBaseAdapter The {@link MyCollectionDetails.MyBaseAdapter} object
+     * @param  myCollectionDetails The {@link MyCollectionDetails} object
+     * @param topicId The topic id
      */
     public void getRemainingArticlesInTopics(List<String> existingArticles, String topicId, final MyCollectionDetails myCollectionDetails, final MyCollectionDetails.MyBaseAdapter myBaseAdapter) {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
@@ -216,6 +258,11 @@ public class MyCollectionsDetailsUsecase {
         });
     }
 
+    /**
+     * Gets the unread articles and sorts them
+     * @param myCollectionDetails The {@link MyCollectionDetails} object
+     * @param myBaseAdapter The {@link MyCollectionDetails.MyBaseAdapter} object
+     */
     private void getUnreadArticlesAndSort(MyCollectionDetails myCollectionDetails, MyCollectionDetails.MyBaseAdapter myBaseAdapter) {
         List<Articles> tempArticlesList = new ArrayList<Articles>(myCollectionDetails.articlesList);
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
@@ -269,6 +316,9 @@ public class MyCollectionsDetailsUsecase {
      * Gets the remaining articles of the magazine
      *
      * @param existingArticles The list of existing article ids
+     * @param myBaseAdapter The {@link MyCollectionDetails.MyBaseAdapter} object
+     * @param myCollectionDetails The {@link MyCollectionDetails} object
+     * @param topicId The topic id
      */
     public void getRemainingArticlesInMagazine(List<String> existingArticles, final MyCollectionDetails myCollectionDetails, String topicId, final MyCollectionDetails.MyBaseAdapter myBaseAdapter) {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
@@ -313,6 +363,11 @@ public class MyCollectionsDetailsUsecase {
         });
     }
 
+    /**
+     * Handles the failure of getting the remaining articles in a topic or magazine
+     * @param t The Throwable instance
+     * @param myCollectionDetails The {@link MyCollectionDetails} object
+     */
     private void failureError(Throwable t, MyCollectionDetails myCollectionDetails) {
         if(t instanceof SocketTimeoutException) {
             myCollectionDetails.tvNoArticles.setText(R.string.socket_time_out);

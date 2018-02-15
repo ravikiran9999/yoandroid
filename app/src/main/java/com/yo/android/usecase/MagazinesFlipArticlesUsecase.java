@@ -41,6 +41,9 @@ import static com.yo.android.flip.MagazineFlipArticlesFragment.currentFlippedPos
  * Created by MYPC on 2/10/2018.
  */
 
+/**
+ * This is the helper class that handles the service calls and other specific utility methods of the MagazineFlipArticles fragment class
+ */
 public class MagazinesFlipArticlesUsecase {
 
     public static final String TAG = MagazinesFlipArticlesUsecase.class.getSimpleName();
@@ -58,6 +61,10 @@ public class MagazinesFlipArticlesUsecase {
     /**
      * Calls the service to get the articles service daily
      * @param swipeRefreshContainer The SwipeRefreshLayout object
+     * @param context The context
+     * @param myBaseAdapter The MagazineArticlesBaseAdapter object
+     * @param magazineFlipArticlesFragment The MagazineFlipArticlesFragment object
+     * @param magazineDashboardHelper The MagazineDashboardHelper object
      */
     public void callDailyArticlesService(final SwipeRefreshLayout swipeRefreshContainer, Context context, MagazineArticlesBaseAdapter myBaseAdapter, MagazineFlipArticlesFragment magazineFlipArticlesFragment, MagazineDashboardHelper magazineDashboardHelper) {
         getReadArticleIds(context, magazineFlipArticlesFragment, myBaseAdapter);
@@ -101,6 +108,10 @@ public class MagazinesFlipArticlesUsecase {
 
     /**
      * Getting the cached articles
+     * @param context The context
+     * @param myBaseAdapter The MagazineArticlesBaseAdapter object
+     * @param magazineFlipArticlesFragment The MagazineFlipArticlesFragment object
+     * @param magazineDashboardHelper The MagazineDashboardHelper object
      */
     public void getLandingCachedArticles(Context context, MagazineArticlesBaseAdapter myBaseAdapter, MagazineFlipArticlesFragment magazineFlipArticlesFragment, MagazineDashboardHelper magazineDashboardHelper) {
         magazineFlipArticlesFragment.isSearch = false;
@@ -183,6 +194,10 @@ public class MagazinesFlipArticlesUsecase {
 
     /**
      * Getting the read article ids
+     * @param context The context
+     * @param magazineFlipArticlesFragment The MagazineFlipArticlesFragment object
+     * @param myBaseAdapter The MagazineArticlesBaseAdapter object
+     * @return The list of read article ids
      */
     public List<String> getReadArticleIds(Context context, MagazineFlipArticlesFragment magazineFlipArticlesFragment, MagazineArticlesBaseAdapter myBaseAdapter) {
         List<String> articlesList1 = null;
@@ -230,8 +245,11 @@ public class MagazinesFlipArticlesUsecase {
 
     /**
      * Updating the articles after following a topic
-     *
      * @param topicId The topic id
+     * @param myBaseAdapter The MagazineArticlesBaseAdapter object
+     * @param context The context
+     * @param magazineDashboardHelper The MagazineDashboardHelper object
+     * @param magazineFlipArticlesFragment The MagazineFlipArticlesFragment object
      */
     public void updateArticlesAfterFollowTopic(String topicId, MagazineArticlesBaseAdapter myBaseAdapter, Context context, MagazineDashboardHelper magazineDashboardHelper, MagazineFlipArticlesFragment magazineFlipArticlesFragment) {
         List<Articles> articlesList = myBaseAdapter.getAllItems();
@@ -376,10 +394,10 @@ public class MagazinesFlipArticlesUsecase {
 
     /**
      * Sorting after following a topic
-     *
      * @param totalArticles               The total articles
      * @param unreadOtherFollowedArticles The unread other followed articles
      * @param followedArticlesList        The followed articles list
+     * @param myBaseAdapter  The MagazineArticlesBaseAdapter object
      */
     public void performSortingAfterFollow(List<Articles> totalArticles, List<Articles> unreadOtherFollowedArticles, List<Articles> followedArticlesList, MagazineArticlesBaseAdapter myBaseAdapter) {
         List<Articles> followedTopicArticles = new ArrayList<>();
@@ -487,6 +505,10 @@ public class MagazinesFlipArticlesUsecase {
 
     /**
      * Updating the articles after the daily service to fetch the new articles
+     * @param swipeRefreshContainer The SwipeRefreshLayout object
+     * @param myBaseAdapter The MagazineArticlesBaseAdapter object
+     * @param magazineDashboardHelper The MagazineDashboardHelper object
+     * @param magazineFlipArticlesFragment The MagazineFlipArticlesFragment object
      */
     public void updateArticlesAfterDailyService(final SwipeRefreshLayout swipeRefreshContainer, MagazineArticlesBaseAdapter myBaseAdapter, MagazineDashboardHelper magazineDashboardHelper, MagazineFlipArticlesFragment magazineFlipArticlesFragment) {
         List<Articles> articlesList = myBaseAdapter.getAllItems();
@@ -576,9 +598,12 @@ public class MagazinesFlipArticlesUsecase {
 
     /**
      * Sorting the articles after the daily service to fetch the new articles
-     *
      * @param totalArticles               The total articles
      * @param unreadOtherFollowedArticles The unread other followed articles
+     * @param myBaseAdapter The MagazineArticlesBaseAdapter object
+     * @param context The Context
+     * @param magazineDashboardHelper The MagazineDashboardHelper object
+     * @param magazineFlipArticlesFragment The MagazineFlipArticlesFragment object
      */
     public void performSortingAfterDailyService(List<Articles> totalArticles, List<Articles> unreadOtherFollowedArticles, MagazineArticlesBaseAdapter myBaseAdapter, Context context, MagazineFlipArticlesFragment magazineFlipArticlesFragment, MagazineDashboardHelper magazineDashboardHelper) {
         List<Articles> followedTopicArticles = new ArrayList<>();

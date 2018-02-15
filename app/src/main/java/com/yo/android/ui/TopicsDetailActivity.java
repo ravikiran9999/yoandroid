@@ -277,9 +277,9 @@ public class TopicsDetailActivity extends BaseActivity {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
-                        topicDetailsUsecase.likeMyCollectionArticles(data, context, myBaseAdapter);
+                        topicDetailsUsecase.likeTopicArticles(data, context, myBaseAdapter);
                     } else {
-                        topicDetailsUsecase.unlikeMyCollectionArticles(data, context, myBaseAdapter);
+                        topicDetailsUsecase.unlikeTopicArticles(data, context, myBaseAdapter);
                     }
                 }
             });
@@ -298,9 +298,9 @@ public class TopicsDetailActivity extends BaseActivity {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
-                        topicDetailsUsecase.likeMyCollectionArticles(data, context, myBaseAdapter);
+                        topicDetailsUsecase.likeTopicArticles(data, context, myBaseAdapter);
                     } else {
-                        topicDetailsUsecase.unlikeMyCollectionArticles(data, context, myBaseAdapter);
+                        topicDetailsUsecase.unlikeTopicArticles(data, context, myBaseAdapter);
                     }
                 }
             });

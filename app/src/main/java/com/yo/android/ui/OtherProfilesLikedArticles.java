@@ -305,9 +305,9 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
-                        othersProfileLikedArticlesUsecase.likeMyCollectionArticles(data, context, myBaseAdapter);
+                        othersProfileLikedArticlesUsecase.likeOthersProfileLikedArticles(data, context, myBaseAdapter);
                     } else {
-                        othersProfileLikedArticlesUsecase.unlikeMyCollectionArticles(data, context, myBaseAdapter);
+                        othersProfileLikedArticlesUsecase.unlikeOthersProfileLikedArticles(data, context, myBaseAdapter);
                     }
                 }
             });
@@ -326,9 +326,9 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
-                        othersProfileLikedArticlesUsecase.likeMyCollectionArticles(data, context, myBaseAdapter);
+                        othersProfileLikedArticlesUsecase.likeOthersProfileLikedArticles(data, context, myBaseAdapter);
                     } else {
-                        othersProfileLikedArticlesUsecase.unlikeMyCollectionArticles(data, context, myBaseAdapter);
+                        othersProfileLikedArticlesUsecase.unlikeOthersProfileLikedArticles(data, context, myBaseAdapter);
                     }
                 }
             });

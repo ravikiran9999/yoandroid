@@ -259,7 +259,7 @@ dependencies {
 
     compile 'se.emilsjolander:android-flipview:1.1.0'
     compile 'com.android.support:multidex:1.0.1'
-    //compile 'me.grantland:autofittextview:0.2.1'
+    compile 'me.grantland:autofittextview:0.2.1'
     compile 'com.isseiaoki:simplecropview:1.1.4'
     compile 'com.flurry.android:analytics:7.0.0@aar'
     compile 'com.google.android.gms:play-services-auth:11.8.0'

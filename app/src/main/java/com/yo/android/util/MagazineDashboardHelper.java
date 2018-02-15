@@ -96,8 +96,8 @@ public class MagazineDashboardHelper {
                     } else {
                         magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                         magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
-                        if(magazinesFlipArticlesUsecase != null) {
-                        magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);}
+                        if(magazineFlipArticlesFragment.magazinesFlipArticlesUsecase != null) {
+                            magazineFlipArticlesFragment.magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);}
                     }
 
                 }
@@ -201,8 +201,8 @@ public class MagazineDashboardHelper {
                     } else {
                         magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                         magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
-                        if(magazinesFlipArticlesUsecase != null) {
-                            magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
+                        if(magazineFlipArticlesFragment.magazinesFlipArticlesUsecase != null) {
+                            magazineFlipArticlesFragment.magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
                         }
                     }
 
@@ -221,8 +221,8 @@ public class MagazineDashboardHelper {
                     magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                     magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                     magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
-                    if(magazinesFlipArticlesUsecase != null) {
-                        magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
+                    if(magazineFlipArticlesFragment.magazinesFlipArticlesUsecase != null) {
+                        magazineFlipArticlesFragment.magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
                     }
                     if(t instanceof SocketTimeoutException) {
                         Toast.makeText(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.getActivity().getResources().getString(R.string.socket_time_out), Toast.LENGTH_LONG).show();
@@ -295,8 +295,8 @@ public class MagazineDashboardHelper {
                     } else {
                         magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                         magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
-                        if(magazinesFlipArticlesUsecase != null) {
-                            magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
+                        if(magazineFlipArticlesFragment.magazinesFlipArticlesUsecase != null) {
+                            magazineFlipArticlesFragment.magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
                         }
                     }
                 }
@@ -309,8 +309,8 @@ public class MagazineDashboardHelper {
                     magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                     magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                     magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
-                    if (magazinesFlipArticlesUsecase != null) {
-                        magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
+                    if (magazineFlipArticlesFragment.magazinesFlipArticlesUsecase != null) {
+                        magazineFlipArticlesFragment.magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
                     }
                     if (magazineFlipArticlesFragment.getActivity() != null) {
                         Toast.makeText(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.getActivity().getResources().getString(R.string.connectivity_network_settings), Toast.LENGTH_LONG).show();
@@ -370,8 +370,8 @@ public class MagazineDashboardHelper {
                     } else {
                         magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                         magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
-                        if(magazinesFlipArticlesUsecase != null) {
-                            magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
+                        if(magazineFlipArticlesFragment.magazinesFlipArticlesUsecase != null) {
+                            magazineFlipArticlesFragment.magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
                         }
                     }
 
@@ -389,8 +389,8 @@ public class MagazineDashboardHelper {
                     magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                     magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
                     magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
-                    if(magazinesFlipArticlesUsecase != null) {
-                        magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
+                    if(magazineFlipArticlesFragment.magazinesFlipArticlesUsecase != null) {
+                        magazineFlipArticlesFragment.magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
                     }
                     if(t instanceof SocketTimeoutException) {
                         Toast.makeText(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.getActivity().getResources().getString(R.string.socket_time_out), Toast.LENGTH_LONG).show();
@@ -477,16 +477,16 @@ public class MagazineDashboardHelper {
                     }
                     magazineFlipArticlesFragment.tvProgressText.setVisibility(View.GONE);
                     magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
-                    if(magazinesFlipArticlesUsecase != null) {
-                        magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
+                    if(magazineFlipArticlesFragment.magazinesFlipArticlesUsecase != null) {
+                        magazineFlipArticlesFragment.magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
                     }
                     break;
             }
         } else {
             magazineFlipArticlesFragment.flipContainer.setVisibility(View.VISIBLE);
             magazineFlipArticlesFragment.llNoArticles.setVisibility(View.GONE);
-            if(magazinesFlipArticlesUsecase != null) {
-                magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
+            if(magazineFlipArticlesFragment.magazinesFlipArticlesUsecase != null) {
+                magazineFlipArticlesFragment.magazinesFlipArticlesUsecase.getLandingCachedArticles(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.myBaseAdapter, magazineFlipArticlesFragment, MagazineDashboardHelper.this);
             }
         }
     }
@@ -519,15 +519,15 @@ public class MagazineDashboardHelper {
     }
 
     private void addMoreDashboardArticlesAfterFollow(MagazineFlipArticlesFragment articlesFragment, List<Articles> totalArticles, List<Articles> unreadOtherFollowedArticles, final List<Articles> followedArticlesList) {
-        if(magazinesFlipArticlesUsecase != null) {
-            magazinesFlipArticlesUsecase.performSortingAfterFollow(totalArticles, unreadOtherFollowedArticles, followedArticlesList, articlesFragment.myBaseAdapter);
+        if(articlesFragment.magazinesFlipArticlesUsecase != null) {
+            articlesFragment.magazinesFlipArticlesUsecase.performSortingAfterFollow(totalArticles, unreadOtherFollowedArticles, followedArticlesList, articlesFragment.myBaseAdapter);
         }
         articlesFragment.handleMoreDashboardResponse(totalArticles, true, false);
     }
 
     private void addDashboardArticlesForDailyService(MagazineFlipArticlesFragment articlesFragment, List<Articles> totalArticles, List<Articles> unreadOtherFollowedArticles) {
-        if(magazinesFlipArticlesUsecase != null) {
-        magazinesFlipArticlesUsecase.performSortingAfterDailyService(totalArticles, unreadOtherFollowedArticles, articlesFragment.myBaseAdapter, articlesFragment.getActivity(), articlesFragment, MagazineDashboardHelper.this);
+        if(articlesFragment.magazinesFlipArticlesUsecase != null) {
+            articlesFragment.magazinesFlipArticlesUsecase.performSortingAfterDailyService(totalArticles, unreadOtherFollowedArticles, articlesFragment.myBaseAdapter, articlesFragment.getActivity(), articlesFragment, MagazineDashboardHelper.this);
         }
         //articlesFragment.handleMoreDashboardResponse(totalArticles, false);
     }

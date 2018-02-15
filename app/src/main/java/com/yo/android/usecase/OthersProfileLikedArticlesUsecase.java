@@ -27,6 +27,9 @@ import retrofit2.Response;
  * Created by MYPC on 2/14/2018.
  */
 
+/**
+ * This is the helper class that handles the service calls and other specific utility methods of the OtherProfilesLikedArticles class
+ */
 public class OthersProfileLikedArticlesUsecase {
 
     @Inject
@@ -41,7 +44,8 @@ public class OthersProfileLikedArticlesUsecase {
     /**
      * Gets the other Yo app user's liked articles
      *
-     * @param userID
+     * @param userID The user id
+     * @param otherProfilesLikedArticles The {@link OtherProfilesLikedArticles} object
      */
     public void loadLikedArticles(String userID, final OtherProfilesLikedArticles otherProfilesLikedArticles) {
         otherProfilesLikedArticles.articlesList.clear();
@@ -99,23 +103,38 @@ public class OthersProfileLikedArticlesUsecase {
         });
     }
 
-    public void unlikeMyCollectionArticles(final Articles data, final Context context, final OtherProfilesLikedArticles.MyBaseAdapter myBaseAdapter) {
+    /**
+     * Unlikes the other profiles liked articles
+     * @param data The Articles object
+     * @param context The context
+     * @param myBaseAdapter The {@link com.yo.android.ui.OtherProfilesLikedArticles.MyBaseAdapter} object
+     */
+    public void unlikeOthersProfileLikedArticles(final Articles data, final Context context, final OtherProfilesLikedArticles.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                handleLikeUnlikeMyCollectionSuccess(data, false, "false", "You have unliked the article ", context, myBaseAdapter);
+                handleLikeUnlikeOtherLikedArticlesSuccess(data, false, "false", "You have unliked the article ", context, myBaseAdapter);
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                handleLikeUnlikeMyCollectionFailure(data, true, "true", "Error while unliking article ", context, myBaseAdapter);
+                handleLikeUnlikeOthersLikedArticlesFailure(data, true, "true", "Error while unliking article ", context, myBaseAdapter);
             }
         });
     }
 
-    private void handleLikeUnlikeMyCollectionFailure(Articles data, boolean isChecked, String setLiked, String toastMsg, Context context, OtherProfilesLikedArticles.MyBaseAdapter myBaseAdapter) {
+    /**
+     * Handles the like or unlike others articles failure response
+     * @param data The Articles object
+     * @param isChecked isChecked or not
+     * @param setLiked isLiked or not
+     * @param toastMsg The toast msg to be displayed
+     * @param context The context
+     * @param myBaseAdapter The {@link com.yo.android.ui.OtherProfilesLikedArticles.MyBaseAdapter} object
+     */
+    private void handleLikeUnlikeOthersLikedArticlesFailure(Articles data, boolean isChecked, String setLiked, String toastMsg, Context context, OtherProfilesLikedArticles.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).dismissProgressDialog();
         Toast.makeText(context, toastMsg + data.getTitle(), Toast.LENGTH_LONG).show();
         data.setIsChecked(isChecked);
@@ -125,23 +144,38 @@ public class OthersProfileLikedArticlesUsecase {
         }
     }
 
-    public void likeMyCollectionArticles(final Articles data, final Context context, final OtherProfilesLikedArticles.MyBaseAdapter myBaseAdapter) {
+    /**
+     * Likes the others profile liked articles
+     * @param data The Articles object
+     * @param context The context
+     * @param myBaseAdapter The {@link com.yo.android.ui.OtherProfilesLikedArticles.MyBaseAdapter} object
+     */
+    public void likeOthersProfileLikedArticles(final Articles data, final Context context, final OtherProfilesLikedArticles.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                handleLikeUnlikeMyCollectionSuccess(data, true, "true", "You have liked the article ", context, myBaseAdapter);
+                handleLikeUnlikeOtherLikedArticlesSuccess(data, true, "true", "You have liked the article ", context, myBaseAdapter);
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                handleLikeUnlikeMyCollectionFailure(data, false, "false", "Error while liking article ", context, myBaseAdapter);
+                handleLikeUnlikeOthersLikedArticlesFailure(data, false, "false", "Error while liking article ", context, myBaseAdapter);
             }
         });
     }
 
-    private void handleLikeUnlikeMyCollectionSuccess(final Articles data, boolean isChecked, String setLiked, String toastMsg, final Context context, final OtherProfilesLikedArticles.MyBaseAdapter myBaseAdapter) {
+    /**
+     * Handles the like or unlike of others liked articles success response
+     * @param data The Articles object
+     * @param isChecked isChecked or not
+     * @param setLiked isLiked or not
+     * @param toastMsg The toast msg to be displayed
+     * @param context The context
+     * @param myBaseAdapter The {@link com.yo.android.ui.OtherProfilesLikedArticles.MyBaseAdapter} object
+     */
+    private void handleLikeUnlikeOtherLikedArticlesSuccess(final Articles data, boolean isChecked, String setLiked, String toastMsg, final Context context, final OtherProfilesLikedArticles.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).dismissProgressDialog();
         data.setIsChecked(isChecked);
         data.setLiked(setLiked);

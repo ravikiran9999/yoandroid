@@ -30,6 +30,9 @@ import retrofit2.Response;
  * Created by MYPC on 2/14/2018.
  */
 
+/**
+ * This is the helper class that handles the service calls and other specific utility methods of the TopicsDetailActivity class
+ */
 public class TopicDetailsUsecase {
 
     @Inject
@@ -40,6 +43,10 @@ public class TopicDetailsUsecase {
     @Inject
     protected ToastFactory mToastFactory;
 
+    /**
+     * Gets the articles of a topic
+     * @param topicsDetailActivity The {@link TopicsDetailActivity} object
+     */
     public void getArticlesOfTopic(final TopicsDetailActivity topicsDetailActivity) {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         List<String> tagIds = new ArrayList<>();
@@ -78,6 +85,11 @@ public class TopicDetailsUsecase {
         });
     }
 
+    /**
+     * Handles the failure of getting the articles of the topic
+     * @param t The {@link Throwable } object
+     * @param topicsDetailActivity The {@link TopicsDetailActivity} object
+     */
     private void failureError(Throwable t, TopicsDetailActivity topicsDetailActivity) {
         if(t instanceof SocketTimeoutException) {
             topicsDetailActivity.tvNoArticles.setText(R.string.socket_time_out);
@@ -88,7 +100,13 @@ public class TopicDetailsUsecase {
         topicsDetailActivity.flipView.setVisibility(View.GONE);
     }
 
-    public void unlikeMyCollectionArticles(final Articles data, final Context context, final TopicsDetailActivity.MyBaseAdapter myBaseAdapter) {
+    /**
+     * Unlikes the article of a topic
+     * @param data The Articles object
+     * @param context The Context
+     * @param myBaseAdapter The {@link com.yo.android.ui.TopicsDetailActivity.MyBaseAdapter} object
+     */
+    public void unlikeTopicArticles(final Articles data, final Context context, final TopicsDetailActivity.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
@@ -99,12 +117,21 @@ public class TopicDetailsUsecase {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                handleLikeUnlikeMyCollectionFailure(data, true, "true", "Error while unliking article ", context, myBaseAdapter);
+                handleLikeUnlikeTopicArticleFailure(data, true, "true", "Error while unliking article ", context, myBaseAdapter);
             }
         });
     }
 
-    private void handleLikeUnlikeMyCollectionFailure(Articles data, boolean isChecked, String setLiked, String toastMsg, Context context, TopicsDetailActivity.MyBaseAdapter myBaseAdapter) {
+    /**
+     * Handles the like or unlike topic article failure response
+     * @param data The Articles object
+     * @param isChecked isChecked or not
+     * @param setLiked isLiked or not
+     * @param toastMsg The toast msg to be displayed
+     * @param context The Context
+     * @param myBaseAdapter The {@link com.yo.android.ui.TopicsDetailActivity.MyBaseAdapter} object
+     */
+    private void handleLikeUnlikeTopicArticleFailure(Articles data, boolean isChecked, String setLiked, String toastMsg, Context context, TopicsDetailActivity.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).dismissProgressDialog();
         Toast.makeText(context, toastMsg + data.getTitle(), Toast.LENGTH_LONG).show();
         data.setIsChecked(isChecked);
@@ -114,7 +141,13 @@ public class TopicDetailsUsecase {
         }
     }
 
-    public void likeMyCollectionArticles(final Articles data, final Context context, final TopicsDetailActivity.MyBaseAdapter myBaseAdapter) {
+    /**
+     * Likes the article of the topic
+     * @param data The Articles object
+     * @param context The Context
+     * @param myBaseAdapter The {@link com.yo.android.ui.TopicsDetailActivity.MyBaseAdapter} object
+     */
+    public void likeTopicArticles(final Articles data, final Context context, final TopicsDetailActivity.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
@@ -125,11 +158,20 @@ public class TopicDetailsUsecase {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                handleLikeUnlikeMyCollectionFailure(data, false, "false", "Error while liking article ", context, myBaseAdapter);
+                handleLikeUnlikeTopicArticleFailure(data, false, "false", "Error while liking article ", context, myBaseAdapter);
             }
         });
     }
 
+    /**
+     * Handles like or unlike of the article of a topic success response
+     * @param data The Articles object
+     * @param isChecked isChecked or not
+     * @param setLiked isLiked or not
+     * @param toastMsg The toast msg to be displayed
+     * @param context The Context
+     * @param myBaseAdapter The {@link com.yo.android.ui.TopicsDetailActivity.MyBaseAdapter} object
+     */
     private void handleLikeUnlikeMyCollectionSuccess(final Articles data, boolean isChecked, String setLiked, String toastMsg, final Context context, final TopicsDetailActivity.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).dismissProgressDialog();
         data.setIsChecked(isChecked);

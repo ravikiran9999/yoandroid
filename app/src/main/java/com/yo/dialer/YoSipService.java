@@ -507,8 +507,10 @@ public class YoSipService extends InjectedService implements IncomingCallListene
         intent.putExtra(CallExtras.NAME, calleeContact.getName());
         intent.putExtra(CallExtras.IS_PSTN, isPSTNCall);
         //Wait until user profile image is loaded , it should not show blank image
-        startActivity(intent);
         sendNotification(intent, isOutgongCall);
+        intent.putExtra("notificationId", callNotificationId);
+        startActivity(intent);
+        //sendNotification(intent, isOutgongCall);
         //Check if no response from the calle side need to disconnect the call.
         // checkCalleeLossNetwork();
 
