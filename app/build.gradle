@@ -30,7 +30,7 @@ android {
     }
     // Enabling multidex support.
     defaultConfig {
-        applicationId "com.yowatsup"
+        applicationId "com.yowatsup.android"
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 5
@@ -87,11 +87,11 @@ android {
             buildConfigField "boolean", "NEW_YO_CREDIT_SCREEN", "true"
             buildConfigField "boolean", "NEW_FOLLOW_MORE_TOPICS", "true"
 
-            buildConfigField "String", "BASE_URL", "\"http://34.198.165.8/\""
+            buildConfigField "String", "BASE_URL", "\"http://34.225.28.188/\""
             buildConfigField "String", "CLIENT_ID", "\"22878964b4ec1de00626c4b88c81d177eafb4869523dad8b52eb7909e7d8f076\""
             buildConfigField "String", "CLIENT_SECRET", "\"f0f79dfe87ed1eca3d77c48d0b1f48eedc690a6ae2f02ec777fd1b0456ad1870\""
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://yo-production.appspot.com\""
-            buildConfigField "String", "FIREBASE_URL", "\"https://yo-production.firebaseio.com/\""
+            buildConfigField "String", "FIREBASE_URL", "\"https://enhancement-94ccd.firebaseio.com/\""
 
             //Same as Dev
             /*buildConfigField "String", "BASE_URL", "\"http://34.198.165.8/\""
@@ -259,7 +259,7 @@ dependencies {
 
     compile 'se.emilsjolander:android-flipview:1.1.0'
     compile 'com.android.support:multidex:1.0.1'
-    //compile 'me.grantland:autofittextview:0.2.1'
+    compile 'me.grantland:autofittextview:0.2.1'
     compile 'com.isseiaoki:simplecropview:1.1.4'
     compile 'com.flurry.android:analytics:7.0.0@aar'
     compile 'com.google.android.gms:play-services-auth:11.8.0'

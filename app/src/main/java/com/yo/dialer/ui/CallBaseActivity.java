@@ -26,6 +26,7 @@ import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.ui.BaseActivity;
+import com.yo.android.util.Util;
 import com.yo.android.util.YODialogs;
 import com.yo.android.vox.BalanceHelper;
 import com.yo.dialer.CallExtras;
@@ -96,6 +97,7 @@ class CallBaseActivity extends BaseActivity {
     protected View mOutgoingCallHeader;
     @Inject
     protected BalanceHelper mBalanceHelper;
+    private int callNotificationId;
 
 
     public boolean isIncoming() {
@@ -161,6 +163,7 @@ class CallBaseActivity extends BaseActivity {
         calleImageUrl = getIntent().getStringExtra(CallExtras.IMAGE);
         calleName = getIntent().getStringExtra(CallExtras.NAME);
         isPstn = getIntent().getBooleanExtra(CallExtras.IS_PSTN, false);
+        callNotificationId = getIntent().getIntExtra("notificationId", 0);
         EventBus.getDefault().register(this);
     }
 
@@ -205,6 +208,7 @@ class CallBaseActivity extends BaseActivity {
      * Rejects the call
      */
     protected void rejectCall() {
+        Util.cancelNotification(this, callNotificationId);
         if (sipBinder != null && sipBinder.getYOHandler() != null) {
             isCallStopped = true;
             sipBinder.getYOHandler().rejectCall();

@@ -22,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
@@ -36,15 +35,12 @@ import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.helpers.MagazinePreferenceEndPoint;
 import com.yo.android.model.Articles;
-import com.yo.android.model.MagazineArticles;
 import com.yo.android.usecase.MagazinesServicesUsecase;
-import com.yo.android.util.ArticlesComparator;
+import com.yo.android.usecase.MyCollectionsDetailsUsecase;
 import com.yo.android.util.Constants;
 
 import java.lang.reflect.Type;
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -69,20 +65,22 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
-    private List<Articles> articlesList = new ArrayList<Articles>();
+    public List<Articles> articlesList = new ArrayList<Articles>();
     private MyBaseAdapter myBaseAdapter;
     private String type;
     private String topicId;
-    private LinkedHashSet<Articles> articlesHashSet = new LinkedHashSet<>();
+    public LinkedHashSet<Articles> articlesHashSet = new LinkedHashSet<>();
     private static int currentFlippedPosition;
     private List<String> readArticleIds;
     private LinkedHashSet<List<String>> articlesIdsHashSet = new LinkedHashSet<>();
-    private TextView tvNoArticles;
-    private FlipView flipView;
+    public TextView tvNoArticles;
+    public FlipView flipView;
     private List<Articles> cachedArticlesList = new ArrayList<>();
     private Context context;
     @Inject
     MagazinesServicesUsecase magazinesServicesUsecase;
+    @Inject
+    MyCollectionsDetailsUsecase myCollectionsDetailsUsecase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +113,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             List<String> tagIds = new ArrayList<String>();
             tagIds.add(topicId);
 
-            displayUnreadCachedMagazines();
+            myCollectionsDetailsUsecase.displayUnreadCachedMagazines(this, topicId, myBaseAdapter);
 
             /*if (cachedArticlesList.size() == 0) {
                 tvNoArticles.setVisibility(View.VISIBLE);
@@ -128,10 +126,10 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             showProgressDialog();
 
             List<String> existingArticleIds = checkCachedMagazines();
-            getRemainingArticlesInTopics(existingArticleIds);
+            myCollectionsDetailsUsecase.getRemainingArticlesInTopics(existingArticleIds, topicId, this, myBaseAdapter);
         } else {
 
-            displayUnreadCachedMagazines();
+            myCollectionsDetailsUsecase.displayUnreadCachedMagazines(this, topicId, myBaseAdapter);
             /*if (cachedArticlesList.size() == 0) {
                 tvNoArticles.setVisibility(View.VISIBLE);
                 flipView.setVisibility(View.GONE);
@@ -142,60 +140,8 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
             showProgressDialog();
             List<String> existingArticleIds = checkCachedMagazines();
-            getRemainingArticlesInMagazine(existingArticleIds);
+            myCollectionsDetailsUsecase.getRemainingArticlesInMagazine(existingArticleIds, this, topicName, myBaseAdapter);
         }
-    }
-
-    private void displayUnreadCachedMagazines() {
-        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        List<Articles> cachedTopicMagazinesList = new ArrayList<Articles>();
-        List<Articles> cachedMagazinesList = magazinesServicesUsecase.getCachedMagazinesList(this);
-
-        if (cachedMagazinesList != null) {
-            for (Articles article : cachedMagazinesList) {
-                if (article.getTopicId().equals(topicId)) {
-                    cachedTopicMagazinesList.add(article);
-                }
-            }
-        }
-
-        cachedArticlesList.addAll(cachedTopicMagazinesList);
-        List<Articles> tempArticlesList = new ArrayList<Articles>(cachedArticlesList);
-        String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("read_article_ids", "");
-        if (!TextUtils.isEmpty(readCachedIds)) {
-            Type type1 = new TypeToken<List<String>>() {
-            }.getType();
-            String cachedIds = readCachedIds;
-            List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
-
-
-            for (Articles article : cachedArticlesList) {
-                for (String artId : cachedReadList) {
-                    if (article.getId().equals(artId)) {
-                        tempArticlesList.remove(article);
-                        break;
-                    }
-                }
-            }
-        }
-        cachedArticlesList = tempArticlesList;
-        List<Articles> emptyUpdatedArticles = new ArrayList<>();
-        List<Articles> notEmptyUpdatedArticles = new ArrayList<>();
-        for (Articles updatedArticles : cachedArticlesList) {
-            if (!TextUtils.isEmpty(updatedArticles.getUpdated())) {
-                notEmptyUpdatedArticles.add(updatedArticles);
-            } else {
-                emptyUpdatedArticles.add(updatedArticles);
-            }
-        }
-        Collections.sort(notEmptyUpdatedArticles, new ArticlesComparator());
-        Collections.reverse(notEmptyUpdatedArticles);
-        notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
-        cachedArticlesList = notEmptyUpdatedArticles;
-        LinkedHashSet<Articles> hashSet = new LinkedHashSet<>();
-        hashSet.addAll(cachedArticlesList);
-        cachedArticlesList = new ArrayList<Articles>(hashSet);
-        myBaseAdapter.addItems(cachedArticlesList);
     }
 
     @Override
@@ -218,7 +164,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
         super.onBackPressed();
     }
 
-    private class MyBaseAdapter extends BaseAdapter {
+    public class MyBaseAdapter extends BaseAdapter {
 
 
         private Context context;
@@ -252,7 +198,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
         }
 
         @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, final View convertView, ViewGroup parent) {
             ViewHolder holder = null;
             View layout = convertView;
             if (layout == null) {
@@ -273,8 +219,6 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 holder.magazineAdd = UI.findViewById(layout, R.id.imv_magazine_add);
 
                 holder.magazineShare = UI.findViewById(layout, R.id.imv_magazine_share);
-
-                holder.articleFollow = UI.findViewById(layout, R.id.imv_magazine_follow);
 
                 holder.tvTopicName = UI.findViewById(layout, R.id.imv_magazine_topic);
 
@@ -376,9 +320,9 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                     if (isChecked) {
-                        likeMyCollectionArticles(data);
+                        myCollectionsDetailsUsecase.likeMyCollectionArticles(data, context, myBaseAdapter);
                     } else {
-                        unlikeMyCollectionArticles(data);
+                        myCollectionsDetailsUsecase.unlikeMyCollectionArticles(data, context, myBaseAdapter);
                     }
                 }
             });
@@ -398,9 +342,9 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                     if (isChecked) {
-                        likeMyCollectionArticles(data);
+                        myCollectionsDetailsUsecase.likeMyCollectionArticles(data, context, myBaseAdapter);
                     } else {
-                        unlikeMyCollectionArticles(data);
+                        myCollectionsDetailsUsecase.unlikeMyCollectionArticles(data, context, myBaseAdapter);
                     }
                 }
             });
@@ -489,14 +433,6 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 }
             });
 
-            if ("true".equals(data.getIsFollowing())) {
-                holder.articleFollow.setText("Following");
-                holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-            } else {
-                holder.articleFollow.setText("Follow");
-                holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            }
-
             final ViewHolder finalHolder = holder;
 
             LinearLayout llArticleInfo = (LinearLayout) layout.findViewById(R.id.ll_article_info);
@@ -520,73 +456,6 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
 
             return layout;
-        }
-
-       /* private void naviagateToMagazineWebView(Articles data, int position) {
-            Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-            intent.putExtra("Title", data.getTitle());
-            intent.putExtra("Image", data.getUrl());
-            intent.putExtra("Article", data);
-            intent.putExtra("Position", position);
-            startActivityForResult(intent, 500);
-        }*/
-
-        private void unlikeMyCollectionArticles(final Articles data) {
-            showProgressDialog();
-            String accessToken = preferenceEndPoint.getStringPreference("access_token");
-            yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    handleLikeUnlikeMyCollectionSuccess(data, false, "false", "You have unliked the article ");
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    handleLikeUnlikeMyCollectionFailure(data, true, "true", "Error while unliking article ");
-                }
-            });
-        }
-
-        private void handleLikeUnlikeMyCollectionFailure(Articles data, boolean isChecked, String setLiked, String toastMsg) {
-            dismissProgressDialog();
-            Toast.makeText(context, toastMsg + data.getTitle(), Toast.LENGTH_LONG).show();
-            data.setIsChecked(isChecked);
-            data.setLiked(setLiked);
-            if (!((BaseActivity) context).hasDestroyed()) {
-                notifyDataSetChanged();
-            }
-        }
-
-        private void likeMyCollectionArticles(final Articles data) {
-            showProgressDialog();
-            String accessToken = preferenceEndPoint.getStringPreference("access_token");
-            yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    handleLikeUnlikeMyCollectionSuccess(data, true, "true", "You have liked the article ");
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    handleLikeUnlikeMyCollectionFailure(data, false, "false", "Error while liking article ");
-                }
-            });
-        }
-
-        private void handleLikeUnlikeMyCollectionSuccess(final Articles data, boolean isChecked, String setLiked, String toastMsg) {
-            dismissProgressDialog();
-            data.setIsChecked(isChecked);
-            data.setLiked(setLiked);
-            if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
-            }
-            if (MagazineArticlesBaseAdapter.mListener != null) {
-                MagazineArticlesBaseAdapter.mListener.updateMagazineStatus(data, Constants.LIKE_EVENT);
-            }
-            if (!((BaseActivity) context).hasDestroyed()) {
-                notifyDataSetChanged();
-            }
-            mToastFactory.showToast(toastMsg + data.getTitle());
         }
 
         /**
@@ -633,8 +502,6 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
         private ImageView magazineAdd;
 
         private ImageView magazineShare;
-
-        private Button articleFollow;
 
         private TextView tvTopicName;
 
@@ -878,161 +745,5 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
         }
 
         return existingArticleIds;
-    }
-
-    /**
-     * Gets the remaining articles of the topic
-     *
-     * @param existingArticles The list of existing article ids
-     */
-    private void getRemainingArticlesInTopics(List<String> existingArticles) {
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.getRemainingArticlesInTopicAPI(accessToken, topicId, existingArticles).enqueue(new Callback<List<Articles>>() {
-            @Override
-            public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
-                dismissProgressDialog();
-                if (response.body() != null && response.body().size() > 0) {
-                    try {
-                        for (int i = 0; i < response.body().size(); i++) {
-                            if (!"...".equalsIgnoreCase(response.body().get(i).getSummary())) {
-                                articlesHashSet.add(response.body().get(i));
-                            }
-                        }
-                        articlesList = new ArrayList<>(articlesHashSet);
-                        articlesList.addAll(cachedArticlesList);
-                    } finally {
-                        if(response != null && response.body() != null) {
-                            try {
-                                response.body().clear();
-                                response = null;
-                            }catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                    getUnreadArticlesAndSort();
-                } else {
-                    if (cachedArticlesList.size() == 0) {
-                        tvNoArticles.setVisibility(View.VISIBLE);
-                        flipView.setVisibility(View.GONE);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Articles>> call, Throwable t) {
-                dismissProgressDialog();
-                if (cachedArticlesList.size() == 0) {
-                    failureError(t);
-                }
-            }
-        });
-    }
-
-    private void getUnreadArticlesAndSort() {
-        List<Articles> tempArticlesList = new ArrayList<Articles>(articlesList);
-        String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
-        String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(context, userId).getString("read_article_ids", "");
-        if (!TextUtils.isEmpty(readCachedIds)) {
-            Type type1 = new TypeToken<List<String>>() {
-            }.getType();
-            String cachedIds = readCachedIds;
-            List<String> cachedReadList = new Gson().fromJson(cachedIds, type1);
-
-
-            for (Articles article : articlesList) {
-                for (String artId : cachedReadList) {
-                    if (article.getId().equals(artId)) {
-                        tempArticlesList.remove(article);
-                        break;
-                    }
-                }
-            }
-        }
-        articlesList = tempArticlesList;
-
-        List<Articles> emptyUpdatedArticles = new ArrayList<>();
-        List<Articles> notEmptyUpdatedArticles = new ArrayList<>();
-        for (Articles updatedArticles : articlesList) {
-            if (!TextUtils.isEmpty(updatedArticles.getUpdated())) {
-                notEmptyUpdatedArticles.add(updatedArticles);
-            } else {
-                emptyUpdatedArticles.add(updatedArticles);
-            }
-        }
-        Collections.sort(notEmptyUpdatedArticles, new ArticlesComparator());
-        Collections.reverse(notEmptyUpdatedArticles);
-        notEmptyUpdatedArticles.addAll(emptyUpdatedArticles);
-        articlesList = notEmptyUpdatedArticles;
-
-                    /*for (Articles a : articlesList) {
-                        Log.d("MyCollectionDetails", "The sorted list is " + a.getId() + " updated " + a.getUpdated());
-                    }*/
-        myBaseAdapter.addItems(articlesList);
-        if (articlesList.size() == 0) {
-            tvNoArticles.setVisibility(View.VISIBLE);
-            flipView.setVisibility(View.GONE);
-        } else {
-            tvNoArticles.setVisibility(View.GONE);
-            flipView.setVisibility(View.VISIBLE);
-        }
-    }
-
-    /**
-     * Gets the remaining articles of the magazine
-     *
-     * @param existingArticles The list of existing article ids
-     */
-    private void getRemainingArticlesInMagazine(List<String> existingArticles) {
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.getRemainingArticlesInMagAPI(accessToken, topicId, existingArticles).enqueue(new Callback<MagazineArticles>() {
-            @Override
-            public void onResponse(Call<MagazineArticles> call, Response<MagazineArticles> response) {
-                dismissProgressDialog();
-                if (response.body().getArticlesList() != null && response.body().getArticlesList().size() > 0) {
-                    try {
-                        for (int i = 0; i < response.body().getArticlesList().size(); i++) {
-                            if (!"...".equalsIgnoreCase(response.body().getArticlesList().get(i).getSummary())) {
-                                articlesHashSet.add(response.body().getArticlesList().get(i));
-                            }
-                        }
-                        articlesList = new ArrayList<Articles>(articlesHashSet);
-                        articlesList.addAll(cachedArticlesList);
-                    } finally {
-                        if(response != null && response.body() != null) {
-                            try {
-                                response = null;
-                            }catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                    getUnreadArticlesAndSort();
-                } else {
-                    if (cachedArticlesList.size() == 0) {
-                        tvNoArticles.setVisibility(View.VISIBLE);
-                        flipView.setVisibility(View.GONE);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MagazineArticles> call, Throwable t) {
-                dismissProgressDialog();
-                if (cachedArticlesList.size() == 0) {
-                    failureError(t);
-                }
-            }
-        });
-    }
-
-    private void failureError(Throwable t) {
-        if(t instanceof SocketTimeoutException) {
-            tvNoArticles.setText(R.string.socket_time_out);
-        } else {
-            tvNoArticles.setText(R.string.no_articles);
-        }
-        tvNoArticles.setVisibility(View.VISIBLE);
-        flipView.setVisibility(View.GONE);
     }
 }
