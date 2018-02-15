@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 
 // firebase performance monitor
 apply plugin: 'com.google.firebase.firebase-perf'
+// realm database
+apply plugin: 'realm-android'
 
 //apply plugin: 'android-apt'
 
@@ -171,6 +173,10 @@ android {
     aaptOptions {
         cruncherEnabled = false
     }
+
+    /*realm {
+        syncEnabled = true;
+    }*/
 }
 
 repositories {

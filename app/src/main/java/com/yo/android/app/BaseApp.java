@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import dagger.ObjectGraph;
+import io.realm.Realm;
 
 /**
  * Created by Ramesh on 17/06/16.
@@ -63,6 +64,18 @@ public class BaseApp extends MultiDexApplication {
         // FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         Firebase.getDefaultConfig().setPersistenceEnabled(true);
         Firebase.setAndroidContext(getApplicationContext());
+
+        // The default Realm file is "default.realm" in Context.getFilesDir();
+        // we'll change it to "myrealm.realm"
+
+        // initialize realm
+        try {
+            Realm.init(this);
+            //RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
+            //Realm.setDefaultConfiguration(realmConfiguration);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         injectDependencies();
 

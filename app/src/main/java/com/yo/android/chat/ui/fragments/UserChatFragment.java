@@ -286,7 +286,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             roomExist = 1;
 
             roomReference = authReference.child(Constants.ROOMS).child(childRoomId).child(Constants.CHATS);
-            messageQuery = roomReference.orderByValue().limitToLast(100); // show only last 100 items
+            messageQuery = roomReference.limitToLast(100); // show only last 100 items
             registerChildEventListener(messageQuery);
 
             if (chatForwards != null) {
