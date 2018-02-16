@@ -684,6 +684,11 @@ public class MagazinesServicesUsecase {
         }
     }
 
+    /**
+     * Handles sharing the article
+     * @param imageView The {@link ImageView} object
+     * @param data The Articles data
+     */
     public void handleArticleShare(ImageView imageView, final Articles data) {
         if (imageView != null) {
             ImageView share = imageView;
@@ -696,6 +701,12 @@ public class MagazinesServicesUsecase {
         }
     }
 
+    /**
+     * Handles adding the article to a magazine
+     * @param imageView The {@link ImageView} object
+     * @param data The Articles data
+     * @param context The Context
+     */
     public void handleArticleAdd(ImageView imageView, final Articles data, final Context context) {
         if (imageView != null) {
             ImageView add = imageView;
@@ -708,6 +719,14 @@ public class MagazinesServicesUsecase {
         }
     }
 
+    /**
+     * Handles the image of the article
+     * @param position The article position
+     * @param holder The ViewHolder object
+     * @param imageView The {@link ImageView} object
+     * @param data The Articles data
+     * @param context The Context
+     */
     public void handleArticleImage(final int position, MagazineArticlesBaseAdapter.ViewHolder holder, ImageView imageView, final Articles data, final Context context) {
         if (imageView != null) {
             final ImageView photoView = imageView;
@@ -733,6 +752,15 @@ public class MagazinesServicesUsecase {
         }
     }
 
+    /**
+     * Handles the liking of an article
+     * @param position The article position
+     * @param checkBox The {@link CheckBox} object
+     * @param data The Articles data
+     * @param magazineArticlesBaseAdapter The MagazineArticlesBaseAdapter object
+     * @param context The Context
+     * @param mToastFactory The ToastFactory object
+     */
     public void handleArticleLike(int position, CheckBox checkBox, final Articles data, final MagazineArticlesBaseAdapter magazineArticlesBaseAdapter, final Context context, final ToastFactory mToastFactory) {
         if (checkBox != null) {
             checkBox.setTag(position);
@@ -760,6 +788,14 @@ public class MagazinesServicesUsecase {
         }
     }
 
+    /**
+     * Calls the like or unlike article
+     * @param isChecked boolean whether checkbox is checked or not
+     * @param data The Articles data
+     * @param magazineArticlesBaseAdapter The MagazineArticlesBaseAdapter object
+     * @param context The Context
+     * @param mToastFactory The ToastFactory object
+     */
     private void likeUnlikeServiceCall(boolean isChecked, Articles data, MagazineArticlesBaseAdapter magazineArticlesBaseAdapter, Context context, ToastFactory mToastFactory) {
         if (isChecked) {
             likeArticles(magazineArticlesBaseAdapter, context, data, mToastFactory);
@@ -768,6 +804,12 @@ public class MagazinesServicesUsecase {
         }
     }
 
+    /**
+     * Displays the left or right article summary based on the density
+     * @param textView The {@link TextView} object
+     * @param data The Articles data
+     * @param context The Context
+     */
     public void displayLeftRightSummaryBasedOnDensity(TextView textView, Articles data, Context context) {
         if (textView != null) {
 
@@ -831,6 +873,10 @@ public class MagazinesServicesUsecase {
 
     }
 
+    /**
+     * Populates the empty right article
+     * @param holder  The view holder object
+     */
     public void populateEmptyRightArticle(MagazineArticlesBaseAdapter.ViewHolder holder) {
         if (holder.magazineLikeRight != null) {
             holder.magazineLikeRight.setVisibility(View.GONE);

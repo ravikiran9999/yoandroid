@@ -236,9 +236,9 @@ public class WishListActivity extends BaseActivity {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                     if (isChecked) {
-                        wishListUsecase.likeMyCollectionArticles(data, context, myBaseAdapter);
+                        wishListUsecase.likeLikedArticles(data, context, myBaseAdapter);
                     } else {
-                        wishListUsecase.unlikeMyCollectionArticles(data, context, myBaseAdapter);
+                        wishListUsecase.unlikeLikedArticles(data, context, myBaseAdapter);
                     }
                 }
             });
@@ -258,9 +258,9 @@ public class WishListActivity extends BaseActivity {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                     if (isChecked) {
-                        wishListUsecase.likeMyCollectionArticles(data, context, myBaseAdapter);
+                        wishListUsecase.likeLikedArticles(data, context, myBaseAdapter);
                     } else {
-                        wishListUsecase.unlikeMyCollectionArticles(data, context, myBaseAdapter);
+                        wishListUsecase.unlikeLikedArticles(data, context, myBaseAdapter);
                     }
                 }
             });
