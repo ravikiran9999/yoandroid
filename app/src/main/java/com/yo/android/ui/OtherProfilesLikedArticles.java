@@ -32,6 +32,7 @@ import com.yo.android.R;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
+import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.model.Articles;
 import com.yo.android.usecase.MagazinesServicesUsecase;
 import com.yo.android.usecase.OthersProfileLikedArticlesUsecase;
@@ -341,7 +342,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                     .setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            magazinesServicesUsecase.navigateToArticleWebView(context, data, position);
+                            navigateToArticleWebView(data, position);
                         }
                     });
 
@@ -412,7 +413,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
             photoView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    magazinesServicesUsecase.navigateToArticleWebView(context, data, position);
+                    navigateToArticleWebView(data, position);
                 }
             });
 
@@ -441,7 +442,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                 llArticleInfo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        magazinesServicesUsecase.navigateToArticleWebView(context, data, position);
+                        navigateToArticleWebView(data, position);
                     }
                 });
             }
@@ -482,6 +483,20 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
 
 
             return layout;
+        }
+
+        /**
+         * Navigates to the article WebView
+         * @param data The Articles object
+         * @param position The position
+         */
+        private void navigateToArticleWebView(Articles data, int position) {
+            Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
+            intent.putExtra("Title", data.getTitle());
+            intent.putExtra("Image", data.getUrl());
+            intent.putExtra("Article", data);
+            intent.putExtra("Position", position);
+            startActivityForResult(intent, 500);
         }
 
         /**

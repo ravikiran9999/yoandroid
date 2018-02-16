@@ -197,7 +197,7 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
                 boolean isLiked = Boolean.valueOf(articles.getLiked());
                 myBaseAdapter.updateArticle(isLiked, articles, pos, articlePlace);
 
-                Log.d("FlipArticlesFragment", "Title and liked " + articles.getTitle() + " " + articles.getLiked());
+                //Log.d("FlipArticlesFragment", "Title and liked " + articles.getTitle() + " " + articles.getLiked());
             }
 
         }

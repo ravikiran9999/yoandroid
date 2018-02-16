@@ -27,7 +27,9 @@ import retrofit2.Response;
 /**
  * Created by MYPC on 2/14/2018.
  */
-
+/**
+ * This is the helper class that handles the service calls and other specific utility methods of the WishListActivity class
+ */
 public class WishListUsecase {
 
     @Inject
@@ -38,6 +40,10 @@ public class WishListUsecase {
     @Inject
     protected ToastFactory mToastFactory;
 
+    /**
+     * Gets the list of liked articles
+     * @param wishListActivity The {@link WishListActivity} object
+     */
     public void getLikedArticles(final WishListActivity wishListActivity) {
         wishListActivity.showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
@@ -90,23 +96,38 @@ public class WishListUsecase {
         });
     }
 
-    public void unlikeMyCollectionArticles(final Articles data, final Context context, final WishListActivity.MyBaseAdapter myBaseAdapter) {
+    /**
+     * Calls the service to unlike the liked article
+     * @param data The Articles data
+     * @param context The Context
+     * @param myBaseAdapter The {@link com.yo.android.ui.WishListActivity.MyBaseAdapter} object
+     */
+    public void unlikeLikedArticles(final Articles data, final Context context, final WishListActivity.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                handleUnlikeMyCollectionSuccess(data, false, "false", "You have unliked the article ", context, myBaseAdapter);
+                handleUnlikeLikedArticlesSuccess(data, false, "false", "You have unliked the article ", context, myBaseAdapter);
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                handleLikeUnlikeMyCollectionFailure(data, true, "true", "Error while unliking article ", context, myBaseAdapter);
+                handleLikeUnlikeLikedArticlesFailure(data, true, "true", "Error while unliking article ", context, myBaseAdapter);
             }
         });
     }
 
-    private void handleLikeUnlikeMyCollectionFailure(Articles data, boolean isChecked, String setLiked, String toastMsg, Context context, WishListActivity.MyBaseAdapter myBaseAdapter) {
+    /**
+     * Handles the like or unlike of a liked article failure response
+     * @param data The Articles data
+     * @param isChecked isChecked or not
+     * @param setLiked setLiked or not
+     * @param toastMsg The toast msg to be displayed
+     * @param context The Context
+     * @param myBaseAdapter The {@link com.yo.android.ui.WishListActivity.MyBaseAdapter} object
+     */
+    private void handleLikeUnlikeLikedArticlesFailure(Articles data, boolean isChecked, String setLiked, String toastMsg, Context context, WishListActivity.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).dismissProgressDialog();
         Toast.makeText(context, toastMsg + data.getTitle(), Toast.LENGTH_LONG).show();
         data.setIsChecked(isChecked);
@@ -116,23 +137,38 @@ public class WishListUsecase {
         }
     }
 
-    public void likeMyCollectionArticles(final Articles data, final Context context, final WishListActivity.MyBaseAdapter myBaseAdapter) {
+    /**
+     * Calls the service to like the liked articles
+     * @param data The Articles data
+     * @param context The Context
+     * @param myBaseAdapter The {@link com.yo.android.ui.WishListActivity.MyBaseAdapter} object
+     */
+    public void likeLikedArticles(final Articles data, final Context context, final WishListActivity.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                handleLikeMyCollectionSuccess(data, true, "true", "You have liked the article ", context, myBaseAdapter);
+                handleLikeLikedArticlesSuccess(data, true, "true", "You have liked the article ", context, myBaseAdapter);
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                handleLikeUnlikeMyCollectionFailure(data, false, "false", "Error while liking article ", context, myBaseAdapter);
+                handleLikeUnlikeLikedArticlesFailure(data, false, "false", "Error while liking article ", context, myBaseAdapter);
             }
         });
     }
 
-    private void handleUnlikeMyCollectionSuccess(final Articles data, boolean isChecked, String setLiked, String toastMsg, final Context context, final WishListActivity.MyBaseAdapter myBaseAdapter) {
+    /**
+     * Handles the unlike of the liked articles
+     * @param data The Articles data
+     * @param isChecked isChecked or not
+     * @param setLiked setLiked or not
+     * @param toastMsg The toast msg to be displayed
+     * @param context The Context
+     * @param myBaseAdapter The {@link com.yo.android.ui.WishListActivity.MyBaseAdapter} object
+     */
+    private void handleUnlikeLikedArticlesSuccess(final Articles data, boolean isChecked, String setLiked, String toastMsg, final Context context, final WishListActivity.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).dismissProgressDialog();
         data.setIsChecked(isChecked);
         data.setLiked(setLiked);
@@ -156,7 +192,16 @@ public class WishListUsecase {
         refreshWishList(((WishListActivity) context));
     }
 
-    private void handleLikeMyCollectionSuccess(final Articles data, boolean isChecked, String setLiked, String toastMsg, final Context context, final WishListActivity.MyBaseAdapter myBaseAdapter) {
+    /**
+     * Handles the like of liked articles success response
+     * @param data The Articles data
+     * @param isChecked isChecked or not
+     * @param setLiked setLiked or not
+     * @param toastMsg The toast msg to be displayed
+     * @param context The Context
+     * @param myBaseAdapter The {@link com.yo.android.ui.WishListActivity.MyBaseAdapter} object
+     */
+    private void handleLikeLikedArticlesSuccess(final Articles data, boolean isChecked, String setLiked, String toastMsg, final Context context, final WishListActivity.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).dismissProgressDialog();
         data.setIsChecked(isChecked);
         data.setLiked(setLiked);
@@ -172,6 +217,7 @@ public class WishListUsecase {
 
     /**
      * Refreshes the liked articles list
+     * @param wishListActivity The {@link WishListActivity} object
      */
     public void refreshWishList(final WishListActivity wishListActivity) {
         String accessToken = preferenceEndPoint.getStringPreference("access_token");
