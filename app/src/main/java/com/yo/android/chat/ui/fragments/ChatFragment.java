@@ -167,6 +167,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         swipeRefreshContainer.setOnRefreshListener(this);
 
         List<Room> roomsList = roomDao.getAll();
+
         if (roomsList != null && roomsList.size() > 0) {
             chatRoomListAdapter.addChatRoomItems(roomsList);
         }
@@ -725,7 +726,9 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private void showEmptyImage() {
         dismissProgressDialog();
-        emptyImageView.setVisibility(View.VISIBLE);
+        if(chatRoomListAdapter.getCount() == 0) {
+            emptyImageView.setVisibility(View.VISIBLE);
+        }
     }
 
     private static ArrayList<Room> sortedList(ArrayList<Room> mSortedList) {

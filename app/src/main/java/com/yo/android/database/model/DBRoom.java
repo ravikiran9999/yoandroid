@@ -2,10 +2,11 @@ package com.yo.android.database.model;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 public class DBRoom extends RealmObject {
 
-
+    @PrimaryKey
     private String firebaseRoomId;
     private String id;
     private String groupName;

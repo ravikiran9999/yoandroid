@@ -46,6 +46,8 @@ import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.NonScrollListView;
 import com.yo.android.chat.ui.fragments.BaseFragment;
+import com.yo.android.database.RoomDao;
+import com.yo.android.database.model.DBRoom;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.helpers.Helper;
 import com.yo.android.helpers.PopupHelper;
@@ -87,6 +89,7 @@ import javax.inject.Named;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.realm.Realm;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -123,6 +126,9 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Inject
     FireBaseHelper fireBaseHelper;
+
+    @Inject
+    RoomDao roomDao;
 
     @Bind(R.id.add_change_photo_text)
     TextView addOrChangePhotoText;
@@ -794,6 +800,20 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         preferenceEndPoint.removePreference(Constants.FIRE_BASE_ROOMS);
         preferenceEndPoint.removePreference(Constants.FIRE_BASE_ROOMS);
 
+        // delete realm database on signout
+        try {
+
+
+            /*Realm realm = Realm.getDefaultInstance();
+            if(!realm.isClosed()) {
+                realm.close();
+            }
+            realm.delete(DBRoom.class);
+            Realm.deleteRealm(Realm.getDefaultInstance().getConfiguration());*/
+            roomDao.clearDatabase();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         // clear firebase userId
         preferenceEndPoint.removePreference(Constants.FIREBASE_USER_ID);
         // clear firebase authToken

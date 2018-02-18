@@ -81,6 +81,7 @@ public class DbRoomMapper {
         return dbUserProfile;
     }
 
+    // retrieve list of rooms
     public static ArrayList<Room> map(List<DBRoom> dbRooms) {
         ArrayList<Room> rooms = new ArrayList<>();
 
