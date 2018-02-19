@@ -9,6 +9,7 @@ import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.yo.android.R;
 import com.yo.android.helpers.RegisteredContactsViewHolder;
 import com.yo.android.helpers.Settings;
@@ -19,6 +20,8 @@ import com.yo.android.photo.util.ColorGenerator;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 /**
  * Created by creatives on 10/3/2016.
@@ -66,16 +69,17 @@ public class TransferBalanceContactAdapter extends AbstractBaseAdapter<Contact, 
         } else {
             holder.getContactMail().setVisibility(View.GONE);
         }
-
+        Glide.with(mContext).clear(holder.getContactPic());
         if (!TextUtils.isEmpty(item.getImage())) {
-
-            Glide.with(mContext)
-                    .load(item.getImage())
+            RequestOptions requestOptions = new RequestOptions()
                     .fitCenter()
                     .placeholder(R.drawable.dynamic_profile)
-                    .crossFade()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .error(R.drawable.dynamic_profile)
+                    .error(R.drawable.dynamic_profile);
+            Glide.with(mContext)
+                    .load(item.getImage())
+                    .apply(requestOptions)
+                    .transition(withCrossFade())
                     .into(holder.getContactPic());
         } else if (Settings.isTitlePicEnabled) {
             if (!TextUtils.isEmpty(item.getName()) && item.getName().length() >= 1) {
@@ -85,7 +89,7 @@ public class TransferBalanceContactAdapter extends AbstractBaseAdapter<Contact, 
                 boolean b = m.matches();
                 if (b) {
                     Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getRandomColor());
-                    Glide.clear(holder.getContactPic());
+
                     holder.getContactPic().setImageDrawable(drawable);
                 } else {
                     loadAvatarImage(holder);
@@ -110,13 +114,15 @@ public class TransferBalanceContactAdapter extends AbstractBaseAdapter<Contact, 
             }
             holder.getContactPic().setImageDrawable((Drawable) holder.getContactPic().getTag(Settings.imageTag));
         } else {
-            Glide.with(mContext)
-                    .load("")
+            RequestOptions requestOptions = new RequestOptions()
                     .fitCenter()
                     .placeholder(R.drawable.dynamic_profile)
-                    .crossFade()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .error(R.drawable.dynamic_profile)
+                    .error(R.drawable.dynamic_profile);
+            Glide.with(mContext)
+                    .load("")
+                    .apply(requestOptions)
+                    .transition(withCrossFade())
                     .into(holder.getContactPic());
         }
     }

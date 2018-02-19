@@ -6,6 +6,7 @@ import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.adapters.NewSuggestionsAdapter;
 import com.yo.android.chat.ChatRefreshBackground;
 //import com.yo.android.database.RoomDao;
+import com.yo.android.database.ChatMessageDao;
 import com.yo.android.database.RoomDao;
 import com.yo.android.ui.MagazineActivity;
 import com.yo.android.ui.NewFollowMoreTopicsActivity;
@@ -270,6 +271,7 @@ import dagger.Provides;
 
                 //database
                 RoomDao.class,
+                ChatMessageDao.class,
 
                 //usecases
                 WebserviceUsecase.class,

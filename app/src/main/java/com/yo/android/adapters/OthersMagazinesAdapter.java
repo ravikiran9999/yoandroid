@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.yo.android.R;
 import com.yo.android.model.OwnMagazine;
 import com.yo.android.ui.BaseActivity;
@@ -20,6 +21,8 @@ import com.yo.android.widgets.SquareItemLinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 //import com.squareup.picasso.Picasso;
 
@@ -81,29 +84,29 @@ public class OthersMagazinesAdapter extends BaseAdapter {
         textViewDesc.setText(ownMagazineList.get(position).getDescription());
 
             if (!TextUtils.isEmpty(ownMagazineList.get(position).getImage())) { // Image url is not empty
-
-                Glide.with(mContext)
-                        .load(ownMagazineList.get(position).getImage())
+                RequestOptions requestOptions = new RequestOptions()
                         .placeholder(R.drawable.magazine_backdrop)
                         .fitCenter()
-                        .crossFade()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL);
+                Glide.with(mContext)
+                        .load(ownMagazineList.get(position).getImage())
+                        .apply(requestOptions)
+                        .transition(withCrossFade())
                         .into(imageView);
 
             } else { // Image url is empty
+                RequestOptions requestOptions = new RequestOptions()
+                        .fitCenter()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL);
                 if(ownMagazineList.get(position).getArticlesCount() == 0) {
                     Glide.with(mContext)
                             .load(R.drawable.ic_default_magazine)
-                            .fitCenter()
-                            .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .transition(withCrossFade())
                             .into(imageView);
                 } else {
                     Glide.with(mContext)
                             .load(R.drawable.magazine_backdrop)
-                            .fitCenter()
-                            .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .transition(withCrossFade())
                             .into(imageView);
                 }
             }

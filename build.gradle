@@ -1,8 +1,8 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-ext.supportAppcompatVersion = '25.0.0'
-ext.supportDesignVersion = '25.0.0'
-ext.supportCardViewVersion = '25.0.0'
-ext.supportRecyclerViewVersion = '25.0.0'
+ext.supportAppcompatVersion = '27.0.0'
+ext.supportDesignVersion = '27.0.0'
+ext.supportCardViewVersion = '27.0.0'
+ext.supportRecyclerViewVersion = '27.0.0'
 
 buildscript {
     repositories {

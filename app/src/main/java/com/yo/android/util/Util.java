@@ -44,7 +44,6 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.DrawableTypeRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.orion.android.common.preferences.PreferenceEndPoint;

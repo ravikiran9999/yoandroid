@@ -21,8 +21,6 @@ import org.pjsip.pjsua2.pjsip_tsx_state_e;
 import org.pjsip.pjsua2.pjsua2;
 import org.pjsip.pjsua2.pjsua_call_media_status;
 
-import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
-
 /**
  * Created by root on 17/7/17.
  */

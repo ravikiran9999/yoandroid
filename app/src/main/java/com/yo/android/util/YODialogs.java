@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -44,6 +45,8 @@ import javax.inject.Named;
 
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 /**
  * Created by rajesh on 8/9/16.
@@ -113,15 +116,17 @@ public class YODialogs {
 
             if (!TextUtils.isEmpty(imageUrl)) {
                 tvDialogImage.setVisibility(View.VISIBLE);
-                Glide.with(activity)
-                        .load(imageUrl)
+                RequestOptions requestOptions = new RequestOptions()
                         .placeholder(R.drawable.magazine_backdrop)
                         .centerCrop()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate();
+                Glide.with(activity)
+                        .load(imageUrl)
+                        .apply(requestOptions)
                         //Image size will be reduced 50%
                         .thumbnail(0.5f)
-                        .crossFade()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .dontAnimate()
+                        .transition(withCrossFade())
                         .into(tvDialogImage);
             } else {
                 tvDialogImage.setVisibility(View.GONE);

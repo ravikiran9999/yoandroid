@@ -2,12 +2,9 @@ package com.yo.android.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,8 +26,7 @@ import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.RequestOptions;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
@@ -500,12 +496,14 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                 final ImageView blackMask = holder.blackMask;
                 final RelativeLayout rlFullImageOptions = holder.rlFullImageOptions;
                 final TextView textView1 = holder.articleShortDesc;
+                RequestOptions requestOptions = new RequestOptions()
+                        .placeholder(R.drawable.magazine_backdrop)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate();
                 Glide.with(context)
                         .load(data.getImage_filename())
                         //.asBitmap()
-                        .placeholder(R.drawable.magazine_backdrop)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .dontAnimate()
+                        .apply(requestOptions)
                         .into(photoView);
                 textView1.setText(Html.fromHtml(data.getSummary()));
                 articleTitle.setText(AphidLog.format("%s", data.getTitle()));
@@ -522,7 +520,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                                                 .load(data.getImage_filename())
                                                 .override(bmp.getWidth(), bmp.getHeight())
                                                 .placeholder(R.drawable.magazine_backdrop)
-                                                .crossFade()
+                                                .transition(withCrossFade())()
                                                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                                                 .dontAnimate()
                                                 .into(photoView);

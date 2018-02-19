@@ -117,21 +117,20 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Inject
     FireBaseHelper fireBaseHelper;
-
     @Inject
     @Named("login")
     PreferenceEndPoint loginPrefs;
-
     @Inject
     RoomDao roomDao;
-
     @Inject
     ContactsSyncManager mContactsSyncManager;
+
     private boolean isAlreadyShown;
     //private boolean isRemoved;
     private boolean isSharedPreferenceShown;
     private boolean isShowDefault;
     private SearchView searchView;
+    ArrayList<Room> roomsList;
 
     public ChatFragment() {
         // Required empty public constructor
@@ -151,7 +150,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         executed = 0;
         activeCount = 0;
         isShowDefault = false;
-
+        roomsList = roomDao.getAll();
     }
 
     @Override
@@ -160,24 +159,17 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
         ButterKnife.bind(this, view);
-        chatRoomListAdapter = new ChatRoomListAdapter(activity);
+
         getActiveSavedRooms();
         listView.setOnItemClickListener(this);
         emptyImageView.setVisibility(View.GONE);
         swipeRefreshContainer.setOnRefreshListener(this);
-
-        List<Room> roomsList = roomDao.getAll();
-
-        if (roomsList != null && roomsList.size() > 0) {
-            chatRoomListAdapter.addChatRoomItems(roomsList);
-        }
 
         //Load from Cache first
         //loadRoomsFromPref();
         synchronized (this) {
             isRoomsExist(null);
         }
-
 
         return view;
     }
@@ -264,10 +256,15 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        activity = getActivity();
-        if (activity != null) {
 
+        if (activity != null) {
+            chatRoomListAdapter = new ChatRoomListAdapter(activity);
             listView.setAdapter(chatRoomListAdapter);
+
+            if (roomsList != null && roomsList.size() > 0) {
+                chatRoomListAdapter.addChatRoomItems(sortedList(roomsList));
+            }
+
             if (arrayOfUsers != null && arrayOfUsers.size() > 0) {
                 ArrayList<Room> roomsSortedList = sortedList(arrayOfUsers);
                 chatRoomListAdapter.addChatRoomItems(roomsSortedList);

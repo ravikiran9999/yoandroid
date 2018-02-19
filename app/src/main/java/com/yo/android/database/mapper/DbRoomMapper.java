@@ -108,6 +108,8 @@ public class DbRoomMapper {
 
             room.setMembers(mapMembers(dbRoom.getMembers()));
             room.setGroupMembers(mapGroupMembers(dbRoom.getGroupMembers()));
+
+            rooms.add(room);
         }
 
         return rooms;

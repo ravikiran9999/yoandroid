@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractViewHolder;
 import com.yo.android.adapters.YoViewHolder;
@@ -16,6 +17,8 @@ import com.yo.android.model.Categories;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 public class NewSuggestionsViewHolder extends YoViewHolder {
 
@@ -55,13 +58,15 @@ public class NewSuggestionsViewHolder extends YoViewHolder {
     }
 
     private void loadImage(String imageUrl) {
+        RequestOptions requestOptions = new RequestOptions()
+                .placeholder(R.drawable.magazine_backdrop)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .dontAnimate();
         Glide.with(mContext)
                 .load(imageUrl)
                 //.override(bmp.getWidth(), bmp.getHeight())
-                .placeholder(R.drawable.magazine_backdrop)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .dontAnimate()
+                .apply(requestOptions)
+                .transition(withCrossFade())
                 .into(imageView);
     }
 }

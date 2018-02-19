@@ -20,6 +20,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.BuildConfig;
@@ -233,11 +234,13 @@ public class OutGoingCallActivity extends BaseActivity implements View.OnClickLi
 
         //To display name of the user based on vox username
         if (contact != null) {
-            Glide.with(this).load(CallLog.Calls.getImagePath(this, contact.getNexgieUserName()))
+            RequestOptions requestOptions = new RequestOptions()
                     .placeholder(R.drawable.ic_contacts)
                     .dontAnimate()
-                    .error(R.drawable.ic_contacts).
-                    into(callerImageView);
+                    .error(R.drawable.ic_contacts);
+            Glide.with(this).load(CallLog.Calls.getImagePath(this, contact.getNexgieUserName()))
+                    .apply(requestOptions)
+                    .into(callerImageView);
         }
 
 

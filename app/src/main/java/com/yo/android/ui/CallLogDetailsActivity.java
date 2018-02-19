@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.model.dialer.CallLogsResult;
@@ -78,11 +79,13 @@ public class CallLogDetailsActivity extends BaseActivity {
         }
         Log.e("", callLogsDetails + "");
         if (callLogsDetails.size() >= 1) {
-            Glide.with(this).load(callLogsDetails.get(0).getImage())
+            RequestOptions requestOptions = new RequestOptions()
                     .placeholder(R.drawable.dynamic_profile)
                     .dontAnimate()
-                    .error(R.drawable.dynamic_profile).
-                    into(imageView);
+                    .error(R.drawable.dynamic_profile);
+            Glide.with(this).load(callLogsDetails.get(0).getImage())
+                    .apply(requestOptions)
+                    .into(imageView);
             if (!TextUtils.isEmpty(name)) {
                 opponentName.setVisibility(View.VISIBLE);
                 opponentName.setText(name);

@@ -24,7 +24,7 @@ public final class RoomDao {
     public RoomDao() {
     }
 
-    public List<Room> getAll() {
+    public ArrayList<Room> getAll() {
         try {
             Realm realm = Realm.getInstance(BaseApp.getRealmConfiguration());
             return DbRoomMapper.map(realm.where(DBRoom.class).findAll());

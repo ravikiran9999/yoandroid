@@ -5,10 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -18,8 +21,9 @@ import android.widget.TextView;
 import com.aphidmobile.utils.AphidLog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -36,6 +40,7 @@ import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.BitmapScaler;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.DeviceDimensionsHelper;
+import com.yo.android.ui.MyCollectionDetails;
 import com.yo.android.ui.OtherProfilesLikedArticles;
 import com.yo.android.ui.TopicsDetailActivity;
 import com.yo.android.util.ArticlesComparator;
@@ -57,6 +62,8 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 /**
  * Created by ec on 9/2/18.
@@ -265,12 +272,13 @@ public class MagazinesServicesUsecase {
             final ImageView blackMask = holder.blackMask;
             final RelativeLayout rlFullImageOptions = holder.rlFullImageOptions;
             final TextView textView = holder.articleShortDesc;
-
+            RequestOptions requestOptions = new RequestOptions()
+                    .placeholder(R.drawable.magazine_backdrop)
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .dontAnimate();
             Glide.with(context)
                     .load(data.getS3_image_filename())
-                    .placeholder(R.drawable.magazine_backdrop)
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .dontAnimate()
+                    .apply(requestOptions)
                     .into(photoView);
 
 
@@ -333,29 +341,30 @@ public class MagazinesServicesUsecase {
      */
     public void loadImageFromS3(final Context context, final Articles data, final ImageView photoView) {
         if (!((BaseActivity) context).hasDestroyed()) {
-
-            Glide.with(context)
-                    .load(data.getS3_image_filename())
-                    .asBitmap()
+            RequestOptions requestOptions = new RequestOptions()
                     .placeholder(R.drawable.magazine_backdrop)
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .dontAnimate()
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .dontAnimate();
+            Glide.with(context)
+                    .asBitmap()
+                    .load(data.getS3_image_filename())
                     .into(new SimpleTarget<Bitmap>() {
                         @Override
-                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                             int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
                             Bitmap bmp = null;
                             if (resource != null) {
                                 try {
                                     bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
-                                    Glide.clear(photoView);
-                                    Glide.with(context)
-                                            .load(data.getS3_image_filename())
+                                    RequestOptions options = new RequestOptions()
                                             .override(bmp.getWidth(), bmp.getHeight())
                                             .placeholder(R.drawable.magazine_backdrop)
-                                            .crossFade()
-                                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                            .dontAnimate()
+                                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                                            .dontAnimate();
+                                    Glide.with(context).clear(photoView);
+                                    Glide.with(context)
+                                            .load(data.getS3_image_filename())
+                                            .transition(withCrossFade())
                                             .into(photoView);
                                 } finally {
                                     if (bmp != null) {

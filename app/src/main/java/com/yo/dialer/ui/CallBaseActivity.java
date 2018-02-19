@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.model.dialer.OpponentDetails;
@@ -295,11 +296,13 @@ class CallBaseActivity extends BaseActivity {
      */
     protected void loadCalleImage(ImageView imageView, String imagePath) {
         try {
-            Glide.with(CallBaseActivity.this).load(imagePath)
+            RequestOptions requestOptions = new RequestOptions()
                     .placeholder(R.drawable.ic_contacts)
                     .dontAnimate()
-                    .error(R.drawable.ic_contacts).
-                    into(imageView);
+                    .error(R.drawable.ic_contacts);
+            Glide.with(CallBaseActivity.this).load(imagePath)
+                    .apply(requestOptions)
+                    .into(imageView);
             loadFullImage(imagePath);
             DialerLogs.messageI(TAG, "YO====loadCalleImage====" + imagePath);
         } catch (IllegalArgumentException exe) {

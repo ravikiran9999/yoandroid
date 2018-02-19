@@ -10,6 +10,7 @@ import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.yo.android.R;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.helpers.RegisteredContactsViewHolder;
@@ -23,6 +24,8 @@ import com.yo.android.util.Util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 public class ContactsListAdapter extends AbstractBaseAdapter<Contact, RegisteredContactsViewHolder> {
 
@@ -91,18 +94,19 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
 
 
         if (!TextUtils.isEmpty(item.getImage())) {
-
-            Glide.with(mContext)
-                    .load(item.getImage())
+            RequestOptions requestOptions = new RequestOptions()
                     .fitCenter()
                     .placeholder(R.drawable.dynamic_profile)
-                    .crossFade()
                     .dontAnimate()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .error(R.drawable.dynamic_profile)
+                    .error(R.drawable.dynamic_profile);
+            Glide.with(mContext)
+                    .load(item.getImage())
+                    .apply(requestOptions)
+                    .transition(withCrossFade())
                     .into(holder.getContactPic());
         } else if (Settings.isTitlePicEnabled) {
-            Glide.clear(holder.getContactPic());
+            Glide.with(mContext).clear(holder.getContactPic());
             if (item.getName() != null && item.getName().length() >= 1) {
                 String title = String.valueOf(item.getName().charAt(0)).toUpperCase();
                 Pattern p = Pattern.compile("^[a-zA-Z]");
