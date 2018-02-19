@@ -2,6 +2,8 @@ package com.yo.android.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -9,8 +11,9 @@ import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.yo.android.R;
 import com.yo.android.helpers.MyCollectionsViewHolder;
 import com.yo.android.model.Collections;
@@ -20,6 +23,8 @@ import com.yo.android.ui.NewImageRenderTask;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 //import com.squareup.picasso.Picasso;
 
@@ -52,43 +57,48 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
     public void bindView(int position, final MyCollectionsViewHolder holder, final Collections item) {
 
         if (position == 0 && "Follow more topics".equalsIgnoreCase(item.getName())) { // First position and is the Follow more topics text
-
+            RequestOptions requestOptions = new RequestOptions()
+                    .fitCenter()
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .dontAnimate();
             Glide.with(mContext)
                     .load(R.color.grey_divider)
-                    .fitCenter()
-                    .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .dontAnimate()
+                    .apply(requestOptions)
+                    .transition(withCrossFade())
                     .into(holder.getImageView());
 
         } else if (!TextUtils.isEmpty(item.getImage())) { // Image url is not empty
             //new NewImageRenderTask(mContext,item.getImage(),holder.getImageView()).execute();
-            Glide.clear(holder.getImageView());
+            RequestOptions requestOptions = new RequestOptions()
+                    .placeholder(R.drawable.magazine_backdrop)
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .dontAnimate();
+            Glide.with(mContext).clear(holder.getImageView());
             Glide.with(mContext)
                     //.load(item.getImage())
-                    .load(item.getS3_image_filename())
                     .asBitmap()
-                    .placeholder(R.drawable.magazine_backdrop)
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .dontAnimate()
+                    .load(item.getS3_image_filename())
+                    .apply(requestOptions)
                     .into(new SimpleTarget<Bitmap>() {
                         @Override
-                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                             int screenWidth = DeviceDimensionsHelper.getDisplayWidth(mContext);
                             Bitmap bmp = null;
                             if (resource != null) {
                                 try {
-                                bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
-                                Glide.with(mContext)
-                                        .load(item.getImage())
-                                        .override(bmp.getWidth(), bmp.getHeight())
-                                        .placeholder(R.drawable.magazine_backdrop)
-                                        .crossFade()
-                                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                        .dontAnimate()
-                                        .into(holder.getImageView());
-                                }finally {
-                                    if(bmp != null) {
+                                    bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
+                                    RequestOptions options = new RequestOptions()
+                                            .override(bmp.getWidth(), bmp.getHeight())
+                                            .placeholder(R.drawable.magazine_backdrop)
+                                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                                            .dontAnimate();
+                                    Glide.with(mContext)
+                                            .load(item.getImage())
+                                            .apply(options)
+                                            .transition(withCrossFade())
+                                            .into(holder.getImageView());
+                                } finally {
+                                    if (bmp != null) {
                                         bmp.recycle();
                                         bmp = null;
                                     }
@@ -97,23 +107,28 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
                         }
                     });
         } else { // Not first position and not having image url
-            Glide.clear(holder.getImageView());
-            if(item.getArticlesCount() == 0) {
+            Glide.with(mContext).clear(holder.getImageView());
+            if (item.getArticlesCount() == 0) {
+                RequestOptions requestOptions = new RequestOptions()
+                        .fitCenter()
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .dontAnimate();
                 Glide.with(mContext)
                         .load(R.drawable.magazine_backdrop)
-                        .fitCenter()
-                        .crossFade()
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .dontAnimate()
+                        .apply(requestOptions)
+                        .transition(withCrossFade())
                         .into(holder.getImageView());
             } else {
-                Glide.clear(holder.getImageView());
+                Glide.with(mContext).clear(holder.getImageView());
+                RequestOptions requestOptions = new RequestOptions()
+                        .fitCenter()
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .dontAnimate();
                 Glide.with(mContext)
                         .load(R.drawable.magazine_backdrop)
-                        .fitCenter()
-                        .crossFade()
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .dontAnimate()
+                        .apply(requestOptions)
+                        .transition(withCrossFade())
+
                         .into(holder.getImageView());
             }
         }
@@ -127,7 +142,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
             params.rightMargin = 10;
             holder.getTextView().setLayoutParams(params);
 
-        } else if(position == 0 && !"Follow more topics".equalsIgnoreCase(item.getName())) {
+        } else if (position == 0 && !"Follow more topics".equalsIgnoreCase(item.getName())) {
             holder.getTextView().setTextColor(mContext.getResources().getColor(android.R.color.white));
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
@@ -166,6 +181,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
 
     /**
      * Gets the selected items in the list
+     *
      * @return The selected items
      */
     public List<Collections> getSelectedItems() {

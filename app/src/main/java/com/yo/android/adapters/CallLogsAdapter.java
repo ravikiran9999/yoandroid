@@ -19,6 +19,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.calllogs.CallLog;
@@ -172,11 +173,13 @@ public class CallLogsAdapter extends AbstractBaseAdapter<Map.Entry<String, List<
             holder.getAddToContact().setVisibility(View.VISIBLE);
         }
         if (item.getValue().get(0).getImage() != null) {
-            Glide.with(mContext).load(item.getValue().get(0).getImage())
+            RequestOptions requestOptions = new RequestOptions()
                     .placeholder(drawable)
                     .dontAnimate()
-                    .error(drawable).
-                    into(holder.getContactPic());
+                    .error(drawable);
+            Glide.with(mContext).load(item.getValue().get(0).getImage())
+                    .apply(requestOptions)
+                    .into(holder.getContactPic());
         }
 
         //By default set these properties

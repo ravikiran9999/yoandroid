@@ -124,6 +124,7 @@ public class BaseFragment extends Fragment {
     public void checkFirebaseUserStatus(Firebase databaseReference, String opponentFirebaseUserId, final UserChatFragment.UpdateStatus updateStatus) {
 
         final Firebase onlineStatusRef = databaseReference.child(Constants.USERS + "/" + opponentFirebaseUserId + "/" + Constants.PROFILE + "/presence");
+        //final Firebase onlineStatusRef = databaseReference.child(Constants.USERS + "/" + opponentFirebaseUserId);
         onlineStatusRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot) {

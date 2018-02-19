@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.yo.android.R;
 import com.yo.android.adapters.TabsPagerAdapter;
 import com.yo.android.util.Constants;
@@ -97,9 +98,11 @@ public class OthersProfileActivity extends BaseActivity {
         String isFollowing = getIntent().getStringExtra("PersonIsFollowing");
 
         if (!TextUtils.isEmpty(pic)) {
-            Glide.with(this).load(pic)
+            RequestOptions requestOptions = new RequestOptions()
                     .dontAnimate()
-                    .fitCenter()
+                    .fitCenter();
+            Glide.with(this).load(pic)
+                    .apply(requestOptions)
                     .into(picture);
         }
 

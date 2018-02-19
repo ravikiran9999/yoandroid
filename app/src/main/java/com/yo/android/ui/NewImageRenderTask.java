@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.yo.android.R;
 import com.yo.android.model.Articles;
 
@@ -18,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 /**
  * Created by root on 1/11/17.
@@ -67,13 +70,15 @@ public  class NewImageRenderTask extends AsyncTask<Void, Void, Bitmap> {
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate()
                         .into(articleImageView);*/
-                Glide.with(mContext)
-                        .load(imageLink)
+                RequestOptions requestOptions = new RequestOptions()
                         .override(bmp.getWidth(), bmp.getHeight())
                         .placeholder(R.drawable.magazine_backdrop)
-                        .crossFade()
-                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                        .dontAnimate()
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .dontAnimate();
+                Glide.with(mContext)
+                        .load(imageLink)
+                        .apply(requestOptions)
+                        .transition(withCrossFade())
                         .into(articleImageView);
             }
             }finally {

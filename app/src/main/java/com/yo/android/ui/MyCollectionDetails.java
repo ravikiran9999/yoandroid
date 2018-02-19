@@ -22,11 +22,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -35,12 +37,16 @@ import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.helpers.MagazinePreferenceEndPoint;
 import com.yo.android.model.Articles;
+import com.yo.android.model.MagazineArticles;
 import com.yo.android.usecase.MagazinesServicesUsecase;
 import com.yo.android.usecase.MyCollectionsDetailsUsecase;
+import com.yo.android.util.ArticlesComparator;
 import com.yo.android.util.Constants;
 
 import java.lang.reflect.Type;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -371,12 +377,14 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 final ImageView blackMask = holder.blackMask;
                 final RelativeLayout rlFullImageOptions = holder.rlFullImageOptions;
                 final TextView textView1 = holder.articleShortDesc;
+                RequestOptions requestOptions = new RequestOptions()
+                        .placeholder(R.drawable.magazine_backdrop)
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .dontAnimate();
                 Glide.with(context)
                         .load(data.getS3_image_filename())
                         .thumbnail(0.1f)
-                        .placeholder(R.drawable.magazine_backdrop)
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .dontAnimate()
+                        .apply(requestOptions)
                         .into(photoView);
 
                 if(articleTitle != null) {

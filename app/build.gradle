@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 
 // firebase performance monitor
 apply plugin: 'com.google.firebase.firebase-perf'
+// realm database
+apply plugin: 'realm-android'
 
 //apply plugin: 'android-apt'
 
@@ -21,20 +23,20 @@ android {
             storePassword '123456'
         }
     }
-    compileSdkVersion 25
+    compileSdkVersion 27
     flavorDimensions "versionCode"
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.0'
     useLibrary 'org.apache.http.legacy'
     dexOptions {
         javaMaxHeapSize "4g"
     }
     // Enabling multidex support.
     defaultConfig {
-        applicationId "com.yowatsup.android"
+        applicationId "com.yowatsup"
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 5
-        versionName "1.0.4.4"
+        versionName "1.0.4.5T"
 
         // annotationProcess issue in latest gradle
         javaCompileOptions {
@@ -102,7 +104,7 @@ android {
         }
 
         production {
-            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
             buildConfigField "String", "RELEASE_USER_TYPE_END", "\"D\""
 
@@ -252,10 +254,10 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.0.0'
 
     // Glide
-    compile 'com.github.bumptech.glide:glide:3.5.2'
+    //compile 'com.github.bumptech.glide:glide:3.5.2'
 
-    //compile 'com.github.bumptech.glide:glide:4.5.0'
-    //annotationProcessor 'com.github.bumptech.glide:compiler:4.5.0'
+    compile 'com.github.bumptech.glide:glide:4.5.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.5.0'
 
     compile 'se.emilsjolander:android-flipview:1.1.0'
     compile 'com.android.support:multidex:1.0.1'
@@ -265,7 +267,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:11.8.0'
     compile 'pub.devrel:easypermissions:0.3.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.android.support:support-v4:25.2.0'
     testCompile 'junit:junit:4.12'
 
 }

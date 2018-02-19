@@ -238,7 +238,19 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         mMagazinesServicesUsecase.handleArticleImage(position, holder, holder.articlePhoto, data, context);
 
+/*<<<<<<< HEAD
+        if (holder.articlePhoto != null) {
+            final ImageView photoView = holder.articlePhoto;
+
+            photoView.setImageResource(R.drawable.magazine_backdrop);
+            if (data.getS3_image_filename() != null) {
+                mMagazinesServicesUsecase.handleImageLoading(holder, context, data, photoView);
+            } else {
+                photoView.setImageResource(R.drawable.magazine_backdrop);
+            }
+=======*/
         mMagazinesServicesUsecase.handleArticleAdd(holder.magazineAdd, data, context);
+//>>>>>>> 4056593f7dcc1b6568a3d53e115d921d4309687c
 
         mMagazinesServicesUsecase.handleArticleShare(holder.magazineShare, data);
 

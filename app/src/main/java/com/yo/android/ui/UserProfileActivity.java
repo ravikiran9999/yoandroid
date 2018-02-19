@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -77,6 +78,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 import static com.yo.android.ui.EditGroupSubjectActivity.GROUP_SUBJECT;
 
 public class UserProfileActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener, ValueEventListener, AdapterView.OnItemClickListener {
@@ -256,23 +258,27 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
             getSupportActionBar().setTitle(getResources().getString(R.string.profile));
             Contact mContact = mContactsSyncManager.getContactByVoxUserName(contact.getNexgieUserName());
             if (roomName != null) {
-                Glide.with(this)
-                        .load(contact.getImage())
+                RequestOptions requestOptions = new RequestOptions()
                         .placeholder(R.drawable.chat_group)
                         .dontAnimate()
-                        .crossFade()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL);
+                Glide.with(this)
+                        .load(contact.getImage())
+                        .apply(requestOptions)
+                        .transition(withCrossFade())
                         .into(profileImage);
                 membersList.setVisibility(View.VISIBLE);
                 profileNumber.setVisibility(View.GONE);
             } else {
                 if (!TextUtils.isEmpty(contact.getImage())) {
+                    RequestOptions requestOptions = new RequestOptions()
+                            .placeholder(R.drawable.dynamic_profile)
+                            .dontAnimate()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL);
                     Glide.with(this)
                             .load(contact.getImage())
-                            .placeholder(R.drawable.dynamic_profile)
-                            .crossFade()
-                            .dontAnimate()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .apply(requestOptions)
+                            .transition(withCrossFade())
                             .into(profileImage);
                 } else if (mContact != null && !TextUtils.isDigitsOnly(mContact.getName())) {
                     Drawable drawable = Util.showFirstLetter(this, mContact.getName());
@@ -365,11 +371,13 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
         } else if (Constants.USER_AVATAR.equals(key)) {
             String image = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
             if (!TextUtils.isEmpty(image)) {
+                RequestOptions requestOptions = new RequestOptions()
+                        .placeholder(R.drawable.dynamic_profile)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL);
                 Glide.with(this)
                         .load(image)
-                        .placeholder(R.drawable.dynamic_profile)
-                        .crossFade()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .apply(requestOptions)
+                        .transition(withCrossFade())
                         .into(profileImage);
             }
         }

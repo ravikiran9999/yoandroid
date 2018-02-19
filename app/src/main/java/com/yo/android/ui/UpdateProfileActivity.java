@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.orion.android.common.util.ToastFactory;
@@ -164,11 +165,13 @@ public class UpdateProfileActivity extends BaseActivity {
                     if (imagePath != null) {
                         preferenceEndPoint.saveStringPreference(Constants.IMAGE_PATH, imagePath.getPath());
                         imgFile = new File(imagePath.getPath());
-                        Glide.with(this).load(imgFile)
+                        RequestOptions requestOptions = new RequestOptions()
                                 .dontAnimate()
                                 .placeholder(R.drawable.dynamic_profile)
                                 .error(R.drawable.dynamic_profile)
-                                .fitCenter()
+                                .fitCenter();
+                        Glide.with(this).load(imgFile)
+                                .apply(requestOptions)
                                 .into(profileImage);
                         addPhoto.setText(getResources().getString(R.string.change_picture));
                     }

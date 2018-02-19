@@ -31,6 +31,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.flurry.android.FlurryAgent;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
@@ -46,9 +47,12 @@ import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.NonScrollListView;
 import com.yo.android.chat.ui.fragments.BaseFragment;
+import com.yo.android.database.ChatMessageDao;
+import com.yo.android.database.RoomDao;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.helpers.Helper;
 import com.yo.android.helpers.PopupHelper;
+import com.yo.android.model.ChatMessage;
 import com.yo.android.model.MoreData;
 import com.yo.android.model.Popup;
 import com.yo.android.model.UserProfileInfo;
@@ -87,6 +91,7 @@ import javax.inject.Named;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.realm.Realm;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -123,6 +128,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Inject
     FireBaseHelper fireBaseHelper;
+
+    @Inject
+    RoomDao roomDao;
+    @Inject
+    ChatMessageDao chatMessageDao;
 
     @Bind(R.id.add_change_photo_text)
     TextView addOrChangePhotoText;
@@ -211,18 +221,19 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         if (preferenceEndPoint != null && addOrChangePhotoText != null && getActivity() != null) {
             String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
             String localImage = preferenceEndPoint.getStringPreference(Constants.IMAGE_PATH);
+            RequestOptions requestOptions = new RequestOptions()
+                    .dontAnimate()
+                    .fitCenter();
             if (!TextUtils.isEmpty(localImage)) {
                 addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
                 Glide.with(getActivity()).load(new File(localImage))
-                        .dontAnimate()
-                        .fitCenter()
+                        .apply(requestOptions)
                         .into(profilePic);
             } else if (!TextUtils.isEmpty(avatar)) {
                 addOrChangePhotoText.setText(getActivity().getResources().getString(R.string.change_photo));
-                Glide.clear(profilePic);
+                Glide.with(getActivity()).clear(profilePic);
                 Glide.with(getActivity()).load(avatar)
-                        .dontAnimate()
-                        .fitCenter()
+                        .apply(requestOptions)
                         .into(profilePic);
             } else {
                 profilePic.setImageResource(R.drawable.default_avatar_40);
@@ -794,6 +805,21 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         preferenceEndPoint.removePreference(Constants.FIRE_BASE_ROOMS);
         preferenceEndPoint.removePreference(Constants.FIRE_BASE_ROOMS);
 
+        // delete realm database on signout
+        try {
+
+
+            /*Realm realm = Realm.getDefaultInstance();
+            if(!realm.isClosed()) {
+                realm.close();
+            }
+            realm.delete(DBRoom.class);
+            Realm.deleteRealm(Realm.getDefaultInstance().getConfiguration());*/
+            roomDao.clearDatabase();
+            chatMessageDao.clearDatabase();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         // clear firebase userId
         preferenceEndPoint.removePreference(Constants.FIREBASE_USER_ID);
         // clear firebase authToken

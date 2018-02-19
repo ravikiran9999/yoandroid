@@ -471,7 +471,7 @@ public class YoSipService extends InjectedService implements IncomingCallListene
                 showToast(getResources().getString(R.string.calls_no_network));
                 return;
             } else if (regStatus == CallExtras.StatusCode.YO_REQUEST_TIME_OUT) {
-                showToast(getResources().getString(R.string.request_timeout));
+                showToast(getResources().getString(R.string.socket_time_out));
                 return;
             } else {
                 intent = new Intent(YoSipService.this, OutgoingCallActivity.class);

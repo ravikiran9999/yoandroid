@@ -22,6 +22,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.common.eventbus.Subscribe;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ConnectivityHelper;
@@ -150,11 +151,14 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
         //To display name of the user based on vox username
         Contact contact = mContactsSyncManager.getContactByVoxUserName(getIntent().getStringExtra(CALLER));
         if (contact != null) {
-            Glide.with(this).load(CallLog.Calls.getImagePath(this, contact.getNexgieUserName()))
+            RequestOptions requestOptions = new RequestOptions()
                     .placeholder(R.drawable.ic_contacts)
                     .dontAnimate()
-                    .error(R.drawable.ic_contacts).
-                    into(callerImageView);
+                    .error(R.drawable.ic_contacts);
+            Glide.with(this)
+                    .load(CallLog.Calls.getImagePath(this, contact.getNexgieUserName()))
+                    .apply(requestOptions)
+                    .into(callerImageView);
         }
         if (contact != null && contact.getName() != null) {
             callerName.setText(contact.getName());

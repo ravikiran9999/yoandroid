@@ -28,6 +28,9 @@ import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.yo.android.R;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.api.YoApi;
@@ -357,12 +360,14 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                 final ImageView blackMask = holder.blackMask;
                 final RelativeLayout rlFullImageOptions = holder.rlFullImageOptions;
                 final TextView textView1 = holder.articleShortDesc;
+                RequestOptions requestOptions = new RequestOptions()
+                        .placeholder(R.drawable.magazine_backdrop)
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .dontAnimate();
                 Glide.with(context)
                         .load(data.getS3_image_filename())
                         //.asBitmap()
-                        .placeholder(R.drawable.magazine_backdrop)
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .dontAnimate()
+                        .apply(requestOptions)
                         .into(photoView);
                         /*.into(new SimpleTarget<Bitmap>() {
                             @Override

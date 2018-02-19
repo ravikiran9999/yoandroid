@@ -23,6 +23,7 @@ import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.yo.android.R;
 import com.yo.android.model.Articles;
 import com.yo.android.usecase.MagazinesServicesUsecase;
@@ -287,13 +288,15 @@ public class WishListActivity extends BaseActivity {
                 final ImageView blackMask = holder.blackMask;
                 final RelativeLayout rlFullImageOptions = holder.rlFullImageOptions;
                 final TextView textView1 = holder.articleShortDesc;
+                RequestOptions requestOptions = new RequestOptions()
+                        .placeholder(R.drawable.magazine_backdrop)
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .dontAnimate();
                 Glide.with(context)
                         .load(data.getImage_filename())
+                        .apply(requestOptions)
                         .thumbnail(0.1f)
                         //.asBitmap()
-                        .placeholder(R.drawable.magazine_backdrop)
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .dontAnimate()
                         .into(photoView);
 
                 if (articleTitle != null) {

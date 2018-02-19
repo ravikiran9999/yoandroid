@@ -28,6 +28,10 @@ public class Members implements Parcelable {
         this.mobileNumber = mobileNumber;
     }
 
+    public Members() {
+        // empty default constructor, necessary for Firebase to be able to deserialize
+    }
+
     @Override
     public int describeContents() {
         return 0;

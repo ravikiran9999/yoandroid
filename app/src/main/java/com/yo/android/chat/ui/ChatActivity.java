@@ -19,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.google.gson.Gson;
 import com.yo.android.R;
@@ -291,11 +292,16 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
             }
 
             if (room != null && room.getGroupName() != null) {
-                Glide.with(this).load(mOpponentImg)
-                        .asBitmap().centerCrop()
+                RequestOptions requestOptions = new RequestOptions()
+                        .centerCrop()
                         .placeholder(loadAvatarImage(imageView, true))
                         .error(loadAvatarImage(imageView, true))
-                        .dontAnimate()
+                        .dontAnimate();
+
+                Glide.with(this)
+                        .asBitmap()
+                        .load(mOpponentImg)
+                        .apply(requestOptions)
                         .into(new BitmapImageViewTarget(imageView) {
                             @Override
                             protected void setResource(Bitmap resource) {
@@ -310,11 +316,16 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                         });
             } else {
                 if (!TextUtils.isEmpty(mOpponentImg)) {
-                    Glide.with(this).load(mOpponentImg)
-                            .asBitmap().centerCrop()
-                            .dontAnimate()
+                    RequestOptions requestOptions = new RequestOptions()
+                            .centerCrop()
                             .placeholder(loadAvatarImage(imageView, false))
                             .error(loadAvatarImage(imageView, false))
+                            .dontAnimate();
+
+                    Glide.with(this)
+                            .asBitmap()
+                            .load(mOpponentImg)
+                            .apply(requestOptions)
                             .into(new BitmapImageViewTarget(imageView) {
                                 @Override
                                 protected void setResource(Bitmap resource) {

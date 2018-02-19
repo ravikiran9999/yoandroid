@@ -9,6 +9,7 @@ import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.yo.android.R;
 import com.yo.android.helpers.ProfileMembersViewHolder;
 import com.yo.android.helpers.Settings;
@@ -18,6 +19,8 @@ import com.yo.android.photo.util.ColorGenerator;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 /**
  * Created by rdoddapaneni on 7/26/2016.
@@ -66,18 +69,20 @@ public class ProfileMembersAdapter extends AbstractBaseAdapter<GroupMembers, Pro
         }
 
         try {
+            Glide.with(mContext).clear(holder.getImageView());
             if (!TextUtils.isEmpty(item.getUserProfile().getImage())) {
-
-                Glide.with(mContext)
-                        .load(item.getUserProfile().getImage())
+                RequestOptions requestOptions = new RequestOptions()
                         .fitCenter()
                         .placeholder(R.drawable.dynamic_profile)
-                        .crossFade()
                         .dontAnimate()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL);
+                Glide.with(mContext)
+                        .load(item.getUserProfile().getImage())
+                        .apply(requestOptions)
+                        .transition(withCrossFade())
                         .into(holder.getImageView());
             } else if (fullName != null && fullName.length() >= 1 && !TextUtils.isDigitsOnly(fullName)) {
-                Glide.clear(holder.getImageView());
+
                 if (Settings.isTitlePicEnabled) {
                     if (fullName.length() >= 1) {
                         String title = String.valueOf(fullName.charAt(0)).toUpperCase();

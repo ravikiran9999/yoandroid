@@ -205,8 +205,6 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     @Override
     public void onResume() {
-        Log.d("FlipArticlesFragment", "In onResume()");
-
         if (showAddBalance()) {
             YODialogs.addBalance(getActivity(), getString(R.string.no_sufficient_bal_wallet), preferenceEndPoint);
         }
