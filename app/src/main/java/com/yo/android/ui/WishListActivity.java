@@ -1,18 +1,14 @@
 package com.yo.android.ui;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -22,28 +18,23 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.yo.android.R;
-import com.yo.android.adapters.MagazineArticlesBaseAdapter;
-import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.model.Articles;
-import com.yo.android.util.Constants;
-import com.yo.android.util.Util;
+import com.yo.android.usecase.MagazinesServicesUsecase;
+import com.yo.android.usecase.WishListUsecase;
 import com.yo.android.video.InAppVideoActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import javax.inject.Inject;
+
 import se.emilsjolander.flipview.FlipView;
 
 /**
@@ -51,12 +42,15 @@ import se.emilsjolander.flipview.FlipView;
  */
 public class WishListActivity extends BaseActivity {
 
-    private List<Articles> articlesList = new ArrayList<Articles>();
-    private MyBaseAdapter myBaseAdapter;
-
-    private TextView noArticals;
-    private FrameLayout flipContainer;
-    private LinearLayout llNoWishlist;
+    public List<Articles> articlesList = new ArrayList<Articles>();
+    public MyBaseAdapter myBaseAdapter;
+    public TextView noArticals;
+    public FrameLayout flipContainer;
+    public LinearLayout llNoWishlist;
+    @Inject
+    WishListUsecase wishListUsecase;
+    @Inject
+    MagazinesServicesUsecase magazinesServicesUsecase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,59 +75,10 @@ public class WishListActivity extends BaseActivity {
 
         articlesList.clear();
         myBaseAdapter.addItems(articlesList);
-        showProgressDialog();
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.getWishListAPI(accessToken, "true").enqueue(new Callback<List<Articles>>() {
-            @Override
-            public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
-                dismissProgressDialog();
-                if (response.body() != null && response.body().size() > 0) {
-                    try {
-                        for (int i = 0; i < response.body().size(); i++) {
-                            flipContainer.setVisibility(View.VISIBLE);
-                            if (noArticals != null) {
-                                noArticals.setVisibility(View.GONE);
-                                llNoWishlist.setVisibility(View.GONE);
-                            }
-                            if (!"...".equalsIgnoreCase(response.body().get(i).getSummary())) {
-                                articlesList.add(response.body().get(i));
-                            }
-                        }
-                        myBaseAdapter.addItems(articlesList);
-                    } finally {
-                        if (response != null && response.body() != null) {
-                            try {
-                                response.body().clear();
-                                response = null;
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                } else {
-                    flipContainer.setVisibility(View.GONE);
-                    if (noArticals != null) {
-                        noArticals.setVisibility(View.GONE);
-                        llNoWishlist.setVisibility(View.VISIBLE);
-                    }
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<List<Articles>> call, Throwable t) {
-                dismissProgressDialog();
-                flipContainer.setVisibility(View.GONE);
-                if (noArticals != null) {
-                    noArticals.setVisibility(View.GONE);
-                    llNoWishlist.setVisibility(View.VISIBLE);
-                }
-            }
-        });
+        wishListUsecase.getLikedArticles(this);
     }
 
-    private class MyBaseAdapter extends BaseAdapter {
-
+    public class MyBaseAdapter extends BaseAdapter {
 
         private Context context;
 
@@ -187,8 +132,6 @@ public class WishListActivity extends BaseActivity {
                 holder.magazineAdd = UI.findViewById(layout, R.id.imv_magazine_add);
 
                 holder.magazineShare = UI.findViewById(layout, R.id.imv_magazine_share);
-
-                holder.articleFollow = UI.findViewById(layout, R.id.imv_magazine_follow);
 
                 holder.tvTopicName = UI.findViewById(layout, R.id.imv_magazine_topic);
 
@@ -293,74 +236,9 @@ public class WishListActivity extends BaseActivity {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                     if (isChecked) {
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                MagazineArticlesBaseAdapter.initListener();
-                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
-                                }
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                                mToastFactory.showToast("You have liked the article " + data.getTitle());
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                            }
-                        });
+                        wishListUsecase.likeLikedArticles(data, context, myBaseAdapter);
                     } else {
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        showProgressDialog();
-                        yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                dismissProgressDialog();
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                MagazineArticlesBaseAdapter.initListener();
-                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
-                                }
-
-                                if (OthersMagazinesDetailActivity.myBaseAdapter != null) {
-                                    if (OthersMagazinesDetailActivity.myBaseAdapter.reflectListener != null) {
-                                        OthersMagazinesDetailActivity.myBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
-                                    }
-                                }
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                                mToastFactory.showToast("You have unliked the article " + data.getTitle());
-
-                                articlesList.clear();
-                                myBaseAdapter.addItems(articlesList);
-
-                                refreshWishList();
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                dismissProgressDialog();
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                            }
-                        });
+                        wishListUsecase.unlikeLikedArticles(data, context, myBaseAdapter);
                     }
                 }
             });
@@ -380,74 +258,9 @@ public class WishListActivity extends BaseActivity {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                     if (isChecked) {
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                MagazineArticlesBaseAdapter.initListener();
-                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
-                                }
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                                mToastFactory.showToast("You have liked the article " + data.getTitle());
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                Toast.makeText(context, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                            }
-                        });
+                        wishListUsecase.likeLikedArticles(data, context, myBaseAdapter);
                     } else {
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        showProgressDialog();
-                        yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                dismissProgressDialog();
-                                data.setIsChecked(false);
-                                data.setLiked("false");
-                                MagazineArticlesBaseAdapter.initListener();
-                                if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                    MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
-                                }
-
-                                if (OthersMagazinesDetailActivity.myBaseAdapter != null) {
-                                    if (OthersMagazinesDetailActivity.myBaseAdapter.reflectListener != null) {
-                                        OthersMagazinesDetailActivity.myBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
-                                    }
-                                }
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                                mToastFactory.showToast("You have unliked the article " + data.getTitle());
-
-                                articlesList.clear();
-                                myBaseAdapter.addItems(articlesList);
-
-                                refreshWishList();
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                Toast.makeText(context, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
-                                data.setIsChecked(true);
-                                data.setLiked("true");
-                                dismissProgressDialog();
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-                            }
-                        });
+                        wishListUsecase.unlikeLikedArticles(data, context, myBaseAdapter);
                     }
                 }
             });
@@ -460,12 +273,7 @@ public class WishListActivity extends BaseActivity {
                     .setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                            intent.putExtra("Title", data.getTitle());
-                            intent.putExtra("Image", data.getUrl());
-                            intent.putExtra("Article", data);
-                            intent.putExtra("Position", position);
-                            startActivityForResult(intent, 500);
+                            magazinesServicesUsecase.navigateToArticleWebView(context, data, position);
                         }
                     });
 
@@ -474,7 +282,6 @@ public class WishListActivity extends BaseActivity {
 
             photoView.setImageResource(R.drawable.magazine_backdrop);
             if (data.getImage_filename() != null) {
-                //new NewImageRenderTask(context, data.getImage_filename(), photoView).execute();
                 final TextView fullImageTitle = holder.fullImageTitle;
                 final TextView articleTitle = holder.articleTitle;
                 final ImageView blackMask = holder.blackMask;
@@ -617,12 +424,7 @@ public class WishListActivity extends BaseActivity {
                     if (videoUrl != null && !TextUtils.isEmpty(videoUrl)) {
                         InAppVideoActivity.start((Activity) context, videoUrl, data.getTitle());
                     } else {
-                        Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                        intent.putExtra("Title", data.getTitle());
-                        intent.putExtra("Image", data.getUrl());
-                        intent.putExtra("Article", data);
-                        intent.putExtra("Position", position);
-                        startActivityForResult(intent, 500);
+                        magazinesServicesUsecase.navigateToArticleWebView(context, data, position);
                     }
                 }
             });
@@ -635,10 +437,7 @@ public class WishListActivity extends BaseActivity {
             add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    Intent intent = new Intent(WishListActivity.this, CreateMagazineActivity.class);
-                    intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
-                    startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
+                    magazinesServicesUsecase.onAddClick(context, data);
                 }
             });
 
@@ -646,137 +445,7 @@ public class WishListActivity extends BaseActivity {
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (data.getImage_filename() != null) {
-                        new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
-                    } else {
-                        String summary = Html.fromHtml(data.getSummary()).toString();
-                        Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, null);
-                    }
-                }
-            });
-
-            if ("true".equals(data.getIsFollowing())) {
-                holder.articleFollow.setText("Following");
-                holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-            } else {
-                holder.articleFollow.setText("Follow");
-                holder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            }
-
-            final ViewHolder finalHolder = holder;
-            holder.articleFollow.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!"true".equals(data.getIsFollowing())) {
-                        ((BaseActivity) context).showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                        yoService.followArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                try {
-                                    ((BaseActivity) context).dismissProgressDialog();
-                                    finalHolder.articleFollow.setText("Following");
-                                    finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                                    data.setIsFollowing("true");
-                                    if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                        MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
-                                    }
-                                    if (!((BaseActivity) context).hasDestroyed()) {
-                                        notifyDataSetChanged();
-                                    }
-                                } finally {
-                                    if (response != null && response.body() != null) {
-                                        response.body().close();
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                ((BaseActivity) context).dismissProgressDialog();
-                                finalHolder.articleFollow.setText("Follow");
-                                finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                                data.setIsFollowing("false");
-                                if (!((BaseActivity) context).hasDestroyed()) {
-                                    notifyDataSetChanged();
-                                }
-
-                            }
-                        });
-                    } else {
-
-
-                        final AlertDialog.Builder builder = new AlertDialog.Builder(WishListActivity.this);
-
-                        LayoutInflater layoutInflater = LayoutInflater.from(WishListActivity.this);
-                        final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
-                        builder.setView(view);
-
-                        Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
-                        Button noBtn = (Button) view.findViewById(R.id.no_btn);
-
-
-                        final AlertDialog alertDialog = builder.create();
-                        alertDialog.setCancelable(false);
-                        alertDialog.show();
-
-                        yesBtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                alertDialog.dismiss();
-                                showProgressDialog();
-                                String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                                ((BaseActivity) context).showProgressDialog();
-                                yoService.unfollowArticleAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
-                                    @Override
-                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                        try {
-                                            ((BaseActivity) context).dismissProgressDialog();
-                                            finalHolder.articleFollow.setText("Follow");
-                                            finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                                            data.setIsFollowing("false");
-                                            if (MagazineArticlesBaseAdapter.reflectListener != null) {
-                                                MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.FOLLOW_EVENT);
-                                            }
-                                            if (!((BaseActivity) context).hasDestroyed()) {
-                                                notifyDataSetChanged();
-                                            }
-
-                                            articlesList.clear();
-                                            myBaseAdapter.addItems(articlesList);
-
-                                            refreshWishList();
-                                        } finally {
-                                            if (response != null && response.body() != null) {
-                                                response.body().close();
-                                            }
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                        ((BaseActivity) context).dismissProgressDialog();
-                                        finalHolder.articleFollow.setText("Following");
-                                        finalHolder.articleFollow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
-                                        data.setIsFollowing("true");
-                                        if (!((BaseActivity) context).hasDestroyed()) {
-                                            notifyDataSetChanged();
-                                        }
-
-                                    }
-                                });
-                            }
-                        });
-
-
-                        noBtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                alertDialog.dismiss();
-                            }
-                        });
-
-                    }
+                    magazinesServicesUsecase.onShareClick(v, data);
                 }
             });
 
@@ -785,11 +454,7 @@ public class WishListActivity extends BaseActivity {
                 add1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(context, CreateMagazineActivity.class);
-                        intent.putExtra(Constants.MAGAZINE_ADD_ARTICLE_ID, data.getId());
-                        if (context instanceof Activity) {
-                            ((Activity) context).startActivityForResult(intent, Constants.ADD_ARTICLES_TO_MAGAZINE);
-                        }
+                        magazinesServicesUsecase.onAddClick(context, data);
                     }
                 });
             }
@@ -799,12 +464,7 @@ public class WishListActivity extends BaseActivity {
                 share1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (data.getImage_filename() != null) {
-                            new Util.ImageLoaderTask(v, data).execute(data.getImage_filename());
-                        } else {
-                            String summary = Html.fromHtml(data.getSummary()).toString();
-                            Util.shareNewIntent(v, data.getGenerated_url(), "Article: " + data.getTitle(), summary, null);
-                        }
+                        magazinesServicesUsecase.onShareClick(v, data);
                     }
                 });
             }
@@ -814,12 +474,7 @@ public class WishListActivity extends BaseActivity {
                 llArticleInfo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(context, MagazineArticleDetailsActivity.class);
-                        intent.putExtra("Title", data.getTitle());
-                        intent.putExtra("Image", data.getUrl());
-                        intent.putExtra("Article", data);
-                        intent.putExtra("Position", position);
-                        startActivityForResult(intent, 500);
+                        magazinesServicesUsecase.navigateToArticleWebView(context, data, position);
                     }
                 });
             }
@@ -897,67 +552,11 @@ public class WishListActivity extends BaseActivity {
             if (!isLiked) {
                 articlesList.clear();
                 myBaseAdapter.addItems(articlesList);
-                refreshWishList();
+                wishListUsecase.refreshWishList(WishListActivity.this);
             }
 
             notifyDataSetChanged();
         }
-    }
-
-    /**
-     * Refreshes the liked articles list
-     */
-    private void refreshWishList() {
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
-        yoService.getWishListAPI(accessToken, "true").enqueue(new Callback<List<Articles>>() {
-            @Override
-            public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
-                if (response.body() != null && response.body().size() > 0) {
-                    try {
-                        for (int i = 0; i < response.body().size(); i++) {
-                            if (!hasDestroyed()) {
-                                if (noArticals != null) {
-                                    noArticals.setVisibility(View.GONE);
-                                    llNoWishlist.setVisibility(View.GONE);
-                                    flipContainer.setVisibility(View.VISIBLE);
-                                }
-                                articlesList.add(response.body().get(i));
-                            }
-                        }
-                        myBaseAdapter.addItems(articlesList);
-                    } finally {
-                        if (response != null && response.body() != null) {
-                            try {
-                                response.body().clear();
-                                response = null;
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                } else {
-                    if (!hasDestroyed()) {
-                        if (noArticals != null) {
-                            noArticals.setVisibility(View.GONE);
-                            flipContainer.setVisibility(View.GONE);
-                            llNoWishlist.setVisibility(View.VISIBLE);
-                        }
-                    }
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<List<Articles>> call, Throwable t) {
-                if (!hasDestroyed()) {
-                    if (noArticals != null) {
-                        noArticals.setVisibility(View.GONE);
-                        flipContainer.setVisibility(View.GONE);
-                        llNoWishlist.setVisibility(View.VISIBLE);
-                    }
-                }
-            }
-        });
     }
 
     /**
@@ -976,8 +575,6 @@ public class WishListActivity extends BaseActivity {
         private ImageView magazineAdd;
 
         private ImageView magazineShare;
-
-        private Button articleFollow;
 
         private TextView tvTopicName;
 
