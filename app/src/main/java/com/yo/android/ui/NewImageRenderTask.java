@@ -73,7 +73,7 @@ public  class NewImageRenderTask extends AsyncTask<Void, Void, Bitmap> {
                 RequestOptions requestOptions = new RequestOptions()
                         .override(bmp.getWidth(), bmp.getHeight())
                         .placeholder(R.drawable.magazine_backdrop)
-                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
                 Glide.with(mContext)
                         .load(imageLink)

@@ -11,7 +11,6 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -40,7 +39,6 @@ import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.BitmapScaler;
 import com.yo.android.ui.CreateMagazineActivity;
 import com.yo.android.ui.DeviceDimensionsHelper;
-import com.yo.android.ui.MyCollectionDetails;
 import com.yo.android.ui.OtherProfilesLikedArticles;
 import com.yo.android.ui.TopicsDetailActivity;
 import com.yo.android.util.ArticlesComparator;
@@ -274,7 +272,7 @@ public class MagazinesServicesUsecase {
             final TextView textView = holder.articleShortDesc;
             RequestOptions requestOptions = new RequestOptions()
                     .placeholder(R.drawable.magazine_backdrop)
-                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .dontAnimate();
             Glide.with(context)
                     .load(data.getS3_image_filename())
@@ -343,7 +341,7 @@ public class MagazinesServicesUsecase {
         if (!((BaseActivity) context).hasDestroyed()) {
             RequestOptions requestOptions = new RequestOptions()
                     .placeholder(R.drawable.magazine_backdrop)
-                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .dontAnimate();
             Glide.with(context)
                     .asBitmap()
@@ -359,7 +357,7 @@ public class MagazinesServicesUsecase {
                                     RequestOptions options = new RequestOptions()
                                             .override(bmp.getWidth(), bmp.getHeight())
                                             .placeholder(R.drawable.magazine_backdrop)
-                                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
                                             .dontAnimate();
                                     Glide.with(context).clear(photoView);
                                     Glide.with(context)

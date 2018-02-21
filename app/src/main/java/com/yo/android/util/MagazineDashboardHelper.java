@@ -226,7 +226,7 @@ public class MagazineDashboardHelper {
                     }
                     if(t instanceof SocketTimeoutException) {
                         if (magazineFlipArticlesFragment.getActivity() != null) {
-                            Toast.makeText(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.getActivity().getResources().getString(R.string.socket_time_out), Toast.LENGTH_LONG).show();
+                            //Toast.makeText(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.getActivity().getResources().getString(R.string.socket_time_out), Toast.LENGTH_LONG).show();
                         }
                     } else if (magazineFlipArticlesFragment.getActivity() != null) {
                         Toast.makeText(magazineFlipArticlesFragment.getActivity(), magazineFlipArticlesFragment.getActivity().getResources().getString(R.string.connectivity_network_settings), Toast.LENGTH_LONG).show();

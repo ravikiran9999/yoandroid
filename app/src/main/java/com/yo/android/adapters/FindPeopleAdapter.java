@@ -102,7 +102,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                     .fitCenter()
                     .placeholder(R.drawable.dynamic_profile)
                     .dontAnimate()
-                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .error(R.drawable.dynamic_profile);
 
             Glide.with(mContext)

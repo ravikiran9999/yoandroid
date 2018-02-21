@@ -159,7 +159,7 @@ public class BottomTabsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bottom_tabs);
         context = this;
-        //mContext = getApplicationContext();
+
         String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
 
         appRunning = true;
@@ -362,6 +362,9 @@ public class BottomTabsActivity extends BaseActivity {
             //bindService(intent, myServiceConnection, Context.BIND_AUTO_CREATE);
         }
 
+        Intent intent = new Intent(getApplicationContext(), FirebaseService.class);
+        startService(intent);
+
         //
         Intent in = new Intent(getApplicationContext(), SipService.class);
 
@@ -419,11 +422,11 @@ public class BottomTabsActivity extends BaseActivity {
                                     intent.putExtra("LikedArticlesCount", userInfo.getLikedArticlesCount());
                                     startActivity(intent);
                                     finish();
-                                }finally {
-                                    if(response != null && response.body() != null) {
+                                } finally {
+                                    if (response != null && response.body() != null) {
                                         try {
                                             response = null;
-                                        }catch (Exception e) {
+                                        } catch (Exception e) {
                                             e.printStackTrace();
                                         }
                                     }
@@ -438,11 +441,11 @@ public class BottomTabsActivity extends BaseActivity {
                     });
 
                 } else if ("Topic".equals(tag)) {
-                    Intent intent = new Intent(BottomTabsActivity.this, MyCollectionDetails.class);
+                    Intent topicIntent = new Intent(BottomTabsActivity.this, MyCollectionDetails.class);
                     intent.putExtra("TopicId", redirectId);
                     intent.putExtra("TopicName", title);
                     intent.putExtra("Type", "Tag");
-                    startActivity(intent);
+                    startActivity(topicIntent);
                     finish();
                 } else if ("Article".equals(tag)) {
                     String accessToken = preferenceEndPoint.getStringPreference("access_token");
@@ -460,10 +463,10 @@ public class BottomTabsActivity extends BaseActivity {
                                     startActivity(intent);
                                     finish();
                                 } finally {
-                                    if(response != null && response.body() != null) {
+                                    if (response != null && response.body() != null) {
                                         try {
                                             response = null;
-                                        }catch (Exception e) {
+                                        } catch (Exception e) {
                                             e.printStackTrace();
                                         }
                                     }
@@ -478,11 +481,11 @@ public class BottomTabsActivity extends BaseActivity {
                     });
 
                 } else if ("Magzine".equals(tag)) {
-                    Intent intent = new Intent(BottomTabsActivity.this, MyCollectionDetails.class);
+                    Intent magazineIntent = new Intent(BottomTabsActivity.this, MyCollectionDetails.class);
                     intent.putExtra("TopicId", redirectId);
                     intent.putExtra("TopicName", title);
                     intent.putExtra("Type", "Magzine");
-                    startActivity(intent);
+                    startActivity(magazineIntent);
                     finish();
                 } else if ("Recharge".equals(tag) || "Credit".equals(tag) || "BalanceTransferred".equals(tag)) {
                     startActivity(new Intent(BottomTabsActivity.this, TabsHeaderActivity.class));
@@ -511,9 +514,8 @@ public class BottomTabsActivity extends BaseActivity {
             }
         }
 
-        Intent intent = getIntent();
-        if (intent.hasExtra("type"))
-
+        Intent getIntent = getIntent();
+        if (getIntent.hasExtra("type"))
         {
             if ("Missed call".equals(intent.getStringExtra("type").trim())) {
                 viewPager.setCurrentItem(2);
@@ -715,10 +717,10 @@ public class BottomTabsActivity extends BaseActivity {
                         ((MoreFragment) getFragment()).loadImage();
                     }
                 } finally {
-                    if(response != null && response.body() != null) {
+                    if (response != null && response.body() != null) {
                         try {
                             response = null;
-                        }catch (Exception e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -841,10 +843,10 @@ public class BottomTabsActivity extends BaseActivity {
                         }
                         preferenceEndPoint.saveBooleanPreference(Constants.USER_TYPE, response.body().isRepresentative());
                     } finally {
-                        if(response != null && response.body() != null) {
+                        if (response != null && response.body() != null) {
                             try {
                                 response = null;
-                            }catch (Exception e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
@@ -938,9 +940,6 @@ public class BottomTabsActivity extends BaseActivity {
         //Check app running status
         appRunning = true;
 
-        Intent intent = new Intent(getApplicationContext(), FirebaseService.class);
-        startService(intent);
-
         webserviceUsecase.appStatus(null);
 
         if (preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT) == 0) {
@@ -948,9 +947,6 @@ public class BottomTabsActivity extends BaseActivity {
         } else if (preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT) > 0) {
             update(preferenceEndPoint.getIntPreference(Constants.NOTIFICATION_COUNT));
         }
-
-        ActivityManager am = (ActivityManager) context.getSystemService(context.ACTIVITY_SERVICE);
-        Log.i(TAG, "Heap size : " + am.getLargeMemoryClass());
     }
 
     private void startServiceToFetchNewArticles(int currentTimeInSec) {
@@ -960,14 +956,14 @@ public class BottomTabsActivity extends BaseActivity {
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);*/
-        long currenttime =  cal.getTimeInMillis();
+        long currenttime = cal.getTimeInMillis();
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 1);
         calendar.set(Calendar.MINUTE, 0);
         long settime = calendar.getTimeInMillis();
 
-        long differencetime = settime -  currenttime;
-        int dif=(int)differencetime/1000;
+        long differencetime = settime - currenttime;
+        int dif = (int) differencetime / 1000;
 
         cal.set(Calendar.SECOND, calendar.get(Calendar.SECOND) + dif);
 

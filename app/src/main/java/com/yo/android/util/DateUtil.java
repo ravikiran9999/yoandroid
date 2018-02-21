@@ -28,7 +28,6 @@ public class DateUtil {
 
 
 
-
     public static Date convertUtcToGmt(String time) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_FULL);
@@ -172,4 +171,5 @@ public class DateUtil {
 
         return new SimpleDateFormat("hh:mm").format(new Date(time));
     }
+
 }
