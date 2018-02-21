@@ -222,6 +222,8 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
             String avatar = preferenceEndPoint.getStringPreference(Constants.USER_AVATAR);
             String localImage = preferenceEndPoint.getStringPreference(Constants.IMAGE_PATH);
             RequestOptions requestOptions = new RequestOptions()
+                    .placeholder(R.drawable.default_avatar_40)
+                    .error(R.drawable.default_avatar_40)
                     .dontAnimate()
                     .fitCenter();
             if (!TextUtils.isEmpty(localImage)) {
@@ -269,11 +271,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                             preferenceEndPoint.saveStringPreference(Constants.USER_AVATAR, response.body().getAvatar());
                         }
                         loadImage();
-                    }finally {
-                        if(response != null && response.body() != null) {
+                    } finally {
+                        if (response != null && response.body() != null) {
                             try {
                                 response = null;
-                            }catch (Exception e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
@@ -462,14 +464,8 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                                         clearPreferences();
                                         preferenceEndPoint.clearAll();
                                         MagazineFlipArticlesFragment.lastReadArticle = 0;
-                                        //getActivity().stopService(new Intent(getActivity(), FetchNewArticlesService.class));
-                                        //Intent serviceIntent = new Intent(BottomTabsActivity.getAppContext(), FetchNewArticlesService.class);
-                                        //PendingIntent sender = PendingIntent.getBroadcast(getActivity(), 1014, serviceIntent, 0);
                                         if (getActivity() != null) {
                                             AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-                                   /* if (getActivity() != null) {
-                                        getActivity().stopService(serviceIntent);
-                                    }*/
                                             try {
                                                 if (BottomTabsActivity.pintent != null) {
                                                     alarmManager.cancel(BottomTabsActivity.pintent);
@@ -727,10 +723,10 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                     }
                     profileStatus.setText(status);
                 } finally {
-                    if(response != null && response.body() != null) {
+                    if (response != null && response.body() != null) {
                         try {
                             response = null;
-                        }catch (Exception e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -807,14 +803,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
         // delete realm database on signout
         try {
-
-
-            /*Realm realm = Realm.getDefaultInstance();
-            if(!realm.isClosed()) {
-                realm.close();
-            }
-            realm.delete(DBRoom.class);
-            Realm.deleteRealm(Realm.getDefaultInstance().getConfiguration());*/
             roomDao.clearDatabase();
             chatMessageDao.clearDatabase();
         } catch (Exception e) {

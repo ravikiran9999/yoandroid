@@ -59,7 +59,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
         if (position == 0 && "Follow more topics".equalsIgnoreCase(item.getName())) { // First position and is the Follow more topics text
             RequestOptions requestOptions = new RequestOptions()
                     .fitCenter()
-                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .dontAnimate();
             Glide.with(mContext)
                     .load(R.color.grey_divider)
@@ -71,7 +71,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
             //new NewImageRenderTask(mContext,item.getImage(),holder.getImageView()).execute();
             RequestOptions requestOptions = new RequestOptions()
                     .placeholder(R.drawable.magazine_backdrop)
-                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .dontAnimate();
             Glide.with(mContext).clear(holder.getImageView());
             Glide.with(mContext)
@@ -90,7 +90,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
                                     RequestOptions options = new RequestOptions()
                                             .override(bmp.getWidth(), bmp.getHeight())
                                             .placeholder(R.drawable.magazine_backdrop)
-                                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
                                             .dontAnimate();
                                     Glide.with(mContext)
                                             .load(item.getImage())
@@ -111,7 +111,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
             if (item.getArticlesCount() == 0) {
                 RequestOptions requestOptions = new RequestOptions()
                         .fitCenter()
-                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
                 Glide.with(mContext)
                         .load(R.drawable.magazine_backdrop)
@@ -122,7 +122,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
                 Glide.with(mContext).clear(holder.getImageView());
                 RequestOptions requestOptions = new RequestOptions()
                         .fitCenter()
-                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
                 Glide.with(mContext)
                         .load(R.drawable.magazine_backdrop)

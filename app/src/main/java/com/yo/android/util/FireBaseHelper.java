@@ -18,6 +18,7 @@ import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.model.ChatMessage;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -35,6 +36,10 @@ public class FireBaseHelper {
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private int firebaseLoginAttempt;
+    private HashMap token;
+    private int authTime;
+    private int expiry;
+    AuthData authData;
 
     @Inject
     MyServiceConnection myServiceConnection;
@@ -72,64 +77,71 @@ public class FireBaseHelper {
     public Firebase authWithCustomToken(final Context context, final String authToken, ApiCallback<Firebase> firebaseApiCallback) {
         mContext = context;
         //Url from Firebase dashboard
-        AuthData authData = ref.getAuth();
-        if(firebaseApiCallback != null && authData != null) {
-            firebaseApiCallback.onResult(ref);
-        } else if (authData == null && !TextUtils.isEmpty(authToken)) {
-            ref.authWithCustomToken(authToken, new Firebase.AuthResultHandler() {
-                @Override
-                public void onAuthenticated(AuthData mAuthData) {
-                    if (mAuthData != null) {
-                        Log.i(TAG, "Login Succeeded!");
-                        String newAuthToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
-                        authWithCustomToken(context, newAuthToken, null);
-                    } else {
+        if (getExpiry()!= 0 && getExpiry() >= 3600) {
+            return ref;
+        } else {
+            authData = ref.getAuth();
+
+            if (firebaseApiCallback != null && authData != null) {
+                token = (HashMap) authData.getAuth().get("token");
+                getTokenExpiry();
+                firebaseApiCallback.onResult(ref);
+            } else if (authData == null && !TextUtils.isEmpty(authToken)) {
+                ref.authWithCustomToken(authToken, new Firebase.AuthResultHandler() {
+                    @Override
+                    public void onAuthenticated(AuthData mAuthData) {
+                        if (mAuthData != null) {
+                            Log.i(TAG, "Login Succeeded!");
+                            String newAuthToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
+                            authWithCustomToken(context, newAuthToken, null);
+                        } else {
+
+                            FireBaseAuthToken.getInstance(context).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
+                                @Override
+                                public void onSuccess() {
+                                    String newAuthToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
+                                    authWithCustomToken(context, newAuthToken, null);
+                                }
+
+                                @Override
+                                public void onFailed() {
+                                    Log.i(TAG, "Login Failed!");
+                                }
+                            });
+                            Log.i(TAG, "Login un Succeeded!");
+                        }
+                    }
+
+                    @Override
+                    public void onAuthenticationError(FirebaseError firebaseError) {
+                        Log.e(TAG, "Login Failed! Auth token expired : " + firebaseError.getMessage());
+                        unauth();
+                        loginPrefs.removePreference(Constants.FIREBASE_TOKEN);
 
                         FireBaseAuthToken.getInstance(context).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
                             @Override
                             public void onSuccess() {
+                                Log.e(TAG, "Login Failed! Auth token expired  and generated new token");
+                                Log.d(TAG, String.valueOf(++firebaseLoginAttempt));
                                 String newAuthToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
-                                authWithCustomToken(context, newAuthToken, null);
+                                Log.d(TAG, "newAuthToken :" + newAuthToken);
+                                if (firebaseLoginAttempt <= 3) {
+                                    authWithCustomToken(context, newAuthToken, null);
+                                }
+
                             }
 
                             @Override
                             public void onFailed() {
-                                Log.i(TAG, "Login Failed!");
+                                Log.e(TAG, "Login Failed! Auth token expired  and generated new token also failed.");
+
                             }
                         });
-                        Log.i(TAG, "Login un Succeeded!");
                     }
-                }
-
-                @Override
-                public void onAuthenticationError(FirebaseError firebaseError) {
-                    Log.e(TAG, "Login Failed! Auth token expired : " + firebaseError.getMessage());
-                    unauth();
-                    loginPrefs.removePreference(Constants.FIREBASE_TOKEN);
-
-                    FireBaseAuthToken.getInstance(context).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
-                        @Override
-                        public void onSuccess() {
-                            Log.e(TAG, "Login Failed! Auth token expired  and generated new token");
-                            Log.d(TAG, String.valueOf(++firebaseLoginAttempt));
-                            String newAuthToken = loginPrefs.getStringPreference(Constants.FIREBASE_TOKEN);
-                            Log.d(TAG, "newAuthToken :" + newAuthToken);
-                            if (firebaseLoginAttempt <= 3) {
-                                authWithCustomToken(context, newAuthToken, null);
-                            }
-
-                        }
-
-                        @Override
-                        public void onFailed() {
-                            Log.e(TAG, "Login Failed! Auth token expired  and generated new token also failed.");
-
-                        }
-                    });
-                }
-            });
-        } else {
-            return ref;
+                });
+            } else {
+                return ref;
+            }
         }
         return ref;
     }
@@ -157,4 +169,38 @@ public class FireBaseHelper {
                 });
     }*/
 
+    private void getTokenExpiry() {
+        try {
+            for (Object o : token.keySet()) {
+                String key = (String) o;
+                if(token.get(key) instanceof Integer) {
+                    int value = (int) token.get(key);
+
+                    if (key.equals("exp")) {
+                        expiry = value;
+                    }
+
+                    if (key.equals("auth_time")) {
+                        authTime = value;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private long getExpiry() {
+        try {
+            if (authTime != 0 && expiry != 0) {
+
+                int diffTime = expiry - authTime;
+                long expiryTime = System.currentTimeMillis() - diffTime;
+                return expiryTime;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }

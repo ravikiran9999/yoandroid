@@ -262,7 +262,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
             listView.setAdapter(chatRoomListAdapter);
 
             if (roomsList != null && roomsList.size() > 0) {
-                chatRoomListAdapter.addChatRoomItems(sortedList(roomsList));
+                chatRoomListAdapter.addItems(sortedList(roomsList));
             }
 
             if (arrayOfUsers != null && arrayOfUsers.size() > 0) {
@@ -842,7 +842,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         if (swipeRefreshContainer != null) {
             swipeRefreshContainer.setRefreshing(false);
         } else {
-            if (chatRoomListAdapter.getCount() == 0) {
+            if (chatRoomListAdapter != null && chatRoomListAdapter.getCount() == 0) {
                 showProgressDialog();
             }
         }

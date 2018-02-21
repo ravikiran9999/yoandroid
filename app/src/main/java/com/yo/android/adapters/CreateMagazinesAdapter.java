@@ -58,7 +58,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
 
                 RequestOptions myOptions = new RequestOptions()
                         .placeholder(R.drawable.magazine_backdrop)
-                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
                 Glide.with(mContext)
                         .asBitmap()
@@ -75,7 +75,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                                         RequestOptions myOptions = new RequestOptions()
                                                 .override(bmp.getWidth(), bmp.getHeight())
                                                 .placeholder(R.drawable.magazine_backdrop)
-                                                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                                                .diskCacheStrategy(DiskCacheStrategy.ALL)
                                                 .dontAnimate();
 
                                         Glide.with(mContext)
@@ -96,7 +96,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
             } else {
                 RequestOptions requestOptions = new RequestOptions()
                         .fitCenter()
-                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
                 if (item.getArticlesCount() == 0) { // Image url is null and no articles are present
                     Glide.with(mContext)
@@ -125,7 +125,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
             if (!TextUtils.isEmpty(item.getImage())) { // Image url is not null
                 RequestOptions requestOptions = new RequestOptions()
                         .placeholder(R.drawable.magazine_backdrop)
-                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
                 Glide.with(mContext)
                         .asBitmap()
@@ -143,7 +143,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                                         RequestOptions myOptions = new RequestOptions()
                                                 .override(bmp.getWidth(), bmp.getHeight())
                                                 .placeholder(R.drawable.magazine_backdrop)
-                                                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                                                .diskCacheStrategy(DiskCacheStrategy.ALL)
                                                 .dontAnimate();
 
                                         Glide.with(mContext)
@@ -164,7 +164,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
             } else {
                 RequestOptions myOptions = new RequestOptions()
                         .fitCenter()
-                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
 
                 if (item.getArticlesCount() == 0) { // Image url is null and no articles are present

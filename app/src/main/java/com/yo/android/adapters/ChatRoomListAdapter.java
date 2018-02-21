@@ -75,7 +75,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
                 RequestOptions requestOptions = new RequestOptions()
                         .placeholder(loadAvatarImage(item, holder, false))
                         .error(loadAvatarImage(item, holder, false))
-                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
                 Glide.with(mContext).clear(holder.getChatRoomPic());
                 Glide.with(mContext).load(item.getImage())
@@ -113,7 +113,7 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
                         .priority(Priority.HIGH)
                         .dontAnimate()
                         .error(loadAvatarImage(item, holder, true))
-                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE);
+                        .diskCacheStrategy(DiskCacheStrategy.ALL);
                 Glide.with(mContext).load(item.getImage())
                         .apply(requestOptions)
                         .into(holder.getChatRoomPic());
