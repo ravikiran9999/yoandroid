@@ -104,8 +104,8 @@ public class FirebaseService extends InjectedService {
             FireBaseAuthToken.getInstance(this).getFirebaseAuth(new FireBaseAuthToken.FireBaseAuthListener() {
                 @Override
                 public void onSuccess() {
-                    ChatRefreshBackground.getInstance().doRefresh(FirebaseService.this, null);
-                    getAllRooms();
+                    //ChatRefreshBackground.getInstance().doRefresh(FirebaseService.this, null);
+                    //getAllRooms();
                 }
 
                 @Override

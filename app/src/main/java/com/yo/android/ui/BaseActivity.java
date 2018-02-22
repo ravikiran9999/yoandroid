@@ -2,20 +2,15 @@ package com.yo.android.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.client.Firebase;
@@ -25,10 +20,6 @@ import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.ValueRange;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 import com.orion.android.common.util.ResourcesHelper;
 import com.yo.android.R;
 import com.yo.android.api.ApiCallback;
@@ -58,8 +49,6 @@ import java.util.TimerTask;
 
 import javax.inject.Inject;
 
-import static com.yo.android.app.BaseApp.appRunning;
-
 public class BaseActivity extends ParentActivity {
 
     @Inject
@@ -77,9 +66,6 @@ public class BaseActivity extends ParentActivity {
     MyServiceConnection myServiceConnection;
 
     @Inject
-    FirebaseJobDispatcher firebaseJobDispatcher;
-
-    @Inject
     FireBaseHelper fireBaseHelper;
 
     @Inject
@@ -89,7 +75,6 @@ public class BaseActivity extends ParentActivity {
 
     private boolean isDestroyed;
     private static final String TAG = BaseActivity.class.getSimpleName();
-    //private FirebaseJobDispatcher firebaseJobDispatcher;
 
     private static Activity activity;
     private Typeface alexBrushRegular;
@@ -291,7 +276,6 @@ public class BaseActivity extends ParentActivity {
 
     @Override
     public void finish() {
-        //Toast.makeText(this, TAG + "finish", Toast.LENGTH_SHORT).show();
         stopTimer();
         super.finish();
     }
@@ -315,36 +299,6 @@ public class BaseActivity extends ParentActivity {
         return isDestroyed;
     }
 
-    public void createNotification(String title, String message) {
-
-        Intent destinationIntent = new Intent(BaseActivity.this, NotificationsActivity.class);
-
-        int notificationId = title.hashCode();
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), notificationId, destinationIntent, PendingIntent.FLAG_ONE_SHOT);
-
-        NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
-        notificationStyle.bigText(title);
-
-        Notification notification = new NotificationCompat.Builder(getApplicationContext())
-                .setSmallIcon(getNotificationIcon())
-                .setContentTitle(title)
-                .setContentText(message)
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent)
-                .setStyle(notificationStyle)
-                .build();
-
-        NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(notificationId, notification);
-
-
-    }
-
-    private int getNotificationIcon() {
-        boolean useWhiteIcon = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP;
-        return useWhiteIcon ? R.drawable.ic_yo_notification_white : R.drawable.ic_yo_notification;
-    }
-
     /**
      * Fetch a list of names and majors of students in a sample spreadsheet:
      * https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
@@ -363,7 +317,7 @@ public class BaseActivity extends ParentActivity {
         List<List<Object>> values = new ArrayList<>();
         String range = " ";
         if (type.equals("Calls")) {
-            range = "1.0.4 Call Logs!A:L";
+            range = "1.0.4.6 Call Logs!A:L";
             //range = "17.4.5.0!A:L";
             DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
             if (TextUtils.isEmpty(model.getCallee().trim())) {
@@ -456,6 +410,7 @@ public class BaseActivity extends ParentActivity {
         }
     }
 
+    // Alexbrush regular font
     protected Typeface getAlexBrushRegular() {
         if (alexBrushRegular == null) {
             alexBrushRegular = Typeface.createFromAsset(getAssets(), TypefacePath.ALEX_BRUSH_REGULAR);

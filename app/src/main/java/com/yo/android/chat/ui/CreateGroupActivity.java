@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -55,6 +56,8 @@ import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 public class CreateGroupActivity extends BaseActivity implements View.OnClickListener, TextWatcher {
 
@@ -143,6 +146,12 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        RequestOptions requestOptions = new RequestOptions()
+                .priority(Priority.IMMEDIATE)
+                .error(getResources().getDrawable(R.drawable.image_creategroup))
+                .centerCrop()
+                .dontAnimate()
+                .diskCacheStrategy(DiskCacheStrategy.NONE);
 
         switch (requestCode) {
             case REQUEST_SELECTED_CONTACTS:
@@ -160,12 +169,8 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                         imgFile = new File(imagePath);
                         Glide.with(this)
                                 .load(imgFile.getAbsoluteFile())
-                                .priority(Priority.IMMEDIATE)
-                                .error(getResources().getDrawable(R.drawable.image_creategroup))
-                                .centerCrop()
-                                .dontAnimate()
-                                .crossFade()
-                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .apply(requestOptions)
+                                //.transition(withCrossFade())
                                 .into(groupImage);
 
                     } catch (Exception e) {
@@ -182,12 +187,8 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                         //new ImageLoader(groupImage, imgFile, this).execute();
                         Glide.with(this)
                                 .load(imgFile.getAbsoluteFile())
-                                .priority(Priority.IMMEDIATE)
-                                .error(getResources().getDrawable(R.drawable.image_creategroup))
-                                .centerCrop()
-                                .dontAnimate()
-                                .crossFade()
-                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .apply(requestOptions)
+                                //.transition(withCrossFade())
                                 .into(groupImage);
 
                     } catch (Exception e) {

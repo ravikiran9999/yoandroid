@@ -20,12 +20,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.ui.BaseActivity;
+import com.yo.android.util.Util;
 import com.yo.android.util.YODialogs;
 import com.yo.android.vox.BalanceHelper;
 import com.yo.dialer.CallExtras;
@@ -96,6 +98,7 @@ class CallBaseActivity extends BaseActivity {
     protected View mOutgoingCallHeader;
     @Inject
     protected BalanceHelper mBalanceHelper;
+    private int callNotificationId;
 
 
     public boolean isIncoming() {
@@ -161,6 +164,7 @@ class CallBaseActivity extends BaseActivity {
         calleImageUrl = getIntent().getStringExtra(CallExtras.IMAGE);
         calleName = getIntent().getStringExtra(CallExtras.NAME);
         isPstn = getIntent().getBooleanExtra(CallExtras.IS_PSTN, false);
+        callNotificationId = getIntent().getIntExtra("notificationId", 0);
         EventBus.getDefault().register(this);
     }
 
@@ -205,6 +209,7 @@ class CallBaseActivity extends BaseActivity {
      * Rejects the call
      */
     protected void rejectCall() {
+        Util.cancelNotification(this, callNotificationId);
         if (sipBinder != null && sipBinder.getYOHandler() != null) {
             isCallStopped = true;
             sipBinder.getYOHandler().rejectCall();
@@ -291,11 +296,13 @@ class CallBaseActivity extends BaseActivity {
      */
     protected void loadCalleImage(ImageView imageView, String imagePath) {
         try {
-            Glide.with(CallBaseActivity.this).load(imagePath)
+            RequestOptions requestOptions = new RequestOptions()
                     .placeholder(R.drawable.ic_contacts)
                     .dontAnimate()
-                    .error(R.drawable.ic_contacts).
-                    into(imageView);
+                    .error(R.drawable.ic_contacts);
+            Glide.with(CallBaseActivity.this).load(imagePath)
+                    .apply(requestOptions)
+                    .into(imageView);
             loadFullImage(imagePath);
             DialerLogs.messageI(TAG, "YO====loadCalleImage====" + imagePath);
         } catch (IllegalArgumentException exe) {

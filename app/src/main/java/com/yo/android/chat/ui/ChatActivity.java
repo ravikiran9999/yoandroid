@@ -19,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.google.gson.Gson;
 import com.yo.android.R;
@@ -35,6 +36,7 @@ import com.yo.android.model.Room;
 import com.yo.android.model.Share;
 import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.ui.BaseActivity;
+import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -291,11 +293,16 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
             }
 
             if (room != null && room.getGroupName() != null) {
-                Glide.with(this).load(mOpponentImg)
-                        .asBitmap().centerCrop()
+                RequestOptions requestOptions = new RequestOptions()
+                        .centerCrop()
                         .placeholder(loadAvatarImage(imageView, true))
                         .error(loadAvatarImage(imageView, true))
-                        .dontAnimate()
+                        .dontAnimate();
+
+                Glide.with(this)
+                        .asBitmap()
+                        .load(mOpponentImg)
+                        .apply(requestOptions)
                         .into(new BitmapImageViewTarget(imageView) {
                             @Override
                             protected void setResource(Bitmap resource) {
@@ -310,11 +317,16 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
                         });
             } else {
                 if (!TextUtils.isEmpty(mOpponentImg)) {
-                    Glide.with(this).load(mOpponentImg)
-                            .asBitmap().centerCrop()
-                            .dontAnimate()
+                    RequestOptions requestOptions = new RequestOptions()
+                            .centerCrop()
                             .placeholder(loadAvatarImage(imageView, false))
                             .error(loadAvatarImage(imageView, false))
+                            .dontAnimate();
+
+                    Glide.with(this)
+                            .asBitmap()
+                            .load(mOpponentImg)
+                            .apply(requestOptions)
                             .into(new BitmapImageViewTarget(imageView) {
                                 @Override
                                 protected void setResource(Bitmap resource) {
@@ -496,5 +508,17 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
             }
         }
         return opponent;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getIntent().hasExtra(Constants.OPPONENT_ID)) {
+            Intent myCollectionsIntent = new Intent(this, BottomTabsActivity.class);
+            myCollectionsIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(myCollectionsIntent);
+            finish();
+        } else {
+            super.onBackPressed();
+        }
     }
 }

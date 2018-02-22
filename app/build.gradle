@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 
 // firebase performance monitor
 apply plugin: 'com.google.firebase.firebase-perf'
+// realm database
+apply plugin: 'realm-android'
 
 //apply plugin: 'android-apt'
 
@@ -21,9 +23,9 @@ android {
             storePassword '123456'
         }
     }
-    compileSdkVersion 25
+    compileSdkVersion 27
     flavorDimensions "versionCode"
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.0'
     useLibrary 'org.apache.http.legacy'
     dexOptions {
         javaMaxHeapSize "4g"
@@ -34,7 +36,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 5
-        versionName "1.0.4.4"
+        versionName "1.0.4.6"
 
         // annotationProcess issue in latest gradle
         javaCompileOptions {
@@ -87,11 +89,11 @@ android {
             buildConfigField "boolean", "NEW_YO_CREDIT_SCREEN", "true"
             buildConfigField "boolean", "NEW_FOLLOW_MORE_TOPICS", "true"
 
-            buildConfigField "String", "BASE_URL", "\"http://34.198.165.8/\""
+            buildConfigField "String", "BASE_URL", "\"http://34.225.28.188/\""
             buildConfigField "String", "CLIENT_ID", "\"22878964b4ec1de00626c4b88c81d177eafb4869523dad8b52eb7909e7d8f076\""
             buildConfigField "String", "CLIENT_SECRET", "\"f0f79dfe87ed1eca3d77c48d0b1f48eedc690a6ae2f02ec777fd1b0456ad1870\""
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://yo-production.appspot.com\""
-            buildConfigField "String", "FIREBASE_URL", "\"https://yo-production.firebaseio.com/\""
+            buildConfigField "String", "FIREBASE_URL", "\"https://enhancement-94ccd.firebaseio.com/\""
 
             //Same as Dev
             /*buildConfigField "String", "BASE_URL", "\"http://34.198.165.8/\""
@@ -102,7 +104,7 @@ android {
         }
 
         production {
-            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
             buildConfigField "String", "RELEASE_USER_TYPE_END", "\"D\""
 
@@ -127,7 +129,7 @@ android {
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"yowltuser\""
             buildConfigField "String", "RELEASE_USER_TYPE_END", "\"D\""
-            buildConfigField "String", "BASE_URL", "\"http://34.225.28.188/\""
+            buildConfigField "String", "BASE_URL", "\"http://52.77.230.8/\""
 
             // Remove
             buildConfigField "String", "CLIENT_ID", "\"22878964b4ec1de00626c4b88c81d177eafb4869523dad8b52eb7909e7d8f076\""
@@ -139,8 +141,11 @@ android {
 
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://enhancement-94ccd.appspot.com\""
             buildConfigField "String", "FIREBASE_URL", "\"https://enhancement-94ccd.firebaseio.com\""
+
             buildConfigField "boolean", "NEW_YO_CREDIT_SCREEN", "true"
             buildConfigField "boolean", "NEW_FOLLOW_MORE_TOPICS", "true"
+            buildConfigField "boolean", "NEW_OTP_SCREEN", "true"
+            buildConfigField "boolean", "NEW_CONTACTS_SCREEN", "true"
             minSdkVersion 18
         }
 
@@ -252,10 +257,10 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.0.0'
 
     // Glide
-    compile 'com.github.bumptech.glide:glide:3.5.2'
+    //compile 'com.github.bumptech.glide:glide:3.5.2'
 
-    //compile 'com.github.bumptech.glide:glide:4.5.0'
-    //annotationProcessor 'com.github.bumptech.glide:compiler:4.5.0'
+    compile 'com.github.bumptech.glide:glide:4.5.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.5.0'
 
     compile 'se.emilsjolander:android-flipview:1.1.0'
     compile 'com.android.support:multidex:1.0.1'
@@ -265,7 +270,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:11.8.0'
     compile 'pub.devrel:easypermissions:0.3.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.android.support:support-v4:25.2.0'
     testCompile 'junit:junit:4.12'
 
 }

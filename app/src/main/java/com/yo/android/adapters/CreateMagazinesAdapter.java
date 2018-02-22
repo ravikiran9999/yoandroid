@@ -3,6 +3,8 @@ package com.yo.android.adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -10,13 +12,17 @@ import android.widget.FrameLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.yo.android.R;
 import com.yo.android.helpers.OwnMagazineViewHolder;
 import com.yo.android.model.OwnMagazine;
 import com.yo.android.ui.BitmapScaler;
 import com.yo.android.ui.DeviceDimensionsHelper;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 /**
  * Created by creatives on 7/9/2016.
@@ -47,33 +53,38 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
 
         holder.getTextViewDesc().setText(item.getDescription());
 
-        if(position != 0) { // Other than the first position
-            if(!TextUtils.isEmpty(item.getImage())) { // Image url is not null
+        if (position != 0) { // Other than the first position
+            if (!TextUtils.isEmpty(item.getImage())) { // Image url is not null
 
-                Glide.with(mContext)
-                        .load(item.getImage())
-                        .asBitmap()
+                RequestOptions myOptions = new RequestOptions()
                         .placeholder(R.drawable.magazine_backdrop)
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .dontAnimate()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate();
+                Glide.with(mContext)
+                        .asBitmap()
+                        .load(item.getImage())
+                        .apply(myOptions)
                         .into(new SimpleTarget<Bitmap>() {
                             @Override
-                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                                 int screenWidth = DeviceDimensionsHelper.getDisplayWidth(mContext);
                                 Bitmap bmp = null;
                                 if (resource != null) {
                                     try {
                                         bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
-                                        Glide.with(mContext)
-                                                .load(item.getImage())
+                                        RequestOptions myOptions = new RequestOptions()
                                                 .override(bmp.getWidth(), bmp.getHeight())
                                                 .placeholder(R.drawable.magazine_backdrop)
-                                                .crossFade()
-                                                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                                .dontAnimate()
+                                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                                .dontAnimate();
+
+                                        Glide.with(mContext)
+                                                .load(item.getImage())
+                                                .apply(myOptions)
+                                                //.transition(withCrossFade())
                                                 .into(holder.getImageView());
                                     } finally {
-                                        if(bmp != null) {
+                                        if (bmp != null) {
                                             bmp.recycle();
                                             bmp = null;
                                         }
@@ -83,21 +94,21 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                         });
 
             } else {
-                if(item.getArticlesCount() == 0) { // Image url is null and no articles are present
+                RequestOptions requestOptions = new RequestOptions()
+                        .fitCenter()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate();
+                if (item.getArticlesCount() == 0) { // Image url is null and no articles are present
                     Glide.with(mContext)
                             .load(R.drawable.ic_default_magazine)
-                            .fitCenter()
-                            .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                            .dontAnimate()
+                            .apply(requestOptions)
+                            //.transition(withCrossFade())
                             .into(holder.getImageView());
                 } else { // Image url is null and articles are present
                     Glide.with(mContext)
                             .load(R.drawable.magazine_backdrop)
-                            .fitCenter()
-                            .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                            .dontAnimate()
+                            .apply(requestOptions)
+                            //.transition(withCrossFade())
                             .into(holder.getImageView());
                 }
 
@@ -106,37 +117,42 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
             holder.getTextViewDesc().setTextColor(mContext.getResources().getColor(android.R.color.white));
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-            params.gravity = Gravity.TOP|Gravity.LEFT;
+            params.gravity = Gravity.TOP | Gravity.LEFT;
             params.leftMargin = 10;
             params.rightMargin = 10;
             holder.getTextView().setLayoutParams(params);
-        } else if(position == 0 && !"+ New Magazine".equalsIgnoreCase(item.getName())) { // First position but not the New Magazine text(applies when searching)
-            if(!TextUtils.isEmpty(item.getImage())) { // Image url is not null
-
-                Glide.with(mContext)
-                        .load(item.getImage())
-                        .asBitmap()
+        } else if (position == 0 && !"+ New Magazine".equalsIgnoreCase(item.getName())) { // First position but not the New Magazine text(applies when searching)
+            if (!TextUtils.isEmpty(item.getImage())) { // Image url is not null
+                RequestOptions requestOptions = new RequestOptions()
                         .placeholder(R.drawable.magazine_backdrop)
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .dontAnimate()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate();
+                Glide.with(mContext)
+                        .asBitmap()
+                        .load(item.getImage())
+                        .apply(requestOptions)
                         .into(new SimpleTarget<Bitmap>() {
                             @Override
-                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                                 int screenWidth = DeviceDimensionsHelper.getDisplayWidth(mContext);
                                 Bitmap bmp = null;
+
                                 if (resource != null) {
                                     try {
-                                    bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
-                                    Glide.with(mContext)
-                                            .load(item.getImage())
-                                            .override(bmp.getWidth(), bmp.getHeight())
-                                            .placeholder(R.drawable.magazine_backdrop)
-                                            .crossFade()
-                                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                                            .dontAnimate()
-                                            .into(holder.getImageView());
-                                    }finally {
-                                        if(bmp != null) {
+                                        bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
+                                        RequestOptions myOptions = new RequestOptions()
+                                                .override(bmp.getWidth(), bmp.getHeight())
+                                                .placeholder(R.drawable.magazine_backdrop)
+                                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                                .dontAnimate();
+
+                                        Glide.with(mContext)
+                                                .load(item.getImage())
+                                                .apply(myOptions)
+                                                //.transition(withCrossFade())
+                                                .into(holder.getImageView());
+                                    } finally {
+                                        if (bmp != null) {
                                             bmp.recycle();
                                             bmp = null;
                                         }
@@ -146,21 +162,21 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                         });
 
             } else {
-                if(item.getArticlesCount() == 0) { // Image url is null and no articles are present
+                RequestOptions myOptions = new RequestOptions()
+                        .fitCenter()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate();
+
+                if (item.getArticlesCount() == 0) { // Image url is null and no articles are present
                     Glide.with(mContext)
                             .load(R.drawable.ic_default_magazine)
-                            .fitCenter()
-                            .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                            .dontAnimate()
+                            .apply(myOptions)
+                            //.transition(withCrossFade())
                             .into(holder.getImageView());
                 } else { // Image url is null and articles are present
                     Glide.with(mContext)
                             .load(R.drawable.magazine_backdrop)
-                            .fitCenter()
-                            .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                            .dontAnimate()
+                            //.transition(withCrossFade())
                             .into(holder.getImageView());
                 }
             }
@@ -168,7 +184,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
             holder.getTextViewDesc().setTextColor(mContext.getResources().getColor(android.R.color.white));
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-            params.gravity = Gravity.TOP|Gravity.LEFT;
+            params.gravity = Gravity.TOP | Gravity.LEFT;
             params.leftMargin = 10;
             params.rightMargin = 10;
             holder.getTextView().setLayoutParams(params);

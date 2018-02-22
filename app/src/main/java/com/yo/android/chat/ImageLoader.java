@@ -1,25 +1,25 @@
 package com.yo.android.chat;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
+import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.util.Log;
+import android.support.annotation.Nullable;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -28,12 +28,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.yo.android.BuildConfig;
 import com.yo.android.model.ChatMessage;
-import com.yo.android.model.ChatMessageReceived;
 import com.yo.android.util.Constants;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 public class ImageLoader {
 
@@ -120,26 +119,27 @@ public class ImageLoader {
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, height);
             layoutParams.setMargins(5, 5, 5, 5);
             imageView.setLayoutParams(layoutParams);
-
+            RequestOptions requestOptions = new RequestOptions()
+                    .priority(Priority.HIGH)
+                    .dontAnimate()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE);
             Glide.with(context)
                     .load(file)
-                    .listener(new RequestListener<File, GlideDrawable>() {
+                    .listener(new RequestListener<Drawable>() {
                         @Override
-                        public boolean onException(Exception e, File model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                             progressBar.setVisibility(View.GONE);
                             return false;
                         }
 
                         @Override
-                        public boolean onResourceReady(GlideDrawable resource, File model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                             progressBar.setVisibility(View.GONE);
                             return false;
                         }
                     })
-                    .priority(Priority.HIGH)
-                    .dontAnimate()
-                    .crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .apply(requestOptions)
+                    //.transition(withCrossFade())
                     .into(imageView);
         } catch (Exception e) {
             progressBar.setVisibility(View.GONE);

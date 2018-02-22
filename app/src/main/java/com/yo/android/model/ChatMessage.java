@@ -29,19 +29,19 @@ import java.util.Map;
 @IgnoreExtraProperties
 public class ChatMessage implements Parcelable {
 
-    @DatabaseField(id = true)
+    //@DatabaseField(id = true)
     private int msgID;
-    @DatabaseField(columnName = Constants.MESSAGE)
+    //@DatabaseField(columnName = Constants.MESSAGE)
     private String message;
-    @DatabaseField
+    //@DatabaseField
     private String senderID;
-    @DatabaseField
+    //@DatabaseField
     private int status;
-    @DatabaseField
+    //@DatabaseField
     private String imagePath;
-    @DatabaseField
+    //@DatabaseField
     private long time;
-    @DatabaseField
+    //@DatabaseField
     private boolean readUnreadStatus;
     private int delivered;
     private int sent;
@@ -288,6 +288,14 @@ public class ChatMessage implements Parcelable {
 
     public void setYouserId(String youserId) {
         this.youserId = youserId;
+    }
+
+    public void setNexgeUserName(String nexgeUserName) {
+        this.nexgeUserName = nexgeUserName;
+    }
+
+    public void setTimeStampMap(Map<String, Object> timeStampMap) {
+        this.timeStampMap = timeStampMap;
     }
 
     @Override

@@ -2,22 +2,17 @@ package com.yo.android.chat.firebase;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.text.TextUtils;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-import com.yo.android.R;
 import com.yo.android.model.GroupMembers;
-import com.yo.android.model.RoomInfo;
-import com.yo.android.model.UserProfile;
 import com.yo.android.util.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by rdoddapaneni on 5/26/2017.

@@ -70,6 +70,7 @@ import com.yo.android.chat.firebase.Clipboard;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.ui.ChatActivity;
+import com.yo.android.database.ChatMessageDao;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.RoomInfo;
@@ -100,6 +101,7 @@ import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
+
 import static com.yo.android.util.Util.copyFile;
 
 /**
@@ -159,21 +161,18 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
 
     @Inject
     FireBaseHelper fireBaseHelper;
-
     @Inject
     ConnectivityHelper mHelper;
-
     @Inject
     ContactsSyncManager mContactsSyncManager;
-
     @Inject
     YoApi.YoService yoService;
-
     @Inject
     ChatNotificationUsecase chatNotificationUsecase;
-
     @Inject
     AppLogglyUsecase appLogglyUsecase;
+    @Inject
+    ChatMessageDao chatMessageDao;
 
     Handler handler = new Handler();
     Runnable runnable = new Runnable() {
@@ -213,6 +212,8 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         authReference = fireBaseHelper.authWithCustomToken(getActivity(), preferenceEndPoint.getStringPreference(Constants.FIREBASE_TOKEN), null);
 
         chatMessageArray = new ArrayList<>();
+        chatMessageArray = chatMessageDao.getAll();
+
         setHasOptionsMenu(true);
 
         //alarmManager();
@@ -252,6 +253,10 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         popup.setSizeForSoftKeyboard();
         cameraView.setOnClickListener(this);
 
+        if (chatMessageArray.size() > 0) {
+            userChatAdapter.addItems(chatMessageArray);
+        }
+
         //If the emoji popup is dismissed, change emojiButton to smiley icon
         popup.setOnDismissListener(new PopupWindow.OnDismissListener() {
 
@@ -286,7 +291,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
             roomExist = 1;
 
             roomReference = authReference.child(Constants.ROOMS).child(childRoomId).child(Constants.CHATS);
-            messageQuery = roomReference.orderByValue().limitToLast(100); // show only last 100 items
+            messageQuery = roomReference.limitToLast(100); // show only last 100 items
             registerChildEventListener(messageQuery);
 
             if (chatForwards != null) {
@@ -591,7 +596,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     }
 
     /**
-     *  create chat message object
+     * create chat message object
      *
      * @param message
      * @param userId

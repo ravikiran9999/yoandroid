@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 //import com.squareup.picasso.Picasso;
 import com.yo.android.R;
@@ -44,6 +45,8 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 /**
  * Created by MYPC on 7/17/2016.
@@ -95,14 +98,17 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
     @Override
     public void bindView(final int position, final FindPeopleViewHolder holder, final FindPeople item) {
         if (!TextUtils.isEmpty(item.getAvatar())) {
-            Glide.with(mContext)
-                    .load(item.getAvatar())
+            RequestOptions requestOptions = new RequestOptions()
                     .fitCenter()
                     .placeholder(R.drawable.dynamic_profile)
-                    .crossFade()
                     .dontAnimate()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .error(R.drawable.dynamic_profile)
+                    .error(R.drawable.dynamic_profile);
+
+            Glide.with(mContext)
+                    .load(item.getAvatar())
+                    .apply(requestOptions)
+                    //.transition(withCrossFade())
                     .into(holder.getImvFindPeoplePic());
         } else if (Settings.isTitlePicEnabled) { // Showing the first character of the name as the profile pic
             if (item.getFirst_name() != null && item.getFirst_name().length() >= 1) {
@@ -112,7 +118,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                 boolean b = m.matches();
                 if (b) {
                     Drawable drawable = mDrawableBuilder.build(title, mColorGenerator.getColor(item.getPhone_no()));
-                    Glide.clear(holder.getImvFindPeoplePic());
+                    Glide.with(context).clear(holder.getImvFindPeoplePic());
                     holder.getImvFindPeoplePic().setImageDrawable(drawable);
                 } else {
                     loadAvatarImage(holder, item);
@@ -276,7 +282,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
         LayerDrawable bgDrawable = (LayerDrawable) tempImage;
         final GradientDrawable shape = (GradientDrawable) bgDrawable.findDrawableByLayerId(R.id.shape_id);
         if (Settings.isTitlePicEnabled) {
-            Glide.clear(holder.getImvFindPeoplePic());
+            Glide.with(context).clear(holder.getImvFindPeoplePic());
             shape.setColor(mColorGenerator.getColor(item.getPhone_no()));
         }
         if (holder.getImvFindPeoplePic().getTag(Settings.imageTag) == null) {

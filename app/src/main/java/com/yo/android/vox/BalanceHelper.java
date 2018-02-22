@@ -81,13 +81,6 @@ public class BalanceHelper {
                             prefs.saveStringPreference(Constants.WALLET_BALANCE, walletBalance);
                             EventBus.getDefault().post(Constants.BALANCE_UPDATED_ACTION);
 
-                            //Todo low balance notification will come from server
-                            /*double val = Double.parseDouble(balance.trim());
-                            if(val <=2) {
-                                mLog.w(TAG, "Current balance is less than or equal to $2");
-                                Util.setBigStyleNotificationForBalance(context, "Credit", context.getString(R.string.low_balance), "Credit", "");
-                            }*/
-
                         } catch (IllegalArgumentException e) {
                             mLog.w(TAG, "getCurrentBalance", e);
                         }
@@ -101,7 +94,7 @@ public class BalanceHelper {
                         mLog.w(TAG, "loadBalance", e);
 
                     } finally {
-                        if(response != null && response.body() != null) {
+                        if (response != null && response.body() != null) {
                             response.body().close();
                         }
                     }
@@ -149,7 +142,7 @@ public class BalanceHelper {
                         JSONObject jsonObject = new JSONObject(str);
                         int responseCode = jsonObject.getInt("code");
 
-                        if(responseCode == 707) {
+                        if (responseCode == 707) {
                             String errorMessage = jsonObject.getString("data");
                             Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
                             onFailure(call, new Throwable(errorMessage));
@@ -206,7 +199,7 @@ public class BalanceHelper {
                             if (callback != null) {
                                 callback.onResponse(call, response);
                             }
-                        }finally {
+                        } finally {
                             if (response != null && response.body() != null) {
                                 response.body().close();
                             }
@@ -465,11 +458,11 @@ public class BalanceHelper {
                         callback.onResponse(call, response);
                     }
                 } finally {
-                    if(response != null && response.body() != null) {
+                    if (response != null && response.body() != null) {
                         try {
                             response.body().clear();
                             response = null;
-                        }catch (Exception e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -515,7 +508,7 @@ public class BalanceHelper {
 
     public String currencySymbolLookup(String value) {
         String amount = removeCurrencyCodeString(value);
-        if(value.contains("INR") || value.contains("₨")) {
+        if (value.contains("INR") || value.contains("₨")) {
             return "₹ " + amount;
         } else {
             return "$ " + amount;

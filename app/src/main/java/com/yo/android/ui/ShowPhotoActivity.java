@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -13,8 +15,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.yo.android.R;
 import com.yo.android.util.Constants;
 
@@ -67,7 +70,8 @@ public class ShowPhotoActivity extends BaseActivity {
     private void getImageHeightAndWidth(String imageUrl, final ImageView imageView) {
         SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
             @Override
-            public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
+            public void onResourceReady(@NonNull Bitmap bitmap, @Nullable Transition<? super Bitmap> transition) {
+
                 DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
                 float density = displayMetrics.density;
                 int width = displayMetrics.widthPixels;
@@ -77,19 +81,20 @@ public class ShowPhotoActivity extends BaseActivity {
                 imageView.setImageBitmap(bitmap);
             }
         };
+        RequestOptions requestOptions = new RequestOptions()
+                .dontAnimate()
+                .diskCacheStrategy(DiskCacheStrategy.ALL);
         if (imageUrl.contains("storage/")) {
-            Glide.with(getApplicationContext())
-                    .load(new File(imageUrl))
+            Glide.with(this)
                     .asBitmap()
-                    .dontAnimate()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .load(new File(imageUrl))
+                    .apply(requestOptions)
                     .into(target);
         } else {
-            Glide.with(getApplicationContext())
-                    .load((imageUrl))
+            Glide.with(this)
                     .asBitmap()
-                    .dontAnimate()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .load((imageUrl))
+                    .apply(requestOptions)
                     .into(target);
         }
         imageOpen.setVisibility(View.VISIBLE);

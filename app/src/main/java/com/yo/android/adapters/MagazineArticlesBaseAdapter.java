@@ -1,11 +1,9 @@
 package com.yo.android.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -41,9 +38,7 @@ import com.yo.android.usecase.AddTopicsUsecase;
 import com.yo.android.usecase.MagazinesServicesUsecase;
 import com.yo.android.util.AutoReflectTopicsFollowActionsListener;
 import com.yo.android.util.AutoReflectWishListActionsListener;
-import com.yo.android.util.Constants;
 import com.yo.android.util.MagazineOtherPeopleReflectListener;
-import com.yo.android.video.InAppVideoActivity;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -237,82 +232,13 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             return layout;
         }
 
-        if (holder.magazineLike != null) {
-            holder.magazineLike.setTag(position);
-        }
+        mMagazinesServicesUsecase.handleArticleLike(position, holder.magazineLike, data, this, context, mToastFactory);
 
-        if (holder.magazineLike != null) {
-            holder.magazineLike.setOnCheckedChangeListener(null);
-            if (Boolean.valueOf(data.getLiked())) {
-                data.setIsChecked(true);
-            } else {
-                data.setIsChecked(false);
-            }
+        mMagazinesServicesUsecase.handleArticleLike(position, holder.fullImageMagazineLike, data, this, context, mToastFactory);
 
-            holder.magazineLike.setText("");
-            holder.magazineLike.setChecked(Boolean.valueOf(data.getLiked()));
+        mMagazinesServicesUsecase.handleArticleImage(position, holder, holder.articlePhoto, data, context);
 
-            holder.magazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    Log.d("MagazineBaseAdapter", "Title and liked... " + data.getTitle() + " " + Boolean.valueOf(data.getLiked()));
-
-                    if (isChecked) {
-                        mMagazinesServicesUsecase.likeArticles(MagazineArticlesBaseAdapter.this, context, data, mToastFactory);
-                    } else {
-                        mMagazinesServicesUsecase.unlikeArticles(MagazineArticlesBaseAdapter.this, context, data, mToastFactory);
-                    }
-                }
-            });
-        }
-
-        if (holder.fullImageMagazineLike != null) {
-            holder.fullImageMagazineLike.setOnCheckedChangeListener(null);
-            if (Boolean.valueOf(data.getLiked())) {
-                data.setIsChecked(true);
-            } else {
-                data.setIsChecked(false);
-            }
-
-            holder.fullImageMagazineLike.setText("");
-            holder.fullImageMagazineLike.setChecked(Boolean.valueOf(data.getLiked()));
-
-            holder.fullImageMagazineLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    Log.d("MagazineBaseAdapter", "Title and liked... " + data.getTitle() + " " + Boolean.valueOf(data.getLiked()));
-
-                    if (isChecked) {
-                        mMagazinesServicesUsecase.likeArticles(MagazineArticlesBaseAdapter.this, context, data, mToastFactory);
-
-                    } else {
-                        mMagazinesServicesUsecase.unlikeArticles(MagazineArticlesBaseAdapter.this, context, data, mToastFactory);
-                    }
-                }
-            });
-        }
-
-        if (UI
-                .<TextView>findViewById(layout, R.id.tv_category_full_story)
-                != null) {
-            UI
-                    .<TextView>findViewById(layout, R.id.tv_category_full_story)
-                    .setText(AphidLog.format("%s", data.getTitle()));
-        }
-
-        if (UI
-                .<TextView>findViewById(layout, R.id.tv_category_full_story) != null) {
-            UI
-                    .<TextView>findViewById(layout, R.id.tv_category_full_story)
-                    .setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mMagazinesServicesUsecase.navigateToArticleWebView(context, data, position);
-                        }
-                    });
-        }
-
-
+/*<<<<<<< HEAD
         if (holder.articlePhoto != null) {
             final ImageView photoView = holder.articlePhoto;
 
@@ -322,59 +248,15 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             } else {
                 photoView.setImageResource(R.drawable.magazine_backdrop);
             }
+=======*/
+        mMagazinesServicesUsecase.handleArticleAdd(holder.magazineAdd, data, context);
+//>>>>>>> 4056593f7dcc1b6568a3d53e115d921d4309687c
 
-            photoView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String videoUrl = data.getVideo_url();
-                    if (videoUrl != null && !TextUtils.isEmpty(videoUrl)) {
-                        InAppVideoActivity.start((Activity) context, videoUrl, data.getTitle());
-                    } else {
-                        mMagazinesServicesUsecase.navigateToArticleWebView(context, data, position);
-                    }
-                }
-            });
-        }
+        mMagazinesServicesUsecase.handleArticleShare(holder.magazineShare, data);
 
-        if (holder.magazineAdd != null) {
-            ImageView add = holder.magazineAdd;
-            add.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mMagazinesServicesUsecase.onAddClick(context, data);
-                }
-            });
-        }
+        mMagazinesServicesUsecase.handleArticleAdd(holder.fullImageMagazineAdd, data, context);
 
-        if (holder.magazineShare != null) {
-            ImageView share = holder.magazineShare;
-            share.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mMagazinesServicesUsecase.onShareClick(v, data);
-                }
-            });
-        }
-
-        if (holder.fullImageMagazineAdd != null) {
-            ImageView add = holder.fullImageMagazineAdd;
-            add.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mMagazinesServicesUsecase.onAddClick(context, data);
-                }
-            });
-        }
-
-        if (holder.fullImageMagazineShare != null) {
-            ImageView share = holder.fullImageMagazineShare;
-            share.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mMagazinesServicesUsecase.onShareClick(v, data);
-                }
-            });
-        }
+        mMagazinesServicesUsecase.handleArticleShare(holder.fullImageMagazineShare, data);
 
         LinearLayout llArticleInfo = (LinearLayout) layout.findViewById(R.id.ll_article_info);
         if (llArticleInfo != null) {
@@ -410,14 +292,14 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             Articles secondData = secondArticle;
             populateLeftArticle(holder, secondData, position);
         } else {
-            populateEmptyLeftArticle(holder);
+            mMagazinesServicesUsecase.populateEmptyLeftArticle(holder);
         }
 
         if (allArticles.size() >= 3) {
             Articles thirdData = thirdArticle;
             populateRightArticle(holder, thirdData, position);
         } else {
-            populateEmptyRightArticle(holder);
+            mMagazinesServicesUsecase.populateEmptyRightArticle(holder);
         }
         if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
             if (allArticles.size() >= 4 && MagazinesFragment.unSelectedTopics.size() > 0) {
@@ -548,12 +430,12 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     @Override
     public void updateFollowOrLikesStatus(Articles data, String type) {
-       autoReflectStatus(data, type, allArticles, context, this);
+       mMagazinesServicesUsecase.autoReflectStatus(data, type, allArticles, context, this);
     }
 
     @Override
     public void updateMagazineStatus(Articles data, String follow) {
-       autoReflectStatus(data, follow, allArticles, context, this);
+        mMagazinesServicesUsecase.autoReflectStatus(data, follow, allArticles, context, this);
     }
 
     @Override
@@ -584,76 +466,19 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
      */
     private void populateTopArticle(View layout, ViewHolder holder, final Articles data, final int position) {
         // Log.d("ArticlesBaseAdapter", "In populateTopArticle");
-        if (holder.magazineLikeTop != null) {
-            holder.magazineLikeTop.setTag(position);
-        }
 
         if (holder.articleTitleTop != null) {
             holder.articleTitleTop
                     .setText(AphidLog.format("%s", data.getTitle()));
         }
 
-        if (holder.magazineLikeTop != null) {
-            holder.magazineLikeTop.setOnCheckedChangeListener(null);
-            if (Boolean.valueOf(data.getLiked())) {
-                data.setIsChecked(true);
-            } else {
-                data.setIsChecked(false);
-            }
+        mMagazinesServicesUsecase.handleArticleLike(position, holder.magazineLikeTop, data, this, context, mToastFactory);
 
-            holder.magazineLikeTop.setText("");
-            holder.magazineLikeTop.setChecked(Boolean.valueOf(data.getLiked()));
+        mMagazinesServicesUsecase.handleArticleImage(position, holder, holder.articlePhotoTop, data, context);
 
-            holder.magazineLikeTop.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        mMagazinesServicesUsecase.handleArticleAdd(holder.magazineAddTop, data, context);
 
-                    if (isChecked) {
-                        mMagazinesServicesUsecase.likeArticles(MagazineArticlesBaseAdapter.this, context, data, mToastFactory);
-                    } else {
-                        mMagazinesServicesUsecase.unlikeArticles(MagazineArticlesBaseAdapter.this, context, data, mToastFactory);
-
-                    }
-                }
-            });
-        }
-
-        if (holder.articlePhotoTop != null) {
-            final ImageView photoView = holder.articlePhotoTop;
-            photoView.setImageResource(R.drawable.magazine_backdrop);
-            if (data.getImage_filename() != null) {
-                mMagazinesServicesUsecase.loadImageFromS3(context, data, photoView);
-            } else {
-                photoView.setImageResource(R.drawable.magazine_backdrop);
-            }
-
-            photoView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mMagazinesServicesUsecase.navigateToArticleWebView(context, data, position);
-                }
-            });
-        }
-
-        if (holder.magazineAddTop != null) {
-            ImageView add = holder.magazineAddTop;
-            add.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mMagazinesServicesUsecase.onAddClick(context, data);
-                }
-            });
-        }
-
-        if (holder.magazineShareTop != null) {
-            ImageView share = holder.magazineShareTop;
-            share.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mMagazinesServicesUsecase.onShareClick(v, data);
-                }
-            });
-        }
+        mMagazinesServicesUsecase.handleArticleShare(holder.magazineShareTop, data);
 
         Button followMoreTopics = (Button) layout.findViewById(R.id.btn_magazine_follow_topics_top);
         if (followMoreTopics != null) {
@@ -700,7 +525,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         //Log.d("ArticlesBaseAdapter", "In populateLeftArticle");
         if (holder.magazineLikeLeft != null) {
             holder.magazineLikeLeft.setVisibility(View.VISIBLE);
-            holder.magazineLikeLeft.setTag(position);
+            //holder.magazineLikeLeft.setTag(position);
         }
 
         if (holder.articleTitleLeft != null) {
@@ -715,29 +540,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             });
         }
 
-        if (holder.magazineLikeLeft != null) {
-            holder.magazineLikeLeft.setOnCheckedChangeListener(null);
-            if (Boolean.valueOf(data.getLiked())) {
-                data.setIsChecked(true);
-            } else {
-                data.setIsChecked(false);
-            }
-
-            holder.magazineLikeLeft.setText("");
-            holder.magazineLikeLeft.setChecked(Boolean.valueOf(data.getLiked()));
-
-            holder.magazineLikeLeft.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                    if (isChecked) {
-                        mMagazinesServicesUsecase.likeArticles(MagazineArticlesBaseAdapter.this, context, data, mToastFactory);
-                    } else {
-                        mMagazinesServicesUsecase.unlikeArticles(MagazineArticlesBaseAdapter.this, context, data, mToastFactory);
-                    }
-                }
-            });
-        }
+        mMagazinesServicesUsecase.handleArticleLike(position, holder.magazineLikeLeft, data, this, context, mToastFactory);
 
         if (holder.articlePhotoLeft != null) {
             final ImageView photoView = holder.articlePhotoLeft;
@@ -794,28 +597,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             }
         }
 
-        if (holder.articleSummaryLeft != null) {
-
-            float density = context.getResources().getDisplayMetrics().density;
-
-            if (density == 4.0) {
-                holder.articleSummaryLeft.setVisibility(View.VISIBLE);
-            } else if (density == 3.5) {
-                holder.articleSummaryLeft.setVisibility(View.VISIBLE);
-            } else if (density == 3.0) {
-                holder.articleSummaryLeft.setVisibility(View.VISIBLE);
-            } else if (density == 2.0) {
-                holder.articleSummaryLeft.setVisibility(View.VISIBLE);
-            } else {
-                holder.articleSummaryLeft.setVisibility(View.GONE);
-            }
-
-            if (data.getSummary() != null && holder.articleSummaryLeft != null) {
-                holder.articleSummaryLeft
-                        .setText(Html.fromHtml(data.getSummary()));
-            }
-        }
-
+        mMagazinesServicesUsecase.displayLeftRightSummaryBasedOnDensity(holder.articleSummaryLeft, data, context);
 
     }
 
@@ -830,7 +612,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         //  Log.d("ArticlesBaseAdapter", "In populateRightArticle");
         if (holder.magazineLikeRight != null) {
             holder.magazineLikeRight.setVisibility(View.VISIBLE);
-            holder.magazineLikeRight.setTag(position);
+            //holder.magazineLikeRight.setTag(position);
         }
 
         if (holder.articleTitleRight != null) {
@@ -845,29 +627,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             });
         }
 
-        if (holder.magazineLikeRight != null) {
-            holder.magazineLikeRight.setOnCheckedChangeListener(null);
-            if (Boolean.valueOf(data.getLiked())) {
-                data.setIsChecked(true);
-            } else {
-                data.setIsChecked(false);
-            }
-
-            holder.magazineLikeRight.setText("");
-            holder.magazineLikeRight.setChecked(Boolean.valueOf(data.getLiked()));
-
-            holder.magazineLikeRight.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                    if (isChecked) {
-                        mMagazinesServicesUsecase.likeArticles(MagazineArticlesBaseAdapter.this, context, data, mToastFactory);
-                    } else {
-                        mMagazinesServicesUsecase.unlikeArticles(MagazineArticlesBaseAdapter.this, context, data, mToastFactory);
-                    }
-                }
-            });
-        }
+        mMagazinesServicesUsecase.handleArticleLike(position, holder.magazineLikeRight, data, this, context, mToastFactory);
 
         if (holder.articlePhotoRight != null) {
             final ImageView photoView = holder.articlePhotoRight;
@@ -924,105 +684,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             }
         }
 
-        if (holder.articleSummaryRight != null) {
-
-            float density = context.getResources().getDisplayMetrics().density;
-
-            if (density == 4.0) {
-                holder.articleSummaryRight.setVisibility(View.VISIBLE);
-            } else if (density == 3.5) {
-                holder.articleSummaryRight.setVisibility(View.VISIBLE);
-            } else if (density == 3.0) {
-                holder.articleSummaryRight.setVisibility(View.VISIBLE);
-            } else if (density == 2.0) {
-                holder.articleSummaryRight.setVisibility(View.VISIBLE);
-            } else {
-                holder.articleSummaryRight.setVisibility(View.GONE);
-            }
-
-            if (data.getSummary() != null && holder.articleSummaryRight != null) {
-                holder.articleSummaryRight
-                        .setText(Html.fromHtml(data.getSummary()));
-            }
-        }
-
-    }
-
-    /**
-     * Populates the empty left article
-     *
-     * @param holder The view holder object
-     */
-    private void populateEmptyLeftArticle(ViewHolder holder) {
-        if (holder.magazineLikeLeft != null) {
-            holder.magazineLikeLeft.setVisibility(View.GONE);
-        }
-
-        if (holder.articleTitleLeft != null) {
-            holder.articleTitleLeft.setVisibility(View.GONE);
-        }
-
-        if (holder.articlePhotoLeft != null) {
-            ImageView photoView = holder.articlePhotoLeft;
-            photoView.setVisibility(View.GONE);
-        }
-
-        if (holder.magazineAddLeft != null) {
-            ImageView add = holder.magazineAddLeft;
-            add.setVisibility(View.GONE);
-        }
-
-        if (holder.magazineShareLeft != null) {
-            ImageView share = holder.magazineShareLeft;
-            share.setVisibility(View.GONE);
-        }
-
-        if (holder.articleFollowLeft != null) {
-            holder.articleFollowLeft.setVisibility(View.GONE);
-        }
-
-        if (holder.tvTopicNameLeft != null) {
-            holder.tvTopicNameLeft.setVisibility(View.GONE);
-        }
-
-    }
-
-    /**
-     * Populates the empty right article
-     *
-     * @param holder The view holder object
-     */
-    private void populateEmptyRightArticle(ViewHolder holder) {
-        if (holder.magazineLikeRight != null) {
-            holder.magazineLikeRight.setVisibility(View.GONE);
-        }
-
-        if (holder.articleTitleRight != null) {
-            holder.articleTitleRight.setVisibility(View.GONE);
-        }
-
-        if (holder.articlePhotoRight != null) {
-            ImageView photoView = holder.articlePhotoRight;
-            photoView.setVisibility(View.GONE);
-        }
-
-        if (holder.magazineAddRight != null) {
-            ImageView add = holder.magazineAddRight;
-            add.setVisibility(View.GONE);
-        }
-
-        if (holder.magazineShareRight != null) {
-            ImageView share = holder.magazineShareRight;
-            share.setVisibility(View.GONE);
-        }
-
-        if (holder.articleFollowRight != null) {
-            holder.articleFollowRight.setVisibility(View.GONE);
-        }
-
-        if (holder.tvTopicNameRight != null) {
-            holder.tvTopicNameRight.setVisibility(View.GONE);
-        }
+        mMagazinesServicesUsecase.displayLeftRightSummaryBasedOnDensity(holder.articleSummaryRight, data, context);
 
     }
 
@@ -1158,29 +820,29 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         private ImageView magazineShareTop;
 
-        private TextView articleTitleLeft;
+        public TextView articleTitleLeft;
 
-        private ImageView articlePhotoLeft;
+        public ImageView articlePhotoLeft;
 
-        private CheckBox magazineLikeLeft;
+        public CheckBox magazineLikeLeft;
 
-        private ImageView magazineAddLeft;
+        public ImageView magazineAddLeft;
 
-        private ImageView magazineShareLeft;
+        public ImageView magazineShareLeft;
 
-        private Button articleFollowLeft;
+        public Button articleFollowLeft;
 
-        private TextView articleTitleRight;
+        public TextView articleTitleRight;
 
-        private ImageView articlePhotoRight;
+        public ImageView articlePhotoRight;
 
-        private CheckBox magazineLikeRight;
+        public CheckBox magazineLikeRight;
 
-        private ImageView magazineAddRight;
+        public ImageView magazineAddRight;
 
-        private ImageView magazineShareRight;
+        public ImageView magazineShareRight;
 
-        private Button articleFollowRight;
+        public Button articleFollowRight;
 
         private ListView lvSuggestions;
 
@@ -1194,9 +856,9 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         private TextView tvTopicNameTop;
 
-        private TextView tvTopicNameLeft;
+        public TextView tvTopicNameLeft;
 
-        private TextView tvTopicNameRight;
+        public TextView tvTopicNameRight;
 
         private TextView articleSummaryLeft;
 
@@ -1344,56 +1006,4 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
             mToastFactory.newToast(context.getString(R.string.no_topics_selected), Toast.LENGTH_SHORT);
         }
     }
-
-    /**
-     * Updates the Follow and Like status of the articles
-     *
-     * @param data The articles object
-     * @param type Whether it is Follow or Like
-     */
-    public void autoReflectStatus(Articles data, String type, List<Articles> allArticles, Context context, MagazineArticlesBaseAdapter magazineArticlesBaseAdapter) {
-        if (data != null) {
-
-            if (Constants.FOLLOW_EVENT.equals(type)) {
-                for (Articles article : allArticles) {
-                    if (data.getId() != null && data.getId().equals(article.getId())) {
-                        article.setIsFollowing(data.getIsFollowing());
-                        article.setIsFollow(data.isFollow());
-                        if (!((BaseActivity) context).hasDestroyed()) {
-                            magazineArticlesBaseAdapter.notifyDataSetChanged();
-                        }
-                        break;
-                    }
-                }
-            } else {
-                allArticles = magazineArticlesBaseAdapter.getAllItems();
-                for (Articles article : allArticles) {
-                    if (data.getId() != null && data.getId().equals(article.getId())) {
-                        article.setLiked(data.getLiked());
-                        article.setIsChecked(data.isChecked());
-                        if (!((BaseActivity) context).hasDestroyed()) {
-                            magazineArticlesBaseAdapter.notifyDataSetChanged();
-                        }
-
-                        List<Articles> cachedMagazinesList = mMagazinesServicesUsecase.getCachedMagazinesList(context);
-
-                        if (cachedMagazinesList != null) {
-                            List<Articles> tempList = cachedMagazinesList;
-                            for (int i = 0; i < cachedMagazinesList.size(); i++) {
-                                if (data.getId().equals(tempList.get(i).getId())) {
-                                    tempList.get(i).setLiked(data.getLiked());
-                                }
-                            }
-                            cachedMagazinesList = tempList;
-
-                            mMagazinesServicesUsecase.saveCachedMagazinesList(cachedMagazinesList, context);
-                        }
-                        break;
-                    }
-
-                }
-            }
-        }
-    }
-
 }

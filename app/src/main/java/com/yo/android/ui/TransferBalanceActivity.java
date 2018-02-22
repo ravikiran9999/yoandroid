@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.yo.android.R;
 import com.yo.android.helpers.Settings;
 import com.yo.android.model.Contact;
@@ -39,6 +40,8 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 /**
  * This activity is used to transfer the balance to another Yo app user
@@ -191,13 +194,15 @@ public class TransferBalanceActivity extends BaseActivity {
             }
             imvProfilePic.setImageDrawable((Drawable) imvProfilePic.getTag(Settings.imageTag));
         } else {
-            Glide.with(this)
-                    .load("")
+            RequestOptions requestOptions = new RequestOptions()
                     .fitCenter()
                     .placeholder(R.drawable.dynamic_profile)
-                    .crossFade()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .error(R.drawable.dynamic_profile)
+                    .error(R.drawable.dynamic_profile);
+            Glide.with(this)
+                    .load("")
+                    .apply(requestOptions)
+                    //.transition(withCrossFade())
                     .into(imvProfilePic);
         }
     }

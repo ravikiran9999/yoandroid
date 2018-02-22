@@ -2,12 +2,9 @@ package com.yo.android.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,8 +26,7 @@ import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.RequestOptions;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.api.YoApi;
@@ -500,130 +496,17 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                 final ImageView blackMask = holder.blackMask;
                 final RelativeLayout rlFullImageOptions = holder.rlFullImageOptions;
                 final TextView textView1 = holder.articleShortDesc;
+                RequestOptions requestOptions = new RequestOptions()
+                        .placeholder(R.drawable.magazine_backdrop)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate();
                 Glide.with(context)
                         .load(data.getImage_filename())
                         //.asBitmap()
-                        .placeholder(R.drawable.magazine_backdrop)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .dontAnimate()
+                        .apply(requestOptions)
                         .into(photoView);
                 textView1.setText(Html.fromHtml(data.getSummary()));
                 articleTitle.setText(AphidLog.format("%s", data.getTitle()));
-
-                        /*.into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                                int screenWidth = DeviceDimensionsHelper.getDisplayWidth(context);
-                                Bitmap bmp = null;
-                                if (resource != null) {
-                                    try {
-                                        bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
-                                        Glide.with(context)
-                                                .load(data.getImage_filename())
-                                                .override(bmp.getWidth(), bmp.getHeight())
-                                                .placeholder(R.drawable.magazine_backdrop)
-                                                .crossFade()
-                                                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                                .dontAnimate()
-                                                .into(photoView);
-
-                                        int screenHeight = DeviceDimensionsHelper.getDisplayHeight(context);
-                                        //Log.d("BaseAdapter", "screenHeight " + screenHeight);
-                                       *//*int spaceForImage = screenHeight - 120;
-                                       Log.d("BaseAdapter", "spaceForImage" + spaceForImage);*//*
-                                        //Log.d("BaseAdapter", "bmp.getHeight()" + bmp.getHeight());
-                                        int total = bmp.getHeight() + 50;
-                                        //if(bmp.getHeight() >= spaceForImage-30) {
-                                        //Log.d("BaseAdapter", "total" + total);
-
-                                    if (screenHeight - total <= 250) { // Full screen article
-
-                                        Log.d("BaseAdapter", "Full screen image");
-                                        if (fullImageTitle != null && articleTitle != null && blackMask != null && rlFullImageOptions != null) {
-                                            fullImageTitle.setVisibility(View.VISIBLE);
-                                            fullImageTitle.setText(articleTitle.getText().toString());
-                                            blackMask.setVisibility(View.VISIBLE);
-                                            rlFullImageOptions.setVisibility(View.VISIBLE);
-
-                                        }
-                                    } else {
-                                        fullImageTitle.setVisibility(View.GONE);
-                                        blackMask.setVisibility(View.GONE);
-                                        rlFullImageOptions.setVisibility(View.GONE);
-                                        articleTitle
-                                                .setText(AphidLog.format("%s", data.getTitle()));
-                                        textView1.setMaxLines(1000);
-                                        textView1
-                                                .setText(Html.fromHtml(data.getSummary()));
-                                    }
-                                    }finally {
-                                        if(bmp != null) {
-                                            bmp.recycle();
-                                            bmp = null;
-                                        }
-                                    }
-                                    if(articleTitle != null) {
-                                        ViewTreeObserver vto1 = articleTitle.getViewTreeObserver();
-                                        vto1.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                                            private int maxLines = -1;
-
-                                            @Override
-                                            public void onGlobalLayout() {
-                                                //Log.d("BaseAdapter", "Second Title " + data.getTitle() + " max lines " + maxLines + " textView.getHeight() " + textView.getHeight() + " textView.getLineHeight() " + textView.getLineHeight());
-                                                if (maxLines < 0 && articleTitle.getHeight() > 0 && articleTitle.getLineHeight() > 0) {
-                                                    //Log.d("BaseAdapter", "Max lines inside if" + maxLines);
-                                                    int height = articleTitle.getHeight();
-                                                    int lineHeight = articleTitle.getLineHeight();
-                                                    maxLines = height / lineHeight;
-                                                    articleTitle.setMaxLines(maxLines);
-                                                    articleTitle.setEllipsize(TextUtils.TruncateAt.END);
-                                                    // Re-assign text to ensure ellipsize is performed correctly.
-                                                    // Ellipsize the article title
-                                                    articleTitle.setText(AphidLog.format("%s", data.getTitle()));
-                                                } else if(maxLines == -1 && articleTitle.getHeight() > 0) {
-                                                    //Log.d("BaseAdapter", "Max lines inside else if" + maxLines);
-                                                    articleTitle.setMaxLines(1);
-                                                    articleTitle.setEllipsize(TextUtils.TruncateAt.END);
-                                                    // Re-assign text to ensure ellipsize is performed correctly.
-                                                    // Ellipsize the article title
-                                                    articleTitle.setText(AphidLog.format("%s", data.getTitle()));
-                                                } else if(maxLines == -1 && articleTitle.getHeight() == 0) { // Full screen article
-                                                    // Log.d("BaseAdapter", "Full screen image after options cut or not shown");
-                                                    if (fullImageTitle != null && articleTitle != null && blackMask != null && rlFullImageOptions != null) {
-                                                        fullImageTitle.setVisibility(View.VISIBLE);
-                                                        fullImageTitle.setText(articleTitle.getText().toString());
-                                                        blackMask.setVisibility(View.VISIBLE);
-                                                        rlFullImageOptions.setVisibility(View.VISIBLE);
-
-                                                    }
-                                                }
-                                            }
-                                        });
-                                    }
-
-                                    if(textView1 != null) {
-                                        ViewTreeObserver vto = textView1.getViewTreeObserver();
-                                        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                                            private int maxLines = -1;
-
-                                            @Override
-                                            public void onGlobalLayout() {
-                                                if (maxLines < 0 && textView1.getHeight() > 0 && textView1.getLineHeight() > 0) {
-                                                    int height = textView1.getHeight();
-                                                    int lineHeight = textView1.getLineHeight();
-                                                    maxLines = height / lineHeight;
-                                                    textView1.setMaxLines(maxLines);
-                                                    textView1.setEllipsize(TextUtils.TruncateAt.END);
-                                                    // Re-assign text to ensure ellipsize is performed correctly.
-                                                    // Ellipsize the article description
-                                                    textView1.setText(Html.fromHtml(data.getSummary()));
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            }
-                        });*/
             } else {
                 photoView.setImageResource(R.drawable.magazine_backdrop);
             }

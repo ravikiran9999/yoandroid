@@ -5,6 +5,9 @@ import android.content.Context;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.adapters.NewSuggestionsAdapter;
 import com.yo.android.chat.ChatRefreshBackground;
+//import com.yo.android.database.RoomDao;
+import com.yo.android.database.ChatMessageDao;
+import com.yo.android.database.RoomDao;
 import com.yo.android.ui.MagazineActivity;
 import com.yo.android.ui.NewFollowMoreTopicsActivity;
 import com.yo.android.usecase.AddTopicsUsecase;
@@ -13,9 +16,13 @@ import com.yo.android.usecase.ChatNotificationUsecase;
 import com.yo.android.usecase.DenominationsUsecase;
 import com.yo.android.usecase.MagazinesFlipArticlesUsecase;
 import com.yo.android.usecase.MagazinesServicesUsecase;
+import com.yo.android.usecase.MyCollectionsDetailsUsecase;
 import com.yo.android.usecase.NotificationUsecase;
+import com.yo.android.usecase.OthersMagazineDetailsUsecase;
+import com.yo.android.usecase.OthersProfileLikedArticlesUsecase;
 import com.yo.android.usecase.PackageDenominationsUsecase;
 import com.yo.android.usecase.RandomTopicsUsecase;
+import com.yo.android.usecase.TopicDetailsUsecase;
 import com.yo.android.usecase.WebserviceUsecase;
 import com.yo.android.adapters.ChatRoomListAdapter;
 import com.yo.android.adapters.CountryCodeListAdapter;
@@ -107,6 +114,7 @@ import com.yo.android.ui.fragments.WebViewFragment;
 import com.yo.android.ui.fragments.findpeople.FindPeopleFragment;
 import com.yo.android.ui.fragments.findpeople.FollowersFragment;
 import com.yo.android.ui.fragments.findpeople.FollowingsFragment;
+import com.yo.android.usecase.WishListUsecase;
 import com.yo.android.util.FetchNewArticlesService;
 import com.yo.android.util.ReCreateService;
 import com.yo.android.util.Util;
@@ -261,6 +269,10 @@ import dagger.Provides;
                 DialerHelper.class,
                 ChatRefreshBackground.class,
 
+                //database
+                RoomDao.class,
+                ChatMessageDao.class,
+
                 //usecases
                 WebserviceUsecase.class,
                 DenominationsUsecase.class,
@@ -271,7 +283,12 @@ import dagger.Provides;
                 AppLogglyUsecase.class,
                 NotificationUsecase.class,
                 MagazinesServicesUsecase.class,
-                MagazinesFlipArticlesUsecase.class
+                MagazinesFlipArticlesUsecase.class,
+                MyCollectionsDetailsUsecase.class,
+                OthersProfileLikedArticlesUsecase.class,
+                OthersMagazineDetailsUsecase.class,
+                TopicDetailsUsecase.class,
+                WishListUsecase.class
         },
         includes = {
                 AppModule.class,

@@ -11,6 +11,7 @@ import android.view.View;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
 import com.yo.android.chat.firebase.ContactsSyncManager;
@@ -71,15 +72,17 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
                 holder.getOpponentName().setText(item.getFullName());
             }
             if (!TextUtils.isEmpty(item.getImage())) {
-                Glide.clear(holder.getChatRoomPic());
-                Glide.with(mContext).load(item.getImage())
+                RequestOptions requestOptions = new RequestOptions()
                         .placeholder(loadAvatarImage(item, holder, false))
                         .error(loadAvatarImage(item, holder, false))
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .dontAnimate()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .dontAnimate();
+                Glide.with(mContext).clear(holder.getChatRoomPic());
+                Glide.with(mContext).load(item.getImage())
+                        .apply(requestOptions)
                         .into(holder.getChatRoomPic());
             } else if (item.getFullName() != null && item.getFullName().length() >= 1 && !TextUtils.isDigitsOnly(item.getFullName())) {
-                Glide.clear(holder.getChatRoomPic());
+                Glide.with(mContext).clear(holder.getChatRoomPic());
                 if (Settings.isTitlePicEnabled) {
                     if (item.getFullName() != null && item.getFullName().length() >= 1) {
                         Drawable drawable = Util.showFirstLetter(mContext, item.getFullName());
@@ -105,12 +108,14 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
             }
 
             try {
-                Glide.with(mContext).load(item.getImage())
+                RequestOptions requestOptions = new RequestOptions()
                         .placeholder(loadAvatarImage(item, holder, true))
                         .priority(Priority.HIGH)
                         .dontAnimate()
                         .error(loadAvatarImage(item, holder, true))
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL);
+                Glide.with(mContext).load(item.getImage())
+                        .apply(requestOptions)
                         .into(holder.getChatRoomPic());
             } catch (Exception e) {
                 e.printStackTrace();
@@ -119,11 +124,13 @@ public class ChatRoomListAdapter extends AbstractBaseAdapter<Room, ChatRoomViewH
 
         {
             holder.getOpponentName().setText("");
-            Glide.with(context).load(loadAvatarImage(item, holder, false))
+            RequestOptions requestOptions = new RequestOptions()
                     .dontAnimate()
                     .placeholder(loadAvatarImage(item, holder, false))
                     .error(loadAvatarImage(item, holder, false))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL);
+            Glide.with(context).load(loadAvatarImage(item, holder, false))
+                    .apply(requestOptions)
                     .into(holder.getChatRoomPic());
         }
 

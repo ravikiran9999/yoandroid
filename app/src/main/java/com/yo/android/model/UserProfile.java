@@ -2,12 +2,13 @@ package com.yo.android.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+
 /**
  * Created by rdoddapaneni on 9/1/2016.
  */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UserProfile {
+public class UserProfile  {
 
     private String fullName;
     private String mobileNumber;
@@ -67,11 +68,23 @@ public class UserProfile {
         return image;
     }
 
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     public String getFirebaseRoomId() {
         return firebaseRoomId;
     }
 
+    public void setFirebaseRoomId(String firebaseRoomId) {
+        this.firebaseRoomId = firebaseRoomId;
+    }
+
     public String getNexgeUserName() {
         return nexgeUserName;
+    }
+
+    public void setNexgeUserName(String nexgeUserName) {
+        this.nexgeUserName = nexgeUserName;
     }
 }

@@ -16,9 +16,10 @@ import org.pjsip.pjsua2.pjmedia_type;
 import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsua_call_media_status;
 
-import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 public class MyCall extends Call {
+    public static final String TAG = MyCall.class.getSimpleName();
+
     public VideoWindow vidWin;
     public VideoPreview vidPrev;
 
