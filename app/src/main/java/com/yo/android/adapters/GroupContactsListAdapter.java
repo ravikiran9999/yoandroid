@@ -72,7 +72,7 @@ public class GroupContactsListAdapter extends AbstractBaseAdapter<Contact, Group
                 Glide.with(mContext)
                         .load(item.getImage())
                         .apply(requestOptions)
-                        .transition(withCrossFade())
+                        //.transition(withCrossFade())
                         .into(holder.getContactPic());
             } else {
                 if (item.getName() != null && item.getName().length() >= 1 && !TextUtils.isDigitsOnly(item.getName())) {

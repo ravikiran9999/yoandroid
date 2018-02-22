@@ -81,7 +81,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                                         Glide.with(mContext)
                                                 .load(item.getImage())
                                                 .apply(myOptions)
-                                                .transition(withCrossFade())
+                                                //.transition(withCrossFade())
                                                 .into(holder.getImageView());
                                     } finally {
                                         if (bmp != null) {
@@ -102,13 +102,13 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                     Glide.with(mContext)
                             .load(R.drawable.ic_default_magazine)
                             .apply(requestOptions)
-                            .transition(withCrossFade())
+                            //.transition(withCrossFade())
                             .into(holder.getImageView());
                 } else { // Image url is null and articles are present
                     Glide.with(mContext)
                             .load(R.drawable.magazine_backdrop)
                             .apply(requestOptions)
-                            .transition(withCrossFade())
+                            //.transition(withCrossFade())
                             .into(holder.getImageView());
                 }
 
@@ -149,7 +149,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                                         Glide.with(mContext)
                                                 .load(item.getImage())
                                                 .apply(myOptions)
-                                                .transition(withCrossFade())
+                                                //.transition(withCrossFade())
                                                 .into(holder.getImageView());
                                     } finally {
                                         if (bmp != null) {
@@ -171,12 +171,12 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                     Glide.with(mContext)
                             .load(R.drawable.ic_default_magazine)
                             .apply(myOptions)
-                            .transition(withCrossFade())
+                            //.transition(withCrossFade())
                             .into(holder.getImageView());
                 } else { // Image url is null and articles are present
                     Glide.with(mContext)
                             .load(R.drawable.magazine_backdrop)
-                            .transition(withCrossFade())
+                            //.transition(withCrossFade())
                             .into(holder.getImageView());
                 }
             }

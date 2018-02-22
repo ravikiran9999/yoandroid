@@ -91,7 +91,7 @@ public class OthersMagazinesAdapter extends BaseAdapter {
                 Glide.with(mContext)
                         .load(ownMagazineList.get(position).getImage())
                         .apply(requestOptions)
-                        .transition(withCrossFade())
+                        //.transition(withCrossFade())
                         .into(imageView);
 
             } else { // Image url is empty
@@ -101,12 +101,12 @@ public class OthersMagazinesAdapter extends BaseAdapter {
                 if(ownMagazineList.get(position).getArticlesCount() == 0) {
                     Glide.with(mContext)
                             .load(R.drawable.ic_default_magazine)
-                            .transition(withCrossFade())
+                            //.transition(withCrossFade())
                             .into(imageView);
                 } else {
                     Glide.with(mContext)
                             .load(R.drawable.magazine_backdrop)
-                            .transition(withCrossFade())
+                            //.transition(withCrossFade())
                             .into(imageView);
                 }
             }

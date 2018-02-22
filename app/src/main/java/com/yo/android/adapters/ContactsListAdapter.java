@@ -103,7 +103,7 @@ public class ContactsListAdapter extends AbstractBaseAdapter<Contact, Registered
             Glide.with(mContext)
                     .load(item.getImage())
                     .apply(requestOptions)
-                    .transition(withCrossFade())
+                    //.transition(withCrossFade())
                     .into(holder.getContactPic());
         } else if (Settings.isTitlePicEnabled) {
             Glide.with(mContext).clear(holder.getContactPic());

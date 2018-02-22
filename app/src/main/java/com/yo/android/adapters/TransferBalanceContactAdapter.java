@@ -79,7 +79,7 @@ public class TransferBalanceContactAdapter extends AbstractBaseAdapter<Contact, 
             Glide.with(mContext)
                     .load(item.getImage())
                     .apply(requestOptions)
-                    .transition(withCrossFade())
+                    //.transition(withCrossFade())
                     .into(holder.getContactPic());
         } else if (Settings.isTitlePicEnabled) {
             if (!TextUtils.isEmpty(item.getName()) && item.getName().length() >= 1) {
@@ -122,7 +122,7 @@ public class TransferBalanceContactAdapter extends AbstractBaseAdapter<Contact, 
             Glide.with(mContext)
                     .load("")
                     .apply(requestOptions)
-                    .transition(withCrossFade())
+                    //.transition(withCrossFade())
                     .into(holder.getContactPic());
         }
     }

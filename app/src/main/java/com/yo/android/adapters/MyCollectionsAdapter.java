@@ -19,14 +19,11 @@ import com.yo.android.helpers.MyCollectionsViewHolder;
 import com.yo.android.model.Collections;
 import com.yo.android.ui.BitmapScaler;
 import com.yo.android.ui.DeviceDimensionsHelper;
-import com.yo.android.ui.NewImageRenderTask;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
-
-//import com.squareup.picasso.Picasso;
 
 /**
  * Created by creatives on 7/9/2016.
@@ -59,12 +56,14 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
         if (position == 0 && "Follow more topics".equalsIgnoreCase(item.getName())) { // First position and is the Follow more topics text
             RequestOptions requestOptions = new RequestOptions()
                     .fitCenter()
+                    .placeholder(R.drawable.magazine_backdrop)
+                    .error(R.drawable.magazine_backdrop)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .dontAnimate();
             Glide.with(mContext)
                     .load(R.color.grey_divider)
                     .apply(requestOptions)
-                    .transition(withCrossFade())
+                    //.transition(withCrossFade())
                     .into(holder.getImageView());
 
         } else if (!TextUtils.isEmpty(item.getImage())) { // Image url is not empty
@@ -95,7 +94,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
                                     Glide.with(mContext)
                                             .load(item.getImage())
                                             .apply(options)
-                                            .transition(withCrossFade())
+                                            //.transition(withCrossFade())
                                             .into(holder.getImageView());
                                 } finally {
                                     if (bmp != null) {
@@ -116,7 +115,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
                 Glide.with(mContext)
                         .load(R.drawable.magazine_backdrop)
                         .apply(requestOptions)
-                        .transition(withCrossFade())
+                        //.transition(withCrossFade())
                         .into(holder.getImageView());
             } else {
                 Glide.with(mContext).clear(holder.getImageView());
@@ -127,7 +126,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
                 Glide.with(mContext)
                         .load(R.drawable.magazine_backdrop)
                         .apply(requestOptions)
-                        .transition(withCrossFade())
+                        //.transition(withCrossFade())
 
                         .into(holder.getImageView());
             }

@@ -17,9 +17,11 @@ import com.yo.android.chat.firebase.FireBaseAuthToken;
 import com.yo.android.chat.firebase.MyServiceConnection;
 import com.yo.android.model.ChatMessage;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -76,8 +78,8 @@ public class FireBaseHelper {
     // Generate firebase custom token
     public Firebase authWithCustomToken(final Context context, final String authToken, ApiCallback<Firebase> firebaseApiCallback) {
         mContext = context;
-        //Url from Firebase dashboard
-        if (getExpiry()!= 0 && getExpiry() >= 3600) {
+
+        if (getExpiry()) {
             return ref;
         } else {
             authData = ref.getAuth();
@@ -87,6 +89,7 @@ public class FireBaseHelper {
                 getTokenExpiry();
                 firebaseApiCallback.onResult(ref);
             } else if (authData == null && !TextUtils.isEmpty(authToken)) {
+                //Url from Firebase dashboard
                 ref.authWithCustomToken(authToken, new Firebase.AuthResultHandler() {
                     @Override
                     public void onAuthenticated(AuthData mAuthData) {
@@ -190,17 +193,17 @@ public class FireBaseHelper {
         }
     }
 
-    private long getExpiry() {
+    // Current date is before than firebase token expiry date
+    private boolean getExpiry() {
         try {
-            if (authTime != 0 && expiry != 0) {
-
-                int diffTime = expiry - authTime;
-                long expiryTime = System.currentTimeMillis() - diffTime;
-                return expiryTime;
+            if (expiry != 0) {
+                Date expiryDate = DateUtil.convertSecondsToDate(expiry);
+                Date currentDate = new Date();
+                return currentDate.before(expiryDate);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return 0;
+        return false;
     }
 }

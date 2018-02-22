@@ -16,8 +16,6 @@ import com.yo.android.model.Topics;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
-
 public class SubCategoryItemViewHolder extends YoViewHolder {
 
     @Bind(R.id.img_magazine)
@@ -56,13 +54,12 @@ public class SubCategoryItemViewHolder extends YoViewHolder {
     private void loadImage(String imageUrl) {
         RequestOptions requestOptions = new RequestOptions()
                 .placeholder(R.drawable.magazine_backdrop)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .dontAnimate();
+
         Glide.with(mContext)
                 .load(imageUrl)
-                //.override(bmp.getWidth(), bmp.getHeight())
                 .apply(requestOptions)
-                .transition(withCrossFade())
                 .into(tile);
     }
 }

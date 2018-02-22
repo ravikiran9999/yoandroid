@@ -170,7 +170,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                         Glide.with(this)
                                 .load(imgFile.getAbsoluteFile())
                                 .apply(requestOptions)
-                                .transition(withCrossFade())
+                                //.transition(withCrossFade())
                                 .into(groupImage);
 
                     } catch (Exception e) {
@@ -188,7 +188,7 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
                         Glide.with(this)
                                 .load(imgFile.getAbsoluteFile())
                                 .apply(requestOptions)
-                                .transition(withCrossFade())
+                                //.transition(withCrossFade())
                                 .into(groupImage);
 
                     } catch (Exception e) {
