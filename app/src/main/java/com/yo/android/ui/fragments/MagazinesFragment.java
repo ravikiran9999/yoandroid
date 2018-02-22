@@ -323,40 +323,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     }
                     categoriesList.clear();
                     categoriesList.addAll(response.body());
-                    //topicsNewList = topicsList;
-                /*if (TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.MAGAZINE_TAGS))) {
-                    List<String> followedTopicsIdsList = new ArrayList<String>();
-                    for (int k = 0; k < topicsList.size(); k++) {
-                        if (topicsList.get(k).isSelected()) {
-                            followedTopicsIdsList.add(String.valueOf(topicsList.get(k).getId()));
-                        }
-
-                    }
-                    preferenceEndPoint.saveStringPreference(Constants.MAGAZINE_TAGS, TextUtils.join(",", followedTopicsIdsList));
-                }*/
-
-                /*topicNamesList = new ArrayList<String>();
-                for (int i = 0; i < topicsList.size(); i++) {
-                    topicNamesList.add(topicsList.get(i).getName());
-                }
-                mAdapter.clear();
-                mAdapter.addAll(topicNamesList);
-                mAdapter.notifyDataSetChanged();
-                topicsNames = topicNamesList;
-                getActivity().invalidateOptionsMenu();
-                unSelectedTopics.clear();
-
-                for (int i = 0; i < categoriesList.size(); i++) {
-                    if (!topicsList.get(i).isSelected()) {
-                        unSelectedTopics.add(topicsList.get(i));
-                    }
-                }
-                */
                     newCategoriesList.addAll(categoriesList);
-
-/*                mAdapter.clear();
-                mAdapter.addAll(categoriesList);
-                mAdapter.notifyDataSetChanged();*/
                 } finally {
                     if (response != null && response.body() != null) {
                         try {
@@ -739,6 +706,5 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     @Override
     public void onOptionsMenuClosed(Menu menu) {
         super.onOptionsMenuClosed(menu);
-        Log.d("MagazinesFragment", "In onOptionsMenuClosed()");
     }
 }

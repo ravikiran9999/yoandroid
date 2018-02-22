@@ -202,7 +202,7 @@ public class TransferBalanceActivity extends BaseActivity {
             Glide.with(this)
                     .load("")
                     .apply(requestOptions)
-                    .transition(withCrossFade())
+                    //.transition(withCrossFade())
                     .into(imvProfilePic);
         }
     }

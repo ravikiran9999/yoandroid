@@ -265,7 +265,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 Glide.with(this)
                         .load(contact.getImage())
                         .apply(requestOptions)
-                        .transition(withCrossFade())
+                        //.transition(withCrossFade())
                         .into(profileImage);
                 membersList.setVisibility(View.VISIBLE);
                 profileNumber.setVisibility(View.GONE);
@@ -278,7 +278,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                     Glide.with(this)
                             .load(contact.getImage())
                             .apply(requestOptions)
-                            .transition(withCrossFade())
+                            //.transition(withCrossFade())
                             .into(profileImage);
                 } else if (mContact != null && !TextUtils.isDigitsOnly(mContact.getName())) {
                     Drawable drawable = Util.showFirstLetter(this, mContact.getName());
@@ -377,7 +377,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
                 Glide.with(this)
                         .load(image)
                         .apply(requestOptions)
-                        .transition(withCrossFade())
+                        //.transition(withCrossFade())
                         .into(profileImage);
             }
         }

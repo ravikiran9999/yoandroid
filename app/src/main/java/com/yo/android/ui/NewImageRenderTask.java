@@ -12,7 +12,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.yo.android.R;
-import com.yo.android.model.Articles;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -52,24 +51,8 @@ public  class NewImageRenderTask extends AsyncTask<Void, Void, Bitmap> {
         if (urlBitmap != null) {
             try {
             bmp = BitmapScaler.scaleToFitWidth(urlBitmap, screenWidth);
-            //BitmapCache.getInstance(mContext).addBitmapToMemoryCache(imageLink,bmp);
-            //articleImageView.setImageBitmap(bmp);
-            //byte[] byteArray = bitmapToByte(bmp);
             Drawable drawable = new BitmapDrawable(mContext.getResources(), bmp);
             if (!((BaseActivity) mContext).hasDestroyed()) {
-                /*Glide.with(mContext)
-                        .load(byteArray)
-                        .override(screenWidth, screenHeight)
-                        .placeholder()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .dontAnimate()
-                        .into(articleImageView);*/
-/*                Glide.with(mContext)
-                        .load("")
-                        .placeholder(drawable)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .dontAnimate()
-                        .into(articleImageView);*/
                 RequestOptions requestOptions = new RequestOptions()
                         .override(bmp.getWidth(), bmp.getHeight())
                         .placeholder(R.drawable.magazine_backdrop)
@@ -78,7 +61,7 @@ public  class NewImageRenderTask extends AsyncTask<Void, Void, Bitmap> {
                 Glide.with(mContext)
                         .load(imageLink)
                         .apply(requestOptions)
-                        .transition(withCrossFade())
+                        //.transition(withCrossFade())
                         .into(articleImageView);
             }
             }finally {

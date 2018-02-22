@@ -29,7 +29,6 @@ import com.yo.android.model.Popup;
 import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.model.dialer.OpponentDetails;
 import com.yo.android.pjsip.SipHelper;
-import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.TabsHeaderActivity;
 import com.yo.android.ui.fragments.DialerFragment;
 import com.yo.android.ui.fragments.InviteActivity;
@@ -40,10 +39,6 @@ import com.yo.dialer.DialerLogs;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
@@ -126,7 +121,7 @@ public class YODialogs {
                         .apply(requestOptions)
                         //Image size will be reduced 50%
                         .thumbnail(0.5f)
-                        .transition(withCrossFade())
+                        //.transition(withCrossFade())
                         .into(tvDialogImage);
             } else {
                 tvDialogImage.setVisibility(View.GONE);
@@ -283,12 +278,6 @@ public class YODialogs {
 
     private static void loadCurrentBalance(PreferenceEndPoint preferenceEndPoint, BalanceHelper mBalanceHelper, Context context, TextView txtBalance) {
         String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
-        // notification should be triggered from server
-        /*double val = Double.parseDouble(balance.trim());
-        if (val <= 2) {
-            Util.setBigStyleNotificationForBalance(context, "Credit", context.getString(R.string.low_balance), "Credit", "");
-            //Util.showLowBalanceNotification(context, preferenceEndPoint);
-        }*/
         if (mBalanceHelper != null) {
             if (mBalanceHelper.getCurrentBalance() != null) {
                 txtBalance.setText(String.format("%s", mBalanceHelper.getCurrentBalance()));

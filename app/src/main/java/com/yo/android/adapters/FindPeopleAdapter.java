@@ -108,7 +108,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
             Glide.with(mContext)
                     .load(item.getAvatar())
                     .apply(requestOptions)
-                    .transition(withCrossFade())
+                    //.transition(withCrossFade())
                     .into(holder.getImvFindPeoplePic());
         } else if (Settings.isTitlePicEnabled) { // Showing the first character of the name as the profile pic
             if (item.getFirst_name() != null && item.getFirst_name().length() >= 1) {

@@ -60,7 +60,7 @@ class NewImageCompress {
                     }
                 })
                 .apply(requestOptions)
-                .transition(withCrossFade())
+                //.transition(withCrossFade())
                 .into(imageView);
 
     }

@@ -139,7 +139,7 @@ public class ImageLoader {
                         }
                     })
                     .apply(requestOptions)
-                    .transition(withCrossFade())
+                    //.transition(withCrossFade())
                     .into(imageView);
         } catch (Exception e) {
             progressBar.setVisibility(View.GONE);

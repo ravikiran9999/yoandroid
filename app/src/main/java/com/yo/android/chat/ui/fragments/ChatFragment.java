@@ -265,10 +265,11 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 chatRoomListAdapter.addItems(sortedList(roomsList));
             }
 
-            if (arrayOfUsers != null && arrayOfUsers.size() > 0) {
+            /*if (arrayOfUsers != null && arrayOfUsers.size() > 0) {
                 ArrayList<Room> roomsSortedList = sortedList(arrayOfUsers);
                 chatRoomListAdapter.addChatRoomItems(roomsSortedList);
-            }
+            }*/
+
             mLocalBroadcastManager = LocalBroadcastManager.getInstance(activity);
             IntentFilter mIntentFilter = new IntentFilter();
             mIntentFilter.addAction(CallExtras.Actions.CHAT_GROUP_CREATED);
@@ -624,7 +625,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                                 roomDao.save(mRoom);
                             }
 
-                            if (activity != null) {
+                            /*if (activity != null) {
                                 activity.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -632,7 +633,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                                         chatRoomListAdapter.addChatRoomItems(roomsSortedList);
                                     }
                                 });
-                            }
+                            }*/
                         }
                     }
 
@@ -644,6 +645,16 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                 });
             }
 
+            if (activity != null && arrayOfUsers != null && arrayOfUsers.size() > 0) {
+                dismissProgressDialog();
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ArrayList<Room> roomsSortedList = sortedList(arrayOfUsers);
+                        chatRoomListAdapter.addChatRoomItems(roomsSortedList);
+                    }
+                });
+            }
         }
     }
 
@@ -723,7 +734,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
     private void showEmptyImage() {
         dismissProgressDialog();
-        if(chatRoomListAdapter.getCount() == 0) {
+        if (chatRoomListAdapter.getCount() == 0) {
             emptyImageView.setVisibility(View.VISIBLE);
         }
     }

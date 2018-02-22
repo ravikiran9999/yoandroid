@@ -64,7 +64,7 @@ public class InviteFriendsAdapter extends AbstractBaseAdapter<Contact, InviteFri
             Glide.with(mContext)
                     .load(item.getImage())
                     .apply(requestOptions)
-                    .transition(withCrossFade())
+                    //.transition(withCrossFade())
                     .into(holder.getContactPic());
         } else if (Settings.isTitlePicEnabled) {
             if (item.getName() != null && item.getName().length() >= 1) {

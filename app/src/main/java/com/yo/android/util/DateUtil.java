@@ -25,8 +25,7 @@ public class DateUtil {
     public final static String DATE_FORMAT1 = "yyyy-MM-dd HH:mm:ss";
     public final static String DATE_FORMAT8 = "MMM dd, yyyy";
     public final static String DATE_FORMAT9 = "MMM dd yyyy";
-
-
+    public final static String DATE_FORMAT = "EEEE, MMMM d, yyyy HH:mm";
 
     public static Date convertUtcToGmt(String time) {
         try {
@@ -42,11 +41,10 @@ public class DateUtil {
 
     public static String parseConvertUtcToGmt(String time) {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT1);
+            SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT1, Locale.getDefault());
             sdf.setTimeZone(TimeZone.getDefault());
             Date gmtTime = sdf.parse(time);
-            String timeStamp = DateUtils.getRelativeTimeSpanString(gmtTime.getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
-            return timeStamp;
+            return DateUtils.getRelativeTimeSpanString(gmtTime.getTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -172,4 +170,8 @@ public class DateUtil {
         return new SimpleDateFormat("hh:mm").format(new Date(time));
     }
 
+    public static Date convertSecondsToDate(int seconds) {
+        SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
+        return new Date(formatter.format(new Date(seconds * 1000L)));
+    }
 }

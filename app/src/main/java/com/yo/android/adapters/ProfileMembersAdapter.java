@@ -79,7 +79,7 @@ public class ProfileMembersAdapter extends AbstractBaseAdapter<GroupMembers, Pro
                 Glide.with(mContext)
                         .load(item.getUserProfile().getImage())
                         .apply(requestOptions)
-                        .transition(withCrossFade())
+                        //.transition(withCrossFade())
                         .into(holder.getImageView());
             } else if (fullName != null && fullName.length() >= 1 && !TextUtils.isDigitsOnly(fullName)) {
 
