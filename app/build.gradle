@@ -5,9 +5,6 @@ apply plugin: 'com.google.firebase.firebase-perf'
 // realm database
 apply plugin: 'realm-android'
 
-//apply plugin: 'android-apt'
-
-
 android {
     signingConfigs {
         devconfig {
@@ -35,8 +32,8 @@ android {
         applicationId "com.yowatsup"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 5
-        versionName "1.0.4.6"
+        versionCode 6
+        versionName "1.0.5"
 
         // annotationProcess issue in latest gradle
         javaCompileOptions {

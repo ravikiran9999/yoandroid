@@ -6,12 +6,9 @@ import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.api.ApiCallback;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Categories;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -42,7 +39,6 @@ public class AddTopicsUsecase {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.body() != null && response.code() == 200) {
-                    Log.i(TAG, "added topics" + response.body());
                     randomTopicsUsecase.getRandomTopics(new ApiCallback<List<Categories>>() {
 
                         @Override
