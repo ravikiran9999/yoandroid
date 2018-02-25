@@ -223,14 +223,8 @@ public class NewDailerActivity extends BaseActivity {
      * Loads the current balance
      */
     private void loadCurrentBalance() {
-        String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "2.0");
+        String balance = preferenceEndPoint.getStringPreference(Constants.CURRENT_BALANCE, "0.0");
         String[] balanceArray = balance.trim().split("");
-       /* double val = Double.parseDouble(balanceArray[balanceArray.length - 1]);
-        if (val <= 2) {
-            mLog.w(TAG, "Current balance is less than or equal to $2");
-            Util.setBigStyleNotificationForBalance(this, "Credit", getString(R.string.low_balance), "Credit", "");
-            //Util.showLowBalanceNotification(this, preferenceEndPoint);
-        }*/
         if (mBalanceHelper != null) {
             if (mBalanceHelper.getCurrentBalance() != null) {
                 //txtBalance.setText(String.format("%s %s", mBalanceHelper.getCurrencySymbol(), mBalanceHelper.getCurrentBalance()));

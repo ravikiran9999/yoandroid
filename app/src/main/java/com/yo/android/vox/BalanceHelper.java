@@ -79,14 +79,13 @@ public class BalanceHelper {
                             prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
                             prefs.saveStringPreference(Constants.SWITCH_BALANCE, switchBalance);
                             prefs.saveStringPreference(Constants.WALLET_BALANCE, walletBalance);
+
                             EventBus.getDefault().post(Constants.BALANCE_UPDATED_ACTION);
 
                         } catch (IllegalArgumentException e) {
                             mLog.w(TAG, "getCurrentBalance", e);
                         }
-                        /*String subscriberId = jsonObject.getString("Subscriber");
-                        prefs.saveStringPreference(Constants.SUBSCRIBER_ID, subscriberId);*/
-                        //mLog.i(TAG, "loadBalance: balance -  %s", balance);
+
                         if (callback != null) {
                             callback.onResponse(call, response);
                         }

@@ -458,4 +458,11 @@
 
     <string name="rooted_device_msg">This device is rooted , please install Yo app in non rooted device.</string>
     <string name="alert">Alert!</string>
+
+    <!--runtime permissions-->
+    <string name="permission_camera_rationale">Camera permission is needed to open the camera</string>
+
+    <!--open settings to enable runtime permissions-->
+    <string name="enable_camera_permission_settings">To capture photos, allow Yo! watsup access to your camera. Tap Settings > Permissions, and turn Camera on.</string>
+
 </resources>

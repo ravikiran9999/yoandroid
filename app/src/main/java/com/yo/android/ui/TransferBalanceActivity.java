@@ -134,7 +134,7 @@ public class TransferBalanceActivity extends BaseActivity {
             if (!TextUtils.isEmpty(mPhoneNumber.trim()) && phoneNumber.length() > 7) {
                 double val = mBalanceHelper.removeCurrencyCode(mTransferAmount);
                 if (val != 0) {
-                    if (mBalanceHelper.removeCurrencyCode(mBalanceHelper.getCurrentBalance()) > val) {
+                    if (val <= mBalanceHelper.removeCurrencyCode(mBalanceHelper.getCurrentBalance())) {
                         String tranferVal = decimalFormat(val);
                         showMessageDialog(tranferVal, mBalanceHelper.getCurrentBalance(), mPhoneNumber);
 

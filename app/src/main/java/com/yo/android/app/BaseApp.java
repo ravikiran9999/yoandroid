@@ -1,6 +1,7 @@
 package com.yo.android.app;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
@@ -91,9 +92,11 @@ public class BaseApp extends MultiDexApplication {
 
 
         // Fix for camera in nougat
-        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-        StrictMode.setVmPolicy(builder.build());
-        builder.detectFileUriExposure();
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
+            builder.detectFileUriExposure();
+        }
 
         /*StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
                 .detectAll()
