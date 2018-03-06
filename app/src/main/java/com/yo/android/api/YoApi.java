@@ -57,19 +57,9 @@ public class YoApi {
 
 
     public interface YoService {
-        //http://yoapp-dev.herokuapp.com/api/otp.json?phone_no=123456789
-        //country_code=91
         @FormUrlEncoded
         @POST("api/otp.json")
         Call<Response> loginUserAPI(@Field("phone_no") String phone_no, @Field("type") String type);
-
-        /*Call<Response> loginUserAPI(@Field("phone_no") String phone_no,
-                                    @Field("type") String type,
-                                    @Field("country_code") String country_code);*/
-
-        //http://yoapp-dev.herokuapp.com/oauth/token.json?client_id=83ade053e48c03568ab9f5c48884b8fb6fa0abb0ba5a0979da840417779e5c60
-        // &client_secret=1c1a8a358e287759f647285c847f2b95976993651e09d2d4523331f1f271ad49
-        // &grant_type=password&phone_no=123456789&otp=1234
 
         @FormUrlEncoded
         @POST("oauth/token.json")
@@ -87,8 +77,8 @@ public class YoApi {
         @GET("api/tags.json")
         Call<List<Topics>> tagsAPI(@Query("access_token") String access_token);
 
-        @GET("api/tags/current_user_articles.json")
-        Call<List<Articles>> getUserArticlesAPI(@Query("access_token") String access_token);
+        /*@GET("api/tags/current_user_articles.json")
+        Call<List<Articles>> getUserArticlesAPI(@Query("access_token") String access_token);*/
 
         //For Search
         @FormUrlEncoded
@@ -107,9 +97,6 @@ public class YoApi {
         @POST("/api/magzines.json")
         Call<OwnMagazine> createMagazinesAPI(@Field("access_token") String access_token, @Field("magzine[name]") String magzine_name, @Field("magzine[description]") String magzine_description, @Field("magzine[privacy]") String magzine_privacy);
 
-        @GET("api/articles.json")
-        Call<List<Articles>> getAllArticlesAPI(@Query("access_token") String access_token);
-
         @GET("api/collections.json")
         Call<List<Collections>> getCollectionsAPI(@Query("access_token") String access_token);
 
@@ -124,10 +111,6 @@ public class YoApi {
         @POST("api/tags/remove_tags.json")
         Call<ResponseBody> removeTopicsAPI(@Field("access_token") String access_token, @Field("tag_ids[]") List<String> tag_ids);
 
-        @FormUrlEncoded
-        @POST("/api/articles.json")
-        Call<Articles> addStoryMagazineAPI(@Field("access_token") String access_token, @Field("article[url]") String article_url, @Field("magzine_id") String magzine_id, @Field("tag") String tag);
-
         @GET("api/magzines/{magzine_id}.json")
         Call<MagazineArticles> getArticlesOfMagazineAPI(@Path("magzine_id") String magzine_id, @Query("access_token") String access_token);
 
@@ -137,10 +120,6 @@ public class YoApi {
 
         @DELETE("api/magzines/{magzine_id}.json")
         Call<ResponseBody> deleteMagazineAPI(@Path("magzine_id") String magzine_id, @Query("access_token") String access_token);
-
-        @FormUrlEncoded
-        @POST("api/user/contacts_sync.json")
-        Call<List<Contact>> syncContactsAPI(@Field("access_token") String access_token, @Field("user[contacts][]") List<Contact> user);
 
         @FormUrlEncoded
         @POST("api/user/contacts_sync_with_name.json")
@@ -158,7 +137,7 @@ public class YoApi {
         Call<List<Contact>> getContactsOnSearch(@Query("access_token") String access_token, @Query("is_from_balance_transfer") boolean is_from_balance_transfer);
 
         @FormUrlEncoded
-        @PUT("/api/magzines/{magzine_id}.json")
+        @POST("/api/magzines/{magzine_id}.json")
         Call<Response> addArticleMagazineApi(@Field("access_token") String access_token, @Path("magzine_id") String magzine_id, @Field("article_ids[]") List<String> articles);
 
         @GET("api/user.json")
@@ -178,9 +157,6 @@ public class YoApi {
 
         @GET("api/user/info.json")
         Call<UserProfileInfo> getUserInfo(@Query("access_token") String access_token);
-
-        // http://yoapp-dev.herokuapp.com/api/user/578090e7b45d200ebc3b8b99.json?
-        // access_token=2538a604f78a24170b6b37db15e4e782c1d1c2c0b65e89a67ce4315c2ad61c4e&user[first_name]=bhumi&user[last_name]=parimi&user[email]=email@example.com&user[phone_no]=123456789&user[avatar]=image-file
 
         @Multipart
         @PUT("/api/user/{user_id}.json")
@@ -203,6 +179,10 @@ public class YoApi {
         @FormUrlEncoded
         @POST("api/user/follow.json")
         Call<ResponseBody> followUsersAPI(@Field("access_token") String access_token, @Field("followed_id") String followed_id);
+
+        @FormUrlEncoded
+        @POST("api/user/unfollow.json")
+        Call<ResponseBody> unfollowUsersAPI(@Field("access_token") String access_token, @Field("followed_id") String followed_id);
 
         @GET("api/user/followings.json")
         Call<List<FindPeople>> getFollowingsAPI(@Query("access_token") String access_token);
@@ -231,20 +211,16 @@ public class YoApi {
         Call<ResponseBody> followArticleAPI(@Path("article_id") String article_id, @Field("access_token") String access_token);
 
         @FormUrlEncoded
-        @POST("api/magzines/{magzine_id}/follow.json")
-        Call<ResponseBody> followMagazineAPI(@Path("magzine_id") String magzine_id, @Field("access_token") String access_token);
-
-        @FormUrlEncoded
         @POST("api/articles/{article_id}/unfollow.json")
         Call<ResponseBody> unfollowArticleAPI(@Path("article_id") String article_id, @Field("access_token") String access_token);
 
         @FormUrlEncoded
-        @POST("api/magzines/{magzine_id}/unfollow.json")
-        Call<ResponseBody> unfollowMagazineAPI(@Path("magzine_id") String magzine_id, @Field("access_token") String access_token);
+        @POST("api/magzines/{magzine_id}/follow.json")
+        Call<ResponseBody> followMagazineAPI(@Path("magzine_id") String magzine_id, @Field("access_token") String access_token);
 
         @FormUrlEncoded
-        @POST("api/user/unfollow.json")
-        Call<ResponseBody> unfollowUsersAPI(@Field("access_token") String access_token, @Field("followed_id") String followed_id);
+        @POST("api/magzines/{magzine_id}/unfollow.json")
+        Call<ResponseBody> unfollowMagazineAPI(@Path("magzine_id") String magzine_id, @Field("access_token") String access_token);
 
         @FormUrlEncoded
         @POST("api/user/update_device_token.json")
@@ -262,6 +238,7 @@ public class YoApi {
         @GET("api/user/notifications.json")
         Call<List<Notification>> getNotifications(@Query("access_token") String access_token, @Query("req_type") String type, @Query("notification_ids") String notificationIds);
 
+        // need to combine with above api based on parameters : name, description and privacy
         @FormUrlEncoded
         @POST("api/articles.json")
         Call<Articles> postStoryMagazineAPI(@Field("access_token") String access_token, @Field("article[url]") String article_url, @Field("name") String name, @Field("description") String description, @Field("privacy") String privacy, @Field("magzine_id") String magzine_id, @Field("tag") String tag);
@@ -276,7 +253,6 @@ public class YoApi {
         @FormUrlEncoded
         @POST("/api/user/voucher_recharge.json")
         Call<Response> voucherRechargeAPI(@Field("access_token") String access_token, @Field("voucher_number") String voucher_number);
-
 
         @GET("/api/user/get_balance.json")
         Call<ResponseBody> executeBalanceAction(@Query("access_token") String access_token);
@@ -295,7 +271,6 @@ public class YoApi {
         Call<Response> balanceTransferAPI(@Field("access_token") String access_token, @Field("phone_no") String receiver_id, @Field("credit") String credit);
 
         @GET("api/user/receiver_search.json")
-        //Call<List<FindPeople>> searchInBalanceTransferContacts(@Query("access_token") String access_token, @Query("search_item") String search_item, @Query("page") int page, @Query("limit") int limit);
         Call<List<Contact>> searchInBalanceTransferContacts(@Query("access_token") String access_token, @Query("search_item") String search_item);
 
         @GET("api/user/{id}.json")
@@ -305,15 +280,13 @@ public class YoApi {
         @GET("api/articles/{article_id}.json")
         Call<Articles> getArticleInfo(@Path("article_id") String article_id, @Query("access_token") String access_token);
 
-
+        //TODO we can remove it
+        // old denominations
         @GET("api/denominations.json")
         Call<List<Denominations>> getDenominations(@Query("access_token") String access_token);
-        @FormUrlEncoded
-        @POST("/api/user/other_user_info.json")
-        Call<ResponseBody> getUserOtherInfo(@Field("vox_user_name") String vox_user_name);
 
-        @GET("api/articles/articles_with_pagination.json")
-        Call<List<Articles>> getArticlesWithPaginationAPI(@Query("access_token") String access_token, @Query("page") int page, @Query("limit") int limit);
+        /*@GET("api/articles/articles_with_pagination.json")
+        Call<List<Articles>> getArticlesWithPaginationAPI(@Query("access_token") String access_token, @Query("page") int page, @Query("limit") int limit);*/
 
         @FormUrlEncoded
         @POST("api/user/other_user_info.json")
@@ -330,9 +303,6 @@ public class YoApi {
         @FormUrlEncoded
         @POST("api/articles/dashboard.json")
         Call<LandingArticles> getDashboardArticlesAPI(@Field("access_token") String access_token, @Field("read_article_ids[]") List<String> read_article_ids, @Field("unread_article_ids[]") List<String> unread_article_ids, @Field("autorenwal_subscription") boolean autorenwal_subscription, @Field("autorenewal") boolean autorenewal);
-
-        @GET("api/categories.json")
-        Call<List<Categories>> categoriesAPI(@Query("access_token") String access_token);
 
         @GET("api/categories.json")
         Call<List<Categories>> categoriesAPI(@Query("access_token") String access_token, @Query("is_for_tiles") boolean tiles);

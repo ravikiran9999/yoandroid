@@ -38,7 +38,8 @@
                 android:layout_toStartOf="@+id/checkbox"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:textColor="@color/colorPrimary"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 tools:text="English" />

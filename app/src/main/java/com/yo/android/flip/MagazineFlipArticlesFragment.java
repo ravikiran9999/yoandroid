@@ -30,25 +30,20 @@ import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.helpers.MagazinePreferenceEndPoint;
 import com.yo.android.model.Articles;
-import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.NewFollowMoreTopicsActivity;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.usecase.AddTopicsUsecase;
 import com.yo.android.usecase.MagazinesFlipArticlesUsecase;
 import com.yo.android.usecase.MagazinesServicesUsecase;
-import com.yo.android.util.ArticlesComparator;
 import com.yo.android.util.Constants;
 import com.yo.android.util.MagazineDashboardHelper;
 import com.yo.android.util.YODialogs;
 
 import java.lang.reflect.Type;
 import java.net.UnknownHostException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -220,11 +215,11 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
             @Override
             public void onClick(View v) {
                 Intent intent;
-                if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                     intent = new Intent(getActivity(), FollowMoreTopicsActivity.class);
-                } else {
+                } else {*/
                     intent = new Intent(getActivity(), NewFollowMoreTopicsActivity.class);
-                }
+                //}
                 intent.putExtra("From", "Magazines");
                 startActivity(intent);
             }

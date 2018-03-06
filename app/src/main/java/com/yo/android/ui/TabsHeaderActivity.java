@@ -34,7 +34,6 @@ import com.yo.android.helpers.PopupHelper;
 import com.yo.android.model.Popup;
 import com.yo.android.receiver.NetworkChangeReceiver;
 import com.yo.android.typeface.CustomTypefaceSpan;
-import com.yo.android.ui.fragments.CreditAccountFragment;
 import com.yo.android.ui.fragments.NewCreditAccountFragment;
 import com.yo.android.ui.fragments.RechargeDetailsFragment;
 import com.yo.android.ui.fragments.SpendDetailsFragment;
@@ -189,11 +188,11 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
     private void setupViewPager(ViewPager viewPager) {
         adapter = new TabsPagerAdapter(getSupportFragmentManager());
         Fragment fragment;
-        if (!BuildConfig.NEW_YO_CREDIT_SCREEN) {
+        /*if (!BuildConfig.NEW_YO_CREDIT_SCREEN) {
             fragment = new CreditAccountFragment();
-        } else {
+        } else {*/
             fragment = new NewCreditAccountFragment();
-        }
+        //}
         if (getIntent().hasExtra(Constants.OPEN_ADD_BALANCE)) {
             Bundle bundle = new Bundle();
             bundle.putBoolean(Constants.OPEN_ADD_BALANCE, true);

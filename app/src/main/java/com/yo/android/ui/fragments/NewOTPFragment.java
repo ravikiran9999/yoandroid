@@ -1,10 +1,8 @@
 package com.yo.android.ui.fragments;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -12,7 +10,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -34,14 +31,12 @@ import com.yo.android.R;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.firebase.FireBaseAuthToken;
-import com.yo.android.chat.ui.LoginActivity;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.Articles;
 import com.yo.android.model.OTPResponse;
 import com.yo.android.model.Subscriber;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BottomTabsActivity;
-import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.NewFollowMoreTopicsActivity;
 import com.yo.android.ui.NewOTPActivity;
 import com.yo.android.ui.UpdateProfileActivity;
@@ -57,6 +52,9 @@ import java.util.Random;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -69,12 +67,10 @@ import retrofit2.Response;
 
 public class NewOTPFragment extends BaseFragment implements View.OnClickListener, View.OnFocusChangeListener, View.OnKeyListener, TextWatcher {
 
-    private TextView reSendTextBtn;
     private Handler mHandler = new Handler();
     private final static int MAX_DURATION = 60;
     private int duration = MAX_DURATION;
     private Handler dummyOTPHandler = new Handler();
-    private Button nextBtn;
     private String phoneNumber;
     @Inject
     YoApi.YoService yoService;
@@ -84,7 +80,14 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
     ConnectivityHelper mHelper;
     private int count = 0;
     private boolean otpReceived = false;
-    private TextView tvEnterOTP;
+
+    @Bind(R.id.tv_enter_otp)
+    TextView tvEnterOTP;
+    @Bind(R.id.tv_resend)
+    TextView reSendTextBtn;
+    @Bind(R.id.next_btn)
+    Button nextBtn;
+
     private Button btnOne;
     private Button btnTwo;
     private Button btnThree;
@@ -117,6 +120,15 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof Activity) {
+            activity = (Activity) context;
+        }
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
@@ -126,12 +138,10 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.new_otp_layout, container, false);
+        ButterKnife.bind(this, view);
 
         View gvKeypad = view.findViewById(R.id.gv_keypad);
         View llPin = view.findViewById(R.id.pin_content_layout);
-        reSendTextBtn = (TextView) view.findViewById(R.id.tv_resend);
-        tvEnterOTP = (TextView) view.findViewById(R.id.tv_enter_otp);
-        nextBtn = (Button) view.findViewById(R.id.next_btn);
         etOtp = (DigitsEditText) view.findViewById(R.id.et_otp);
 
         // View viewDigits = inflater.inflate(R.layout.otp_keypad, container, false);
@@ -141,37 +151,23 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
 
         tvEnterOTP.setText(getResources().getString(R.string.enter_the_code) + " " + phoneNumber);
 
-        nextBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /*if (nextBtn.getText()
-                        .equals(getString(R.string.next))) {
-                    if (getActivity() instanceof NewOTPActivity) {
-                        ((NewOTPActivity) getActivity()).callLoginService(phoneNumber);
-                        mHandler.post(runnable);
-                        generateDummyOTP();
-                    }
-
-                } else {*/
-                performNext();
-                //}
-            }
-        });
-
-        reSendTextBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if ("Resend".equalsIgnoreCase(reSendTextBtn.getText().toString())) {
-                    ((NewOTPActivity) getActivity()).callLoginService(phoneNumber);
-                    generateDummyOTP();
-                    mHandler.post(runnable);
-                }
-
-            }
-        });
         mHandler.post(runnable);
 
         return view;
+    }
+
+    @OnClick(R.id.next_btn)
+    public void nextButton() {
+        performNext();
+    }
+
+    @OnClick(R.id.tv_resend)
+    public void resendOtp() {
+        if ("Resend".equalsIgnoreCase(reSendTextBtn.getText().toString()) && getActivity() != null) {
+            ((NewOTPActivity) getActivity()).callLoginService(phoneNumber);
+            generateDummyOTP();
+            mHandler.post(runnable);
+        }
     }
 
     private void performNext() {
@@ -184,25 +180,16 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
         }
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        if(context instanceof Activity) {
-            activity = (Activity)context;
-        }
-    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ((NewOTPActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-        ((NewOTPActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         String title = getResources().getString(R.string.verify_phone_number);
 
-        ((NewOTPActivity) getActivity()).getSupportActionBar().setTitle(title);
+        ((NewOTPActivity) activity).getSupportActionBar().setHomeButtonEnabled(true);
+        ((NewOTPActivity) activity).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((NewOTPActivity) activity).getSupportActionBar().setTitle(title);
 
         generateDummyOTP();
     }
@@ -257,11 +244,11 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
                             mToastFactory.showToast(getActivity().getResources().getString(R.string.otp_failure));
                         }
                     }
-                }finally {
-                    if(response != null && response.body() != null) {
+                } finally {
+                    if (response != null && response.body() != null) {
                         try {
                             response = null;
-                        }catch (Exception e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -293,11 +280,11 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
                         preferenceEndPoint.saveStringPreference(Constants.VOX_USER_NAME, response.body().getNexge_subscriber_username());
                         preferenceEndPoint.saveStringPreference(Constants.PASSWORD, response.body().getNexge_subscriber_password());
                         finishAndNavigateToHome();
-                    }finally {
-                        if(response != null && response.body() != null) {
+                    } finally {
+                        if (response != null && response.body() != null) {
                             try {
                                 response = null;
-                            }catch (Exception e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
@@ -375,7 +362,7 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
             //TODO:Enable flag for Profile
             preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_PROFILE_SCREEN, true);
             preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
-            Intent intent = new Intent(getActivity(), UpdateProfileActivity.class);
+            Intent intent = new Intent(activity, UpdateProfileActivity.class);
             intent.putExtra(Constants.PHONE_NUMBER, phoneNumber);
             dismissProgressDialog();
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -390,17 +377,17 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
                     preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, true);
                     preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
                     preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN_AND_VERIFIED, true);
-                    if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
-                        if(activity == null) {
+                    /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                        if (activity == null) {
                             activity = getActivity();
                         }
                         intent = new Intent(activity, FollowMoreTopicsActivity.class);
-                    } else {
-                        if(activity == null) {
+                    } else {*/
+                        if (activity == null) {
                             activity = getActivity();
                         }
                         intent = new Intent(activity, NewFollowMoreTopicsActivity.class);
-                    }
+                    //}
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.putExtra("From", "UpdateProfileActivity");
                     startActivity(intent);
@@ -413,16 +400,16 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
             });
 
         } else {
-            startActivity(new Intent(getActivity(), BottomTabsActivity.class));
+            startActivity(new Intent(activity, BottomTabsActivity.class));
         }
         //Start Sip service
-        getActivity().startService(new Intent(getActivity(), YoSipService.class));
+        getActivity().startService(new Intent(activity, YoSipService.class));
 
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(VoipConstants.NEW_ACCOUNT_REGISTRATION);
-        getActivity().sendBroadcast(broadcastIntent);
+        activity.sendBroadcast(broadcastIntent);
 
-        getActivity().finish();
+        activity.finish();
         EventBus.getDefault().post(Constants.FINISH_LOGIN_ACTIVITY_ACTION);
     }
 
@@ -431,7 +418,7 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
             mLog.e("OTPFragment", "onEventMainThread: otp is already received!");
             return;
         }
-        if (!isAdded() || getActivity() == null) {
+        if (!isAdded() || activity == null) {
             mLog.e("OTPFragment", "onEventMainThread: activity is already destroyed");
             return;
         }
@@ -639,7 +626,7 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
         if (editText == null)
             return;
 
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Service.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
     }
 
@@ -871,7 +858,7 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
         if (editText == null)
             return;
 
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Service.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Service.INPUT_METHOD_SERVICE);
         imm.showSoftInput(editText, 0);
     }
 

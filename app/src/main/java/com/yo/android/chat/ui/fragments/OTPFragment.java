@@ -32,7 +32,6 @@ import com.yo.android.model.OTPResponse;
 import com.yo.android.model.Subscriber;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BottomTabsActivity;
-import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.NewFollowMoreTopicsActivity;
 import com.yo.android.ui.UpdateProfileActivity;
 import com.yo.android.util.Constants;
@@ -355,11 +354,11 @@ public class OTPFragment extends BaseFragment {
             preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
             preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN_AND_VERIFIED, true);
             Intent intent;
-            if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+            /*if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                 intent = new Intent(getActivity(), FollowMoreTopicsActivity.class);
-            } else {
+            } else {*/
                 intent = new Intent(getActivity(), NewFollowMoreTopicsActivity.class);
-            }
+            //}
 
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("From", "UpdateProfileActivity");

@@ -12,6 +12,8 @@ import com.yo.android.model.Categories;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO delete it
+
 /**
  * Created by creatives on 12/20/2016.
  */

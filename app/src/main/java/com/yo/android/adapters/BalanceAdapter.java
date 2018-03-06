@@ -12,7 +12,6 @@ import com.yo.android.R;
 import com.yo.android.helpers.BalanceViewHolder;
 import com.yo.android.helpers.DenominationViewHolder;
 import com.yo.android.helpers.EmptyViewHolder;
-import com.yo.android.helpers.ItemPackageViewHolder;
 import com.yo.android.helpers.SeperatorViewHolder;
 import com.yo.android.model.MoreData;
 

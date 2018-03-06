@@ -13,9 +13,7 @@ import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.model.Categories;
 import com.yo.android.model.Topics;
-import com.yo.android.sectionheaders.CategorizedList;
 import com.yo.android.sectionheaders.NewCategorizedList;
-import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.NewFollowMoreTopicsActivity;
 
 import java.util.ArrayList;

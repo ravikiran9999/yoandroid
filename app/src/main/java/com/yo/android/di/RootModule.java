@@ -64,7 +64,6 @@ import com.yo.android.ui.CreatedMagazineDetailActivity;
 import com.yo.android.ui.DialerActivity;
 import com.yo.android.ui.EditMagazineActivity;
 import com.yo.android.ui.FindPeopleActivity;
-import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.FollowersActivity;
 import com.yo.android.ui.FollowingsActivity;
 import com.yo.android.ui.LoadMagazineActivity;
@@ -164,7 +163,6 @@ import dagger.Provides;
                 ChatActivity.class,
                 AppContactsActivity.class,
                 NewMagazineActivity.class,
-                FollowMoreTopicsActivity.class,
                 CreateGroupActivity.class,
                 CountryListActivity.class,
                 CreateMagazineActivity.class,

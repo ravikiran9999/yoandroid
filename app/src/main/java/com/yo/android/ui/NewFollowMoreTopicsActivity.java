@@ -273,7 +273,8 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
                     //TODO:Disalbe flag for Follow more
                     preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, false);
                     String accessToken = preferenceEndPoint.getStringPreference("access_token");
-                    yoService.getArticlesWithPaginationAPI(accessToken, 1, 200);
+                    // discussed with ingrid, and commenting it, as we are not using it
+                    //yoService.getArticlesWithPaginationAPI(accessToken, 1, 200);
                     navigation();
                 } else {
                     Intent intent = new Intent();

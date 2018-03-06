@@ -9,29 +9,25 @@ import android.view.View;
 
 import com.cunoraz.tagview.Tag;
 import com.cunoraz.tagview.TagView;
-import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.model.Categories;
-import com.yo.android.model.Collections;
 import com.yo.android.model.Topics;
 import com.yo.android.sectionheaders.CategorizedList;
-import com.yo.android.sectionheaders.CategoryAdapter;
-import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.NewFollowMoreTopicsActivity;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+//TODO delete it
 /**
  * Created by creatives on 12/21/2016.
  */
 public class TagLoader extends AsyncTask<Void, TagSelected, HashMap<String, ArrayList<Tag>>> {
 
     @NonNull
-    private final List<Categories> dummyTopicsList;
+    private List<Categories> dummyTopicsList;
     private TagView tagGroup;
     private ArrayList<Tag> initialTags;
     private List<Categories> topicsList;
@@ -39,9 +35,9 @@ public class TagLoader extends AsyncTask<Void, TagSelected, HashMap<String, Arra
     private CategorizedList categorisedList;
     private LayoutInflater layoutInflater;
     private HashMap<String, ArrayList<Tag>> categoriesHashMap;
-    FollowMoreTopicsActivity.TagsLoader tagsLoader;
+    //FollowMoreTopicsActivity.TagsLoader tagsLoader;
 
-    public TagLoader(Context context, FollowMoreTopicsActivity.TagsLoader tagsLoader, List<Categories> topics, TagView tagGroup, ArrayList<Tag> initialTags, CategorizedList categorisedList) {
+    /*public TagLoader(Context context, FollowMoreTopicsActivity.TagsLoader tagsLoader, List<Categories> topics, TagView tagGroup, ArrayList<Tag> initialTags, CategorizedList categorisedList) {
         this.dummyTopicsList = new ArrayList<>(topics);
         this.tagGroup = tagGroup;
         this.initialTags = initialTags;
@@ -49,7 +45,7 @@ public class TagLoader extends AsyncTask<Void, TagSelected, HashMap<String, Arra
         this.context = context;
         this.categorisedList = categorisedList;
         this.layoutInflater = LayoutInflater.from(context);
-    }
+    }*/
 
     @Override
     protected void onPreExecute() {
@@ -69,15 +65,15 @@ public class TagLoader extends AsyncTask<Void, TagSelected, HashMap<String, Arra
             for (Categories categories : topicsList) {
                 initialTags = new ArrayList<>();
                 for (Topics topics : categories.getTags()) {
-                    if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                    /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                         final TagSelected tag = ((FollowMoreTopicsActivity) context).prepareTag(topics);
                         initialTags.add(tag);
                         ((FollowMoreTopicsActivity) context).initialTags.add(tag);
-                    } else {
+                    } else {*/
                         final TagSelected tag = ((NewFollowMoreTopicsActivity) context).prepareTag(topics);
                         initialTags.add(tag);
                         ((NewFollowMoreTopicsActivity) context).initialTags.add(tag);
-                    }
+                    //}
                 }
                 //ArrayList<Tag> cacheTags = new ArrayList<>(initialTags);
                 java.util.Collections.sort(initialTags, new Comparator<Tag>() {
@@ -105,7 +101,7 @@ public class TagLoader extends AsyncTask<Void, TagSelected, HashMap<String, Arra
     protected void onPostExecute(final HashMap<String, ArrayList<Tag>> tagSelected) {
         super.onPostExecute(tagSelected);
 
-        tagsLoader.loaded();
+        //tagsLoader.loaded();
         if (tagGroup != null) {
             tagGroup.setVisibility(View.VISIBLE);
         }
@@ -131,21 +127,21 @@ public class TagLoader extends AsyncTask<Void, TagSelected, HashMap<String, Arra
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+            /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                 ((FollowMoreTopicsActivity) context).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         ((FollowMoreTopicsActivity) context).dismissProgressDialog();
                     }
                 });
-            } else {
+            } else {*/
                 ((NewFollowMoreTopicsActivity) context).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         ((NewFollowMoreTopicsActivity) context).dismissProgressDialog();
                     }
                 });
-            }
+            //}
 
         }
     };
