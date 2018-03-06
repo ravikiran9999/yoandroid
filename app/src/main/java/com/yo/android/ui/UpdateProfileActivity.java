@@ -1,14 +1,24 @@
 package com.yo.android.ui;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -37,6 +47,9 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -51,64 +64,43 @@ import retrofit2.Response;
 public class UpdateProfileActivity extends BaseActivity {
     private static final String USER_NAME_REGX = "^[a-zA-Z0-9-_ ]*$";
     private static final String TAG = UpdateProfileActivity.class.getSimpleName();
+    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 101;
 
-    private EditText username;
-    private TextView mobileNum;
-    private TextView addPhoto;
-    private ImageView profileImage;
+    @Bind(R.id.profile_layout)
+    View mLayout;
+    @Bind(R.id.user_name)
+    EditText username;
+    @Bind(R.id.mobile_number)
+    TextView mobileNum;
+    @Bind(R.id.add_photo)
+    TextView addPhoto;
+    @Bind(R.id.profile_pic)
+    ImageView profileImage;
+    @Bind(R.id.next_btn)
+    Button nextBtn;
 
-
-    private Button nextBtn;
     @Inject
     ToastFactory toastFactory;
     @Inject
     ImagePickHelper cameraIntent;
-    private String mobileNumberTxt;
-    File imgFile;
     @Inject
     ConnectivityHelper mHelper;
+
+    File imgFile;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile_screen);
+        ButterKnife.bind(this);
 
         setupToolbar();
-        initializeViews();
         updateDeviceToken();
         cameraIntent.setActivity(this);
 
-        mobileNumberTxt = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
+        String mobileNumberTxt = preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER);
         mobileNum.setText(mobileNumberTxt);
-
-
-        addPhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (UpdateProfileActivity.this != null) {
-                    Util.hideKeyboard(UpdateProfileActivity.this, getCurrentFocus());
-                }
-                cameraIntent.showDialog();
-            }
-        });
-        profileImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (UpdateProfileActivity.this != null) {
-                    Util.hideKeyboard(UpdateProfileActivity.this, getCurrentFocus());
-                }
-                cameraIntent.showDialog();
-            }
-        });
-
-        nextBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                performActionNext();
-
-            }
-        });
 
         username.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
@@ -121,6 +113,23 @@ public class UpdateProfileActivity extends BaseActivity {
                 return false;
             }
         });
+    }
+
+    @OnClick(R.id.add_photo)
+    public void addPhoto() {
+        Util.hideKeyboard(UpdateProfileActivity.this, getCurrentFocus());
+        checkForPermissions();
+    }
+
+    @OnClick(R.id.profile_pic)
+    public void addProfilePic() {
+        Util.hideKeyboard(UpdateProfileActivity.this, getCurrentFocus());
+        checkForPermissions();
+    }
+
+    @OnClick(R.id.next_btn)
+    public void next() {
+        performActionNext();
     }
 
     private void performActionNext() {
@@ -136,14 +145,6 @@ public class UpdateProfileActivity extends BaseActivity {
         }
     }
 
-
-    private void initializeViews() {
-        username = (EditText) findViewById(R.id.user_name);
-        mobileNum = (TextView) findViewById(R.id.mobile_number);
-        addPhoto = (TextView) findViewById(R.id.add_photo);
-        profileImage = (ImageView) findViewById(R.id.profile_pic);
-        nextBtn = (Button) findViewById(R.id.next_btn);
-    }
 
     private void setupToolbar() {
         getSupportActionBar().setHomeButtonEnabled(false);
@@ -186,7 +187,7 @@ public class UpdateProfileActivity extends BaseActivity {
                     try {
                         bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                         if (imagePath != null) {
-                            if(this != null) {
+                            if (this != null) {
                                 Helper.setSelectedImage(this, imagePath, true, bitmap, true);
                             }
                         }
@@ -238,10 +239,10 @@ public class UpdateProfileActivity extends BaseActivity {
                         preferenceEndPoint.saveBooleanPreference(Constants.USER_TYPE, response.body().isRepresentative());
                         uploadFile(imgFile);
                     } finally {
-                        if(response != null && response.body() != null) {
+                        if (response != null && response.body() != null) {
                             try {
                                 response = null;
-                            }catch (Exception e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
@@ -299,16 +300,16 @@ public class UpdateProfileActivity extends BaseActivity {
                         preferenceEndPoint.saveStringPreference(Constants.USER_NAME, response.body().getFirstName());
                         Util.saveUserDetails(response, preferenceEndPoint);
                     } finally {
-                        if(response != null && response.body() != null) {
+                        if (response != null && response.body() != null) {
                             try {
                                 response = null;
-                            }catch (Exception e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
                     }
                     Intent intent;
-                    if(!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                    if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                         intent = new Intent(UpdateProfileActivity.this, FollowMoreTopicsActivity.class);
                     } else {
                         intent = new Intent(UpdateProfileActivity.this, NewFollowMoreTopicsActivity.class);
@@ -327,10 +328,10 @@ public class UpdateProfileActivity extends BaseActivity {
                             toastFactory.showToast(getResources().getString(R.string.profile_failed));
                         }
                     } finally {
-                        if(response != null && response.body() != null) {
+                        if (response != null && response.body() != null) {
                             try {
                                 response = null;
-                            }catch (Exception e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
@@ -341,7 +342,7 @@ public class UpdateProfileActivity extends BaseActivity {
             @Override
             public void onFailure(Call<UserProfileInfo> call, Throwable t) {
                 dismissProgressDialog();
-                toastFactory.showToast(getResources().getString(R.string.profile_failed));
+                toastFactory.showToast(R.string.profile_failed);
             }
         });
     }
@@ -374,4 +375,75 @@ public class UpdateProfileActivity extends BaseActivity {
             });
         }
     }
+
+    private void checkForPermissions() {
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            requestPermission();
+        } else {
+            // Permission has already been granted
+            cameraIntent.showDialog();
+        }
+    }
+
+    private void requestPermission() {
+        // Should we show an explanation?
+        /*if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+
+            Snackbar.make(mLayout, R.string.permission_camera_rationale,
+                    Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ActivityCompat.requestPermissions(UpdateProfileActivity.this,
+                                    new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                            Manifest.permission.READ_EXTERNAL_STORAGE},
+                                    MY_PERMISSIONS_REQUEST_CAMERA);
+                        }
+                    })
+                    .show();
+
+        } else {*/
+
+            // No explanation needed; request the permission
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_CAMERA);
+
+        //}
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_CAMERA: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // camera-related task you need to do.
+                    cameraIntent.showDialog();
+
+                } else if(grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    showMessageDialog();
+
+                }
+                return;
+            }
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+
+        }
+    }
+
 }
+

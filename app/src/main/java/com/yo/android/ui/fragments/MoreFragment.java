@@ -1,21 +1,23 @@
 package com.yo.android.ui.fragments;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -33,7 +35,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.flurry.android.FlurryAgent;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.preferences.PreferenceEndPoint;
@@ -45,14 +46,12 @@ import com.yo.android.api.YoApi;
 import com.yo.android.calllogs.CallLog;
 import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.ui.LoginActivity;
-import com.yo.android.chat.ui.NonScrollListView;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.database.ChatMessageDao;
 import com.yo.android.database.RoomDao;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.helpers.Helper;
 import com.yo.android.helpers.PopupHelper;
-import com.yo.android.model.ChatMessage;
 import com.yo.android.model.MoreData;
 import com.yo.android.model.Popup;
 import com.yo.android.model.UserProfileInfo;
@@ -91,7 +90,6 @@ import javax.inject.Named;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.realm.Realm;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -106,6 +104,8 @@ import static com.yo.dialer.googlesheet.UploadCallDetails.PREF_ACCOUNT_NAME;
  * A simple {@link Fragment} subclass.
  */
 public class MoreFragment extends BaseFragment implements AdapterView.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener, BalanceAdapter.MoreItemListener {
+
+    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 101;
 
     private MoreListAdapter menuAdapter;
     private BalanceAdapter balanceAdapter;
@@ -139,8 +139,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
 
     @Bind(R.id.profile_pic)
     CircleImageView profilePic;
+    @Bind(R.id.more_layout)
+    View mLayout;
 
     FrameLayout changePhoto;
+
     private boolean isAlreadyShown;
     private TextView profileStatus;
     private boolean isSharedPreferenceShown;
@@ -155,6 +158,8 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //don't want to show any menu options
+        setHasOptionsMenu(false);
         setRetainInstance(true);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 
@@ -203,7 +208,8 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         changePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cameraIntent.showDialog();
+                checkForPermissions();
+                //cameraIntent.showDialog();
             }
         });
 
@@ -211,6 +217,11 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         loadImage();
         callOtherInfoApi();
     }
+
+    /*@OnClick(R.id.add_photo)
+    public void addPhoto() {
+        checkForPermissions();
+    }*/
 
     private void initCircularView() {
         profilePic.setBorderColor(getResources().getColor(R.color.white));
@@ -592,11 +603,6 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.clear();
-    }
-
-    @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(Constants.CURRENT_BALANCE)) {
             String balance = mBalanceHelper.getCurrentBalance();
@@ -817,4 +823,27 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         preferenceEndPoint.removePreference(PREF_ACCOUNT_NAME);
 
     }
+
+    // Runtime permissions for camera and storage
+    private void checkForPermissions() {
+
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            requestPermission();
+        } else {
+            // Permission has already been granted
+            cameraIntent.showDialog();
+        }
+    }
+
+    private void requestPermission() {
+        requestPermissions(
+                new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE},
+                MY_PERMISSIONS_REQUEST_CAMERA);
+
+    }
+
 }

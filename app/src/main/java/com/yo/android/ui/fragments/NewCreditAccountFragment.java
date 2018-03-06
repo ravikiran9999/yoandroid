@@ -30,6 +30,7 @@ import com.yo.android.model.TransferBalanceDenomination;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.TransferBalanceActivity;
 import com.yo.android.usecase.PackageDenominationsUsecase;
+import com.yo.android.usecase.WebserviceUsecase;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
@@ -86,6 +87,8 @@ public class NewCreditAccountFragment extends BaseFragment {
     YoApi.YoService yoService;
     @Inject
     BalanceHelper mBalanceHelper;
+    @Inject
+    WebserviceUsecase webserviceUsecase;
 
     View view;
     EditText voucherNumberEdit;
@@ -375,6 +378,10 @@ public class NewCreditAccountFragment extends BaseFragment {
                                                 case 200:
                                                     mToastFactory.showToast(R.string.voucher_recharge_successful);
                                                     alertDialog.dismiss();
+
+                                                    // check app lock status
+                                                    webserviceUsecase.appStatus(null);
+
                                                     mBalanceHelper.checkBalance(new Callback<ResponseBody>() {
                                                         @Override
                                                         public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
@@ -592,7 +599,7 @@ public class NewCreditAccountFragment extends BaseFragment {
                     if (!TextUtils.isEmpty(enteredAmount) && currencySymbol != null && !enteredAmount.contains(currencySymbol) && isValid(enteredAmount)) {
                         if (!isGreaterThanHundred(enteredAmount)) {
                             double val = mBalanceHelper.removeCurrencyCode(enteredAmount);
-                            if (val < mBalanceHelper.removeCurrencyCode(availableBalance)) {
+                            if (val <= mBalanceHelper.removeCurrencyCode(availableBalance)) {
                                 if (enteredAmount.startsWith(".")) {
                                     enteredAmount = "0" + enteredAmount;
                                 }
