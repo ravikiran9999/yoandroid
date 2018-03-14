@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,7 +16,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.BuildConfig;
@@ -219,11 +217,11 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         } else {
             if (position == 0 && "Follow more topics".equalsIgnoreCase(collections.getName())) {
                 Intent intent;
-                if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                     intent = new Intent(MyCollections.this, FollowMoreTopicsActivity.class);
-                } else {
+                } else {*/
                     intent = new Intent(MyCollections.this, NewFollowMoreTopicsActivity.class);
-                }
+                //}
                 intent.putExtra("From", "MyCollections");
                 startActivityForResult(intent, 2);
             } else {

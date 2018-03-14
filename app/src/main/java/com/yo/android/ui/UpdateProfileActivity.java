@@ -309,11 +309,11 @@ public class UpdateProfileActivity extends BaseActivity {
                         }
                     }
                     Intent intent;
-                    if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                    /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                         intent = new Intent(UpdateProfileActivity.this, FollowMoreTopicsActivity.class);
-                    } else {
+                    } else {*/
                         intent = new Intent(UpdateProfileActivity.this, NewFollowMoreTopicsActivity.class);
-                    }
+                    //}
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.putExtra("From", "UpdateProfileActivity");
                     startActivity(intent);
@@ -390,24 +390,6 @@ public class UpdateProfileActivity extends BaseActivity {
     }
 
     private void requestPermission() {
-        // Should we show an explanation?
-        /*if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
-
-            Snackbar.make(mLayout, R.string.permission_camera_rationale,
-                    Snackbar.LENGTH_INDEFINITE)
-                    .setAction(R.string.ok, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            ActivityCompat.requestPermissions(UpdateProfileActivity.this,
-                                    new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                            Manifest.permission.READ_EXTERNAL_STORAGE},
-                                    MY_PERMISSIONS_REQUEST_CAMERA);
-                        }
-                    })
-                    .show();
-
-        } else {*/
-
             // No explanation needed; request the permission
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,

@@ -31,7 +31,6 @@ import com.yo.android.model.Articles;
 import com.yo.android.model.Categories;
 import com.yo.android.model.Topics;
 import com.yo.android.ui.BaseActivity;
-import com.yo.android.ui.FollowMoreTopicsActivity;
 import com.yo.android.ui.NewFollowMoreTopicsActivity;
 import com.yo.android.ui.fragments.MagazinesFragment;
 import com.yo.android.usecase.AddTopicsUsecase;
@@ -126,11 +125,11 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 layout = inflater.inflate(R.layout.magazine_landing_layout, null);
             } else if (type == 2) {
                 // Inflate the layout with suggestions page
-                if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                     layout = inflater.inflate(R.layout.landing_suggestions_page, null);
-                } else {
+                } else {*/
                     layout = inflater.inflate(R.layout.new_landing_suggestions_page, null);
-                }
+                //}
             } else {
                 // Inflate the layout with single article
                 layout = inflater.inflate(R.layout.magazine_flip_layout, null);
@@ -189,13 +188,13 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
             holder.articleFollowRight = UI.findViewById(layout, R.id.imv_magazine_follow_right);
 
-            if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+            /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                 holder.lvSuggestions = (ListView) layout.findViewById(R.id.lv_suggestions);
-            } else {
+            } else {*/
                 holder.rvSuggestions = (RecyclerView) layout.findViewById(R.id.rv_suggestions);
                 holder.doneButton = (Button) layout.findViewById(R.id.btn_done);
                 holder.noSuggestionsTextView = (TextView) layout.findViewById(R.id.no_suggestions);
-            }
+            //}
             holder.tvFollowMoreTopics = UI.findViewById(layout, R.id.tv_follow_more_topics);
 
             holder.tvTopicName = UI.findViewById(layout, R.id.imv_magazine_topic);
@@ -301,7 +300,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         } else {
             mMagazinesServicesUsecase.populateEmptyRightArticle(holder);
         }
-        if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+        /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
             if (allArticles.size() >= 4 && MagazinesFragment.unSelectedTopics.size() > 0) {
                 if (holder.lvSuggestions != null) {
                     SuggestionsAdapter suggestionsAdapter = new SuggestionsAdapter(context, magazineFlipArticlesFragment);
@@ -319,7 +318,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                     }
                 }
             }
-        } else {
+        } else {*/
 
             if (allArticles.size() >= 4 && MagazinesFragment.newCategoriesList.size() > 0) {
                 if (holder.rvSuggestions != null) {
@@ -349,17 +348,17 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
                 }
             }
-        }
+        //}
         if (holder.tvFollowMoreTopics != null) {
             holder.tvFollowMoreTopics.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent;
-                    if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                    /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                         intent = new Intent(context, FollowMoreTopicsActivity.class);
-                    } else {
+                    } else {*/
                         intent = new Intent(context, NewFollowMoreTopicsActivity.class);
-                    }
+                    //}
                     intent.putExtra("From", "Magazines");
                     context.startActivity(intent);
                 }
@@ -486,11 +485,11 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 @Override
                 public void onClick(View v) {
                     Intent intent;
-                    if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                    /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                         intent = new Intent(context, FollowMoreTopicsActivity.class);
-                    } else {
+                    } else {*/
                         intent = new Intent(context, NewFollowMoreTopicsActivity.class);
-                    }
+                    //}
                     intent.putExtra("From", "Magazines");
                     context.startActivity(intent);
                 }

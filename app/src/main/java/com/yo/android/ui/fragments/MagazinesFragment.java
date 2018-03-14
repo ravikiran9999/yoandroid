@@ -219,12 +219,12 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
             addTopics(followedTopicsIdsList);
         } else {
             //callApiSearchTopics();
-            if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+            /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                 callApiSearchTopics();
-            } else {
+            } else {*/
                 callApiSearchTopics();
                 getRandomTopics();
-            }
+            //}
         }
     }
 
@@ -345,12 +345,12 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
 
     public void refreshSearch() {
         //callApiSearchTopics();
-        if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+        /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
             callApiSearchTopics();
-        } else {
+        } else {*/
             callApiSearchTopics();
             getRandomTopics();
-        }
+        //}
     }
 
     @Override
@@ -593,12 +593,12 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     public void onEventMainThread(String action) {
         if (Constants.REFRESH_TOPICS_ACTION.equals(action)) {
             //callApiSearchTopics();
-            if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+            /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                 callApiSearchTopics();
-            } else {
+            } else {*/
                 callApiSearchTopics();
                 getRandomTopics();
-            }
+            //}
         }
     }
 
@@ -681,12 +681,12 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                     //TODO:Disalbe flag for Follow more
                     preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, false);
                     //callApiSearchTopics();
-                    if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                    /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                         callApiSearchTopics();
-                    } else {
+                    } else {*/
                         callApiSearchTopics();
                         getRandomTopics();
-                    }
+                    //}
                 }
                 preferenceEndPoint.saveStringPreference(Constants.MAGAZINE_TAGS, TextUtils.join(",", followedTopicsIdsList));
                 if (followedTopicsIdsList.isEmpty()) {

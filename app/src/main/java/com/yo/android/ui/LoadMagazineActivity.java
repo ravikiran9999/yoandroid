@@ -285,7 +285,8 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
     private void addStoryToExistingMagazine(String accessToken) {
         if (!isPostClicked) {
             isPostClicked = true;
-            yoService.addStoryMagazineAPI(accessToken, url, magazineId, tag).enqueue(new Callback<Articles>() {
+            //yoService.addStoryMagazineAPI(accessToken, url, magazineId, tag).enqueue(new Callback<Articles>() {
+            yoService.postStoryMagazineAPI(accessToken, url, "", "", "", magazineId, tag).enqueue(new Callback<Articles>() {
                 @Override
                 public void onResponse(Call<Articles> call, Response<Articles> response) {
                     try {

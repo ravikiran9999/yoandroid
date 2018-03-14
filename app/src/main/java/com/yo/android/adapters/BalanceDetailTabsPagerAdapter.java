@@ -4,7 +4,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.yo.android.ui.fragments.CreditAccountFragment;
 import com.yo.android.ui.fragments.RechargeDetailsFragment;
 import com.yo.android.ui.fragments.SpendDetailsFragment;
 

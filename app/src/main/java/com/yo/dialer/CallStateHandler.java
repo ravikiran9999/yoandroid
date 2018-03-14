@@ -25,6 +25,7 @@ public class CallStateHandler {
     private static final String TAG = CallStateHandler.class.getSimpleName();
     private static boolean isRinging;
 
+    // call is disconnected
     public static void verify(YoSipService yoSipService, CallInfo info) {
         if (info.getState() == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED) {
             SipHelper.isAlreadyStarted = false;

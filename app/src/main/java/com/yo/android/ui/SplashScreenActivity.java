@@ -50,11 +50,11 @@ public class SplashScreenActivity extends BaseActivity {
                 if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_PROFILE_SCREEN)) {
                     startActivity(new Intent(SplashScreenActivity.this, UpdateProfileActivity.class));
                 } else if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
-                    if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                    /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                         startActivity(new Intent(SplashScreenActivity.this, FollowMoreTopicsActivity.class));
-                    } else {
+                    } else {*/
                         startActivity(new Intent(SplashScreenActivity.this, NewFollowMoreTopicsActivity.class));
-                    }
+                    //}
                 } else {
                     startActivity(new Intent(SplashScreenActivity.this, BottomTabsActivity.class));
                 }
@@ -128,11 +128,11 @@ public class SplashScreenActivity extends BaseActivity {
                     if (enableProfileScreen) {
                         mActivity.startActivity(new Intent(mActivity, UpdateProfileActivity.class));
                     } else if (enableFollowTopicsScreen) {
-                        if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
+                        /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                             mActivity.startActivity(new Intent(mActivity, FollowMoreTopicsActivity.class));
-                        } else {
+                        } else {*/
                             mActivity.startActivity(new Intent(mActivity, NewFollowMoreTopicsActivity.class));
-                        }
+                        //}
                     } else {
                         mActivity.startActivity(new Intent(mActivity, BottomTabsActivity.class));
                     }

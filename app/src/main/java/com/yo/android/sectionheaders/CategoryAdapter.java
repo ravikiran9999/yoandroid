@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.cunoraz.tagview.Tag;
 import com.cunoraz.tagview.TagView;
 import com.yo.android.R;
-import com.yo.android.ui.FollowMoreTopicsActivity;
 
 import java.util.List;
 import java.util.Locale;
@@ -123,14 +122,14 @@ public class CategoryAdapter extends BaseAdapter {
             title.setText(sectionItem.getCategory());
         } else if (selectedItem.getLayoutId() == R.layout.section_list_item) { // List item is a Section Item
             final TagView tagView = selectedItem.getSectionItem().getCategoryItem();
-            tagView.setOnTagClickListener(new TagView.OnTagClickListener() {
+            /*tagView.setOnTagClickListener(new TagView.OnTagClickListener() {
                 @Override
                 public void onTagClick(Tag tag, int position) {
                     Log.d("TagClick", "Tag is clicked");
                     ((FollowMoreTopicsActivity) context).onClickingTag(tag, position);
 
                 }
-            });
+            });*/
             return selectedItem.getSectionItem().getCategoryItem();
         }
 

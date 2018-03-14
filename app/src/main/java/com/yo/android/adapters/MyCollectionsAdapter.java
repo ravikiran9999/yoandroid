@@ -56,8 +56,6 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
         if (position == 0 && "Follow more topics".equalsIgnoreCase(item.getName())) { // First position and is the Follow more topics text
             RequestOptions requestOptions = new RequestOptions()
                     .fitCenter()
-                    .placeholder(R.drawable.magazine_backdrop)
-                    .error(R.drawable.magazine_backdrop)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .dontAnimate();
             Glide.with(mContext)
