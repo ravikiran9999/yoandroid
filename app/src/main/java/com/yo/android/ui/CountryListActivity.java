@@ -111,34 +111,34 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
         }
 
 
-        yoService.getCallsRatesListAPI(accessToken).enqueue(new Callback<ResponseBody>() {
+        yoService.getCallsRatesListAPI(accessToken).enqueue(new Callback<List<CallRateDetail>>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<List<CallRateDetail>> call, Response<List<CallRateDetail>> response) {
                 dismissProgressDialog();
                 try {
-                    List<CallRateDetail> callRateDetailList = gson.fromJson(new InputStreamReader(response.body().byteStream()), new TypeToken<List<CallRateDetail>>() {
-                    }.getType());
-                    if (callRateDetailList != null && !callRateDetailList.isEmpty()) {
-                       List<CallRateDetail> mCallRateDetails = loadAlphabetOrder(callRateDetailList);
+                    /*List<CallRateDetail> callRateDetailList = gson.fromJson(new InputStreamReader(response.body().byteStream()), new TypeToken<List<CallRateDetail>>() {
+                    }.getType());*/
 
-                        String json = gson.toJson(mCallRateDetails);
-                        preferenceEndPoint.saveStringPreference(Constants.COUNTRY_LIST, json);
+                    List<CallRateDetail> callRateDetailList = response.body();
+                    if (callRateDetailList != null && !callRateDetailList.isEmpty()) {
+                        List<CallRateDetail> mCallRateDetails = loadAlphabetOrder(callRateDetailList);
+
+                        /*String json = gson.toJson(mCallRateDetails);
+                        preferenceEndPoint.saveStringPreference(Constants.COUNTRY_LIST, json);*/
                         adapter.addItems(mCallRateDetails);
-                        //Util.setDynamicHeight(listView);
-                        //Util.setDynamicHeight(listViewRecent);
                     }
                 } catch (Exception e) {
                     mLog.w(TAG, e);
                 } finally {
-                    if(response != null && response.body() != null) {
-                        response.body().close();
+                    if (response != null && response.body() != null) {
+                        response.body().clear();
                     }
                 }
                 showEmptyText();
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<List<CallRateDetail>> call, Throwable t) {
                 dismissProgressDialog();
                 showEmptyText();
             }
@@ -233,8 +233,15 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
             preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CALL_RATE, Util.removeTrailingZeros(callRateDetail.getRate()));
             preferenceEndPoint.saveStringPreference(Constants.COUNTRY_NAME, callRateDetail.getDestination());
             preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CALL_PULSE, callRateDetail.getPulse());
+            preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_CURRENCY_SYMBOL, callRateDetail.getLocalCurrencySymbol());
+            preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CURRENCY_CODE, callRateDetail.getLocalCurrencyCode());
             preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_PREFIX, "+" + callRateDetail.getPrefix());
             preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_SELECTED, json);
+            //global call rate
+            preferenceEndPoint.saveStringPreference(Constants.GLOBAL_CALL_RATE, callRateDetail.getUS_RATE());
+            preferenceEndPoint.saveStringPreference(Constants.GLOBAL_CURRENCY_SYMBOL, callRateDetail.getUS_SYMBOL());
+            preferenceEndPoint.saveStringPreference(Constants.GLOBAL_COUNTRY_CODE, callRateDetail.getUS_CODE());
+
             setResult(RESULT_OK);
             finish();
         }
@@ -267,7 +274,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
 
         @Override
         public void bindView(int position, CallRatesCountryViewHolder holder, CallRateDetail item) {
-            holder.getCountryView().setText(item.getDestination() + " (+" + item.getPrefix() + ")");
+            holder.getCountryView().setText(String.format(getResources().getString(R.string.call_country_code_format), item.getDestination(), item.getPrefix()));
             String pulse;
             String rate = Util.removeTrailingZeros(item.getRate());
             if (item.getPulse().equals("60")) {
@@ -275,8 +282,8 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
             } else {
                 pulse = "sec";
             }
-            //holder.getCallRateView().setText("$ " + rate + "/" + pulse);
-            holder.getCallRateView().setText(rate + "/" + pulse);
+            holder.getLocalCallRateView().setText(String.format(getResources().getString(R.string.call_rate_format), "~" + item.getLocalCurrencyCode(), item.getRATE(), item.getLocalCurrencySymbol(), pulse));
+            holder.getGlobalCallRateView().setText(String.format(getResources().getString(R.string.call_rate_format), item.getUS_CODE(), item.getUS_RATE(), item.getUS_SYMBOL(), pulse));
         }
     }
 
@@ -307,7 +314,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
 
         @Override
         public void bindView(int position, CallRatesCountryViewHolder holder, CallRateDetail item) {
-            holder.getCountryView().setText(item.getDestination() + " (+" + item.getPrefix() + ")");
+            holder.getCountryView().setText(String.format(getResources().getString(R.string.call_country_code_format), item.getDestination(), item.getPrefix()));
             String pulse;
             String rate = Util.removeTrailingZeros(item.getRate());
             if (item.getPulse().equals("60")) {
@@ -315,7 +322,8 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
             } else {
                 pulse = "sec";
             }
-            holder.getCallRateView().setText(rate + "/" + pulse);
+            holder.getLocalCallRateView().setText(String.format(getResources().getString(R.string.call_rate_format), "~" + item.getLocalCurrencyCode(), item.getRATE(), item.getLocalCurrencySymbol(), pulse));
+            holder.getGlobalCallRateView().setText(String.format(getResources().getString(R.string.call_rate_format), item.getUS_CODE(), item.getUS_RATE(), item.getUS_SYMBOL(), pulse));
         }
     }
 }

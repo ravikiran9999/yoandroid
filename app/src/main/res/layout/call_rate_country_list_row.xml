@@ -11,7 +11,6 @@
         android:id="@+id/txt_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="A"
         android:textStyle="bold"
         android:visibility="gone" />
 
@@ -25,7 +24,7 @@
         card_view:cardElevation="1sp"
         card_view:cardPreventCornerOverlap="false">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/white"
@@ -34,22 +33,34 @@
 
             <TextView
                 android:id="@+id/txt_country"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
+                android:layout_centerInParent="true"
+                android:layout_toStartOf="@+id/local_call_rate"
                 android:textColor="@android:color/black"
                 android:textSize="17sp"
                 tools:text="India (+91)" />
 
             <TextView
-                android:id="@+id/txt_call_rate"
+                android:id="@+id/local_call_rate"
                 android:layout_width="wrap_content"
-                android:gravity="center_vertical"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:gravity="center_vertical"
+                android:padding="@dimen/d2"
                 tools:text="$ 2.4min" />
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/global_call_rate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/local_call_rate"
+                android:gravity="center_vertical"
+                android:padding="@dimen/d2"
+                tools:text="$ 2.4min" />
+
+        </RelativeLayout>
 
     </android.support.v7.widget.CardView>
 </LinearLayout>

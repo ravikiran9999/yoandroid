@@ -35,6 +35,7 @@ import com.yo.android.flip.MagazineArticleDetailsActivity;
 import com.yo.android.flip.MagazineFlipArticlesFragment;
 import com.yo.android.helpers.MagazinePreferenceEndPoint;
 import com.yo.android.model.Articles;
+import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.BitmapScaler;
 import com.yo.android.ui.CreateMagazineActivity;
@@ -81,6 +82,8 @@ public class MagazinesServicesUsecase {
     PreferenceEndPoint preferenceEndPoint;
     @Inject
     ConnectivityHelper mHelper;
+
+    private ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
     private static int articleCountThreshold = 2000;
 
     /**
@@ -271,7 +274,8 @@ public class MagazinesServicesUsecase {
             final RelativeLayout rlFullImageOptions = holder.rlFullImageOptions;
             final TextView textView = holder.articleShortDesc;
             RequestOptions requestOptions = new RequestOptions()
-                    .placeholder(R.drawable.magazine_backdrop)
+                    .placeholder(mColorGenerator.getColorPlaceholder())
+                    //.placeholder(R.drawable.magazine_backdrop)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .dontAnimate();
             Glide.with(context)
@@ -315,7 +319,8 @@ public class MagazinesServicesUsecase {
                                     bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
                                     RequestOptions options = new RequestOptions()
                                             .override(bmp.getWidth(), bmp.getHeight())
-                                            .placeholder(R.drawable.magazine_backdrop)
+                                            //.placeholder(R.drawable.magazine_backdrop)
+                                            .placeholder(mColorGenerator.getColor(data.getId()))
                                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                                             .dontAnimate();
                                     Glide.with(context).clear(photoView);
@@ -695,16 +700,15 @@ public class MagazinesServicesUsecase {
      */
     public void handleArticleImage(final int position, MagazineArticlesBaseAdapter.ViewHolder holder, ImageView imageView, final Articles data, final Context context) {
         if (imageView != null) {
-            final ImageView photoView = imageView;
 
-            photoView.setImageResource(R.drawable.magazine_backdrop);
+            imageView.setImageResource(R.drawable.magazine_backdrop);
             if (data.getImage_filename() != null) {
-                handleImageLoading(holder, context, data, photoView);
+                handleImageLoading(holder, context, data, imageView);
             } else {
-                photoView.setImageResource(R.drawable.magazine_backdrop);
+                imageView.setImageResource(R.drawable.magazine_backdrop);
             }
 
-            photoView.setOnClickListener(new View.OnClickListener() {
+            imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     String videoUrl = data.getVideo_url();

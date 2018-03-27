@@ -26,15 +26,17 @@ public class CallRates {
     private static final String TAG = CallRates.class.getSimpleName();
 
     public static void fetch(final YoApi.YoService yoService, final PreferenceEndPoint preferenceEndPoint) {
-        yoService.getCallsRatesListAPI(preferenceEndPoint.getStringPreference("access_token")).enqueue(new Callback<ResponseBody>() {
+        yoService.getCallsRatesListAPI(preferenceEndPoint.getStringPreference("access_token")).enqueue(new Callback<List<CallRateDetail>>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<List<CallRateDetail>> call, Response<List<CallRateDetail>> response) {
                 if (BackgroundServices.ENABLE_LOGS) {
                     Log.w(TAG, "Received call rates response ");
                 }
                 try {
-                    List<CallRateDetail> callRateDetailList = new Gson().fromJson(new InputStreamReader(response.body().byteStream()), new TypeToken<List<CallRateDetail>>() {
-                    }.getType());
+                    /*List<CallRateDetail> callRateDetailList = new Gson().fromJson(new InputStreamReader(response.body().byteStream()), new TypeToken<List<CallRateDetail>>() {
+                    }.getType());*/
+
+                    List<CallRateDetail> callRateDetailList = response.body();
                     if (callRateDetailList != null && !callRateDetailList.isEmpty()) {
                         String json = new Gson().toJson(callRateDetailList);
                         preferenceEndPoint.saveStringPreference(Constants.COUNTRY_LIST, json);
@@ -46,13 +48,13 @@ public class CallRates {
                     }
                 } finally {
                     if(response != null && response.body() != null) {
-                        response.body().close();
+                        response.body().clear();
                     }
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> response, Throwable t) {
+            public void onFailure(Call<List<CallRateDetail>> response, Throwable t) {
                 if (BackgroundServices.ENABLE_LOGS && t != null) {
                     Log.w(TAG, "Failed to get call rates " + t.getMessage());
                 }

@@ -38,6 +38,7 @@ import com.yo.android.typeface.TypefacePath;
 import com.yo.android.usecase.AppLogglyUsecase;
 import com.yo.android.util.Constants;
 import com.yo.android.util.FireBaseHelper;
+import com.yo.android.vox.BalanceHelper;
 import com.yo.android.vox.VoxFactory;
 import com.yo.dialer.CallExtras;
 import com.yo.dialer.DialerLogs;
@@ -55,6 +56,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.inject.Inject;
+
+import okhttp3.ResponseBody;
+import retrofit2.Callback;
 
 public class BaseActivity extends ParentActivity {
 
@@ -77,6 +81,9 @@ public class BaseActivity extends ParentActivity {
 
     @Inject
     protected AppLogglyUsecase appLogglyUsecase;
+
+    @Inject
+    BalanceHelper mBalanceHelper;
 
     private boolean enableBack;
 

@@ -50,9 +50,4 @@ public class Response {
         this.balance = balance;
     }
 
-    /*@Override
-    public String toString()
-    {
-        return "ClassPojo [response = "+response+", data = "+data+", code = "+code+", balance = "+balance+"]";
-    }*/
 }

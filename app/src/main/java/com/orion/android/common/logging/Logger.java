@@ -228,10 +228,12 @@ public class Logger {
         String exception = "";
         exception = e.toString() + "\n";
         StackTraceElement[] temp = e.getStackTrace();
-        for (int i = 0; i < temp.length; i++) {
+        /*for (int i = 0; i < temp.length; i++) {
+            exception = exception + " Exception at " + temp[i].toString() + "\n";
+        }*/
+        for (int i = 0; i <= 3; i++) {
             exception = exception + " Exception at " + temp[i].toString() + "\n";
         }
-
         Log.w(TAG, exception);
         writeLog(Severity.FATAL, exception);
         //return exception

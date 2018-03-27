@@ -12,6 +12,7 @@ import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.yo.android.BuildConfig;
 
 import java.io.File;
 
@@ -45,7 +46,12 @@ public class StoreToS3 {
 
         try {
             Log.e(TAG, "sendToS3: key=" + key);
-            AWSCredentials awsCredentials = new BasicAWSCredentials("AKIAISIWC3UKXGPO74SQ", "0SiIyI1pMKAkY8AmLYkdcClxTnBBKhcbneSE2HZS");
+            AWSCredentials awsCredentials;
+            if(!BuildConfig.YO_AWS_ACCOUNT) {
+                awsCredentials = new BasicAWSCredentials("AKIAISIWC3UKXGPO74SQ", "0SiIyI1pMKAkY8AmLYkdcClxTnBBKhcbneSE2HZS");
+            } else {
+                awsCredentials = new BasicAWSCredentials(GlobalClass.ACCESS_KEY, GlobalClass.SECRET_KEY);
+            }
             s3Client = new AmazonS3Client(awsCredentials);
         } catch (Exception e) {
             Logger.logStackTrace(e);
@@ -54,7 +60,7 @@ public class StoreToS3 {
         }
         String objectURL = null;
         try {
-            PutObjectRequest putObjectRequest = new PutObjectRequest(GlobalClass.BUCKET_NAME, key, file);
+            PutObjectRequest putObjectRequest = new PutObjectRequest(GlobalClass.getBucketName(), key, file);
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentType("text/plain");
             putObjectRequest = putObjectRequest.withMetadata(objectMetadata);
@@ -63,7 +69,7 @@ public class StoreToS3 {
             putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
             putObjectRequest.setGeneralProgressListener(progressListener);
             s3Client.putObject(putObjectRequest);
-            objectURL = "https://s3.amazonaws.com/" + GlobalClass.BUCKET_NAME + "/" + key;
+            objectURL = "https://s3.amazonaws.com/" + GlobalClass.getBucketName() + "/" + key;
             Log.e(TAG, "sendToS3: objectURL=" + objectURL);
         } catch (AmazonS3Exception as3e) {
             Logger.logStackTrace(as3e);

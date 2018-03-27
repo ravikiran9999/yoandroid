@@ -418,6 +418,7 @@
     <string name="successful_transfer">Your fund transfer to %1$s was successfully done.</string>
 
     <string name="phone_number_input">0123456789+</string>
+    <string name="mobile_number">Enter mobile number</string>
 
     <!--video-->
     <string name="selection_default_none">Default (none)</string>
@@ -464,5 +465,8 @@
 
     <!--open settings to enable runtime permissions-->
     <string name="enable_camera_permission_settings">To capture photos, allow Yo! watsup access to your camera. Tap Settings > Permissions, and turn Camera on.</string>
+
+    <string name="call_rate_format">%1$s %2$s %3$s/%4$s</string>
+    <string name="call_country_code_format">%1$s (+%2$s)</string>
 
 </resources>

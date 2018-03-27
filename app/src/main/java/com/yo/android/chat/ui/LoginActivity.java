@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -219,8 +220,8 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
         try {
             swissNumberProto = phoneUtil.parse(selectedCountryCode + phoneNumber, country.toUpperCase());
 
-            android.util.Log.e("Login", "Country code " + swissNumberProto.toString());
-        } catch (NumberParseException e) {
+            Log.e("Login", "Country code " + swissNumberProto.toString());
+        } catch (NumberParseException | IllegalStateException e) {
             System.err.println("NumberParseException was thrown: " + e.toString());
         }
 

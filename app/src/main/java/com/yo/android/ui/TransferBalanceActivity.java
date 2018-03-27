@@ -228,6 +228,7 @@ public class TransferBalanceActivity extends BaseActivity {
                             switch (statusCode) {
                                 case 200:
                                     String mName = name != null ? name : phoneNo;
+                                    EventBus.getDefault().post(Constants.UPDATE_SPEND_DETAILS_ACTION);
                                     showAlertDialog(response.body().getBalance(), getString(R.string.transfer_success), getString(R.string.successful_transfer, mName), R.drawable.right_icon, true);
                                     break;
                                 case 606:

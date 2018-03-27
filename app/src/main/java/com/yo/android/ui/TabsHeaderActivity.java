@@ -239,7 +239,7 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
         super.onDestroy();
         unregisterBroadcastReceiver();
         preferenceEndPoint.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
-
+        EventBus.getDefault().unregister(this);
     }
 
     @Override

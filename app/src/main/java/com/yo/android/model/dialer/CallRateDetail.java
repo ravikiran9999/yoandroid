@@ -23,6 +23,22 @@ public class CallRateDetail {
     @SerializedName("package_id")
     private String PACKAGEID;
 
+    @SerializedName("us_code")
+    private String US_CODE;
+
+    @SerializedName("us_symbol")
+    private String US_SYMBOL;
+
+    @SerializedName("us_rate")
+    private String US_RATE;
+
+    @SerializedName("currency_code")
+    private String localCurrencyCode;
+
+    @SerializedName("currency_symbol")
+    private String localCurrencySymbol;
+
+
     public String getPrefix() {
         return PREFIX;
     }
@@ -85,6 +101,62 @@ public class CallRateDetail {
 
     public void setRecentSelected(boolean recentSelected) {
         this.recentSelected = recentSelected;
+    }
+
+    public String getPREFIX() {
+        return PREFIX;
+    }
+
+    public String getRATE() {
+        return RATE;
+    }
+
+    public String getDESTINATION() {
+        return DESTINATION;
+    }
+
+    public String getPULSE() {
+        return PULSE;
+    }
+
+    public String getUS_CODE() {
+        return US_CODE;
+    }
+
+    public void setUS_CODE(String US_CODE) {
+        this.US_CODE = US_CODE;
+    }
+
+    public String getUS_SYMBOL() {
+        return US_SYMBOL;
+    }
+
+    public void setUS_SYMBOL(String US_SYMBOL) {
+        this.US_SYMBOL = US_SYMBOL;
+    }
+
+    public String getUS_RATE() {
+        return US_RATE;
+    }
+
+    public void setUS_RATE(String US_RATE) {
+        this.US_RATE = US_RATE;
+    }
+
+    public String getLocalCurrencyCode() {
+        return localCurrencyCode;
+    }
+
+    public void setLocalCurrencyCode(String localCurrencyCode) {
+        this.localCurrencyCode = localCurrencyCode;
+    }
+
+    public String getLocalCurrencySymbol() {
+        return localCurrencySymbol;
+    }
+
+    public void setLocalCurrencySymbol(String localCurrencySymbol) {
+        this.localCurrencySymbol = localCurrencySymbol;
     }
 
     @Override
