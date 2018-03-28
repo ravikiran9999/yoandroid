@@ -75,6 +75,8 @@ public class NewDailerActivity extends BaseActivity {
 
     @Bind(R.id.txt_call_rate)
     protected TextView txtCallRate;
+    @Bind(R.id.global_call_rate)
+    TextView globalCallRate;
 
     @Bind(R.id.country_name)
     protected TextView countryName;
@@ -429,13 +431,22 @@ public class NewDailerActivity extends BaseActivity {
 
     /**
      * Gets the country code prefix
+     *
      * @return The country code prefix
      */
     private String setCallRateText() {
         String cName = preferenceEndPoint.getStringPreference(Constants.COUNTRY_NAME, null);
         String cRate = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CALL_RATE, null);
         String cPulse = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CALL_PULSE, null);
+        String currencySymbol = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_CURRENCY_SYMBOL, null);
+        String currencyCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CURRENCY_CODE, null);
         String cPrefix = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_PREFIX, null);
+
+        //global call rate
+        String gRate = preferenceEndPoint.getStringPreference(Constants.GLOBAL_CALL_RATE, null);
+        String gCurrencySymbol = preferenceEndPoint.getStringPreference(Constants.GLOBAL_CURRENCY_SYMBOL, null);
+        String gCurrencyCode = preferenceEndPoint.getStringPreference(Constants.GLOBAL_COUNTRY_CODE, null);
+
         if (cName == null) {
             String prefixWhileLogin = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
             if (callRateDetailList != null) {
@@ -464,8 +475,8 @@ public class NewDailerActivity extends BaseActivity {
             if (cName != null) {
                 countryName.setText(cName);
             }
-            preferenceEndPoint.saveStringPreference(Constants.CALL_RATE, cRate + "/" + pulse);
-            txtCallRate.setText(mBalanceHelper.currencySymbolLookup(cRate) + "/" + pulse);
+            txtCallRate.setText(String.format(getString(R.string.call_rate_format), currencyCode, cRate, currencySymbol, pulse));
+            globalCallRate.setText(String.format(getString(R.string.call_rate_format), gCurrencyCode, gRate, gCurrencySymbol, pulse));
             if (TextUtils.isEmpty(dialPadView.getDigits().getText().toString())) {
                 //TODO: Need to improve the logic
                 String str = dialPadView.getDigits().getText().toString();
@@ -524,6 +535,7 @@ public class NewDailerActivity extends BaseActivity {
 
     /**
      * Alert used to show self number is being dialled
+     *
      * @param message The message displayed to show that the self number is being dialled
      */
     private void alertMessage(int message) {

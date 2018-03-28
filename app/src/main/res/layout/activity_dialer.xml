@@ -102,7 +102,21 @@
                         android:maxLines="1"
                         android:maxWidth="150dp"
                         android:textColor="@color/dark_gray"
-                        android:textSize="18sp"
+                        tool:text="$2.00" />
+
+                    <TextView
+                        android:id="@+id/global_call_rate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_toRightOf="@+id/txt_call_rate"
+                        android:drawablePadding="10dp"
+                        android:gravity="right"
+                        android:maxLines="1"
+                        android:maxWidth="150dp"
+                        android:textColor="@color/dark_gray"
                         tool:text="$2.00" />
                 </RelativeLayout>
             </LinearLayout>

@@ -26,6 +26,7 @@ import com.yo.android.model.UpdateMagazine;
 import com.yo.android.model.UserProfileInfo;
 import com.yo.android.model.Wallet;
 import com.yo.android.model.denominations.Denominations;
+import com.yo.android.model.dialer.CallRateDetail;
 
 import org.json.JSONObject;
 
@@ -258,7 +259,7 @@ public class YoApi {
         Call<ResponseBody> executeBalanceAction(@Query("access_token") String access_token);
 
         @GET("api/package_rates_lists.json")
-        Call<ResponseBody> getCallsRatesListAPI(@Query("access_token") String access_token);
+        Call<List<CallRateDetail>> getCallsRatesListAPI(@Query("access_token") String access_token);
 
         @GET("/api/call_costs.json")
         Call<ResponseBody> getSpentDetailsHistory(@Query("access_token") String access_token);

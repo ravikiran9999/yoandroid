@@ -15,20 +15,27 @@ import butterknife.ButterKnife;
 public class CallRatesCountryViewHolder extends AbstractViewHolder {
     @Bind(R.id.txt_country)
     TextView country;
+    @Bind(R.id.local_call_rate)
+    TextView localCallRate;
+    @Bind(R.id.global_call_rate)
+    TextView globalCallRate;
 
-    @Bind(R.id.txt_call_rate)
-    TextView callRate;
 
     public CallRatesCountryViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
     }
 
-    public TextView getCallRateView() {
-        return callRate;
+    public TextView getLocalCallRateView() {
+        return localCallRate;
+    }
+
+    public TextView getGlobalCallRateView() {
+        return globalCallRate;
     }
 
     public TextView getCountryView() {
         return country;
     }
+
 }

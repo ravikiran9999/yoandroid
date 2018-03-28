@@ -149,13 +149,14 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
         setHasOptionsMenu(true);
         bus.register(this);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-        yoService.getCallsRatesListAPI(preferenceEndPoint.getStringPreference("access_token")).enqueue(new Callback<ResponseBody>() {
+        yoService.getCallsRatesListAPI(preferenceEndPoint.getStringPreference("access_token")).enqueue(new Callback<List<CallRateDetail>>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<List<CallRateDetail>> call, Response<List<CallRateDetail>> response) {
                 dismissProgressDialog();
                 try {
-                    List<CallRateDetail> callRateDetailList = new Gson().fromJson(new InputStreamReader(response.body().byteStream()), new TypeToken<List<CallRateDetail>>() {
-                    }.getType());
+                    /*List<CallRateDetail> callRateDetailList = new Gson().fromJson(new InputStreamReader(response.body().byteStream()), new TypeToken<List<CallRateDetail>>() {
+                    }.getType());*/
+                    List<CallRateDetail> callRateDetailList = response.body();
                     if (callRateDetailList != null && !callRateDetailList.isEmpty()) {
                         String json = new Gson().toJson(callRateDetailList);
                         preferenceEndPoint.saveStringPreference(Constants.COUNTRY_LIST, json);
@@ -165,14 +166,14 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
                     mLog.w(TAG, e);
                 } finally {
                     if(response != null && response.body() != null) {
-                        response.body().close();
+                        response.body().clear();
                     }
                 }
                 showEmptyText();
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<List<CallRateDetail>> call, Throwable t) {
                 dismissProgressDialog();
                 showEmptyText();
             }

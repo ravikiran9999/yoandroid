@@ -1,10 +1,8 @@
 package com.yo.android.ui.fragments;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Contacts;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +21,7 @@ import com.yo.android.helpers.Helper;
 import com.yo.android.helpers.SpendDetailsViewHolder;
 import com.yo.android.model.dialer.SubscribersList;
 import com.yo.android.provider.YoAppContactContract;
+import com.yo.android.util.Constants;
 import com.yo.android.util.DateUtil;
 import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
@@ -37,6 +36,7 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -103,10 +103,15 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
         super.onActivityCreated(savedInstanceState);
         listView.setAdapter(adapter);
         listView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        EventBus.getDefault().register(this);
         showProgressDialog();
         mBalanceHelper.loadSpentDetailsHistory(this);
+    }
 
-
+    public void onEventMainThread(String action) {
+        if(action.equals(Constants.UPDATE_SPEND_DETAILS_ACTION)) {
+            mBalanceHelper.loadSpentDetailsHistory(this);
+        }
     }
 
     @Override
@@ -225,37 +230,8 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             String phoneName = Helper.getContactName(mContext, item.getDestination());
             if (phoneName != null) {
                 holder.getTxtPhone().setText(phoneName);
-            } else {
-                // Todo remove this code as we are not using
-                /*final ContentResolver resolver = mContext.getContentResolver();
-                Cursor c = null;
-                try {
-                    c = resolver.query(
-                            CONTENT_URI,
-                            null,
-                            CallLog.Calls.NUMBER + " = " + item.getDestination(),
-                            null,
-                            DEFAULT_SORT_ORDER);
-                    if (c == null || !c.moveToFirst()) {
-                        String contactName = getContactName(item.getDestination());
-                        if (!TextUtils.isEmpty(contactName)) {
-                            holder.getTxtPhone().setText(contactName);
-                        } else {
-                            holder.getTxtPhone().setText(item.getDestination());
-                        }
-                    } else {
-                        String name = c.getString(c.getColumnIndex(CallLog.Calls.CACHED_NAME));
-                        if (!TextUtils.isEmpty(name)) {
-                            holder.getTxtPhone().setText(name);
-                        } else {
-                            holder.getTxtPhone().setText(item.getDestination());
-                        }
-                    }
-                } finally {
-                    if (c != null) c.close();
-                }*/
             }
-            //holder.getTxtPrice().setText("US $ " + item.getCallcost());
+
             holder.getTxtPrice().setText(mBalanceHelper.currencySymbolLookup(item.getCallcost()));
             holder.getTxtReason().setText(item.getCalltype());
         }
@@ -274,33 +250,11 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             mSubscribersList.clear();
             notifyDataSetChanged();
         }
+    }
 
-        public String getContactName(final String phoneNumber) {
-            Uri uri;
-            String[] projection;
-            Uri mBaseUri = Contacts.Phones.CONTENT_FILTER_URL;
-            projection = new String[]{android.provider.Contacts.People.NAME};
-            try {
-                Class<?> c = Class.forName("android.provider.ContactsContract$PhoneLookup");
-                mBaseUri = (Uri) c.getField("CONTENT_FILTER_URI").get(mBaseUri);
-                projection = new String[]{"display_name"};
-            } catch (Exception e) {
-            }
-
-
-            uri = Uri.withAppendedPath(mBaseUri, Uri.encode(phoneNumber));
-            Cursor cursor = mContext.getContentResolver().query(uri, projection, null, null, null);
-
-            String contactName = "";
-
-            if (cursor.moveToFirst()) {
-                contactName = cursor.getString(0);
-            }
-
-            cursor.close();
-            cursor = null;
-
-            return contactName;
-        }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        EventBus.getDefault().unregister(this);
     }
 }

@@ -76,7 +76,14 @@ public class Constants {
     public static final String COUNTRY_CODE_PREFIX = "country_code_prefix";
     public static final String COUNTRY_CODE_FROM_SIM = "country_code_from_sim";
     public static final String COUNTRY_CODE_SELECTED = "country_code_selected";
+    public static final String COUNTRY_CURRENCY_CODE = "country_currency_code";
+    public static final String COUNTRY_CODE_CURRENCY_SYMBOL = "country_code_currency_symbol";
     public static final String CALL_RATE = "call_rate";
+
+    public static final String GLOBAL_CALL_RATE = "global_call_rate";
+    public static final String GLOBAL_CURRENCY_SYMBOL = "global_currency_symbol";
+    public static final String GLOBAL_COUNTRY_CODE = "global_country_code";
+
 
 
     // Firebase tables
@@ -151,6 +158,7 @@ public class Constants {
     public static String CALL_RATE_DETAILS_ACTION = "com.callrates.CALLRATEDETAILS";
     public static String BALANCE_RECHARGE_ACTION = "com.balance.BALANCERECHARGE";
     public static String FINISH_LOGIN_ACTIVITY_ACTION = "com.finish.LOGINACTIVITY";
+    public static String UPDATE_SPEND_DETAILS_ACTION = "com.update.spend.details";
 
     // Contacts
     public static final String NUMBER = "number";
