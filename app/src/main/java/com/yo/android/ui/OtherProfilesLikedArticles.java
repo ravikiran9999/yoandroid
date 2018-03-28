@@ -42,6 +42,7 @@ import com.yo.android.usecase.OthersProfileLikedArticlesUsecase;
 import com.yo.android.util.AutoReflectWishListActionsListener;
 import com.yo.android.util.Constants;
 import com.yo.android.util.OtherPeopleMagazineReflectListener;
+import com.yo.android.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -352,7 +353,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
 
             final ImageView photoView = holder.articlePhoto;
 
-            photoView.setImageResource(R.drawable.magazine_backdrop);
+            photoView.setImageResource(Util.getMagazineBackdrop(context));
 
             if (data.getImage_filename() != null) {
                 final TextView fullImageTitle = holder.fullImageTitle;
@@ -361,7 +362,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                 final RelativeLayout rlFullImageOptions = holder.rlFullImageOptions;
                 final TextView textView1 = holder.articleShortDesc;
                 RequestOptions requestOptions = new RequestOptions()
-                        .placeholder(R.drawable.magazine_backdrop)
+                        .placeholder(Util.getMagazineBackdrop(context))
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
                 Glide.with(context)
@@ -378,7 +379,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                     Glide.with(context)
                                             .load(data.getImage_filename())
                                             .override(bmp.getWidth(), bmp.getHeight())
-                                            .placeholder(R.drawable.magazine_backdrop)
+                                            .placeholder(Util.getMagazineBackdrop(context))
                                             .crossFade()
                                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                                             .dontAnimate()
@@ -395,7 +396,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                             }
                         });*/
             } else {
-                photoView.setImageResource(R.drawable.magazine_backdrop);
+                photoView.setImageResource(Util.getMagazineBackdrop(context));
             }
 
             /*Log.d("OthersProfileLiked", "The photoView.getDrawable() is " + photoView.getDrawable());

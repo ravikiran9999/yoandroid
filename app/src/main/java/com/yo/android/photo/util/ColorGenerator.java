@@ -51,19 +51,6 @@ public class ColorGenerator {
                 0xff90a4ae
         ));
 
-        PLACEHOLDER = create(Arrays.asList(
-                R.color.bright_pink,
-                R.color.red,
-                R.color.orange,
-                R.color.yellow,
-                R.color.green,
-                R.color.chartreuse,
-                R.color.spring_green,
-                R.color.cyan,
-                R.color.blue,
-                R.color.violet,
-                R.color.magenta
-                ));
     }
 
     private final List<Integer> mColors;
@@ -84,16 +71,5 @@ public class ColorGenerator {
 
     public int getColor(Object key) {
         return mColors.get(Math.abs(key.hashCode()) % mColors.size());
-    }
-
-    public int getColorPlaceholder() {
-        try {
-            //return mColors.get(mRandom.nextInt(mColors.size()));
-            return R.color.azure;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return R.color.colorPrimaryDark;
     }
 }

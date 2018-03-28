@@ -35,6 +35,8 @@ import com.yo.android.model.Articles;
 import com.yo.android.usecase.MagazinesServicesUsecase;
 import com.yo.android.usecase.TopicDetailsUsecase;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -321,7 +323,7 @@ public class TopicsDetailActivity extends BaseActivity {
 
             final ImageView photoView = holder.articlePhoto;
 
-            photoView.setImageResource(R.drawable.magazine_backdrop);
+            photoView.setImageResource(Util.getMagazineBackdrop(context));
 
             if (data.getImage_filename() != null) {
                 final TextView fullImageTitle = holder.fullImageTitle;
@@ -330,7 +332,7 @@ public class TopicsDetailActivity extends BaseActivity {
                 final RelativeLayout rlFullImageOptions = holder.rlFullImageOptions;
                 final TextView textView1 = holder.articleShortDesc;
                 RequestOptions requestOptions = new RequestOptions()
-                        .placeholder(R.drawable.magazine_backdrop)
+                        .placeholder(Util.getMagazineBackdrop(context))
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
                 Glide.with(context)
@@ -381,7 +383,7 @@ public class TopicsDetailActivity extends BaseActivity {
                 textView1.setText(Html.fromHtml(data.getSummary()));
 
             } else {
-                photoView.setImageResource(R.drawable.magazine_backdrop);
+                photoView.setImageResource(Util.getMagazineBackdrop(context));
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {

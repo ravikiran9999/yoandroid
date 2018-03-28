@@ -149,7 +149,7 @@ android {
     buildTypes {
         release {
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             //signingConfig signingConfigs.config
             productFlavors.dev.signingConfig signingConfigs.devconfig

@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.yo.android.R;
+import com.yo.android.util.Util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -55,7 +56,7 @@ public  class NewImageRenderTask extends AsyncTask<Void, Void, Bitmap> {
             if (!((BaseActivity) mContext).hasDestroyed()) {
                 RequestOptions requestOptions = new RequestOptions()
                         .override(bmp.getWidth(), bmp.getHeight())
-                        .placeholder(R.drawable.magazine_backdrop)
+                        .placeholder(Util.getMagazineBackdrop(mContext))
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
                 Glide.with(mContext)
@@ -71,7 +72,7 @@ public  class NewImageRenderTask extends AsyncTask<Void, Void, Bitmap> {
                 }
             }
         } else {
-            articleImageView.setImageResource(R.drawable.magazine_backdrop);
+            articleImageView.setImageResource(Util.getMagazineBackdrop(mContext));
         }
 
     }

@@ -17,6 +17,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.yo.android.R;
 import com.yo.android.model.OwnMagazine;
 import com.yo.android.ui.BaseActivity;
+import com.yo.android.util.Util;
 import com.yo.android.widgets.SquareItemLinearLayout;
 
 import java.util.ArrayList;
@@ -85,7 +86,7 @@ public class OthersMagazinesAdapter extends BaseAdapter {
 
             if (!TextUtils.isEmpty(ownMagazineList.get(position).getImage())) { // Image url is not empty
                 RequestOptions requestOptions = new RequestOptions()
-                        .placeholder(R.drawable.magazine_backdrop)
+                        .placeholder(Util.getMagazineBackdrop(mContext))
                         .fitCenter()
                         .diskCacheStrategy(DiskCacheStrategy.ALL);
                 Glide.with(mContext)
@@ -105,7 +106,7 @@ public class OthersMagazinesAdapter extends BaseAdapter {
                             .into(imageView);
                 } else {
                     Glide.with(mContext)
-                            .load(R.drawable.magazine_backdrop)
+                            .load(Util.getMagazineBackdrop(mContext))
                             //.transition(withCrossFade())
                             .into(imageView);
                 }

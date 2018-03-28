@@ -38,6 +38,8 @@ import com.yo.android.usecase.MagazinesServicesUsecase;
 import com.yo.android.util.AutoReflectTopicsFollowActionsListener;
 import com.yo.android.util.AutoReflectWishListActionsListener;
 import com.yo.android.util.MagazineOtherPeopleReflectListener;
+import com.yo.android.util.Util;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -544,11 +546,11 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         if (holder.articlePhotoLeft != null) {
             final ImageView photoView = holder.articlePhotoLeft;
             photoView.setVisibility(View.VISIBLE);
-            photoView.setImageResource(R.drawable.magazine_backdrop);
+            photoView.setImageResource(Util.getMagazineBackdrop(context));
             if (data.getImage_filename() != null) {
                 mMagazinesServicesUsecase.loadImageFromS3(context, data, photoView);
             } else {
-                photoView.setImageResource(R.drawable.magazine_backdrop);
+                photoView.setImageResource(Util.getMagazineBackdrop(context));
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {
@@ -631,11 +633,11 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         if (holder.articlePhotoRight != null) {
             final ImageView photoView = holder.articlePhotoRight;
             photoView.setVisibility(View.VISIBLE);
-            photoView.setImageResource(R.drawable.magazine_backdrop);
+            photoView.setImageResource(Util.getMagazineBackdrop(context));
             if (data.getImage_filename() != null) {
                 mMagazinesServicesUsecase.loadImageFromS3(context, data, photoView);
             } else {
-                photoView.setImageResource(R.drawable.magazine_backdrop);
+                photoView.setImageResource(Util.getMagazineBackdrop(context));
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="magazinebackdrop">
+        <item>@drawable/magazine_back_drop_green</item>
+        <item>@drawable/magazine_back_drop_azure</item>
+        <item>@drawable/magazine_back_drop_magenta</item>
+        <item>@drawable/magazine_back_drop_violet</item>
+    </array>
+</resources>

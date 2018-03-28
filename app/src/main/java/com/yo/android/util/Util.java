@@ -11,6 +11,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -82,6 +83,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1124,6 +1126,14 @@ public class Util {
         }
 
         return false;
+    }
+
+    public static int getMagazineBackdrop(Context context) {
+        final TypedArray imgs = context.getResources().obtainTypedArray(R.array.magazinebackdrop);
+        final Random rand = new Random();
+        final int rndInt = rand.nextInt(imgs.length());
+        return imgs.getResourceId(rndInt, 0);
+
     }
 
 }

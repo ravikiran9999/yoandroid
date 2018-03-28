@@ -21,6 +21,7 @@ import com.yo.android.helpers.OwnMagazineViewHolder;
 import com.yo.android.model.OwnMagazine;
 import com.yo.android.ui.BitmapScaler;
 import com.yo.android.ui.DeviceDimensionsHelper;
+import com.yo.android.util.Util;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
@@ -57,7 +58,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
             if (!TextUtils.isEmpty(item.getImage())) { // Image url is not null
 
                 RequestOptions myOptions = new RequestOptions()
-                        .placeholder(R.drawable.magazine_backdrop)
+                        .placeholder(Util.getMagazineBackdrop(mContext))
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
                 Glide.with(mContext)
@@ -74,7 +75,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                                         bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
                                         RequestOptions myOptions = new RequestOptions()
                                                 .override(bmp.getWidth(), bmp.getHeight())
-                                                .placeholder(R.drawable.magazine_backdrop)
+                                                .placeholder(Util.getMagazineBackdrop(mContext))
                                                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                                                 .dontAnimate();
 
@@ -106,7 +107,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                             .into(holder.getImageView());
                 } else { // Image url is null and articles are present
                     Glide.with(mContext)
-                            .load(R.drawable.magazine_backdrop)
+                            .load(Util.getMagazineBackdrop(mContext))
                             .apply(requestOptions)
                             //.transition(withCrossFade())
                             .into(holder.getImageView());
@@ -124,7 +125,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
         } else if (position == 0 && !"+ New Magazine".equalsIgnoreCase(item.getName())) { // First position but not the New Magazine text(applies when searching)
             if (!TextUtils.isEmpty(item.getImage())) { // Image url is not null
                 RequestOptions requestOptions = new RequestOptions()
-                        .placeholder(R.drawable.magazine_backdrop)
+                        .placeholder(Util.getMagazineBackdrop(mContext))
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
                 Glide.with(mContext)
@@ -142,7 +143,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                                         bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
                                         RequestOptions myOptions = new RequestOptions()
                                                 .override(bmp.getWidth(), bmp.getHeight())
-                                                .placeholder(R.drawable.magazine_backdrop)
+                                                .placeholder(Util.getMagazineBackdrop(mContext))
                                                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                                                 .dontAnimate();
 
@@ -175,7 +176,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                             .into(holder.getImageView());
                 } else { // Image url is null and articles are present
                     Glide.with(mContext)
-                            .load(R.drawable.magazine_backdrop)
+                            .load(Util.getMagazineBackdrop(mContext))
                             //.transition(withCrossFade())
                             .into(holder.getImageView());
                 }

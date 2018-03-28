@@ -12,6 +12,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.yo.android.R;
 import com.yo.android.adapters.YoViewHolder;
 import com.yo.android.model.Topics;
+import com.yo.android.util.Util;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -53,7 +54,7 @@ public class SubCategoryItemViewHolder extends YoViewHolder {
 
     private void loadImage(String imageUrl) {
         RequestOptions requestOptions = new RequestOptions()
-                .placeholder(R.drawable.magazine_backdrop)
+                .placeholder(Util.getMagazineBackdrop(mContext))
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .dontAnimate();
 

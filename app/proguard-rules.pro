@@ -28,6 +28,15 @@
 -keepattributes Exceptions
 -keepattributes *Annotation*
 
+-dontwarn butterknife.internal.**
+-dontwarn com.fasterxml.jackson.databind.**
+-dontwarn com.google.common.collect.*
+-dontwarn com.google.common.util.concurrent**
+-dontwarn com.google.common.io.BaseEncoding
+-dontwarn com.aphidmobile.flip.Card
+-dontwarn dagger.internal.codegen.*
+-dontwarn com.google.common.io.*
+-dontwarn com.google.common.eventbus.*
 
 # This rule will properly ProGuard all the model classes in
 # the package com.yourcompany.models. Modify to fit the structure

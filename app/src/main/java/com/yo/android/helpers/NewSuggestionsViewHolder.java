@@ -12,6 +12,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.yo.android.R;
 import com.yo.android.adapters.YoViewHolder;
 import com.yo.android.model.Categories;
+import com.yo.android.util.Util;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -56,7 +57,7 @@ public class NewSuggestionsViewHolder extends YoViewHolder {
 
     private void loadImage(String imageUrl) {
         RequestOptions requestOptions = new RequestOptions()
-                .placeholder(R.drawable.magazine_backdrop)
+                .placeholder(Util.getMagazineBackdrop(mContext))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .dontAnimate();
         Glide.with(mContext)

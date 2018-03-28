@@ -42,6 +42,7 @@ import com.yo.android.usecase.MagazinesServicesUsecase;
 import com.yo.android.usecase.MyCollectionsDetailsUsecase;
 import com.yo.android.util.ArticlesComparator;
 import com.yo.android.util.Constants;
+import com.yo.android.util.Util;
 
 import java.lang.reflect.Type;
 import java.net.SocketTimeoutException;
@@ -370,7 +371,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
             final ImageView photoView = holder.articlePhoto;
 
-            photoView.setImageResource(R.drawable.magazine_backdrop);
+            photoView.setImageResource(Util.getMagazineBackdrop(context));
             if (data.getImage_filename() != null) {
                 final TextView fullImageTitle = holder.fullImageTitle;
                 final TextView articleTitle = holder.articleTitle;
@@ -378,7 +379,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 final RelativeLayout rlFullImageOptions = holder.rlFullImageOptions;
                 final TextView textView1 = holder.articleShortDesc;
                 RequestOptions requestOptions = new RequestOptions()
-                        .placeholder(R.drawable.magazine_backdrop)
+                        .placeholder(Util.getMagazineBackdrop(context))
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
                 Glide.with(context)
@@ -396,7 +397,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 }
 
             } else {
-                photoView.setImageResource(R.drawable.magazine_backdrop);
+                photoView.setImageResource(Util.getMagazineBackdrop(context));
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {
