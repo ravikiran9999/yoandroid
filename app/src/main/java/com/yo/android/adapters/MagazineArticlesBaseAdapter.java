@@ -983,7 +983,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         if (followedTopicsIdsList.size() > 0) {
             ((BaseActivity) context).showProgressDialog();
-            mAddTopicsUsecase.addTopics(followedTopicsIdsList, new ApiCallback<List<Categories>>() {
+            mAddTopicsUsecase.addTopics(followedTopicsIdsList, "random_topics", new ApiCallback<List<Categories>>() {
                 @Override
                 public void onResult(List<Categories> result) {
                     newSuggestionsAdapter.getmData().clear();

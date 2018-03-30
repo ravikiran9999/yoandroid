@@ -4,14 +4,9 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
@@ -33,11 +28,12 @@ import com.yo.android.api.YoApi;
 import com.yo.android.model.FindPeople;
 import com.yo.android.util.Constants;
 import com.yo.android.util.YODialogs;
-import com.yo.android.widgets.ScrollTabHolder;
 import com.yo.android.util.Util;
 import com.yo.dialer.DialerLogs;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -89,6 +85,7 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
     private Call<List<FindPeople>> call;
     public int mMinHeaderTranslation;
     public int mHeaderHeight;
+    private Context mContext;
 
 
     @Override
@@ -97,6 +94,7 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
         setContentView(R.layout.activity_find_people);
         ButterKnife.bind(this);
 
+        mContext = this;
         initToolbar();
         // Todo uncomment while implementing tabs
         /*setupTabPager();
@@ -173,6 +171,7 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
                     }
                     if (response.body() != null && response.body().size() > 0) {
                         List<FindPeople> findPeopleList = response.body();
+                        sortedList(findPeopleList);
                         findPeopleAdapter.clearAll();
                         findPeopleAdapter.addItemsAll(findPeopleList);
 
@@ -211,6 +210,7 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
                     dismissProgressDialog();
                 }*/
                 // Todo comment below lines
+                dismissProgressDialog();
                 noData.setVisibility(View.GONE);
                 llNoPeople.setVisibility(View.GONE);
                 lvFindPeople.setVisibility(View.GONE);
@@ -264,6 +264,7 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
                     dismissProgressDialog();
                     if (response.body() != null && response.body().size() > 0) {
                         List<FindPeople> findPeopleList = response.body();
+                        sortedList(findPeopleList);
                         findPeopleAdapter.addItemsAll(findPeopleList);
                         originalList.addAll(findPeopleList);
                     }
@@ -454,11 +455,6 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
         }
     }
 
-    //@Override
-    public void onRefresh() {
-        //callFindPeopleService(swipeRefreshContainer);
-    }
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         boolean renewalStatus = preferenceEndPoint.getBooleanPreference(Constants.MAGAZINE_LOCK, false);
@@ -481,5 +477,14 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
         } else {
             YODialogs.renewMagazine(this, null, R.string.renewal_message, preferenceEndPoint);
         }
+    }
+
+    private void sortedList(List<FindPeople> mSortedList) {
+        Collections.sort(mSortedList, new Comparator<FindPeople>() {
+            @Override
+            public int compare(FindPeople lhs, FindPeople rhs) {
+                return lhs.getFullName(mContext).compareTo(rhs.getFullName(mContext));
+            }
+        });
     }
 }

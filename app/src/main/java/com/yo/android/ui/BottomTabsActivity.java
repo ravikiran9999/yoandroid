@@ -282,21 +282,6 @@ public class BottomTabsActivity extends BaseActivity {
             @Override
             public void onPageSelected(int position) {
 
-                /*switch (position) {
-                    case 0:
-                        if (getFragment() instanceof MagazinesFragment) {
-                            MagazineDashboardHelper.request = 1;
-                            ((MagazinesFragment) getFragment()).removeReadArticles();
-                            ((MagazinesFragment) getFragment()).update();
-                            MagazineFlipArticlesFragment.currentFlippedPosition = 0;
-                        }
-                        break;
-                    case 2:
-                        if (getFragment() instanceof DialerFragment) {
-                            ((DialerFragment) getFragment()).loadData();
-                        }
-                }*/
-
                 if (lastFragmentPosition == 0) {
                     mLog.d(TAG, "Leaving Magazines tab");
                     // End the timed event, when the user navigates away from Magazines tab
@@ -515,8 +500,7 @@ public class BottomTabsActivity extends BaseActivity {
         }
 
         Intent getIntent = getIntent();
-        if (getIntent.hasExtra("type"))
-        {
+        if (getIntent.hasExtra("type")) {
             if ("Missed call".equals(intent.getStringExtra("type").trim())) {
                 viewPager.setCurrentItem(2);
             }

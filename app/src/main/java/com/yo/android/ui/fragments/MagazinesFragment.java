@@ -222,8 +222,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
             /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                 callApiSearchTopics();
             } else {*/
-                callApiSearchTopics();
-                getRandomTopics();
+            callApiSearchTopics();
+            getRandomTopics();
             //}
         }
     }
@@ -291,8 +291,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                         }
                     }*/
 
-                    for(Topics topics : topicsList) {
-                        if(topics.isSelected()) {
+                    for (Topics topics : topicsList) {
+                        if (topics.isSelected()) {
                             unSelectedTopics.add(topics);
                         }
                     }
@@ -344,13 +344,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     }
 
     public void refreshSearch() {
-        //callApiSearchTopics();
-        /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
-            callApiSearchTopics();
-        } else {*/
-            callApiSearchTopics();
-            getRandomTopics();
-        //}
+        callApiSearchTopics();
+        getRandomTopics();
     }
 
     @Override
@@ -490,7 +485,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
                 public boolean onClose() {
                     if (mMagazineFlipArticlesFragment != null) {
                         MagazineFlipArticlesFragment.lastReadArticle = 0;
-                        magazinesFlipArticlesUsecase.getLandingCachedArticles(getActivity(), mMagazineFlipArticlesFragment.myBaseAdapter, mMagazineFlipArticlesFragment, magazineDashboardHelper );
+                        magazinesFlipArticlesUsecase.getLandingCachedArticles(getActivity(), mMagazineFlipArticlesFragment.myBaseAdapter, mMagazineFlipArticlesFragment, magazineDashboardHelper);
                     }
                     return true;
                 }
@@ -596,8 +591,8 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
             /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                 callApiSearchTopics();
             } else {*/
-                callApiSearchTopics();
-                getRandomTopics();
+            callApiSearchTopics();
+            getRandomTopics();
             //}
         }
     }
@@ -678,19 +673,13 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
-                    //TODO:Disalbe flag for Follow more
                     preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, false);
-                    //callApiSearchTopics();
-                    /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
-                        callApiSearchTopics();
-                    } else {*/
-                        callApiSearchTopics();
-                        getRandomTopics();
-                    //}
+                    callApiSearchTopics();
+                    getRandomTopics();
                 }
                 preferenceEndPoint.saveStringPreference(Constants.MAGAZINE_TAGS, TextUtils.join(",", followedTopicsIdsList));
                 if (followedTopicsIdsList.isEmpty()) {
-                    magazinesFlipArticlesUsecase.getLandingCachedArticles(getActivity(), mMagazineFlipArticlesFragment.myBaseAdapter, mMagazineFlipArticlesFragment, magazineDashboardHelper );
+                    magazinesFlipArticlesUsecase.getLandingCachedArticles(getActivity(), mMagazineFlipArticlesFragment.myBaseAdapter, mMagazineFlipArticlesFragment, magazineDashboardHelper);
                 }
             }
 

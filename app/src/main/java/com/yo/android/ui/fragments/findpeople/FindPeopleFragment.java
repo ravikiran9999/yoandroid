@@ -20,7 +20,6 @@ import com.yo.android.adapters.FindPeopleAdapter;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.FindPeople;
-import com.yo.android.ui.FindPeopleActivity;
 import com.yo.android.ui.OthersProfileActivity;
 import com.yo.android.util.Constants;
 

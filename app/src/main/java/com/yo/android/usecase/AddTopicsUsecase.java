@@ -32,9 +32,9 @@ public class AddTopicsUsecase {
     @Inject
     RandomTopicsUsecase randomTopicsUsecase;
 
-    public void addTopics(List<String> followedTopicsIdsList, final ApiCallback<List<Categories>> categoriesCallback) {
+    public void addTopics(List<String> followedTopicsIdsList, String randomTopics, final ApiCallback<List<Categories>> categoriesCallback) {
         String accessToken = loginPrefs.getStringPreference("access_token");
-        Call<ResponseBody> call = yoService.addTopicsAPI(accessToken, followedTopicsIdsList, "random_topics");
+        Call<ResponseBody> call = yoService.addTopicsAPI(accessToken, followedTopicsIdsList, randomTopics);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

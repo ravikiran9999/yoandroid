@@ -3,17 +3,13 @@ package com.yo.android.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -21,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cunoraz.tagview.Tag;
-import com.cunoraz.tagview.Utils;
 import com.google.gson.Gson;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
@@ -34,7 +29,6 @@ import com.yo.android.model.Topics;
 import com.yo.android.sectionheaders.NewCategorizedList;
 import com.yo.android.ui.followmoretopics.CategoriesAccordionSection;
 import com.yo.android.util.Constants;
-import com.yo.android.util.Util;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -83,12 +77,6 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
     TextView noCategories;
 
     private List<String> followedTopicsIdsList;
-    private int lineMargin;
-    private int tagMargin;
-    private int textPaddingLeft;
-    private int textPaddingRight;
-    private int textPaddingTop;
-    private int texPaddingBottom;
 
     private String from;
     private ArrayList<String> selectedTopics;
@@ -96,8 +84,6 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
     private List<String> addedTopics;
     public ArrayList<Tag> initialTags;
     private ArrayList<Tag> searchTags;
-    private boolean isInvalidSearch;
-    private NewCategorizedList categorisedList;
     private List<Categories> serverTopics;
     private boolean isSkipClicked;
     private Context context;

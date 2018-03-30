@@ -1,5 +1,9 @@
 package com.yo.android.model;
 
+import android.content.Context;
+
+import com.yo.android.R;
+
 /**
  * Created by MYPC on 7/17/2016.
  */
@@ -103,5 +107,10 @@ public class FindPeople {
 
     public void setPhone_no(String phone_no) {
         this.phone_no = phone_no;
+    }
+
+    public String getFullName(Context context) {
+        String fullName = String.format(context.getString(R.string.first_last_name_format), getFirst_name(), getLast_name());
+        return fullName.substring(0, 1).toUpperCase() + fullName.substring(1);
     }
 }

@@ -306,6 +306,8 @@
     <string name="you_might_follow_topics">You might also follow these topics</string>
     <string name="followers">Followers</string>
     <string name="followings">Followings</string>
+    <string name="following">Following</string>
+    <string name="follow">Follow</string>
     <string name="find_people">Yo! People</string>
     <string name="move_to_top">Back to Top</string>
     <string name="liked_articles">Liked Articles</string>
@@ -468,5 +470,7 @@
 
     <string name="call_rate_format">%1$s %2$s %3$s/%4$s</string>
     <string name="call_country_code_format">%1$s (+%2$s)</string>
+
+    <string name="first_last_name_format">%1$s %2$s</string>
 
 </resources>

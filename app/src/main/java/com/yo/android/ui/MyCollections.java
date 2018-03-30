@@ -147,8 +147,9 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 } else {
                     dismissProgressDialog();
                 }
-                networkFailureText.setVisibility(View.VISIBLE);
+
                 gridView.setVisibility(View.GONE);
+                networkFailureText.setVisibility(View.VISIBLE);
                 isNetworkFailure = true;
             }
         });

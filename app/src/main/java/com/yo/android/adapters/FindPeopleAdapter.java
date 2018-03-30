@@ -129,17 +129,17 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
         }
 
         if (!TextUtils.isEmpty(item.getFirst_name())) {
-            holder.getTvFindPeopleName().setText(item.getFirst_name() + " " + item.getLast_name());
+            holder.getTvFindPeopleName().setText(item.getFullName(context));
         } else {
             holder.getTvFindPeopleName().setText("Unknown");
         }
         holder.getTvFindPeopleDesc().setText(item.getDescription());
         if ("true".equals(item.getIsFollowing())) {
-            holder.getBtnFindPeopleFollow().setText("Following");
+            holder.getBtnFindPeopleFollow().setText(R.string.following);
             holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
             isFollowingUser = true;
         } else {
-            holder.getBtnFindPeopleFollow().setText("Follow");
+            holder.getBtnFindPeopleFollow().setText(R.string.follow);
             holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             isFollowingUser = false;
         }
@@ -158,7 +158,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 try {
                                     ((BaseActivity) context).dismissProgressDialog();
-                                    holder.getBtnFindPeopleFollow().setText("Following");
+                                    holder.getBtnFindPeopleFollow().setText(R.string.following);
                                     holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                                     item.setIsFollowing("true");
                                     item.setFollowersCount(item.getFollowersCount() + 1);
@@ -173,7 +173,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                             @Override
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
                                 ((BaseActivity) context).dismissProgressDialog();
-                                holder.getBtnFindPeopleFollow().setText("Follow");
+                                holder.getBtnFindPeopleFollow().setText(R.string.follow);
                                 holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                                 item.setIsFollowing("false");
                                 isFollowingUser = false;
@@ -215,7 +215,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                                                 } else {
                                                     // do nothing
                                                 }
-                                                holder.getBtnFindPeopleFollow().setText("Follow");
+                                                holder.getBtnFindPeopleFollow().setText(R.string.follow);
                                                 holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                                                 item.setIsFollowing("false");
                                                 item.setFollowersCount(item.getFollowersCount() - 1);
@@ -230,7 +230,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                                         @Override
                                         public void onFailure(Call<ResponseBody> call, Throwable t) {
                                             ((BaseActivity) context).dismissProgressDialog();
-                                            holder.getBtnFindPeopleFollow().setText("Following");
+                                            holder.getBtnFindPeopleFollow().setText(R.string.following);
                                             holder.getBtnFindPeopleFollow().setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                                             item.setIsFollowing("true");
                                             isFollowingUser = true;
