@@ -80,7 +80,8 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         String title = "Notifications";
-        getSupportActionBar().setTitle(title);
+        actionBarTitle.setText(title);
+        notificationEnable.setVisibility(View.GONE);
         EventBus.getDefault().register(this);
 
         preferenceEndPoint.saveBooleanPreference("isNotifications", true);

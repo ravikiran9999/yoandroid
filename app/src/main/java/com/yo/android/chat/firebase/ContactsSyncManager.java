@@ -9,15 +9,14 @@ import android.os.AsyncTask;
 import android.os.RemoteException;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
-import android.util.Log;
-
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.api.ApiCallback;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Contact;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.sync.YoContactsSyncAdapter;
+import com.yo.android.usecase.ContactsSyncWithNameUsecase;
 import com.yo.android.util.Constants;
 import com.yo.android.util.ContactSyncHelper;
 
@@ -49,6 +48,7 @@ public class ContactsSyncManager {
 
     private static final String TAG = "ContactsSyncManager";
     private YoApi.YoService yoService;
+    private ContactsSyncWithNameUsecase contactsSyncWithNameUsecase;
     private Context context;
     private List<Contact> cacheList;
     private Object lock = new Object();
@@ -80,10 +80,11 @@ public class ContactsSyncManager {
 
 
     @Inject
-    public ContactsSyncManager(YoApi.YoService yoService, Context context, @Named("login") PreferenceEndPoint loginPrefs) {
+    public ContactsSyncManager(YoApi.YoService yoService, Context context, @Named("login") PreferenceEndPoint loginPrefs, ContactsSyncWithNameUsecase contactsSyncWithNameUsecase) {
         this.yoService = yoService;
         this.context = context;
         this.loginPrefs = loginPrefs;
+        this.contactsSyncWithNameUsecase = contactsSyncWithNameUsecase;
     }
 
     public void checkContacts() {
@@ -116,7 +117,6 @@ public class ContactsSyncManager {
     }
 
     public void syncContactsAPI(List<Contact> contacts) throws IOException {
-        String access = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
         List<JSONObject> nameAndNumber = new ArrayList<>();
         for (int i = 0; i < contacts.size(); i++) {
             JSONObject jsonObject = new JSONObject();
@@ -131,14 +131,14 @@ public class ContactsSyncManager {
 
         //Response<List<Contact>> response = yoService.syncContactsWithNameAPI(access, nameAndNumber).execute().body();
         //Asynchronoss call, which will not get stuck UI.
-        yoService.syncContactsWithNameAPI(access, nameAndNumber).enqueue(new Callback<JsonElement>() {
+        contactsSyncWithNameUsecase.contactsSyncWithName(nameAndNumber, new ApiCallback<JsonElement>() {
             @Override
-            public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
+            public void onResult(JsonElement result) {
 
             }
 
             @Override
-            public void onFailure(Call<JsonElement> call, Throwable t) {
+            public void onFailure(String message) {
 
             }
         });
@@ -346,13 +346,5 @@ public class ContactsSyncManager {
         contact.setCountryCode(countryCode);
         contact.setNexgieUserName(voxUserName);
         return contact;
-    }
-
-    private static String getName(String name, String number) {
-        String formatedName = name.replaceAll("\\s+", "");
-        if (!formatedName.equalsIgnoreCase(number)) {
-            return name;
-        }
-        return "";
     }
 }

@@ -1,33 +1,20 @@
 package com.yo.android.util;
 
 import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.text.TextUtilsCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
-import com.yo.android.R;
-import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.di.Injector;
-import com.yo.android.ui.BottomTabsActivity;
-
-import java.text.DateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import static com.yo.android.chat.notification.localnotificationsbuilder.Notifications.GROUP_NOTIFICATION_ID;
 
 /**
  * This service is used to fetch the articles from the server once a day
@@ -83,24 +70,7 @@ public class FetchNewArticlesService extends Service {
 
         Log.d("FetchNewArticlesService", "onTaskRemoved()");
 
-        /*Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        Intent intent = new Intent(getApplicationContext(), FetchNewArticlesService.class);
-        PendingIntent pintent = PendingIntent.getService(this, 1014, intent,
-                0);
-        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
-                Constants.FETCHING_NEW_ARTICLES_FREQUENCY, pintent);*/
-
-        // Start service using AlarmManager
         Calendar cal = Calendar.getInstance();
-        /*cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);*/
         long currenttime =  cal.getTimeInMillis();
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 1);
@@ -116,10 +86,7 @@ public class FetchNewArticlesService extends Service {
         pintent = PendingIntent.getService(this, 1014, intent,
                 0);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        /*alarm.setRepeating(AlarmManager.RTC_WAKEUP, (((24 * 60 * 60) - currentTimeInSec) * 1000),
-                AlarmManager.INTERVAL_DAY, pintent);*/
         alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, pintent);
     }
-
 }

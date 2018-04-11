@@ -23,6 +23,8 @@ import com.yo.android.util.Util;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -42,20 +44,20 @@ public class EditMagazineActivity extends BaseActivity {
     protected PreferenceEndPoint preferenceEndPoint;
     private String magazineId;
     private String magazinePrivacy;
-    private EditText etTitle;
-    private EditText etDesc;
+
+    @Bind(R.id.et_title)
+    EditText etTitle;
+    @Bind(R.id.et_desc)
+    EditText etDesc;
+    @Bind(R.id.tv_delete)
+    TextView tvDelete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_magazine);
+        ButterKnife.bind(this);
 
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        etTitle = (EditText) findViewById(R.id.et_title);
-        etDesc = (EditText) findViewById(R.id.et_desc);
-        TextView tvDelete = (TextView) findViewById(R.id.tv_delete);
         etTitle.requestFocus();
         Intent intent = getIntent();
         final String magazineTitle = intent.getStringExtra("MagazineTitle");
@@ -63,9 +65,8 @@ public class EditMagazineActivity extends BaseActivity {
         final String magazineDesc = intent.getStringExtra("MagazineDesc");
         magazinePrivacy = intent.getStringExtra("MagazinePrivacy");
 
-        String title = "Edit Magazine";
-
-        getSupportActionBar().setTitle(title);
+        setTitleHideIcon(R.string.edit_magazine);
+        enableBack();
 
         etTitle.setText(magazineTitle);
         etDesc.setText(magazineDesc);
@@ -81,8 +82,6 @@ public class EditMagazineActivity extends BaseActivity {
                 showDeleteAlert(magazineTitle);
             }
         });
-
-
     }
 
     /**

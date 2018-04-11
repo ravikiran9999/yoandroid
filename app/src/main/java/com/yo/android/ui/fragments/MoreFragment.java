@@ -160,6 +160,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
         super.onCreate(savedInstanceState);
         //don't want to show any menu options
         setHasOptionsMenu(false);
+
         setRetainInstance(true);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 

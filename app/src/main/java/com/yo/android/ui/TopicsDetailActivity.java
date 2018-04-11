@@ -86,9 +86,6 @@ public class TopicsDetailActivity extends BaseActivity {
         flipView.setAdapter(myBaseAdapter);
 
 
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         Intent intent = getIntent();
         topic = intent.getParcelableExtra("Topic");
         position = intent.getIntExtra("Position", 0);
@@ -98,9 +95,8 @@ public class TopicsDetailActivity extends BaseActivity {
             articlePlacement = "";
         }
 
-        String title = topic.getTopicName();
-
-        getSupportActionBar().setTitle(title);
+        setTitleHideIcon(topic.getTopicName());
+        enableBack();
 
         articlesList.clear();
         topicDetailsUsecase.getArticlesOfTopic(this);

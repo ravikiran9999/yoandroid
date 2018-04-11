@@ -31,6 +31,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,11 +42,16 @@ import retrofit2.Response;
  */
 public class InviteFriendsFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
-    private ListView lv_invite;
+    @Bind(R.id.invite_list)
+    ListView lv_invite;
     private InviteFriendsAdapter inviteFriendsAdapter;
-    private ListView layout;
-    private TextView txtEmpty;
-    private TextView noSearchResultsTxtVw;
+    @Bind(R.id.side_index)
+    ListView layout;
+    @Bind(R.id.txtEmpty)
+    TextView txtEmpty;
+    @Bind(R.id.no_search_results)
+    TextView noSearchResultsTxtVw;
+
     private Menu menu;
     private static final int PICK_CONTACT_REQUEST = 100;
 
@@ -61,11 +68,7 @@ public class InviteFriendsFragment extends BaseFragment implements AdapterView.O
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_invite_friends, container, false);
-        lv_invite = (ListView) view.findViewById(R.id.invite_list);
-        layout = (ListView) view.findViewById(R.id.side_index);
-        txtEmpty = (TextView) view.findViewById(R.id.txtEmpty);
-        noSearchResultsTxtVw=(TextView) view.findViewById(R.id.no_search_results);
-
+        ButterKnife.bind(this, view);
         setHasOptionsMenu(true);
         return view;
     }

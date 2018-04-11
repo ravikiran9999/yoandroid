@@ -149,7 +149,7 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
         init(llPin);
         setPINListeners();
 
-        tvEnterOTP.setText(getResources().getString(R.string.enter_the_code) + " " + phoneNumber);
+        tvEnterOTP.setText(String.format(getString(R.string.enter_the_code), phoneNumber));
 
         mHandler.post(runnable);
 
@@ -185,11 +185,10 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        String title = getResources().getString(R.string.verify_phone_number);
 
-        ((NewOTPActivity) activity).getSupportActionBar().setHomeButtonEnabled(true);
+        /*((NewOTPActivity) activity).getSupportActionBar().setHomeButtonEnabled(true);
         ((NewOTPActivity) activity).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((NewOTPActivity) activity).getSupportActionBar().setTitle(title);
+        ((NewOTPActivity) activity).getSupportActionBar().setTitle(title);*/
 
         generateDummyOTP();
     }

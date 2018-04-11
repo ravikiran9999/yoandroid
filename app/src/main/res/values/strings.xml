@@ -219,6 +219,7 @@
     <string name="cancle">Cancel</string>
     <string name="are_you_sure_you_want_to_unfollow">Are you sure you want to Unfollow?</string>
     <string name="unfollow">Unfollow</string>
+    <string name="follow_more_topics">Follow more topics</string>
     <string name="cancel">Cancel</string>
     <string name="disable_signout">Signout is disabled, will be enabled soon!</string>
     <string name="dialing">Dialing...</string>
@@ -399,7 +400,7 @@
     <string name="no_sufficient_bal_recharge">You don\'t have sufficient balance to call. Please recharge.</string>
     <string name="not_in_coverage_area">Recipient not in coverage area.</string>
     <string name="cannot_transfer_full_balance">You cannot transfer your whole balance. Please maintain atleast 0.001</string>
-    <string name="enter_the_code">Enter the code sent to</string>
+    <string name="enter_the_code">Enter the code sent to %1$s</string>
     <string name="resend_code">Resend code</string>
     <string name="verify_phone_number">Verify phone number</string>
     <string name="pin_content_desc">PIN input field</string>
@@ -473,4 +474,7 @@
 
     <string name="first_last_name_format">%1$s %2$s</string>
 
+    <string name="photo_preview">Photo Preview</string>
+    <string name="edit_magazine">Edit Magazine</string>
+    <string name="invite_friends">Invite Friends</string>
 </resources>

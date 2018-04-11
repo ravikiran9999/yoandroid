@@ -99,7 +99,7 @@ android {
         }
 
         production {
-            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
+            buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "false"
             buildConfigField "String", "RELEASE_USER_TYPE", "\"youser\""
             buildConfigField "String", "RELEASE_USER_TYPE_END", "\"D\""
 
@@ -243,6 +243,7 @@ dependencies {
     // Glide
     compile 'com.github.bumptech.glide:glide:4.5.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.5.0'
+
     compile 'se.emilsjolander:android-flipview:1.1.0'
     compile 'com.android.support:multidex:1.0.1'
     compile 'me.grantland:autofittextview:0.2.1'

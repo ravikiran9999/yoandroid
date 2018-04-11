@@ -53,8 +53,7 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_magazine_article_details);
 
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        enableBack();
 
         Intent intent = getIntent();
         String title = intent.getStringExtra("Title");
@@ -67,7 +66,7 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
             articlePlacement = "";
         }
 
-        getSupportActionBar().setTitle(title);
+        setTitleHideIcon(title);
 
         WebView webview = (WebView) findViewById(R.id.webview);
         webview.getSettings().setJavaScriptEnabled(true);

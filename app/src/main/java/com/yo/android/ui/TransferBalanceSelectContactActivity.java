@@ -80,12 +80,8 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transfer_balance_select_contact);
 
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        String title = getString(R.string.select_contact);
-
-        getSupportActionBar().setTitle(title);
+        setTitleHideIcon(R.string.select_contact);
+        enableBack();
 
         balance = getIntent().getStringExtra(Constants.CURRENT_BALANCE);
         currencySymbol = getIntent().getStringExtra("currencySymbol");

@@ -1,6 +1,7 @@
 package com.yo.android.ui;
 
 import android.os.Bundle;
+import android.view.View;
 
 import com.google.gson.internal.LinkedTreeMap;
 import com.yo.android.BuildConfig;
@@ -20,6 +21,9 @@ public class NewOTPActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setTitleHideIcon(R.string.verify_phone_number);
+
         NewOTPFragment newOTPFragment = new NewOTPFragment();
         getSupportFragmentManager().beginTransaction()
                 .add(android.R.id.content, newOTPFragment)

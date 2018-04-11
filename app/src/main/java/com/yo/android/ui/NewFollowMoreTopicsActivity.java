@@ -101,9 +101,8 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
         setContentView(R.layout.activity_follow_more_topics);
         ButterKnife.bind(this);
         context = this;
-        String title = "Follow more topics";
 
-        getSupportActionBar().setTitle(title);
+        setTitleHideIcon(R.string.follow_more_topics);
 
         Intent intent = getIntent();
         from = intent.getStringExtra("From");

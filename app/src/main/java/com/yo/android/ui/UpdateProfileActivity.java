@@ -149,8 +149,7 @@ public class UpdateProfileActivity extends BaseActivity {
     private void setupToolbar() {
         getSupportActionBar().setHomeButtonEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        String title = getResources().getString(R.string.profile);
-        getSupportActionBar().setTitle(title);
+        setTitleHideIcon(R.string.profile);
     }
 
     @Override
@@ -248,13 +247,14 @@ public class UpdateProfileActivity extends BaseActivity {
                         }
                     }
                 } else {
+                    dismissProgressDialog();
                     toastFactory.showToast(getResources().getString(R.string.unable_to_fetch));
                 }
             }
 
             @Override
             public void onFailure(Call<UserProfileInfo> call, Throwable t) {
-
+                dismissProgressDialog();
             }
         });
     }
@@ -309,11 +309,7 @@ public class UpdateProfileActivity extends BaseActivity {
                         }
                     }
                     Intent intent;
-                    /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
-                        intent = new Intent(UpdateProfileActivity.this, FollowMoreTopicsActivity.class);
-                    } else {*/
-                        intent = new Intent(UpdateProfileActivity.this, NewFollowMoreTopicsActivity.class);
-                    //}
+                    intent = new Intent(UpdateProfileActivity.this, NewFollowMoreTopicsActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.putExtra("From", "UpdateProfileActivity");
                     startActivity(intent);
@@ -390,11 +386,11 @@ public class UpdateProfileActivity extends BaseActivity {
     }
 
     private void requestPermission() {
-            // No explanation needed; request the permission
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            Manifest.permission.READ_EXTERNAL_STORAGE},
-                    MY_PERMISSIONS_REQUEST_CAMERA);
+        // No explanation needed; request the permission
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE},
+                MY_PERMISSIONS_REQUEST_CAMERA);
 
         //}
     }
@@ -412,7 +408,7 @@ public class UpdateProfileActivity extends BaseActivity {
                     // camera-related task you need to do.
                     cameraIntent.showDialog();
 
-                } else if(grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                     showMessageDialog();

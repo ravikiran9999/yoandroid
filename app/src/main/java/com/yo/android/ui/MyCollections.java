@@ -76,13 +76,9 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_magazine);
         ButterKnife.bind(this);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        String title = getString(R.string.my_topics);
-
-        getSupportActionBar().setTitle(title);
-
+        setTitleHideIcon(R.string.my_topics);
+        enableBack();
 
         myCollectionsAdapter = new MyCollectionsAdapter(MyCollections.this);
 

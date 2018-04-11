@@ -62,12 +62,9 @@ public class CreateMagazineActivity extends BaseActivity implements SwipeRefresh
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_magazine);
         ButterKnife.bind(this);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        final String title = getString(R.string.my_magazines);
-
-        getSupportActionBar().setTitle(title);
+        setTitleHideIcon(R.string.my_magazines);
+        enableBack();
 
         EventBus.getDefault().register(this);
 

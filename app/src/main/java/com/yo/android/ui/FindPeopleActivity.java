@@ -95,7 +95,11 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
         ButterKnife.bind(this);
 
         mContext = this;
-        initToolbar();
+        //initToolbar();
+        setTitleHideIcon(R.string.find_people);
+        enableBack();
+
+
         // Todo uncomment while implementing tabs
         /*setupTabPager();
         TabLayout tabLayout = (TabLayout) findViewById(R.id.htab_tabs);

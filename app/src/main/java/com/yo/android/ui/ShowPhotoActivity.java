@@ -50,7 +50,7 @@ public class ShowPhotoActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo_layout);
         ButterKnife.bind(this);
-        getSupportActionBar().setTitle("Photo Preview ");
+        setTitleHideIcon(R.string.photo_preview);
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         enableBack();
         mAttacher = new PhotoViewAttacher(imageOpen);

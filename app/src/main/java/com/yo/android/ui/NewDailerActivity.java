@@ -96,16 +96,16 @@ public class NewDailerActivity extends BaseActivity {
 
     private LinearLayout llOptions;
 
-    public static final String currencySymbolDollar = " US $";
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.newdialter);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(R.string.activity_title_dialer);
+
         ButterKnife.bind(this);
+
+        setTitleHideIcon(R.string.activity_title_dialer);
+        enableBack();
+
         String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
         EventBus.getDefault().register(this);
 

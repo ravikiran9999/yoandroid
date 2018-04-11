@@ -59,12 +59,8 @@ public class WishListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wish_list);
 
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        String title = "Liked Articles";
-
-        getSupportActionBar().setTitle(title);
+        setTitleHideIcon(R.string.liked_articles);
+        enableBack();
 
         noArticals = (TextView) findViewById(R.id.no_data);
         llNoWishlist = (LinearLayout) findViewById(R.id.ll_no_wishlist);

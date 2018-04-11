@@ -2,7 +2,6 @@ package com.yo.android.di;
 
 import android.content.Context;
 
-import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.adapters.NewSuggestionsAdapter;
 import com.yo.android.chat.ChatRefreshBackground;
 //import com.yo.android.database.RoomDao;
@@ -13,6 +12,7 @@ import com.yo.android.ui.NewFollowMoreTopicsActivity;
 import com.yo.android.usecase.AddTopicsUsecase;
 import com.yo.android.usecase.AppLogglyUsecase;
 import com.yo.android.usecase.ChatNotificationUsecase;
+import com.yo.android.usecase.ContactsSyncWithNameUsecase;
 import com.yo.android.usecase.DenominationsUsecase;
 import com.yo.android.usecase.MagazinesFlipArticlesUsecase;
 import com.yo.android.usecase.MagazinesServicesUsecase;
@@ -32,7 +32,6 @@ import com.yo.android.adapters.UserChatAdapter;
 import com.yo.android.app.BaseApp;
 import com.yo.android.chat.firebase.FireBaseAuthToken;
 import com.yo.android.chat.firebase.FirebaseService;
-import com.yo.android.chat.firebase.RetrieveContactsManager;
 import com.yo.android.chat.notification.MyInstanceIDListenerService;
 import com.yo.android.chat.notification.PushNotificationService;
 import com.yo.android.chat.ui.ChatActivity;
@@ -82,7 +81,6 @@ import com.yo.android.ui.OthersMagazinesDetailActivity;
 import com.yo.android.ui.OthersProfileActivity;
 import com.yo.android.ui.OthersProfileMagazines;
 import com.yo.android.ui.PhoneBookActivity;
-import com.yo.android.ui.PhoneChatActivity;
 import com.yo.android.ui.PlainActivity;
 import com.yo.android.ui.SettingsActivity;
 import com.yo.android.ui.ShowPhotoActivity;
@@ -92,7 +90,6 @@ import com.yo.android.ui.TopicsDetailActivity;
 import com.yo.android.ui.TransferBalanceActivity;
 import com.yo.android.ui.TransferBalanceSelectContactActivity;
 import com.yo.android.ui.UpdateProfileActivity;
-import com.yo.android.ui.UserCreatedMagazineActivity;
 import com.yo.android.ui.UserProfileActivity;
 import com.yo.android.ui.WishListActivity;
 import com.yo.android.ui.fragments.AccountDetailsEditFragment;
@@ -168,7 +165,6 @@ import dagger.Provides;
                 CreateMagazineActivity.class,
                 MyCollections.class,
                 MyCollectionDetails.class,
-                UserCreatedMagazineActivity.class,
                 LoadMagazineActivity.class,
                 ShowPhotoActivity.class,
                 OthersProfileActivity.class,
@@ -202,7 +198,6 @@ import dagger.Provides;
                 InAppVideoActivity.class,
                 YouTubeFailureRecoveryActivity.class,
                 PhoneBookActivity.class,
-                PhoneChatActivity.class,
                 CallLogDetailsActivity.class,
                 MagazineActivity.class,
                 GroupContactsActivity.class,
@@ -236,7 +231,6 @@ import dagger.Provides;
                 NewContactsFragment.class,
 
                 //Managers
-                RetrieveContactsManager.class,
 
                 //Adapters
                 ChatRoomListAdapter.class,
@@ -286,7 +280,8 @@ import dagger.Provides;
                 OthersProfileLikedArticlesUsecase.class,
                 OthersMagazineDetailsUsecase.class,
                 TopicDetailsUsecase.class,
-                WishListUsecase.class
+                WishListUsecase.class,
+                ContactsSyncWithNameUsecase.class,
         },
         includes = {
                 AppModule.class,

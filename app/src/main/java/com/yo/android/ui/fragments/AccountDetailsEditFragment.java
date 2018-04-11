@@ -96,7 +96,8 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
         if (edit.equalsIgnoreCase("dd-mm-yyyy")) {
             edit = "";
         }
-        ((AccountDetailsActivity) getActivity()).getSupportActionBar().setTitle(title);
+        assert ((AccountDetailsActivity) getActivity()) != null;
+        ((AccountDetailsActivity) getActivity()).setActionbarTitle(title);
         ((AccountDetailsActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
         ((AccountDetailsActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         editProfile = (EditText) view.findViewById(R.id.edit_profile);
@@ -106,28 +107,6 @@ public class AccountDetailsEditFragment extends BaseFragment implements View.OnC
         okBtn = (TextView) view.findViewById(R.id.ok_edit);
         cancelBtn.setOnClickListener(this);
         okBtn.setOnClickListener(this);
-
-//        editProfile.setFilters(new InputFilter[]{
-//               new InputFilter.LengthFilter(130)
-//       });
-//
-//       editProfile.addTextChangedListener(new TextWatcher() {
-//           @Override
-//           public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//           }
-//
-//           @Override
-//           public void onTextChanged(CharSequence s, int start, int before, int count){
-//           }
-//
-//           @Override
-//           public void afterTextChanged(Editable s) {
-//
-//                maxCharCount.setText(String.valueOf(130-editProfile.length()));
-//
-//           }
-//       });
 
         if (key.equalsIgnoreCase(Constants.DOB_TEMP)) {
             editBirth.setVisibility(View.VISIBLE);

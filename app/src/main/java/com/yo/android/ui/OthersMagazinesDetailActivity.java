@@ -90,8 +90,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
 
         flipContainer.setVisibility(View.GONE);
 
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        enableBack();
 
         EventBus.getDefault().register(this);
 
@@ -99,7 +98,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
         ownMagazine = intent.getParcelableExtra("OwnMagazine");
         position = intent.getIntExtra("Position", 0);
 
-        getSupportActionBar().setTitle(ownMagazine.getName());
+        setTitleHideIcon(ownMagazine.getName());
 
         noArticals.setText(getString(R.string.others_no_article_added));
 
@@ -525,6 +524,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
 
         /**
          * Adds articles to the list
+         *
          * @param articlesList The articles list
          */
         public void addItems(List<Articles> articlesList) {
@@ -567,9 +567,10 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
 
         /**
          * Updates the topic following
+         *
          * @param isFollowing isFollowing or not
-         * @param topic The articles object
-         * @param position The position
+         * @param topic       The articles object
+         * @param position    The position
          */
         public void updateTopic(boolean isFollowing, Articles topic, int position) {
             items.remove(position);
@@ -591,9 +592,10 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
 
         /**
          * Updates the articles
-         * @param isLiked isLiked or not
-         * @param articles The articles object
-         * @param position The position
+         *
+         * @param isLiked      isLiked or not
+         * @param articles     The articles object
+         * @param position     The position
          * @param articlePlace The article placement
          */
         public void updateArticle(boolean isLiked, Articles articles, int position, String articlePlace) {
@@ -675,7 +677,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                 ownMagazine.setIsFollowing("true");
                                 EventBus.getDefault().post(Constants.OTHERS_MAGAZINE_ACTION);
                             } finally {
-                                if(response != null && response.body() != null) {
+                                if (response != null && response.body() != null) {
                                     response.body().close();
                                 }
                             }
@@ -727,7 +729,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                                             MagazineArticlesBaseAdapter.reflectTopicsFollowActionsListener.updateUnfollowTopicStatus(ownMagazine.getId(), Constants.FOLLOW_TOPIC_EVENT);
                                         }
                                     } finally {
-                                        if(response != null && response.body() != null) {
+                                        if (response != null && response.body() != null) {
                                             response.body().close();
                                         }
                                     }

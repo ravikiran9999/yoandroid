@@ -48,6 +48,7 @@ public class MoreSettingsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_layout);
         ButterKnife.bind(this);
+        setTitleHideIcon(R.string.settings_label);
         enableBack();
         setDataFromPreferences();
     }

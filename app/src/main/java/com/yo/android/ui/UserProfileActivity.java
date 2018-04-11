@@ -255,7 +255,7 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     private void setDataFromPreferences() {
         if (contact != null) {
 
-            getSupportActionBar().setTitle(getResources().getString(R.string.profile));
+            setTitleHideIcon(R.string.profile);
             Contact mContact = mContactsSyncManager.getContactByVoxUserName(contact.getNexgieUserName());
             if (roomName != null) {
                 RequestOptions requestOptions = new RequestOptions()

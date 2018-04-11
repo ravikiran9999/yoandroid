@@ -74,10 +74,10 @@ public class GroupContactsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_yo_contacts);
         ButterKnife.bind(this);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setHomeButtonEnabled(true);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+
+        enableBack();
+        setTitleHideIcon(R.string.select_contact);
+
         groupName = getIntent().getStringExtra(Constants.GROUP_NAME);
         groupContactsListAdapter = new GroupContactsListAdapter(this);
         listView.setAdapter(groupContactsListAdapter);

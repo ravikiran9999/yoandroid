@@ -98,8 +98,6 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
         tvNoArticles = (TextView) findViewById(R.id.tv_no_articles);
         myBaseAdapter = new MyBaseAdapter(this);
         flipView.setAdapter(myBaseAdapter);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         flipView.setOnFlipListener(this);
 
         Intent intent = getIntent();
@@ -107,8 +105,9 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
         String topicName = intent.getStringExtra("TopicName");
         type = intent.getStringExtra("Type");
 
-        String title = topicName;
-        getSupportActionBar().setTitle(title);
+        setTitleHideIcon(topicName);
+        enableBack();
+
         articlesList.clear();
 
         readArticleIds = new ArrayList<>();

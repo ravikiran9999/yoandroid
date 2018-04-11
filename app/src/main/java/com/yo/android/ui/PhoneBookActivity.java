@@ -25,7 +25,7 @@ public class PhoneBookActivity extends BaseActivity {
         if (getIntent().hasExtra(Constants.FROM)) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        getSupportActionBar().setTitle(R.string.contact);
+        setTitleHideIcon(R.string.contact);
 
         FrameLayout frame = (FrameLayout) findViewById(R.id.loadfragments);
         Fragment mFragment;

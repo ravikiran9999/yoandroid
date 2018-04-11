@@ -30,9 +30,9 @@ public class StartServiceAtBootReceiver extends BroadcastReceiver {
             service.setAction(CallExtras.REGISTER);
             context.startService(service);
 
-            service = new Intent(context, BackgroundServices.class);
+            /*service = new Intent(context, BackgroundServices.class);
             service.setAction(BackgroundServices.FETCH_CALL_RATES);
-            context.startService(service);
+            context.startService(service);*/
 
             service = new Intent(context, BackgroundServices.class);
             service.setAction(BackgroundServices.SYNC_OFFLINE_CONTACTS);

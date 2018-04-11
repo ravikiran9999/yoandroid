@@ -21,6 +21,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.yo.android.R;
 import com.yo.android.helpers.Settings;
 import com.yo.android.model.Contact;
+import com.yo.android.model.SpendDetails;
 import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -89,12 +90,9 @@ public class TransferBalanceActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transfer_balance);
         ButterKnife.bind(this);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        String title = getString(R.string.transfer_balance);
-
-        getSupportActionBar().setTitle(title);
+        setTitleHideIcon(R.string.transfer_balance);
+        enableBack();
 
         String balance = getIntent().getStringExtra(Constants.CURRENT_BALANCE);
         mTransferAmount = getIntent().getStringExtra(Constants.TRANSFER_AMOUNT);
@@ -228,7 +226,7 @@ public class TransferBalanceActivity extends BaseActivity {
                             switch (statusCode) {
                                 case 200:
                                     String mName = name != null ? name : phoneNo;
-                                    EventBus.getDefault().post(Constants.UPDATE_SPEND_DETAILS_ACTION);
+                                    EventBus.getDefault().post(new SpendDetails());
                                     showAlertDialog(response.body().getBalance(), getString(R.string.transfer_success), getString(R.string.successful_transfer, mName), R.drawable.right_icon, true);
                                     break;
                                 case 606:

@@ -3,7 +3,6 @@ package com.yo.android.ui;
 import android.Manifest;
 import android.accounts.AccountManager;
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -33,7 +32,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -128,13 +126,10 @@ public class BottomTabsActivity extends BaseActivity {
 
     TabsPagerAdapter mAdapter;
     public CustomViewPager viewPager;
-    private Button notificationCount;
     private Context context;
     private SipBinder sipBinder;
     //private static Context mContext;
     public static PendingIntent pintent;
-    private TextView actionBarTitle;
-    private SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     private static int REQUEST_AUDIO_RECORD = 200;
     private int lastFragmentPosition = 0;
     public static GoogleAccountCredential mCredential;
@@ -240,7 +235,7 @@ public class BottomTabsActivity extends BaseActivity {
             index++;
         }
 
-        ViewGroup customActionBar = (ViewGroup) getLayoutInflater().inflate(R.layout.custom_action_bar, null);
+        /*ViewGroup customActionBar = (ViewGroup) getLayoutInflater().inflate(R.layout.custom_action_bar, null);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setCustomView(customActionBar);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -249,13 +244,8 @@ public class BottomTabsActivity extends BaseActivity {
 
         notificationCount = (Button) customActionBar.findViewById(R.id.notif_count);
         ImageView notificationEnable = (ImageView) customActionBar.findViewById(R.id.yo_icon);
-        notificationEnable.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(context, NotificationsActivity.class));
-            }
-        });
-        actionBarTitle = (TextView) customActionBar.findViewById(R.id.action_bar_title);
+
+        actionBarTitle = (TextView) customActionBar.findViewById(R.id.action_bar_title);*/
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -352,7 +342,6 @@ public class BottomTabsActivity extends BaseActivity {
 
         //
         Intent in = new Intent(getApplicationContext(), SipService.class);
-
         startService(in);
 
         //balanceHelper.checkBalance(null);
@@ -374,7 +363,6 @@ public class BottomTabsActivity extends BaseActivity {
 
         Intent intent1 = getIntent();
         if (!intent1.getBooleanExtra("fromLowBalNotification", false))
-
         {
             balanceHelper.checkBalance(null);
         }
@@ -489,9 +477,7 @@ public class BottomTabsActivity extends BaseActivity {
                     viewPager.setCurrentItem(2);
                 }
             }
-        } else
-
-        {
+        } else {
             if ("Recharge".equals(tag) || "Credit".equals(tag) || "BalanceTransferred".equals(tag)) {
 
                 startActivity(new Intent(BottomTabsActivity.this, TabsHeaderActivity.class));
@@ -936,10 +922,6 @@ public class BottomTabsActivity extends BaseActivity {
     private void startServiceToFetchNewArticles(int currentTimeInSec) {
         // Start service using AlarmManager
         Calendar cal = Calendar.getInstance();
-        /*cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);*/
         long currenttime = cal.getTimeInMillis();
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, 1);
@@ -976,6 +958,4 @@ public class BottomTabsActivity extends BaseActivity {
         mCredential = null;
         super.onDestroy();
     }
-
-
 }

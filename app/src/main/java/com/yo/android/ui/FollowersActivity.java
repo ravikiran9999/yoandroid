@@ -58,12 +58,9 @@ public class FollowersActivity extends BaseActivity implements SwipeRefreshLayou
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_people);
         ButterKnife.bind(this);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        String title = getString(R.string.followers);
-
-        getSupportActionBar().setTitle(title);
+        setTitleHideIcon(R.string.followers);
+        enableBack();
 
         findPeopleAdapter = new FindPeopleAdapter(this);
         imvEmptyFollowers.setImageResource(R.drawable.ic_empty_followers);

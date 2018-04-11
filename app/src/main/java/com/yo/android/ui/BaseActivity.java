@@ -16,14 +16,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.FirebaseException;
-import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.ValueRange;
@@ -56,9 +57,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.inject.Inject;
-
-import okhttp3.ResponseBody;
-import retrofit2.Callback;
 
 public class BaseActivity extends ParentActivity {
 
@@ -95,6 +93,10 @@ public class BaseActivity extends ParentActivity {
     Timer myTimer;
     String firebaseToken;
 
+    Button notificationCount;
+    TextView actionBarTitle;
+    ImageView notificationEnable;
+
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +117,35 @@ public class BaseActivity extends ParentActivity {
 
             }, 0, 1000);
         }
+
+
+        ViewGroup customActionBar = (ViewGroup) getLayoutInflater().inflate(R.layout.custom_action_bar, null);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setCustomView(customActionBar);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayShowCustomEnabled(true);
+        }
+
+        notificationCount = customActionBar.findViewById(R.id.notif_count);
+        notificationEnable = customActionBar.findViewById(R.id.yo_icon);
+        actionBarTitle = customActionBar.findViewById(R.id.action_bar_title);
+        notificationEnable.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(BaseActivity.this, NotificationsActivity.class));
+            }
+        });
+
+    }
+
+    protected void setTitleHideIcon(int title) {
+        notificationEnable.setVisibility(View.GONE);
+        actionBarTitle.setText(title);
+    }
+
+    protected void setTitleHideIcon(String title) {
+        notificationEnable.setVisibility(View.GONE);
+        actionBarTitle.setText(title);
     }
 
     protected void enableBack() {

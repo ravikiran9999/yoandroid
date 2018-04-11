@@ -17,23 +17,25 @@ import com.yo.android.ui.fragments.AccountDetailsFragment;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
-/**
- * Created by Sindhura on 11/22/2016.
- */
 public class AccountDetailsActivity extends BaseActivity {
 
     public static final String FRAGMENT = "fragment";
-    private AccountDetailsFragment accountDetailsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().setTitle(getString(R.string.account_details));
-        accountDetailsFragment = new AccountDetailsFragment();
+
+        setTitleHideIcon(R.string.account_details);
+
+        AccountDetailsFragment accountDetailsFragment = new AccountDetailsFragment();
         getSupportFragmentManager().beginTransaction()
                 .add(android.R.id.content, accountDetailsFragment, FRAGMENT)
                 .commit();
         enableBack();
+    }
+
+    public void setActionbarTitle(String title) {
+        setTitleHideIcon(title);
     }
 
     @Override
@@ -84,7 +86,7 @@ public class AccountDetailsActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         if (getSupportFragmentManager().findFragmentByTag(FRAGMENT) instanceof AccountDetailsFragment) {
-            getSupportActionBar().setTitle(getString(R.string.account_details));
+            setTitleHideIcon(R.string.account_details);
             ((AccountDetailsFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT)).setUserInfoDetails();
         }
     }

@@ -19,6 +19,8 @@ import com.yo.android.R;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.helpers.Helper;
 import com.yo.android.helpers.SpendDetailsViewHolder;
+import com.yo.android.model.Collections;
+import com.yo.android.model.SpendDetails;
 import com.yo.android.model.dialer.SubscribersList;
 import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.util.Constants;
@@ -29,6 +31,7 @@ import com.yo.android.vox.BalanceHelper;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -108,10 +111,8 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
         mBalanceHelper.loadSpentDetailsHistory(this);
     }
 
-    public void onEventMainThread(String action) {
-        if(action.equals(Constants.UPDATE_SPEND_DETAILS_ACTION)) {
-            mBalanceHelper.loadSpentDetailsHistory(this);
-        }
+    public void onEventMainThread(SpendDetails action) {
+        mBalanceHelper.loadSpentDetailsHistory(this);
     }
 
     @Override
@@ -126,13 +127,17 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
                         List<SubscribersList> removedFreeSpents = new ArrayList<>();
                         for (SubscribersList item : detailResponseList) {
                             if (item.getCalltype().equals(PSTN) || item.getCalltype().equals(BALANCE_TRANSFER) || item.getCalltype().equals(MAGAZINES)) {
-                                /*if (Float.valueOf(item.getCallcost()) != 0f) {
-                                    removedFreeSpents.add(item);
-                                }*/
+
                                 if (!TextUtils.isEmpty(item.getCallcost()))
                                     removedFreeSpents.add(item);
                             }
                         }
+                        java.util.Collections.sort(removedFreeSpents, new Comparator<SubscribersList>() {
+                            @Override
+                            public int compare(SubscribersList lhs, SubscribersList rhs) {
+                                return lhs.getTime().compareToIgnoreCase(rhs.getTime());
+                            }
+                        });
                         adapter.addItems(removedFreeSpents);
                     }
                 } catch (Exception e) {
@@ -191,11 +196,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
         public void onBindViewHolder(SpendDetailsViewHolder holder, int position) {
             final SubscribersList item = mSubscribersList.get(position);
 
-            String modifiedTime = item.getTime().substring(0, item.getTime().lastIndexOf("."));
-            //holder.getDate().setText(modifiedTime);
-            Date date = DateUtil.convertUtcToGmt(modifiedTime);
-            holder.getDate().setText(new SimpleDateFormat(DateUtil.DATE_FORMAT8).format(date));
-
+            holder.getDate().setText(item.getTime());
 
             if (item.getDuration() != null) {
                 if (item.getDuration().contains(":")) {
@@ -242,6 +243,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
         }
 
         public void addItems(List<SubscribersList> detailResponseList) {
+            mSubscribersList.clear();
             mSubscribersList.addAll(detailResponseList);
             notifyDataSetChanged();
         }

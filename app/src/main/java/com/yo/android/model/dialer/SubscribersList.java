@@ -1,6 +1,10 @@
 package com.yo.android.model.dialer;
 
 import com.google.gson.annotations.SerializedName;
+import com.yo.android.util.DateUtil;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class SubscribersList {
     @SerializedName("uaip")
@@ -50,11 +54,12 @@ public class SubscribersList {
     }
 
     public String getTime() {
-        return time;
+        Date date = DateUtil.convertUtcToGmt(time);
+        return new SimpleDateFormat(DateUtil.DATE_FORMAT8).format(date);
     }
 
     public void setTime(String time) {
-        this.time = time;
+        this.time = time.substring(0, time.lastIndexOf("."));
     }
 
     public String getUsername() {
@@ -95,11 +100,6 @@ public class SubscribersList {
 
     public void setDestination(String destination) {
         this.destination = destination;
-    }
-
-    @Override
-    public String toString() {
-        return "ClassPojo [uaip = " + uaip + ", sipdestination = " + sipdestination + ", duration = " + duration + ", time = " + time + ", username = " + username + ", calltype = " + calltype + ", callcost = " + callcost + ", country = " + country + ", destination = " + destination + "]";
     }
 
     public boolean isArrowDown() {

@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 
+import com.yo.android.R;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Share;
 import com.yo.android.ui.BaseActivity;
@@ -34,6 +34,7 @@ public class AppContactsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setTitleHideIcon(R.string.select_contact);
         //get the received intent
         Intent receivedIntent = getIntent();
         //get the action

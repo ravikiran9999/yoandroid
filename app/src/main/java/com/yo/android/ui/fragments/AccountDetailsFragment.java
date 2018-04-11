@@ -1,5 +1,7 @@
 package com.yo.android.ui.fragments;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -96,7 +98,13 @@ public class AccountDetailsFragment extends BaseFragment {
 
 
     public int tokenExpireCount = 0;
+    private Activity activity;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activity = (Activity)context;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

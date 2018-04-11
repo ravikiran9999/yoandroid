@@ -64,7 +64,6 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
     private RecentCountryCallRatesAdapter recentAdapter;
     private MenuItem searchMenuItem;
     private Context context;
-    private Gson gson;
     private List<CallRateDetail> selectedRecentCallRateDetails = new ArrayList<>();
     List<CallRateDetail> recentCallRateDetails;
 
@@ -74,8 +73,10 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
         setContentView(R.layout.activity_county_list);
         ButterKnife.bind(this);
         context = this;
+
+        setTitleHideIcon(R.string.activity_contry_selection_title);
         enableBack();
-        getSupportActionBar().setTitle(R.string.activity_contry_selection_title);
+
         layout.setVisibility(View.GONE);
         adapter = new CountryCallRatesAdapter(this);
         recentAdapter = new RecentCountryCallRatesAdapter(this);
@@ -85,7 +86,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
         listView.setOnItemClickListener(this);
         listViewRecent.setOnItemClickListener(this);
         showProgressDialog();
-        gson = new Gson();
+        Gson gson = new Gson();
         final String accessToken = preferenceEndPoint.getStringPreference("access_token");
         Type type = new TypeToken<List<CallRateDetail>>() {
         }.getType();

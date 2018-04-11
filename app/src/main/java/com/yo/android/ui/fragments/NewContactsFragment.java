@@ -40,6 +40,7 @@ import com.google.gson.reflect.TypeToken;
 import com.orion.android.common.util.ConnectivityHelper;
 import com.yo.android.R;
 import com.yo.android.adapters.ContactsListAdapter;
+import com.yo.android.api.ApiCallback;
 import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.fragments.BaseFragment;
@@ -51,6 +52,8 @@ import com.yo.android.provider.YoAppContactContract;
 import com.yo.android.typeface.CustomTypefaceSpan;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.UserProfileActivity;
+import com.yo.android.usecase.ContactsSyncWithNameUsecase;
+import com.yo.android.usecase.WebserviceUsecase;
 import com.yo.android.util.Constants;
 import com.yo.android.util.PopupDialogListener;
 import com.yo.android.util.Util;
@@ -106,6 +109,8 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
     ContactsSyncManager mSyncManager;
     @Inject
     protected YoApi.YoService yoService;
+    @Inject
+    ContactsSyncWithNameUsecase contactsSyncWithNameUsecase;
 
     private static final int PICK_CONTACT_REQUEST = 100;
 
@@ -169,7 +174,7 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
         btnYoContacts.setTypeface(alexBrushRegular);
 
 
-        contactsListAdapter = new ContactsListAdapter(getActivity().getApplicationContext(), preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
+        contactsListAdapter = new ContactsListAdapter(activity, preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER));
         listView.setAdapter(contactsListAdapter);
         listView.setOnItemClickListener(this);
 
@@ -263,7 +268,9 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
     }
 
     private void syncContactsFromServer() {
-        showProgressDialog();
+        if(contactsListAdapter.getCount() <= 10 ) {
+            showProgressDialog();
+        }
         mSyncManager.loadContacts(new Callback<List<Contact>>() {
             @Override
             public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
@@ -538,7 +545,7 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
                     new String[]{contactName},
                     null);
 
-            if (cursor.moveToFirst()) {
+            if (cursor != null && cursor.moveToFirst()) {
                 // Get the indexes of the MIME type and data
                 mimeIdx = cursor.getColumnIndex(
                         ContactsContract.Contacts.Data.MIMETYPE);
@@ -561,7 +568,6 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
             }
         }
 
-        String access = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         final List<JSONObject> nameAndNumber = new ArrayList<>();
         JSONObject jsonObject = new JSONObject();
         try {
@@ -572,18 +578,19 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
             e.printStackTrace();
         }
         if (activity != null && Util.isOnline(activity)) {
-            yoService.syncContactsWithNameAPI(access, nameAndNumber).enqueue(new Callback<JsonElement>() {
+            contactsSyncWithNameUsecase.contactsSyncWithName(nameAndNumber, new ApiCallback<JsonElement>() {
                 @Override
-                public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
+                public void onResult(JsonElement result) {
                     syncContactsFromServer();
                 }
 
                 @Override
-                public void onFailure(Call<JsonElement> call, Throwable t) {
+                public void onFailure(String message) {
                     //if its failed to add try later to add failed contacts.
                     storeOfflineAddedContacts(nameAndNumber);
                 }
             });
+
         } else {
             //Contact added but not synced to sever, when network is back, contact should be synced.
             storeOfflineAddedContacts(nameAndNumber);
@@ -609,5 +616,4 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
             set(Constants.OFFLINE_ADDED_CONTACTS, json);
         }
     }
-
 }

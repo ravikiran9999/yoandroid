@@ -25,9 +25,8 @@ public class SettingsActivity extends BaseActivity implements AdapterView.OnItem
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        getSupportActionBar().setTitle("Settings");
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setTitleHideIcon(R.string.settings_label);
+        enableBack();
 
         prepareSettingsList();
 
