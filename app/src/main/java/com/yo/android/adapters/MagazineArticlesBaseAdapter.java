@@ -546,11 +546,11 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         if (holder.articlePhotoLeft != null) {
             final ImageView photoView = holder.articlePhotoLeft;
             photoView.setVisibility(View.VISIBLE);
-            photoView.setImageResource(Util.getMagazineBackdrop(context));
+            photoView.setImageResource(R.drawable.magazine_backdrop);
             if (data.getImage_filename() != null) {
                 mMagazinesServicesUsecase.loadImageFromS3(context, data, photoView);
             } else {
-                photoView.setImageResource(Util.getMagazineBackdrop(context));
+                photoView.setImageResource(R.drawable.magazine_backdrop);
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {
@@ -633,11 +633,11 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         if (holder.articlePhotoRight != null) {
             final ImageView photoView = holder.articlePhotoRight;
             photoView.setVisibility(View.VISIBLE);
-            photoView.setImageResource(Util.getMagazineBackdrop(context));
+            photoView.setImageResource(R.drawable.magazine_backdrop);
             if (data.getImage_filename() != null) {
                 mMagazinesServicesUsecase.loadImageFromS3(context, data, photoView);
             } else {
-                photoView.setImageResource(Util.getMagazineBackdrop(context));
+                photoView.setImageResource(R.drawable.magazine_backdrop);
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {

@@ -22,6 +22,7 @@ import com.yo.android.R;
 import com.yo.android.helpers.Settings;
 import com.yo.android.model.Contact;
 import com.yo.android.model.SpendDetails;
+import com.yo.android.model.wallet.Balance;
 import com.yo.android.photo.util.ColorGenerator;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
@@ -350,9 +351,9 @@ public class TransferBalanceActivity extends BaseActivity {
         if (Constants.BALANCE_TRANSFER_NOTIFICATION_ACTION.equals(action)) {
             if (mBalanceHelper != null) {
                 showProgressDialog();
-                mBalanceHelper.checkBalance(new Callback<ResponseBody>() {
+                mBalanceHelper.checkBalance(new Callback<Balance>() {
                     @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    public void onResponse(Call<Balance> call, Response<Balance> response) {
                         dismissProgressDialog();
                         try {
                             DecimalFormat df = new DecimalFormat("0.000");
@@ -370,7 +371,7 @@ public class TransferBalanceActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    public void onFailure(Call<Balance> call, Throwable t) {
                         dismissProgressDialog();
 
                     }

@@ -68,7 +68,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
         } else if (!TextUtils.isEmpty(item.getImage())) { // Image url is not empty
             //new NewImageRenderTask(mContext,item.getImage(),holder.getImageView()).execute();
             RequestOptions requestOptions = new RequestOptions()
-                    .placeholder(Util.getMagazineBackdrop(mContext))
+                    .placeholder(R.drawable.magazine_backdrop)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .dontAnimate();
             Glide.with(mContext).clear(holder.getImageView());
@@ -87,7 +87,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
                                     bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
                                     RequestOptions options = new RequestOptions()
                                             .override(bmp.getWidth(), bmp.getHeight())
-                                            .placeholder(Util.getMagazineBackdrop(mContext))
+                                            .placeholder(R.drawable.magazine_backdrop)
                                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                                             .dontAnimate();
                                     Glide.with(mContext)
@@ -112,7 +112,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
                 Glide.with(mContext)
-                        .load(Util.getMagazineBackdrop(mContext))
+                        .load(R.drawable.magazine_backdrop)
                         .apply(requestOptions)
                         //.transition(withCrossFade())
                         .into(holder.getImageView());
@@ -123,7 +123,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
                 Glide.with(mContext)
-                        .load(Util.getMagazineBackdrop(mContext))
+                        .load(R.drawable.magazine_backdrop)
                         .apply(requestOptions)
                         //.transition(withCrossFade())
 

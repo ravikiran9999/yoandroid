@@ -353,7 +353,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
 
             final ImageView photoView = holder.articlePhoto;
 
-            photoView.setImageResource(Util.getMagazineBackdrop(context));
+            photoView.setImageResource(R.drawable.magazine_backdrop);
 
             if (data.getImage_filename() != null) {
                 final TextView fullImageTitle = holder.fullImageTitle;
@@ -362,7 +362,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                 final RelativeLayout rlFullImageOptions = holder.rlFullImageOptions;
                 final TextView textView1 = holder.articleShortDesc;
                 RequestOptions requestOptions = new RequestOptions()
-                        .placeholder(Util.getMagazineBackdrop(context))
+                        .placeholder(R.drawable.magazine_backdrop)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
                 Glide.with(context)
@@ -379,7 +379,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                                     Glide.with(context)
                                             .load(data.getImage_filename())
                                             .override(bmp.getWidth(), bmp.getHeight())
-                                            .placeholder(Util.getMagazineBackdrop(context))
+                                            .placeholder(R.drawable.magazine_backdrop)
                                             .crossFade()
                                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                                             .dontAnimate()
@@ -396,7 +396,7 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
                             }
                         });*/
             } else {
-                photoView.setImageResource(Util.getMagazineBackdrop(context));
+                photoView.setImageResource(R.drawable.magazine_backdrop);
             }
 
             /*Log.d("OthersProfileLiked", "The photoView.getDrawable() is " + photoView.getDrawable());

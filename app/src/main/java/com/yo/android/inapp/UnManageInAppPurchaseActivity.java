@@ -11,6 +11,7 @@ import com.yo.android.inapp.inapputil.IabHelper;
 import com.yo.android.inapp.inapputil.IabResult;
 import com.yo.android.inapp.inapputil.Inventory;
 import com.yo.android.inapp.inapputil.Purchase;
+import com.yo.android.model.wallet.Balance;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.vox.BalanceHelper;
@@ -146,9 +147,9 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
         mHelper.consumeAsync(info, new IabHelper.OnConsumeFinishedListener() {
             @Override
             public void onConsumeFinished(Purchase purchase, IabResult result) {
-                mBalanceHelper.addBalance(String.valueOf(ITEM_PRICE), new Callback<ResponseBody>() {
+                mBalanceHelper.addBalance(String.valueOf(ITEM_PRICE), new Callback<Balance>() {
                     @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    public void onResponse(Call<Balance> call, Response<Balance> response) {
                         dismissProgressDialog();
                         Intent data = new Intent();
                         data.putExtra("sku", ITEM_SKU);
@@ -164,7 +165,7 @@ public class UnManageInAppPurchaseActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    public void onFailure(Call<Balance> call, Throwable t) {
                         dismissProgressDialog();
                         Intent data = new Intent();
                         data.putExtra("sku", ITEM_SKU);

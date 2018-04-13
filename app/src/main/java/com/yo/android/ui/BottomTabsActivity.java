@@ -41,6 +41,7 @@ import com.google.api.client.util.ExponentialBackOff;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
+import com.yo.android.model.wallet.Balance;
 import com.yo.android.usecase.WebserviceUsecase;
 import com.yo.android.adapters.TabsPagerAdapter;
 import com.yo.android.api.YoApi;
@@ -864,9 +865,9 @@ public class BottomTabsActivity extends BaseActivity {
         if (Constants.BALANCE_TRANSFER_NOTIFICATION_ACTION.equals(action)) {
             if (balanceHelper != null) {
                 showProgressDialog();
-                balanceHelper.checkBalance(new Callback<ResponseBody>() {
+                balanceHelper.checkBalance(new Callback<Balance>() {
                     @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    public void onResponse(Call<Balance> call, Response<Balance> response) {
                         dismissProgressDialog();
                         try {
                             /*DecimalFormat df = new DecimalFormat("0.000");
@@ -877,7 +878,7 @@ public class BottomTabsActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    public void onFailure(Call<Balance> call, Throwable t) {
                         dismissProgressDialog();
 
                     }

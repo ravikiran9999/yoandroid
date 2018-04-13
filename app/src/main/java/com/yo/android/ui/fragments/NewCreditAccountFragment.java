@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.wang.avi.AVLoadingIndicatorView;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.PackageDenomination;
+import com.yo.android.model.wallet.Balance;
 import com.yo.android.usecase.DenominationsUsecase;
 import com.yo.android.R;
 import com.yo.android.api.ApiCallback;
@@ -382,15 +383,15 @@ public class NewCreditAccountFragment extends BaseFragment {
                                                     // check app lock status
                                                     webserviceUsecase.appStatus(null);
 
-                                                    mBalanceHelper.checkBalance(new Callback<ResponseBody>() {
+                                                    mBalanceHelper.checkBalance(new Callback<Balance>() {
                                                         @Override
-                                                        public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                                                        public void onResponse(Call<Balance> call, retrofit2.Response<Balance> response) {
                                                             preferenceEndPoint.saveBooleanPreference("isNewUser", false);
                                                             closeActivityAddBalance(Activity.RESULT_OK, null);
                                                         }
 
                                                         @Override
-                                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                                        public void onFailure(Call<Balance> call, Throwable t) {
                                                             closeActivityAddBalance(Activity.RESULT_CANCELED, null);
                                                             CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, "", "", "Failed to load balance");
                                                         }
@@ -491,15 +492,15 @@ public class NewCreditAccountFragment extends BaseFragment {
                 EventBus.getDefault().post(Constants.BALANCE_UPDATED_ACTION);
             } else {
                 showProgressDialog();
-                mBalanceHelper.checkBalance(new Callback<ResponseBody>() {
+                mBalanceHelper.checkBalance(new Callback<Balance>() {
                     @Override
-                    public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                    public void onResponse(Call<Balance> call, retrofit2.Response<Balance> response) {
                         dismissProgressDialog();
                         preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, mBalanceHelper.getCurrentBalance());
                     }
 
                     @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    public void onFailure(Call<Balance> call, Throwable t) {
                         dismissProgressDialog();
 
                     }
@@ -671,14 +672,14 @@ public class NewCreditAccountFragment extends BaseFragment {
     }
 
     private void checkBalance() {
-        mBalanceHelper.checkBalance(new Callback<ResponseBody>() {
+        mBalanceHelper.checkBalance(new Callback<Balance>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+            public void onResponse(Call<Balance> call, retrofit2.Response<Balance> response) {
                 closeActivityAddBalance(Activity.RESULT_OK, null);
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<Balance> call, Throwable t) {
                 closeActivityAddBalance(Activity.RESULT_CANCELED, null);
                 CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, "", "", activity.getResources().getString(R.string.fail_to_load_balance));
             }

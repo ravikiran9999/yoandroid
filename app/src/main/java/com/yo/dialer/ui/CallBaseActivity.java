@@ -24,9 +24,11 @@ import com.bumptech.glide.request.RequestOptions;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.model.dialer.OpponentDetails;
+import com.yo.android.model.wallet.Balance;
 import com.yo.android.pjsip.SipBinder;
 import com.yo.android.pjsip.SipHelper;
 import com.yo.android.ui.BaseActivity;
+import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 import com.yo.android.util.YODialogs;
 import com.yo.android.vox.BalanceHelper;
@@ -39,6 +41,10 @@ import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by root on 31/7/17.
@@ -96,8 +102,10 @@ class CallBaseActivity extends BaseActivity {
     private boolean isIncoming;
     protected View mInComingHeader;
     protected View mOutgoingCallHeader;
+
     @Inject
     protected BalanceHelper mBalanceHelper;
+
     private int callNotificationId;
 
 
@@ -330,7 +338,7 @@ class CallBaseActivity extends BaseActivity {
      * Called when the call is disconnected
      * @param reason
      */
-    public void callDisconnected(String reason) {
+    public void callDisconnected(final String reason) {
         mHandler.removeCallbacks(UIHelper.getDurationRunnable(CallBaseActivity.this));
         SipHelper.isAlreadyStarted = false;
         CallControls.getCallControlsModel().setCallAccepted(false);
@@ -338,7 +346,27 @@ class CallBaseActivity extends BaseActivity {
         am.setSpeakerphoneOn(false);
         DialerLogs.messageI(TAG, "callDisconnected Before finishing..");
         if ("Forbidden".equals(reason)) {
-            Dialogs.recharge(this);
+            mBalanceHelper.loadBalance(new Callback<Balance>() {
+                @Override
+                public void onResponse(Call<Balance> call, Response<Balance> response) {
+                    String switchBalance = response.body().getSwitchBalance();
+                    String walletBalance = response.body().getWalletBalance();
+                    if(Double.parseDouble(mBalanceHelper.removeCurrencyCodeString(switchBalance)) <= 1) {
+                        Dialogs.recharge(CallBaseActivity.this);
+                        appLogglyUsecase.sendAlertsToLoggly(switchBalance + " : "+walletBalance, reason + ": switch balance is < 1", Constants.CRITICAL, 523);
+                    } else {
+                        Dialogs.nexgeRegistrationIssue(CallBaseActivity.this);
+                        appLogglyUsecase.sendAlertsToLoggly(switchBalance + " : "+walletBalance, reason + ": nexge issue", Constants.CRITICAL, 809);
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<Balance> call, Throwable t) {
+                    mLog.w(TAG, "loadBalance", t.getMessage());
+                }
+            });
+
         } else if("Service not available/User not online".equals(reason) && isPstn) {
                 finish();
             } else {

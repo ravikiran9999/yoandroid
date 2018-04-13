@@ -254,7 +254,6 @@
     <string name="enter_mobile_number_error">Please enter a valid number </string>
     <string name="dialog_text">Please confirm if %s number is correct.</string>
     <string name="Cancel">Cancel</string>
-    <string name="Ok">ok</string>
     <string name="Dialog_title">Confirm</string>
     <string name="others_no_article_added">There is no article added yet to the magazine.</string>
     <string name="admin">Admin</string>
@@ -398,6 +397,7 @@
     <string name="not_online_unavailable">Recipient not online or unavailable.</string>
     <string name="recharge">Recharge</string>
     <string name="no_sufficient_bal_recharge">You don\'t have sufficient balance to call. Please recharge.</string>
+    <string name="nexge_registration_issue">Call connection issue. Please try after sometime.</string>
     <string name="not_in_coverage_area">Recipient not in coverage area.</string>
     <string name="cannot_transfer_full_balance">You cannot transfer your whole balance. Please maintain atleast 0.001</string>
     <string name="enter_the_code">Enter the code sent to %1$s</string>

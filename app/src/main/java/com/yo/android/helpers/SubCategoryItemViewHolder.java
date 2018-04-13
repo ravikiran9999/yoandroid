@@ -54,7 +54,7 @@ public class SubCategoryItemViewHolder extends YoViewHolder {
 
     private void loadImage(String imageUrl) {
         RequestOptions requestOptions = new RequestOptions()
-                .placeholder(Util.getMagazineBackdrop(mContext))
+                .placeholder(R.drawable.magazine_backdrop)
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .dontAnimate();
 

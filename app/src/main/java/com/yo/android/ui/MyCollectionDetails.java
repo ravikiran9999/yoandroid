@@ -370,7 +370,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
 
             final ImageView photoView = holder.articlePhoto;
 
-            photoView.setImageResource(Util.getMagazineBackdrop(context));
+            photoView.setImageResource(R.drawable.magazine_backdrop);
             if (data.getImage_filename() != null) {
                 final TextView fullImageTitle = holder.fullImageTitle;
                 final TextView articleTitle = holder.articleTitle;
@@ -378,7 +378,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 final RelativeLayout rlFullImageOptions = holder.rlFullImageOptions;
                 final TextView textView1 = holder.articleShortDesc;
                 RequestOptions requestOptions = new RequestOptions()
-                        .placeholder(Util.getMagazineBackdrop(context))
+                        .placeholder(R.drawable.magazine_backdrop)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
                 Glide.with(context)
@@ -396,7 +396,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                 }
 
             } else {
-                photoView.setImageResource(Util.getMagazineBackdrop(context));
+                photoView.setImageResource(R.drawable.magazine_backdrop);
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {

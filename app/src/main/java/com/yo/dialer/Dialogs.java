@@ -42,7 +42,7 @@ public class Dialogs {
         if (activity != null) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             LayoutInflater layoutInflater = LayoutInflater.from(activity);
-            final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
+            final View view = layoutInflater.inflate(R.layout.zero_balance_warning, null);
             builder.setView(view);
 
             Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
@@ -121,4 +121,33 @@ public class Dialogs {
         }
     }
 
+    public static void nexgeRegistrationIssue(final Activity activity) {
+        if (activity != null) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            LayoutInflater layoutInflater = LayoutInflater.from(activity);
+            final View view = layoutInflater.inflate(R.layout.zero_balance_warning, null);
+            builder.setView(view);
+
+            Button yesButton = (Button) view.findViewById(R.id.yes_btn);
+            Button noButton = (Button) view.findViewById(R.id.no_btn);
+            TextView tvRechargeText = (TextView) view.findViewById(R.id.dialog_content);
+
+            yesButton.setText(R.string.ok);
+            noButton.setVisibility(View.GONE);
+            tvRechargeText.setText(activity.getString(R.string.nexge_registration_issue));
+
+
+            final AlertDialog alertDialog = builder.create();
+            alertDialog.setCancelable(false);
+            alertDialog.show();
+
+            yesButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                    activity.finish();
+                }
+            });
+        }
+    }
 }

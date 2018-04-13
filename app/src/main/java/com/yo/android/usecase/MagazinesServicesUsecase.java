@@ -275,7 +275,7 @@ public class MagazinesServicesUsecase {
             final TextView textView = holder.articleShortDesc;
             RequestOptions requestOptions = new RequestOptions()
                     //.placeholder(mColorGenerator.getColorPlaceholder())
-                    .placeholder(Util.getMagazineBackdrop(context))
+                    .placeholder(R.drawable.magazine_backdrop)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .dontAnimate();
             Glide.with(context)
@@ -303,7 +303,7 @@ public class MagazinesServicesUsecase {
     public void loadImageFromS3(final Context context, final Articles data, final ImageView photoView) {
         if (!((BaseActivity) context).hasDestroyed()) {
             RequestOptions requestOptions = new RequestOptions()
-                    .placeholder(Util.getMagazineBackdrop(context))
+                    .placeholder(R.drawable.magazine_backdrop)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .dontAnimate();
             Glide.with(context)
@@ -319,8 +319,8 @@ public class MagazinesServicesUsecase {
                                     bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
                                     RequestOptions options = new RequestOptions()
                                             .override(bmp.getWidth(), bmp.getHeight())
-                                            //.placeholder(Util.getMagazineBackdrop(context))
-                                            .placeholder(mColorGenerator.getColor(data.getId()))
+                                            //.placeholder(R.drawable.magazine_backdrop)
+                                            .placeholder(R.drawable.magazine_backdrop)
                                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                                             .dontAnimate();
                                     Glide.with(context).clear(photoView);
@@ -701,11 +701,11 @@ public class MagazinesServicesUsecase {
     public void handleArticleImage(final int position, MagazineArticlesBaseAdapter.ViewHolder holder, ImageView imageView, final Articles data, final Context context) {
         if (imageView != null) {
 
-            imageView.setImageResource(Util.getMagazineBackdrop(context));
+            imageView.setImageResource(R.drawable.magazine_backdrop);
             if (data.getImage_filename() != null) {
                 handleImageLoading(holder, context, data, imageView);
             } else {
-                imageView.setImageResource(Util.getMagazineBackdrop(context));
+                imageView.setImageResource(R.drawable.magazine_backdrop);
             }
 
             imageView.setOnClickListener(new View.OnClickListener() {

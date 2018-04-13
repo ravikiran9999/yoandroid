@@ -58,7 +58,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
             if (!TextUtils.isEmpty(item.getImage())) { // Image url is not null
 
                 RequestOptions myOptions = new RequestOptions()
-                        .placeholder(Util.getMagazineBackdrop(mContext))
+                        .placeholder(R.drawable.magazine_backdrop)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
                 Glide.with(mContext)
@@ -75,7 +75,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                                         bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
                                         RequestOptions myOptions = new RequestOptions()
                                                 .override(bmp.getWidth(), bmp.getHeight())
-                                                .placeholder(Util.getMagazineBackdrop(mContext))
+                                                .placeholder(R.drawable.magazine_backdrop)
                                                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                                                 .dontAnimate();
 
@@ -107,7 +107,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                             .into(holder.getImageView());
                 } else { // Image url is null and articles are present
                     Glide.with(mContext)
-                            .load(Util.getMagazineBackdrop(mContext))
+                            .load(R.drawable.magazine_backdrop)
                             .apply(requestOptions)
                             //.transition(withCrossFade())
                             .into(holder.getImageView());
@@ -125,7 +125,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
         } else if (position == 0 && !"+ New Magazine".equalsIgnoreCase(item.getName())) { // First position but not the New Magazine text(applies when searching)
             if (!TextUtils.isEmpty(item.getImage())) { // Image url is not null
                 RequestOptions requestOptions = new RequestOptions()
-                        .placeholder(Util.getMagazineBackdrop(mContext))
+                        .placeholder(R.drawable.magazine_backdrop)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
                 Glide.with(mContext)
@@ -143,7 +143,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                                         bmp = BitmapScaler.scaleToFitWidth(resource, screenWidth);
                                         RequestOptions myOptions = new RequestOptions()
                                                 .override(bmp.getWidth(), bmp.getHeight())
-                                                .placeholder(Util.getMagazineBackdrop(mContext))
+                                                .placeholder(R.drawable.magazine_backdrop)
                                                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                                                 .dontAnimate();
 
@@ -176,7 +176,7 @@ public class CreateMagazinesAdapter extends AbstractBaseAdapter<OwnMagazine, Own
                             .into(holder.getImageView());
                 } else { // Image url is null and articles are present
                     Glide.with(mContext)
-                            .load(Util.getMagazineBackdrop(mContext))
+                            .load(R.drawable.magazine_backdrop)
                             //.transition(withCrossFade())
                             .into(holder.getImageView());
                 }

@@ -56,7 +56,7 @@ public  class NewImageRenderTask extends AsyncTask<Void, Void, Bitmap> {
             if (!((BaseActivity) mContext).hasDestroyed()) {
                 RequestOptions requestOptions = new RequestOptions()
                         .override(bmp.getWidth(), bmp.getHeight())
-                        .placeholder(Util.getMagazineBackdrop(mContext))
+                        .placeholder(R.drawable.magazine_backdrop)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
                 Glide.with(mContext)
@@ -72,7 +72,7 @@ public  class NewImageRenderTask extends AsyncTask<Void, Void, Bitmap> {
                 }
             }
         } else {
-            articleImageView.setImageResource(Util.getMagazineBackdrop(mContext));
+            articleImageView.setImageResource(R.drawable.magazine_backdrop);
         }
 
     }

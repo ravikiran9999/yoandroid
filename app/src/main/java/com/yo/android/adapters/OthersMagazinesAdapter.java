@@ -86,7 +86,7 @@ public class OthersMagazinesAdapter extends BaseAdapter {
 
             if (!TextUtils.isEmpty(ownMagazineList.get(position).getImage())) { // Image url is not empty
                 RequestOptions requestOptions = new RequestOptions()
-                        .placeholder(Util.getMagazineBackdrop(mContext))
+                        .placeholder(R.drawable.magazine_backdrop)
                         .fitCenter()
                         .diskCacheStrategy(DiskCacheStrategy.ALL);
                 Glide.with(mContext)
@@ -106,7 +106,7 @@ public class OthersMagazinesAdapter extends BaseAdapter {
                             .into(imageView);
                 } else {
                     Glide.with(mContext)
-                            .load(Util.getMagazineBackdrop(mContext))
+                            .load(R.drawable.magazine_backdrop)
                             //.transition(withCrossFade())
                             .into(imageView);
                 }

@@ -319,7 +319,7 @@ public class TopicsDetailActivity extends BaseActivity {
 
             final ImageView photoView = holder.articlePhoto;
 
-            photoView.setImageResource(Util.getMagazineBackdrop(context));
+            photoView.setImageResource(R.drawable.magazine_backdrop);
 
             if (data.getImage_filename() != null) {
                 final TextView fullImageTitle = holder.fullImageTitle;
@@ -328,7 +328,7 @@ public class TopicsDetailActivity extends BaseActivity {
                 final RelativeLayout rlFullImageOptions = holder.rlFullImageOptions;
                 final TextView textView1 = holder.articleShortDesc;
                 RequestOptions requestOptions = new RequestOptions()
-                        .placeholder(Util.getMagazineBackdrop(context))
+                        .placeholder(R.drawable.magazine_backdrop)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
                 Glide.with(context)
@@ -379,7 +379,7 @@ public class TopicsDetailActivity extends BaseActivity {
                 textView1.setText(Html.fromHtml(data.getSummary()));
 
             } else {
-                photoView.setImageResource(Util.getMagazineBackdrop(context));
+                photoView.setImageResource(R.drawable.magazine_backdrop);
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {

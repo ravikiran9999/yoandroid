@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import com.orion.android.common.logger.Log;
 import com.orion.android.common.preferences.PreferenceEndPoint;
+import com.yo.android.model.wallet.Balance;
 import com.yo.android.usecase.WebserviceUsecase;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.PaymentHistoryItem;
@@ -58,23 +59,21 @@ public class BalanceHelper {
     }
 
 
-    public void checkBalance(Callback<ResponseBody> callback) {
+    public void checkBalance(Callback<Balance> callback) {
         loadBalance(callback);
     }
 
 
-    private void loadBalance(final Callback<ResponseBody> callback) {
-        final String accessToken = prefs.getStringPreference("access_token");
-        yoService.executeBalanceAction(accessToken).enqueue(new Callback<ResponseBody>() {
+    public void loadBalance(final Callback<Balance> callback) {
+        final String accessToken = prefs.getStringPreference(YoApi.ACCESS_TOKEN);
+        yoService.executeBalanceAction(accessToken).enqueue(new Callback<Balance>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<Balance> call, Response<Balance> response) {
                 if (response.isSuccessful()) {
                     try {
-                        String str = Util.toString(response.body().byteStream());
-                        JSONObject jsonObject = new JSONObject(str);
-                        String balance = jsonObject.getString(Constants.BALANCE);
-                        String switchBalance = jsonObject.getString(Constants.S_BALANCE);
-                        String walletBalance = jsonObject.getString(Constants.W_BALANCE);
+                        String balance = response.body().getBalance();
+                        String switchBalance = response.body().getSwitchBalance();
+                        String walletBalance = response.body().getWalletBalance();
                         try {
                             prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
                             prefs.saveStringPreference(Constants.SWITCH_BALANCE, switchBalance);
@@ -89,19 +88,19 @@ public class BalanceHelper {
                         if (callback != null) {
                             callback.onResponse(call, response);
                         }
-                    } catch (IOException | JSONException e) {
+                    } catch (Exception e) {
                         mLog.w(TAG, "loadBalance", e);
 
                     } finally {
                         if (response != null && response.body() != null) {
-                            response.body().close();
+                            //response.body().close();
                         }
                     }
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<Balance> call, Throwable t) {
                 mLog.i(TAG, "loadBalance: onFailure");
                 if (callback != null) {
                     callback.onFailure(call, t);
@@ -110,17 +109,17 @@ public class BalanceHelper {
         });
     }
 
-    public void addBalance(final String credit, final Callback<ResponseBody> callback) {
-        final String accessToken = prefs.getStringPreference("access_token");
+    public void addBalance(final String credit, final Callback<Balance> callback) {
+        final String accessToken = prefs.getStringPreference(YoApi.ACCESS_TOKEN);
         if (TextUtils.isEmpty(prefs.getStringPreference(Constants.SUBSCRIBER_ID))) {
-            loadBalance(new Callback<ResponseBody>() {
+            loadBalance(new Callback<Balance>() {
                 @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                public void onResponse(Call<Balance> call, Response<Balance> response) {
                     reAddBalance(accessToken, credit, callback);
                 }
 
                 @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                public void onFailure(Call<Balance> call, Throwable t) {
                     mLog.w(TAG, "loadBalance", t.getMessage());
                 }
             });
@@ -130,41 +129,42 @@ public class BalanceHelper {
 
     }
 
-    private void reAddBalance(String accessToken, String credit, final Callback<ResponseBody> callback) {
-        yoService.addBalance(accessToken, prefs.getStringPreference(Constants.SUBSCRIBER_ID), credit).enqueue(new Callback<ResponseBody>() {
+    private void reAddBalance(String accessToken, String credit, final Callback<Balance> callback) {
+        yoService.addBalance(accessToken, prefs.getStringPreference(Constants.SUBSCRIBER_ID), credit).enqueue(new Callback<Balance>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<Balance> call, Response<Balance> response) {
                 if (response.isSuccessful()) {
                     try {
 
-                        String str = Util.toString(response.body().byteStream());
-                        JSONObject jsonObject = new JSONObject(str);
-                        int responseCode = jsonObject.getInt("code");
+                        /*String str = Util.toString(response.body().byteStream());
+                        JSONObject jsonObject = new JSONObject(str);*/
+                        //int responseCode = jsonObject.getInt("code");
+                        int responseCode = response.body().getCode();
 
                         if (responseCode == 707) {
-                            String errorMessage = jsonObject.getString("data");
+                            //String errorMessage = jsonObject.getString("data");
+                            String errorMessage = response.body().getData();
                             Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show();
                             onFailure(call, new Throwable(errorMessage));
                         } else {
-                            String balance = jsonObject.getJSONArray("ToAccountBalance").getJSONObject(0).getString(Constants.BALANCE);
-                            //String mSwitchBalance = jsonObject.getJSONArray("ToAccountBalance").getJSONObject(0).getString(Constants.S_BALANCE);
-                            //String mWalletBalance = jsonObject.getJSONArray("ToAccountBalance").getJSONObject(0).getString(Constants.W_BALANCE);
+                            //TODO need to check commented by ravikiran
+                            //String balance = jsonObject.getJSONArray("ToAccountBalance").getJSONObject(0).getString(Constants.BALANCE);
 
                             try {
-                                prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
-                                //prefs.saveStringPreference(Constants.SWITCH_BALANCE, mSwitchBalance);
-                                //prefs.saveStringPreference(Constants.WALLET_BALANCE, mWalletBalance);
+                                //TODO need to check commented by ravikiran
+                                //prefs.saveStringPreference(Constants.CURRENT_BALANCE, balance);
+
                                 webserviceUsecase.appStatus(null);
                             } catch (IllegalArgumentException e) {
                                 mLog.w(TAG, "getCurrentBalance", e);
                             }
-                            mLog.i(TAG, "loadBalance: balance -  %s", balance);
+                            //mLog.i(TAG, "loadBalance: balance -  %s", balance);
                         }
-                    } catch (IOException | JSONException e) {
+                    } catch (Exception e) {
                         mLog.w(TAG, "loadBalance", e);
                     } finally {
                         if (response != null && response.body() != null) {
-                            response.body().close();
+                            //response.body().close();
                         }
                     }
                 }
@@ -174,7 +174,7 @@ public class BalanceHelper {
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<Balance> call, Throwable t) {
                 if (callback != null) {
                     callback.onFailure(call, t);
                 }

@@ -278,7 +278,7 @@ public class WishListActivity extends BaseActivity {
 
             final ImageView photoView = holder.articlePhoto;
 
-            photoView.setImageResource(Util.getMagazineBackdrop(context));
+            photoView.setImageResource(R.drawable.magazine_backdrop);
             if (data.getImage_filename() != null) {
                 final TextView fullImageTitle = holder.fullImageTitle;
                 final TextView articleTitle = holder.articleTitle;
@@ -286,7 +286,7 @@ public class WishListActivity extends BaseActivity {
                 final RelativeLayout rlFullImageOptions = holder.rlFullImageOptions;
                 final TextView textView1 = holder.articleShortDesc;
                 RequestOptions requestOptions = new RequestOptions()
-                        .placeholder(Util.getMagazineBackdrop(context))
+                        .placeholder(R.drawable.magazine_backdrop)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .dontAnimate();
                 Glide.with(context)
@@ -314,7 +314,7 @@ public class WishListActivity extends BaseActivity {
                                     Glide.with(context)
                                             .load(data.getImage_filename())
                                             .override(bmp.getWidth(), bmp.getHeight())
-                                            .placeholder(Util.getMagazineBackdrop(context))
+                                            .placeholder(R.drawable.magazine_backdrop)
                                             .crossFade()
                                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                                             .dontAnimate()
@@ -414,7 +414,7 @@ public class WishListActivity extends BaseActivity {
                             }
                         });*/
             } else {
-                photoView.setImageResource(Util.getMagazineBackdrop(context));
+                photoView.setImageResource(R.drawable.magazine_backdrop);
             }
 
             photoView.setOnClickListener(new View.OnClickListener() {

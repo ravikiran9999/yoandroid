@@ -35,6 +35,7 @@ import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.model.Articles;
 import com.yo.android.model.OTPResponse;
 import com.yo.android.model.Subscriber;
+import com.yo.android.model.wallet.Balance;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.ui.NewFollowMoreTopicsActivity;
@@ -367,9 +368,9 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         } else if (!balanceAdded) {
-            mBalanceHelper.checkBalance(new Callback<ResponseBody>() {
+            mBalanceHelper.checkBalance(new Callback<Balance>() {
                 @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                public void onResponse(Call<Balance> call, Response<Balance> response) {
                     dismissProgressDialog();
                     Intent intent;
                     preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_PROFILE_SCREEN, false);
@@ -393,7 +394,7 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
                 }
 
                 @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                public void onFailure(Call<Balance> call, Throwable t) {
                     dismissProgressDialog();
                 }
             });

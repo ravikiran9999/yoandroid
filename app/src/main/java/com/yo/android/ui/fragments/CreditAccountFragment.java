@@ -27,6 +27,7 @@ import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.inapp.UnManageInAppPurchaseActivity;
 import com.yo.android.model.MoreData;
 import com.yo.android.model.denominations.Denominations;
+import com.yo.android.model.wallet.Balance;
 import com.yo.android.pjsip.YoSipService;
 import com.yo.android.ui.TransferBalanceActivity;
 import com.yo.android.ui.TransferBalanceSelectContactActivity;
@@ -144,9 +145,9 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
         super.onActivityResult(requestCode, resultCode, data);
         if (mBalanceHelper != null && (requestCode == 11 || requestCode == 22) && resultCode == Activity.RESULT_OK) {
             showProgressDialog();
-            mBalanceHelper.checkBalance(new Callback<ResponseBody>() {
+            mBalanceHelper.checkBalance(new Callback<Balance>() {
                 @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                public void onResponse(Call<Balance> call, Response<Balance> response) {
                     dismissProgressDialog();
                     try {
                         preferenceEndPoint.saveStringPreference(Constants.CURRENT_BALANCE, mBalanceHelper.getCurrentBalance());
@@ -156,7 +157,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                 }
 
                 @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                public void onFailure(Call<Balance> call, Throwable t) {
                     dismissProgressDialog();
 
                 }
@@ -282,14 +283,14 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                                                 case 200:
                                                     mToastFactory.showToast(R.string.voucher_recharge_successful);
                                                     alertDialog.dismiss();
-                                                    mBalanceHelper.checkBalance(new Callback<ResponseBody>() {
+                                                    mBalanceHelper.checkBalance(new Callback<Balance>() {
                                                         @Override
-                                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                                        public void onResponse(Call<Balance> call, Response<Balance> response) {
                                                             closeActivityAddBalance(Activity.RESULT_OK, null);
                                                         }
 
                                                         @Override
-                                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                                        public void onFailure(Call<Balance> call, Throwable t) {
                                                             closeActivityAddBalance(Activity.RESULT_CANCELED, null);
                                                             CallHelper.uploadToGoogleSheetBalanceFail(preferenceEndPoint, "", "", "Failed to load balance");
                                                         }

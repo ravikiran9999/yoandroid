@@ -27,6 +27,7 @@ import com.yo.android.model.UserProfileInfo;
 import com.yo.android.model.Wallet;
 import com.yo.android.model.denominations.Denominations;
 import com.yo.android.model.dialer.CallRateDetail;
+import com.yo.android.model.wallet.Balance;
 
 import org.json.JSONObject;
 
@@ -232,7 +233,7 @@ public class YoApi {
 
         @FormUrlEncoded
         @POST("api/user/add_balance.json")
-        Call<ResponseBody> addBalance(@Field("access_token") String access_token,
+        Call<Balance> addBalance(@Field("access_token") String access_token,
                                       @Field("subscriber_id") String subscriber_id,
                                       @Field("credit") String credit);
 
@@ -256,7 +257,7 @@ public class YoApi {
         Call<Response> voucherRechargeAPI(@Field("access_token") String access_token, @Field("voucher_number") String voucher_number);
 
         @GET("/api/user/get_balance.json")
-        Call<ResponseBody> executeBalanceAction(@Query("access_token") String access_token);
+        Call<Balance> executeBalanceAction(@Query("access_token") String access_token);
 
         @GET("api/package_rates_lists.json")
         Call<List<CallRateDetail>> getCallsRatesListAPI(@Query("access_token") String access_token);
