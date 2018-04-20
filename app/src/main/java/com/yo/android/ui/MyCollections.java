@@ -97,7 +97,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         } else {
             showProgressDialog();
         }
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         //Todo pass renewal status
         yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
             @Override
@@ -318,7 +318,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
      * Unfollows the selected topic
      */
     private void deleteTopic() {
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         List<Collections> collections = myCollectionsAdapter.getSelectedItems();
         final List<String> topicIds = new ArrayList<String>();
         final List<String> magazineIds = new ArrayList<>();
@@ -334,7 +334,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
             yoService.removeTopicsAPI(accessToken, topicIds).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                     yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
                         @Override
                         public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
@@ -399,7 +399,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
             yoService.removeMagazinesAPI(accessToken, magazineIds).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                     yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
                         @Override
                         public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
@@ -466,7 +466,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
         if (requestCode == 2) {
             showProgressDialog();
-            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
             yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
                 @Override
                 public void onResponse(Call<List<Collections>> call, Response<List<Collections>> response) {
@@ -511,7 +511,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 searchText = searchView.getQuery().toString();
             }
             showProgressDialog();
-            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
             final String finalSearchText = searchText;
             yoService.getCollectionsAPI(accessToken).enqueue(new Callback<List<Collections>>() {
                 @Override

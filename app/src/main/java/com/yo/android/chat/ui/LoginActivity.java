@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -48,7 +47,6 @@ import com.yo.android.util.CountryCodeHelper;
 import com.yo.android.util.Util;
 import com.yo.android.vox.UserDetails;
 import com.yo.android.vox.VoxFactory;
-import com.yo.services.BackgroundServices;
 
 import java.net.SocketTimeoutException;
 import java.util.List;
@@ -98,7 +96,6 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
     private FirebaseAuth.AuthStateListener mAuthListener;
     private static final int SELECTED_OK = 101;
     private List<CountryCode> mList;
-    private MenuItem searchMenuItem;
     private EventBus bus = EventBus.getDefault();
 
 
@@ -147,12 +144,7 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
         }
         String simCountryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
         String simCountryName = preferenceEndPoint.getStringPreference(Constants.COUNTRY_DISPLAY_NAME);
-        mCountryCode.setText("+" + simCountryCode + " " + simCountryName);
-        //spCountrySpinner.attachDataSource(mList);
-
-//         spCountrySpinner.setSelectedIndex(pos);
-
-        //spCountrySpinner.setOnItemSelectedListener(this);
+        mCountryCode.setText(String.format(getString(R.string.sim_country_code), simCountryCode, simCountryName));
 
         mCountryCode.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -205,17 +197,14 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
         // String countryCode=mCountryCode.getText().toString();
         String phoneNumber = mPhoneNumberView.getText().toString().trim();
 
-
         boolean cancel = false;
         View focusView = null;
 
         PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
         Phonenumber.PhoneNumber swissNumberProto = null;
 
-
         String selectedCountryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
         String country = preferenceEndPoint.getStringPreference(Constants.COUNTRY_ID);
-
 
         try {
             swissNumberProto = phoneUtil.parse(selectedCountryCode + phoneNumber, country.toUpperCase());
@@ -270,19 +259,7 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
         UserDetails userDetails = voxFactory.newAddSubscriber(yoUser, yoUser);
         //Debug
         String action = voxFactory.addSubscriber(yoUser, phoneNumber, countryCode);
-        //  mLog.e(TAG, "Request for adding vox api: %s", action);
-            /*voxService.getData(userDetails).enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
 
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                }
-            });
-*/
         callLoginService(phoneNumber);
 
     }
@@ -291,7 +268,6 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
         showProgressDialog();
         String countryCode = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CODE_FROM_SIM);
         String type = BuildConfig.ORIGINAL_SMS_VERIFICATION ? "original" : "dummy";
-        //yoService.loginUserAPI(phoneNumber, type, countryCode).enqueue(new Callback<Response>() {
         yoService.loginUserAPI(countryCode + phoneNumber, type).enqueue(new Callback<Response>() {
             @Override
             public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
@@ -362,13 +338,12 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
         final View view = layoutInflater.inflate(R.layout.custom_dialog, null);
         builder.setView(view);
 
-        TextView textView = (TextView) view.findViewById(R.id.dialog_content);
+        TextView textView = ButterKnife.findById(view, R.id.dialog_content);
+        Button yesBtn = ButterKnife.findById(view, R.id.yes_btn);
+        Button noBtn = ButterKnife.findById(view, R.id.no_btn);
+
         textView.setText(String.format(getResources().getString(R.string.dialog_text), phoneNumber));
-
-
-        Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
         yesBtn.setText(getResources().getString(R.string.yes));
-        Button noBtn = (Button) view.findViewById(R.id.no_btn);
         noBtn.setVisibility(View.VISIBLE);
         noBtn.setText(R.string.no);
 
@@ -433,7 +408,7 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
                 String countryCode = data.getStringExtra("COUNTRY_CODE");
                 String countryName = data.getStringExtra("COUNTRY_NAME");
                 String countryId = data.getStringExtra("COUNTRY_ID");
-                mCountryCode.setText("+" + countryCode + " " + countryName);
+                mCountryCode.setText(String.format(getString(R.string.sim_country_code), countryCode, countryName));
                 preferenceEndPoint.saveStringPreference(Constants.COUNTRY_CODE_FROM_SIM, countryCode);
                 preferenceEndPoint.saveStringPreference(Constants.COUNTRY_ID, countryId);
             }

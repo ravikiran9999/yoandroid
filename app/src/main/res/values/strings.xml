@@ -164,6 +164,8 @@
     <string name="gallery">Gallery</string>
     <string name="unable_to_fetch">Unable to fetch user data at this moment.Please try again later.</string>
     <string name="resend_otp_text">Re-send PIN</string>
+    <string name="sim_country_code">+%1$s %2$s</string>
+    <string name="resend">Resend</string>
     <string name="otp_button_submit">Submit</string>
     <string name="share_invite_title">Share and Invite</string>
     <string name="notifications">Notifications</string>
@@ -196,7 +198,7 @@
 
     <string name="not_online">Recipient not online.</string>
     <string name="call_forwarded">Call is  being forwarded</string>
-    <string name="no_answer">Sorry there was no answer...</string>
+    <string name="no_answer">Sorry there was no answer…</string>
     <string name="ringing">Ringing</string>
     <string name="busy">Sorry, the number was busy.</string>
     <string name="all_busy">All possible destinations are busy</string>
@@ -222,7 +224,7 @@
     <string name="follow_more_topics">Follow more topics</string>
     <string name="cancel">Cancel</string>
     <string name="disable_signout">Signout is disabled, will be enabled soon!</string>
-    <string name="dialing">Dialing...</string>
+    <string name="dialing">Dialing &#8230;</string>
     <string name="balance">Balance </string>
     <string name="failed_add_balance">Failed to add balance.</string>
     <string name="yo_credit">yo! Credit</string>
@@ -473,6 +475,8 @@
     <string name="call_country_code_format">%1$s (+%2$s)</string>
 
     <string name="first_last_name_format">%1$s %2$s</string>
+
+    <string name="pin_text">%1$s </string>
 
     <string name="photo_preview">Photo Preview</string>
     <string name="edit_magazine">Edit Magazine</string>

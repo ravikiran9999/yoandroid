@@ -149,7 +149,7 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
         setHasOptionsMenu(true);
         bus.register(this);
         preferenceEndPoint.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-        yoService.getCallsRatesListAPI(preferenceEndPoint.getStringPreference("access_token")).enqueue(new Callback<List<CallRateDetail>>() {
+        yoService.getCallsRatesListAPI(preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN)).enqueue(new Callback<List<CallRateDetail>>() {
             @Override
             public void onResponse(Call<List<CallRateDetail>> call, Response<List<CallRateDetail>> response) {
                 dismissProgressDialog();

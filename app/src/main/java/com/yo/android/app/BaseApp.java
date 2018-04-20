@@ -24,16 +24,10 @@ import dagger.ObjectGraph;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-/**
- * Created by Ramesh on 17/06/16.
- */
 public class BaseApp extends MultiDexApplication {
 
-    private static final String TAG = BaseApp.class.getSimpleName();
     private ObjectGraph objectGraph;
     private static BaseApp baseAppInstance;
-    protected String userAgent;
-
     public static boolean appRunning;
 
     // Production

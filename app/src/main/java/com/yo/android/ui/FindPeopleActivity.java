@@ -163,7 +163,7 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
         } else {
             showProgressDialog();
         }
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.getFindPeopleAPI(accessToken, 1, 30).enqueue(new Callback<List<FindPeople>>() {
             @Override
             public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
@@ -260,7 +260,7 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
     private void doPagination() {
         isMoreLoading = true;
         pageCount++;
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.getFindPeopleAPI(accessToken, pageCount, 30).enqueue(new Callback<List<FindPeople>>() {
             @Override
             public void onResponse(Call<List<FindPeople>> call, @Nonnull Response<List<FindPeople>> response) {
@@ -380,7 +380,7 @@ public class FindPeopleActivity extends BaseActivity implements AdapterView.OnIt
         } else {
             showProgressDialog();
             mProgressDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
             if (call != null) {
                 call.cancel();
             }

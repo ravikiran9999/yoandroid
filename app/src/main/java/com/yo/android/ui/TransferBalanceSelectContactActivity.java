@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.yo.android.R;
 import com.yo.android.adapters.TransferBalanceContactAdapter;
+import com.yo.android.api.YoApi;
 import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.Contact;
@@ -123,7 +124,7 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
      */
     private void callFindPeopleService() {
         showProgressDialog();
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
        /* yoService.getRepresentativePeopleAPI(accessToken, 1, 30, true).enqueue(new Callback<List<FindPeople>>() {
             @Override
             public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
@@ -168,7 +169,7 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
             //TODO this code can be removed
             if (!isFinishing()) {
                 showProgressDialog();
-                String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                 yoService.getAppUsersAPI(accessToken).enqueue(new Callback<List<FindPeople>>() {
                     @Override
                     public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
@@ -285,7 +286,7 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
     private void doPagination() {
         isMoreLoading = true;
         pageCount++;
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.getRepresentativePeopleAPI(accessToken, pageCount, 30, true).enqueue(new Callback<List<FindPeople>>() {
             @Override
             public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
@@ -399,7 +400,7 @@ public class TransferBalanceSelectContactActivity extends BaseActivity implement
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
             if (call != null) {
                 call.cancel();
             }

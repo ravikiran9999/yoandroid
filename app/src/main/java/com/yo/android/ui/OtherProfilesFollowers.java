@@ -52,7 +52,7 @@ public class OtherProfilesFollowers extends BaseFragment {
         lvFindPeople.setAdapter(findPeopleAdapter);
         userID = getActivity().getIntent().getStringExtra(Constants.USER_ID);
         showProgressDialog();
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         callService(accessToken);
 
         lvFindPeople.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -113,7 +113,7 @@ public class OtherProfilesFollowers extends BaseFragment {
      * Used to call the service to get the list of other Yo app user's followers
      */
     public void update(){
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         callService(accessToken);
     }
     @Override
@@ -122,7 +122,7 @@ public class OtherProfilesFollowers extends BaseFragment {
         if (requestCode == 11 && resultCode == getActivity().RESULT_OK) {
             if (data != null) {
                 showProgressDialog();
-                String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                 yoService.getOtherProfilesFollowersAPI(accessToken, userID).enqueue(new Callback<List<FindPeople>>() {
                     @Override
                     public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {

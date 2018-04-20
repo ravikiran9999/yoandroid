@@ -24,7 +24,7 @@ public class NotificationUsecase {
     PreferenceEndPoint loginPrefs;
 
     public void getNotifications(String notificationItems, String type, final ApiCallback<List<Notification>> notificationCallback) {
-        String accessToken = loginPrefs.getStringPreference("access_token");
+        String accessToken = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
         Call<List<Notification>> call = yoService.getNotifications(accessToken, type, notificationItems);
         call.enqueue(new Callback<List<Notification>>() {
             @Override

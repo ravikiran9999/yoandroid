@@ -72,7 +72,7 @@ public class SuggestionsAdapter extends AbstractBaseAdapter<Topics, SuggestionsV
                 if(magazineFlipArticlesFragment.mProgress != null) {
                     magazineFlipArticlesFragment.mProgress.setVisibility(View.VISIBLE);
                 }
-                String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                 final List<String> followedTopicsIdsList = new ArrayList<String>();
                 if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.MAGAZINE_TAGS))) {
                     String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference(Constants.MAGAZINE_TAGS), ",");

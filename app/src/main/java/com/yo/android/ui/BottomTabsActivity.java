@@ -114,6 +114,7 @@ public class BottomTabsActivity extends BaseActivity {
     private static String TAG = BottomTabsActivity.class.getSimpleName();
     private TabLayout tabLayout;
     private List<TabsData> dataList;
+
     @Inject
     BalanceHelper balanceHelper;
     @Inject
@@ -378,7 +379,7 @@ public class BottomTabsActivity extends BaseActivity {
 
             if (!("POPUP").equals(tag)) {
                 if ("User".equals(tag)) {
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                     yoService.getUserInfoFromId(redirectId, accessToken).enqueue(new Callback<FindPeople>() {
                         @Override
                         public void onResponse(Call<FindPeople> call, Response<FindPeople> response) {
@@ -422,7 +423,7 @@ public class BottomTabsActivity extends BaseActivity {
                     startActivity(topicIntent);
                     finish();
                 } else if ("Article".equals(tag)) {
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                     yoService.getArticleInfo(redirectId, accessToken).enqueue(new Callback<Articles>() {
                         @Override
                         public void onResponse(Call<Articles> call, Response<Articles> response) {
@@ -505,7 +506,7 @@ public class BottomTabsActivity extends BaseActivity {
     }
 
     private void clearNotifications() {
-        NotificationCache.get().clearNotifications();
+        NotificationCache.clearNotifications();
         NotificationManager nMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         nMgr.cancelAll();
     }
@@ -645,6 +646,7 @@ public class BottomTabsActivity extends BaseActivity {
                 }
                 break;
         }
+
         if (requestCode == Helper.CROP_ACTIVITY) {
             if (data != null && data.hasExtra(Helper.IMAGE_PATH)) {
                 Uri imagePath = Uri.parse(data.getStringExtra(Helper.IMAGE_PATH));
@@ -840,7 +842,7 @@ public class BottomTabsActivity extends BaseActivity {
             refreshedToken = preferenceEndPoint.getStringPreference(Constants.FCM_REFRESH_TOKEN);
         }
         if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
-            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
             yoService.updateDeviceTokenAPI(accessToken, refreshedToken).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

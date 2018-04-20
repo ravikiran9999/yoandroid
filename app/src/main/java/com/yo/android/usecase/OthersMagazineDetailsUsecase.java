@@ -45,7 +45,7 @@ public class OthersMagazineDetailsUsecase {
      * @param othersMagazinesDetailActivity The {@link OthersMagazinesDetailActivity} object
      */
     public void getArticlesOfMagazine(final OthersMagazinesDetailActivity othersMagazinesDetailActivity) {
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.getArticlesOfMagazineAPI(othersMagazinesDetailActivity.ownMagazine.getId(), accessToken).enqueue(new Callback<MagazineArticles>() {
             @Override
             public void onResponse(Call<MagazineArticles> call, final Response<MagazineArticles> response) {
@@ -101,7 +101,7 @@ public class OthersMagazineDetailsUsecase {
      */
     public void unlikeOthersMagazineArticles(final Articles data, final Context context, final OthersMagazinesDetailActivity.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).showProgressDialog();
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -142,7 +142,7 @@ public class OthersMagazineDetailsUsecase {
      */
     public void likeOthersMagazineArticles(final Articles data, final Context context, final OthersMagazinesDetailActivity.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).showProgressDialog();
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

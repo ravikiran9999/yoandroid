@@ -665,7 +665,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                 super.onOptionsItemSelected(item);
                 if (!Boolean.valueOf(ownMagazine.getIsFollowing())) {
                     showProgressDialog();
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                     yoService.followMagazineAPI(ownMagazine.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -714,7 +714,7 @@ public class OthersMagazinesDetailActivity extends BaseActivity {
                         public void onClick(View v) {
                             alertDialog.dismiss();
                             showProgressDialog();
-                            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                            String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                             yoService.unfollowMagazineAPI(ownMagazine.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

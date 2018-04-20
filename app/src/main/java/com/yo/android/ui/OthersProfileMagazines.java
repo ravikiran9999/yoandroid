@@ -56,7 +56,7 @@ public class OthersProfileMagazines extends BaseFragment {
         noData = (TextView) view.findViewById(R.id.no_data);
         userID = getActivity().getIntent().getStringExtra(Constants.USER_ID);
 
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.getOtherProfilesMagazinesAPI(accessToken, userID).enqueue(new Callback<List<OwnMagazine>>() {
             @Override
             public void onResponse(Call<List<OwnMagazine>> call, Response<List<OwnMagazine>> response) {

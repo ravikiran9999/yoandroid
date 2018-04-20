@@ -200,7 +200,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
             loadOrPostUrl(webview);
         } else { // Button text is Post
 
-            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
             if (!TextUtils.isEmpty(url.trim()) && !TextUtils.isEmpty(tag.trim())) { // Url is not empty then post the url
                 if (magazineId != null) {
                     addStoryToExistingMagazine(accessToken); // Add story to existing magazine
@@ -322,7 +322,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
      * Gets all the magazine topics
      */
     private void getAllTopics() {
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
 
         yoService.tagsAPI(accessToken).enqueue(new Callback<List<Topics>>() {
             @Override

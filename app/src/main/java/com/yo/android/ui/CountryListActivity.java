@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractBaseAdapter;
+import com.yo.android.api.YoApi;
 import com.yo.android.chat.ui.NonScrollListView;
 import com.yo.android.helpers.CallRatesCountryViewHolder;
 import com.yo.android.model.dialer.CallRateDetail;
@@ -87,7 +88,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
         listViewRecent.setOnItemClickListener(this);
         showProgressDialog();
         Gson gson = new Gson();
-        final String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        final String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         Type type = new TypeToken<List<CallRateDetail>>() {
         }.getType();
         List<CallRateDetail> callRateDetailList = gson.fromJson(preferenceEndPoint.getStringPreference(Constants.COUNTRY_LIST), type);

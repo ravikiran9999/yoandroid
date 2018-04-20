@@ -132,7 +132,7 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
             skip.setVisibility(View.GONE);
         }
 
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         showProgressDialog();
         serverTopics = new ArrayList<>();
 
@@ -245,7 +245,7 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
         }
 
         showProgressDialog();
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.addTopicsAPI(accessToken, followedTopicsIdsList, "").enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -257,7 +257,7 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
                 } else if (preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
                     //TODO:Disalbe flag for Follow more
                     preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, false);
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                     // discussed with ingrid, and commenting it, as we are not using it
                     //yoService.getArticlesWithPaginationAPI(accessToken, 1, 200);
                     navigation();

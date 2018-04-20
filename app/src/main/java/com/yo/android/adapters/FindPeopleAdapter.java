@@ -152,7 +152,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                 if (!renewalStatus) {
                     if (!"true".equals(item.getIsFollowing())) { // Follow the Yo app user
                         ((BaseActivity) context).showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                         yoService.followUsersAPI(accessToken, item.getId()).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -201,7 +201,7 @@ public class FindPeopleAdapter extends AbstractBaseAdapter<FindPeople, FindPeopl
                                 public void onClick(View v) {
                                     alertDialog.dismiss();
                                     ((BaseActivity) context).showProgressDialog();
-                                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                                    String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                                     yoService.unfollowUsersAPI(accessToken, item.getId()).enqueue(new Callback<ResponseBody>() {
                                         @Override
                                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

@@ -31,7 +31,7 @@ public class ContactsSyncWithNameUsecase {
 
 
     public void contactsSyncWithName(List<JSONObject> nameAndNumber, final ApiCallback<JsonElement> apiCallback) {
-        String accessToken = loginPrefs.getStringPreference("access_token");
+        String accessToken = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.syncContactsWithNameAPI(accessToken, nameAndNumber).enqueue(new Callback<JsonElement>() {
             @Override
             public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {

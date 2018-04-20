@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.flurry.android.FlurryAgent;
 import com.yo.android.R;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
+import com.yo.android.api.YoApi;
 import com.yo.android.model.Articles;
 import com.yo.android.ui.BaseActivity;
 import com.yo.android.ui.CreateMagazineActivity;
@@ -120,7 +121,7 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
                     data.setIsChecked(isChecked);
                     if (isChecked) {
                         showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -151,7 +152,7 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
                         });
                     } else {
                         showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

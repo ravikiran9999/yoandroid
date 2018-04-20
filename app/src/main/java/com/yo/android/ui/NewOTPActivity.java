@@ -1,8 +1,6 @@
 package com.yo.android.ui;
 
 import android.os.Bundle;
-import android.view.View;
-
 import com.google.gson.internal.LinkedTreeMap;
 import com.yo.android.BuildConfig;
 import com.yo.android.R;
@@ -51,7 +49,7 @@ public class NewOTPActivity extends BaseActivity {
                             preferenceEndPoint.saveBooleanPreference("balanceAdded", balanceAdded);
                         }
                     } else {
-                        mToastFactory.showToast("Please enter valid phone number.");
+                        mToastFactory.showToast(R.string.enter_mobile_number_error);
                     }
                 } catch (Exception e) {
 

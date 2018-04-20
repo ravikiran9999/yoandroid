@@ -51,7 +51,7 @@ public class OthersProfileLikedArticlesUsecase {
         otherProfilesLikedArticles.articlesList.clear();
         otherProfilesLikedArticles.myBaseAdapter.addItems(otherProfilesLikedArticles.articlesList);
         otherProfilesLikedArticles.mProgress.setVisibility(View.VISIBLE);
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.getOtherProfilesLikedArticlesAPI(accessToken, userID).enqueue(new Callback<List<Articles>>() {
             @Override
             public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
@@ -111,7 +111,7 @@ public class OthersProfileLikedArticlesUsecase {
      */
     public void unlikeOthersProfileLikedArticles(final Articles data, final Context context, final OtherProfilesLikedArticles.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).showProgressDialog();
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -152,7 +152,7 @@ public class OthersProfileLikedArticlesUsecase {
      */
     public void likeOthersProfileLikedArticles(final Articles data, final Context context, final OtherProfilesLikedArticles.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).showProgressDialog();
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

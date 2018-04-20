@@ -4,9 +4,6 @@ import android.content.Context;
 
 import com.yo.android.R;
 
-/**
- * Created by MYPC on 7/17/2016.
- */
 public class FindPeople {
 
     private String id;

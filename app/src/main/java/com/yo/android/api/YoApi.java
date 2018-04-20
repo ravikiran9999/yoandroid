@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 import com.yo.android.model.Alerts;
 import com.yo.android.model.Articles;
 import com.yo.android.model.Categories;
-import com.yo.android.model.ChatMessage;
 import com.yo.android.model.ChatNotificationResponse;
 import com.yo.android.model.Collections;
 import com.yo.android.model.Contact;
@@ -24,7 +23,6 @@ import com.yo.android.model.Topics;
 import com.yo.android.model.TransferBalanceDenomination;
 import com.yo.android.model.UpdateMagazine;
 import com.yo.android.model.UserProfileInfo;
-import com.yo.android.model.Wallet;
 import com.yo.android.model.denominations.Denominations;
 import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.model.wallet.Balance;
@@ -49,9 +47,6 @@ import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-/**
- * Created by Ramesh on 1/7/16.
- */
 public class YoApi {
 
     public static final String ACCESS_TOKEN = "access_token";

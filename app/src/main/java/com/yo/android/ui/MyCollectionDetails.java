@@ -558,7 +558,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                         public void onClick(View v) {
                             alertDialog.dismiss();
                             showProgressDialog();
-                            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                            String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                             List<String> topicIds = new ArrayList<String>();
                             topicIds.add(topicId);
                             yoService.removeTopicsAPI(accessToken, topicIds).enqueue(new Callback<ResponseBody>() {
@@ -601,7 +601,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                         public void onClick(View v) {
                             alertDialog.dismiss();
                             showProgressDialog();
-                            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                            String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                             yoService.unfollowMagazineAPI(topicId, accessToken).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

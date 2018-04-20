@@ -37,7 +37,7 @@ public class PackageDenominationsUsecase {
     PreferenceEndPoint loginPrefs;
 
     public void getPackageDenominationsUsecase(final ApiCallback<ArrayList<PackageDenomination>> packageCallback) {
-        String accessToken = loginPrefs.getStringPreference("access_token");
+        String accessToken = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
         Call<List<PackageDenomination>> call = yoService.giftPackageDenominationApi(accessToken);
         call.enqueue(new Callback<List<PackageDenomination>>() {
             @Override

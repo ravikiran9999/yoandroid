@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.yo.android.R;
+import com.yo.android.api.YoApi;
 import com.yo.android.helpers.Settings;
 import com.yo.android.model.Contact;
 import com.yo.android.model.SpendDetails;
@@ -212,7 +213,7 @@ public class TransferBalanceActivity extends BaseActivity {
      * @param amount The amount to be transferred
      */
     private void transferBalance(String amount, final String phoneNo) {
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         showProgressDialog();
         yoService.balanceTransferAPI(accessToken, phoneNo, amount).enqueue(new Callback<com.yo.android.model.Response>() {
             @Override

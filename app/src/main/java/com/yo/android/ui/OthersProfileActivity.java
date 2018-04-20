@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.yo.android.R;
 import com.yo.android.adapters.TabsPagerAdapter;
+import com.yo.android.api.YoApi;
 import com.yo.android.util.Constants;
 
 import java.util.ArrayList;
@@ -123,7 +124,7 @@ public class OthersProfileActivity extends BaseActivity {
             public void onClick(View v) {
                 if (!isFollowingUser) {
                     showProgressDialog();
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                     yoService.followUsersAPI(accessToken, userId).enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -177,7 +178,7 @@ public class OthersProfileActivity extends BaseActivity {
                         public void onClick(View v) {
                             alertDialog.dismiss();
                             showProgressDialog();
-                            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                            String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                             yoService.unfollowUsersAPI(accessToken, userId).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

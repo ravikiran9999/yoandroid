@@ -91,7 +91,7 @@ public class CreateMagazineActivity extends BaseActivity implements SwipeRefresh
                 } else if (addArticleMagazineId != null) {
                     List<String> articlesList = new ArrayList<>();
                     articlesList.add(addArticleMagazineId);
-                    final String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    final String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                     yoService.addArticleMagazineApi(accessToken, ownMagazine.getId(), articlesList).enqueue(new Callback<com.yo.android.model.Response>() {
                         @Override
                         public void onResponse(Call<com.yo.android.model.Response> call, Response<com.yo.android.model.Response> response) {
@@ -136,7 +136,7 @@ public class CreateMagazineActivity extends BaseActivity implements SwipeRefresh
         } else {
             showProgressDialog();
         }
-        final String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        final String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.getMagazinesAPI(accessToken).enqueue(new Callback<List<OwnMagazine>>() {
             @Override
             public void onResponse(Call<List<OwnMagazine>> call, Response<List<OwnMagazine>> response) {
@@ -193,7 +193,7 @@ public class CreateMagazineActivity extends BaseActivity implements SwipeRefresh
         // check if the request code is same as what is passed  here it is 2
         if (requestCode == 2) {
 
-            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
             yoService.getMagazinesAPI(accessToken).enqueue(new Callback<List<OwnMagazine>>() {
                 @Override
                 public void onResponse(Call<List<OwnMagazine>> call, Response<List<OwnMagazine>> response) {
@@ -239,7 +239,7 @@ public class CreateMagazineActivity extends BaseActivity implements SwipeRefresh
     public void onEventMainThread(String action) {
         if (Constants.DELETE_MAGAZINE_ACTION.equals(action) || Constants.EDIT_MAGAZINE_ACTION.equals(action)) {
 
-            final String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            final String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
             yoService.getMagazinesAPI(accessToken).enqueue(new Callback<List<OwnMagazine>>() {
                 @Override
                 public void onResponse(Call<List<OwnMagazine>> call, Response<List<OwnMagazine>> response) {

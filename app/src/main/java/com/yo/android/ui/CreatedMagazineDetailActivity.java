@@ -106,7 +106,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
     private void loadArticles() {
         articlesList.clear();
         showProgressDialog();
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.getArticlesOfMagazineAPI(magazineId, accessToken).enqueue(new Callback<MagazineArticles>() {
             @Override
             public void onResponse(Call<MagazineArticles> call, final Response<MagazineArticles> response) {
@@ -326,7 +326,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
                     if (isChecked) {
                         showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -358,7 +358,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                         });
                     } else {
                         showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -402,7 +402,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
 
                     if (isChecked) {
                         showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -434,7 +434,7 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
                         });
                     } else {
                         showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

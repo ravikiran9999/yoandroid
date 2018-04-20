@@ -92,7 +92,7 @@ public class NewMagazineActivity extends BaseActivity implements View.OnClickLis
                 if (!TextUtils.isEmpty(magazineTitle.trim())) {
                     if (!isSaveClicked) {
                         isSaveClicked = true;
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                         yoService.createMagazinesAPI(accessToken, magazineTitle, magazineDesc, magazinePrivacy).enqueue(new Callback<OwnMagazine>() {
                             @Override
                             public void onResponse(Call<OwnMagazine> call, Response<OwnMagazine> response) {

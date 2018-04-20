@@ -30,7 +30,7 @@ public class DenominationsUsecase {
     PreferenceEndPoint loginPrefs;
 
     public void getDenominations(final ApiCallback<ArrayList<TransferBalanceDenomination>> balanceTransferCallback) {
-        String accessToken = loginPrefs.getStringPreference("access_token");
+        String accessToken = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
         Call<List<TransferBalanceDenomination>> call = yoService.transferBalanceDenominationAPI(accessToken);
         call.enqueue(new Callback<List<TransferBalanceDenomination>>() {
             @Override

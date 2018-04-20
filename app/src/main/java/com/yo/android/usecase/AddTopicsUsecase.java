@@ -33,7 +33,7 @@ public class AddTopicsUsecase {
     RandomTopicsUsecase randomTopicsUsecase;
 
     public void addTopics(List<String> followedTopicsIdsList, String randomTopics, final ApiCallback<List<Categories>> categoriesCallback) {
-        String accessToken = loginPrefs.getStringPreference("access_token");
+        String accessToken = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
         Call<ResponseBody> call = yoService.addTopicsAPI(accessToken, followedTopicsIdsList, randomTopics);
         call.enqueue(new Callback<ResponseBody>() {
             @Override

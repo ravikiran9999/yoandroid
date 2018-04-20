@@ -89,7 +89,7 @@ public class EditMagazineActivity extends BaseActivity {
      * @param magazineTitle The magazine title
      */
     private void deleteMagazine(final String magazineTitle) {
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.deleteMagazineAPI(magazineId, accessToken).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -173,7 +173,7 @@ public class EditMagazineActivity extends BaseActivity {
                     mToastFactory.showToast("Please enter the Magazine Title");
 
                 } else {
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                     yoService.updateMagazinesAPI(magazineId, accessToken, title, description, magazinePrivacy).enqueue(new Callback<UpdateMagazine>() {
                         @Override
                         public void onResponse(Call<UpdateMagazine> call, Response<UpdateMagazine> response) {

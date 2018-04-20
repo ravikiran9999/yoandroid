@@ -51,7 +51,7 @@ public class MagazineTopicsSelectionFragment extends BaseFragment implements Ada
 
         topicsSpinner.setOnItemSelectedListener(this);
 
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.tagsAPI(accessToken).enqueue(new Callback<List<Topics>>() {
             @Override
             public void onResponse(Call<List<Topics>> call, Response<List<Topics>> response) {

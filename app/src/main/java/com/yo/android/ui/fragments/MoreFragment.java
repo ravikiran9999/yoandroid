@@ -457,7 +457,7 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
                         int deleteContacts = getActivity().getContentResolver().delete(uri, null, null);
                         mLog.i("MoreFragment", "Deleted contacts >>>>%d", deleteContacts);
                         if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.PHONE_NUMBER))) {
-                            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                            String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                             yoService.updateDeviceTokenAPI(accessToken, null).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

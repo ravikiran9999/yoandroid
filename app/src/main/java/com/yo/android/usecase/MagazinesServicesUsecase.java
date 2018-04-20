@@ -95,7 +95,7 @@ public class MagazinesServicesUsecase {
      */
     public void likeArticles(final MagazineArticlesBaseAdapter magazineArticlesBaseAdapter, final Context context, final Articles data, final ToastFactory mToastFactory) {
         ((BaseActivity) context).showProgressDialog();
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -172,7 +172,7 @@ public class MagazinesServicesUsecase {
      */
     public void unlikeArticles(final MagazineArticlesBaseAdapter magazineArticlesBaseAdapter, final Context context, final Articles data, final ToastFactory mToastFactory) {
         ((BaseActivity) context).showProgressDialog();
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -540,7 +540,7 @@ public class MagazinesServicesUsecase {
             magazineFlipArticlesFragment.mProgress.setVisibility(View.VISIBLE);
         }
 
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         if (tagIds != null) { // Getting articles of the selected topic
             magazineFlipArticlesFragment.isSearch = true;
             yoService.getArticlesAPI(accessToken, tagIds).enqueue(magazineFlipArticlesFragment.callback);

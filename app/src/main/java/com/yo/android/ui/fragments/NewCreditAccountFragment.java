@@ -366,7 +366,7 @@ public class NewCreditAccountFragment extends BaseFragment {
 
                     if (!TextUtils.isEmpty(voucherNumber.trim())) {
                         showProgressDialog();
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                         yoService.voucherRechargeAPI(accessToken, voucherNumber).enqueue(new Callback<com.yo.android.model.Response>() {
                             @Override
                             public void onResponse(Call<com.yo.android.model.Response> call, retrofit2.Response<Response> response) {

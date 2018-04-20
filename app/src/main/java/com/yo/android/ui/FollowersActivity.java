@@ -90,7 +90,7 @@ public class FollowersActivity extends BaseActivity implements SwipeRefreshLayou
         } else {
             showProgressDialog();
         }
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.getFollowersAPI(accessToken).enqueue(new Callback<List<FindPeople>>() {
             @Override
             public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {
@@ -160,7 +160,7 @@ public class FollowersActivity extends BaseActivity implements SwipeRefreshLayou
         if (requestCode == 9 && resultCode == RESULT_OK) {
             if (data != null) {
                 showProgressDialog();
-                String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                 yoService.getFollowersAPI(accessToken).enqueue(new Callback<List<FindPeople>>() {
                     @Override
                     public void onResponse(Call<List<FindPeople>> call, Response<List<FindPeople>> response) {

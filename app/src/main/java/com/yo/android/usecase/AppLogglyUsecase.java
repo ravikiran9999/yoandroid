@@ -28,7 +28,7 @@ public class AppLogglyUsecase {
     PreferenceEndPoint loginPrefs;
 
     public void sendAlertsToLoggly(final String title, final String message, final String status, final int code) {
-        String accessToken = loginPrefs.getStringPreference("access_token");
+        String accessToken = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
         Call<Alerts> call = yoService.sendAlerts(accessToken, title, message, status, code);
         call.enqueue(new Callback<Alerts>() {
             @Override

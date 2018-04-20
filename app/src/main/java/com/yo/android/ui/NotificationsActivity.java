@@ -101,7 +101,7 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
                 lvNotifications.setEnabled(false);
 
                 if ("User".equals(tag)) {
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                     yoService.getUserInfoFromId(redirectId, accessToken).enqueue(new Callback<FindPeople>() {
                         @Override
                         public void onResponse(Call<FindPeople> call, Response<FindPeople> response) {
@@ -143,7 +143,7 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
                     intent.putExtra("Type", "Tag");
                     startActivity(intent);
                 } else if ("Article".equals(tag)) {
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                     yoService.getArticleInfo(redirectId, accessToken).enqueue(new Callback<Articles>() {
                         @Override
                         public void onResponse(Call<Articles> call, Response<Articles> response) {
@@ -197,7 +197,7 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
     }
 
     private void getNotifications(final SwipeRefreshLayout swipeRefreshContainer) {
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         if (swipeRefreshContainer != null) {
             swipeRefreshContainer.setRefreshing(false);
         } else {
@@ -316,7 +316,7 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
 
     public void onEventMainThread(String action) {
         if (Constants.UPDATE_NOTIFICATIONS.equals(action)) {
-            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+            String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
             showProgressDialog();
             yoService.getNotifications(accessToken, "", "").enqueue(new Callback<List<Notification>>() {
                 @Override

@@ -39,7 +39,7 @@ public class ChatNotificationUsecase {
 
     public void pushChatMessage(final ChatMessage chatMessage) {
         String mChatMessage = new Gson().toJson(chatMessage);
-        String accessToken = loginPrefs.getStringPreference("access_token");
+        String accessToken = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
         Call<ChatNotificationResponse> call = yoService.chatNotificationApi(accessToken, mChatMessage);
         call.enqueue(new Callback<ChatNotificationResponse>() {
             @Override

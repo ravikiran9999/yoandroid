@@ -73,10 +73,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Created by creatives on 6/27/2016.
- */
-
-/**
  * This fragment is used to show the Magazines Search and attaches the fragment to load the magazine articles
  */
 public class MagazinesFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
@@ -245,7 +241,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
      * Getting all the articles topics
      */
     private void callApiSearchTopics() {
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.tagsAPI(accessToken).enqueue(new Callback<List<Topics>>() {
             @Override
             public void onResponse(Call<List<Topics>> call, Response<List<Topics>> response) {
@@ -312,7 +308,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
     }
 
     private void getRandomTopics() {
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.randomTagsAPI(accessToken).enqueue(new Callback<List<Categories>>() {
             @Override
             public void onResponse(Call<List<Categories>> call, Response<List<Categories>> response) {
@@ -668,7 +664,7 @@ public class MagazinesFragment extends BaseFragment implements SharedPreferences
      * @param followedTopicsIdsList The followed topics list
      */
     private void addTopics(final List<String> followedTopicsIdsList) {
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.addTopicsAPI(accessToken, followedTopicsIdsList, "").enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

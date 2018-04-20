@@ -189,7 +189,7 @@ public class BalanceHelper {
         String fromDate = "2016­06­01";
         String toDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         String limit = "100";
-        final String accessToken = prefs.getStringPreference("access_token");
+        final String accessToken = prefs.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.getSpentDetailsHistory(accessToken)
                 .enqueue(new Callback<ResponseBody>() {
                     @Override

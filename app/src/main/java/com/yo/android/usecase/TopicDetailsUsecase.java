@@ -48,7 +48,7 @@ public class TopicDetailsUsecase {
      * @param topicsDetailActivity The {@link TopicsDetailActivity} object
      */
     public void getArticlesOfTopic(final TopicsDetailActivity topicsDetailActivity) {
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         List<String> tagIds = new ArrayList<>();
         tagIds.add(topicsDetailActivity.topic.getTopicId());
         topicsDetailActivity.showProgressDialog();
@@ -108,7 +108,7 @@ public class TopicDetailsUsecase {
      */
     public void unlikeTopicArticles(final Articles data, final Context context, final TopicsDetailActivity.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).showProgressDialog();
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -149,7 +149,7 @@ public class TopicDetailsUsecase {
      */
     public void likeTopicArticles(final Articles data, final Context context, final TopicsDetailActivity.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).showProgressDialog();
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

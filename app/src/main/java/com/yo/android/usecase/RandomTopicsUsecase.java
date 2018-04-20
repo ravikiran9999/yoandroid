@@ -28,7 +28,7 @@ public class RandomTopicsUsecase {
     PreferenceEndPoint loginPrefs;
 
     public void getRandomTopics(final ApiCallback<List<Categories>> randomCategories) {
-        String accessToken = loginPrefs.getStringPreference("access_token");
+        String accessToken = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.randomTagsAPI(accessToken).enqueue(new Callback<List<Categories>>() {
             @Override
             public void onResponse(Call<List<Categories>> call, Response<List<Categories>> response) {

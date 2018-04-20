@@ -56,15 +56,11 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnFocusChange;
 import de.greenrobot.event.EventBus;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-/**
- * Created by creatives on 7/31/2017.
- */
 
 public class NewOTPFragment extends BaseFragment implements View.OnClickListener, View.OnFocusChangeListener, View.OnKeyListener, TextWatcher {
 
@@ -73,6 +69,7 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
     private int duration = MAX_DURATION;
     private Handler dummyOTPHandler = new Handler();
     private String phoneNumber;
+
     @Inject
     YoApi.YoService yoService;
     @Inject
@@ -82,6 +79,12 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
     private int count = 0;
     private boolean otpReceived = false;
 
+    @Bind(R.id.et_otp)
+    DigitsEditText etOtp;
+    @Bind(R.id.gv_keypad)
+    View gvKeypad;
+    @Bind(R.id.pin_content_layout)
+    View llPin;
     @Bind(R.id.tv_enter_otp)
     TextView tvEnterOTP;
     @Bind(R.id.tv_resend)
@@ -89,18 +92,6 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
     @Bind(R.id.next_btn)
     Button nextBtn;
 
-    private Button btnOne;
-    private Button btnTwo;
-    private Button btnThree;
-    private Button btnFour;
-    private Button btnFive;
-    private Button btnSix;
-    private Button btnSeven;
-    private Button btnEight;
-    private Button btnNine;
-    private Button btnZero;
-    private ImageButton imgBtnClear;
-    private DigitsEditText etOtp;
     private EditText mPinFirstDigitEditText;
     private EditText mPinSecondDigitEditText;
     private EditText mPinThirdDigitEditText;
@@ -114,8 +105,6 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*Bundle phoneNumberBundle = this.getArguments();
-        phoneNumber = phoneNumberBundle.getString(Constants.PHONE_NUMBER);*/
         phoneNumber = getActivity().getIntent().getExtras().getString(Constants.PHONE_NUMBER);
         EventBus.getDefault().register(this);
     }
@@ -141,11 +130,6 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
         View view = inflater.inflate(R.layout.new_otp_layout, container, false);
         ButterKnife.bind(this, view);
 
-        View gvKeypad = view.findViewById(R.id.gv_keypad);
-        View llPin = view.findViewById(R.id.pin_content_layout);
-        etOtp = (DigitsEditText) view.findViewById(R.id.et_otp);
-
-        // View viewDigits = inflater.inflate(R.layout.otp_keypad, container, false);
         initDigitsViews(gvKeypad);
         init(llPin);
         setPINListeners();
@@ -377,17 +361,10 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
                     preferenceEndPoint.saveBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN, true);
                     preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN, true);
                     preferenceEndPoint.saveBooleanPreference(Constants.LOGED_IN_AND_VERIFIED, true);
-                    /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
-                        if (activity == null) {
-                            activity = getActivity();
-                        }
-                        intent = new Intent(activity, FollowMoreTopicsActivity.class);
-                    } else {*/
-                        if (activity == null) {
-                            activity = getActivity();
-                        }
-                        intent = new Intent(activity, NewFollowMoreTopicsActivity.class);
-                    //}
+                    if (activity == null) {
+                        activity = getActivity();
+                    }
+                    intent = new Intent(activity, NewFollowMoreTopicsActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.putExtra("From", "UpdateProfileActivity");
                     startActivity(intent);
@@ -403,7 +380,7 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
             startActivity(new Intent(activity, BottomTabsActivity.class));
         }
         //Start Sip service
-        getActivity().startService(new Intent(activity, YoSipService.class));
+        activity.startService(new Intent(activity, YoSipService.class));
 
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction(VoipConstants.NEW_ACCOUNT_REGISTRATION);
@@ -472,38 +449,27 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
         //Reset
         duration = MAX_DURATION;
         nextBtn.setEnabled(true);
-        reSendTextBtn.setText("Resend");
+        reSendTextBtn.setText(R.string.resend);
         reSendTextBtn.setEnabled(true);
     }
 
     private void initDigitsViews(View viewDigits) {
+        Button btnOne = ButterKnife.findById(viewDigits, R.id.btn_one);
+        Button btnTwo = ButterKnife.findById(viewDigits, R.id.btn_two);
+        Button btnThree = ButterKnife.findById(viewDigits, R.id.btn_three);
+        Button btnFour = ButterKnife.findById(viewDigits, R.id.btn_four);
+        Button btnFive = ButterKnife.findById(viewDigits, R.id.btn_five);
+        Button btnSix = ButterKnife.findById(viewDigits, R.id.btn_six);
+        Button btnSeven = ButterKnife.findById(viewDigits, R.id.btn_seven);
+        Button btnEight = ButterKnife.findById(viewDigits, R.id.btn_eight);
+        Button btnNine = ButterKnife.findById(viewDigits, R.id.btn_nine);
+        Button btnZero = ButterKnife.findById(viewDigits, R.id.btn_zero);
+        ImageButton imgBtnClear = ButterKnife.findById(viewDigits, R.id.img_btn_clear);
 
-        btnOne = (Button) viewDigits.findViewById(R.id.btn_one);
-        btnTwo = (Button) viewDigits.findViewById(R.id.btn_two);
-        btnThree = (Button) viewDigits.findViewById(R.id.btn_three);
-        btnFour = (Button) viewDigits.findViewById(R.id.btn_four);
-        btnFive = (Button) viewDigits.findViewById(R.id.btn_five);
-        btnSix = (Button) viewDigits.findViewById(R.id.btn_six);
-        btnSeven = (Button) viewDigits.findViewById(R.id.btn_seven);
-        btnEight = (Button) viewDigits.findViewById(R.id.btn_eight);
-        btnNine = (Button) viewDigits.findViewById(R.id.btn_nine);
-        btnZero = (Button) viewDigits.findViewById(R.id.btn_zero);
-        imgBtnClear = (ImageButton) viewDigits.findViewById(R.id.img_btn_clear);
-
-        btnOne.setOnClickListener(this);
-        btnTwo.setOnClickListener(this);
-        btnThree.setOnClickListener(this);
-        btnFour.setOnClickListener(this);
-        btnFive.setOnClickListener(this);
-        btnSix.setOnClickListener(this);
-        btnSeven.setOnClickListener(this);
-        btnEight.setOnClickListener(this);
-        btnNine.setOnClickListener(this);
-        btnZero.setOnClickListener(this);
-        imgBtnClear.setOnClickListener(this);
     }
 
-    @Override
+    @OnClick({R.id.btn_one, R.id.btn_two, R.id.btn_three, R.id.btn_four, R.id.btn_five, R.id.btn_six,
+            R.id.btn_seven, R.id.btn_eight, R.id.btn_nine, R.id.btn_zero, R.id.img_btn_clear})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_one:
@@ -636,16 +602,18 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
      * @param llPin
      */
     private void init(View llPin) {
-        mPinFirstDigitEditText = (EditText) llPin.findViewById(R.id.pin_first_edittext);
-        mPinSecondDigitEditText = (EditText) llPin.findViewById(R.id.pin_second_edittext);
-        mPinThirdDigitEditText = (EditText) llPin.findViewById(R.id.pin_third_edittext);
-        mPinForthDigitEditText = (EditText) llPin.findViewById(R.id.pin_forth_edittext);
-        mPinFifthDigitEditText = (EditText) llPin.findViewById(R.id.pin_fifth_edittext);
-        mPinSixthDigitEditText = (EditText) llPin.findViewById(R.id.pin_sixth_edittext);
-        mPinHiddenEditText = (EditText) llPin.findViewById(R.id.pin_hidden_edittext);
+        mPinFirstDigitEditText = ButterKnife.findById(llPin, R.id.pin_first_edittext);
+        mPinSecondDigitEditText = ButterKnife.findById(llPin, R.id.pin_second_edittext);
+        mPinThirdDigitEditText = ButterKnife.findById(llPin, R.id.pin_third_edittext);
+        mPinForthDigitEditText = ButterKnife.findById(llPin, R.id.pin_forth_edittext);
+        mPinFifthDigitEditText = ButterKnife.findById(llPin, R.id.pin_fifth_edittext);
+        mPinSixthDigitEditText = ButterKnife.findById(llPin, R.id.pin_sixth_edittext);
+        mPinHiddenEditText = ButterKnife.findById(llPin, R.id.pin_hidden_edittext);
     }
 
-    @Override
+
+    @OnFocusChange({R.id.pin_first_edittext, R.id.pin_second_edittext, R.id.pin_third_edittext,
+            R.id.pin_forth_edittext, R.id.pin_fifth_edittext, R.id.pin_sixth_edittext})
     public void onFocusChange(View v, boolean hasFocus) {
         final int id = v.getId();
         switch (id) {
@@ -732,45 +700,38 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        /*setDefaultPinBackground(mPinFirstDigitEditText);
-        setDefaultPinBackground(mPinSecondDigitEditText);
-        setDefaultPinBackground(mPinThirdDigitEditText);
-        setDefaultPinBackground(mPinForthDigitEditText);
-        setDefaultPinBackground(mPinFifthDigitEditText);
-        setDefaultPinBackground(mPinSixthDigitEditText);*/
-
         if (s.length() == 0) {
             //setFocusedPinBackground(mPinFirstDigitEditText);
             mPinFirstDigitEditText.setText("");
         } else if (s.length() == 1) {
             //setFocusedPinBackground(mPinSecondDigitEditText);
-            mPinFirstDigitEditText.setText(s.charAt(0) + "");
+            mPinFirstDigitEditText.setText(String.format(activity.getString(R.string.pin_text), s.charAt(0)));
             mPinSecondDigitEditText.setText("");
             mPinThirdDigitEditText.setText("");
             mPinForthDigitEditText.setText("");
             mPinFifthDigitEditText.setText("");
         } else if (s.length() == 2) {
             //setFocusedPinBackground(mPinThirdDigitEditText);
-            mPinSecondDigitEditText.setText(s.charAt(1) + "");
+            mPinSecondDigitEditText.setText(String.format(activity.getString(R.string.pin_text), s.charAt(1)));
             mPinThirdDigitEditText.setText("");
             mPinForthDigitEditText.setText("");
             mPinFifthDigitEditText.setText("");
         } else if (s.length() == 3) {
             //setFocusedPinBackground(mPinForthDigitEditText);
-            mPinThirdDigitEditText.setText(s.charAt(2) + "");
+            mPinThirdDigitEditText.setText(String.format(activity.getString(R.string.pin_text), s.charAt(2)));
             mPinForthDigitEditText.setText("");
             mPinFifthDigitEditText.setText("");
         } else if (s.length() == 4) {
             //setFocusedPinBackground(mPinFifthDigitEditText);
-            mPinForthDigitEditText.setText(s.charAt(3) + "");
+            mPinForthDigitEditText.setText(String.format(activity.getString(R.string.pin_text), s.charAt(3)));
             mPinFifthDigitEditText.setText("");
         } else if (s.length() == 5) {
             //setFocusedPinBackground(mPinSixthDigitEditText);
-            mPinFifthDigitEditText.setText(s.charAt(4) + "");
+            mPinFifthDigitEditText.setText(String.format(activity.getString(R.string.pin_text), s.charAt(4)));
             mPinSixthDigitEditText.setText("");
         } else if (s.length() == 6) {
             //setDefaultPinBackground(mPinSixthDigitEditText);
-            mPinSixthDigitEditText.setText(s.charAt(5) + "");
+            mPinSixthDigitEditText.setText(String.format(activity.getString(R.string.pin_text), s.charAt(5)));
 
             hideSoftKeyboard(mPinSixthDigitEditText);
         }
@@ -814,12 +775,12 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
     private void setPINListeners() {
         mPinHiddenEditText.addTextChangedListener(this);
 
-        mPinFirstDigitEditText.setOnFocusChangeListener(this);
+        /*mPinFirstDigitEditText.setOnFocusChangeListener(this);
         mPinSecondDigitEditText.setOnFocusChangeListener(this);
         mPinThirdDigitEditText.setOnFocusChangeListener(this);
         mPinForthDigitEditText.setOnFocusChangeListener(this);
         mPinFifthDigitEditText.setOnFocusChangeListener(this);
-        mPinSixthDigitEditText.setOnFocusChangeListener(this);
+        mPinSixthDigitEditText.setOnFocusChangeListener(this);*/
 
         mPinFirstDigitEditText.setOnKeyListener(this);
         mPinSecondDigitEditText.setOnKeyListener(this);
@@ -847,19 +808,6 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
         } else {
             view.setBackgroundDrawable(background);
         }
-    }
-
-    /**
-     * Shows soft keyboard.
-     *
-     * @param editText EditText which has focus
-     */
-    public void showSoftKeyboard(EditText editText) {
-        if (editText == null)
-            return;
-
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Service.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(editText, 0);
     }
 
     private void clearOTP() {

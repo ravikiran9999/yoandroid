@@ -536,7 +536,7 @@ public class TopicsDetailActivity extends BaseActivity {
                 if (!Boolean.valueOf(topic.getTopicFollowing())) {
                     showProgressDialog();
 
-                    String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                    String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                     final List<String> followedTopicsIdsList = new ArrayList<>();
                     if (!TextUtils.isEmpty(preferenceEndPoint.getStringPreference(Constants.MAGAZINE_TAGS))) {
                         String[] prefTags = TextUtils.split(preferenceEndPoint.getStringPreference(Constants.MAGAZINE_TAGS), ",");
@@ -590,7 +590,7 @@ public class TopicsDetailActivity extends BaseActivity {
                         public void onClick(View v) {
                             alertDialog.dismiss();
                             showProgressDialog();
-                            String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                            String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                             final List<String> topicIds = new ArrayList<>();
                             topicIds.add(topic.getTopicId());
                             yoService.removeTopicsAPI(accessToken, topicIds).enqueue(new Callback<ResponseBody>() {

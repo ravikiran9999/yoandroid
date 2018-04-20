@@ -28,7 +28,7 @@ public class WebserviceUsecase {
     PreferenceEndPoint loginPrefs;
 
     public void appStatus(final ApiCallback<Lock> lockApiCallback) {
-        String accessToken = loginPrefs.getStringPreference("access_token");
+        String accessToken = loginPrefs.getStringPreference(YoApi.ACCESS_TOKEN);
         Call<Lock> call = yoService.lockAPI(accessToken);
         call.enqueue(new Callback<Lock>() {
             @Override

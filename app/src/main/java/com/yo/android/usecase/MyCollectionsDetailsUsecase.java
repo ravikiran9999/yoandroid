@@ -126,7 +126,7 @@ public class MyCollectionsDetailsUsecase {
      */
     public void unlikeMyCollectionArticles(final Articles data, final Context context, final MyCollectionDetails.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).showProgressDialog();
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -167,7 +167,7 @@ public class MyCollectionsDetailsUsecase {
      */
     public void likeMyCollectionArticles(final Articles data, final Context context, final MyCollectionDetails.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).showProgressDialog();
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -215,7 +215,7 @@ public class MyCollectionsDetailsUsecase {
      * @param topicId The topic id
      */
     public void getRemainingArticlesInTopics(List<String> existingArticles, String topicId, final MyCollectionDetails myCollectionDetails, final MyCollectionDetails.MyBaseAdapter myBaseAdapter) {
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.getRemainingArticlesInTopicAPI(accessToken, topicId, existingArticles).enqueue(new Callback<List<Articles>>() {
             @Override
             public void onResponse(Call<List<Articles>> call, Response<List<Articles>> response) {
@@ -321,7 +321,7 @@ public class MyCollectionsDetailsUsecase {
      * @param topicId The topic id
      */
     public void getRemainingArticlesInMagazine(List<String> existingArticles, final MyCollectionDetails myCollectionDetails, String topicId, final MyCollectionDetails.MyBaseAdapter myBaseAdapter) {
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.getRemainingArticlesInMagAPI(accessToken, topicId, existingArticles).enqueue(new Callback<MagazineArticles>() {
             @Override
             public void onResponse(Call<MagazineArticles> call, Response<MagazineArticles> response) {

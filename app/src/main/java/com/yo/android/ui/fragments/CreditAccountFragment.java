@@ -270,7 +270,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
                     String voucherNumber = voucherNumberEdit.getText().toString();
 
                     if (!TextUtils.isEmpty(voucherNumber.trim())) {
-                        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+                        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
                         yoService.voucherRechargeAPI(accessToken, voucherNumber).enqueue(new Callback<com.yo.android.model.Response>() {
                             @Override
                             public void onResponse(Call<com.yo.android.model.Response> call, Response<com.yo.android.model.Response> response) {
@@ -391,7 +391,7 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     }
 
     private void retrieveDenominations() {
-        String accessToken = preferenceEndPoint.getStringPreference("access_token");
+        String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         Call<List<Denominations>> call = yoService.getDenominations(accessToken);
         call.enqueue(new Callback<List<Denominations>>() {
             @Override
