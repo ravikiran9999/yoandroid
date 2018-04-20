@@ -24,6 +24,8 @@ import com.yo.android.util.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -34,9 +36,20 @@ import retrofit2.Response;
  * This activity contains the Other Profiles Magazines, Followers and Liked Articles tabs
  */
 public class OthersProfileActivity extends BaseActivity {
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
-    private ImageView backbtn;
+
+    @Bind(R.id.tabs)
+    TabLayout tabLayout;
+    @Bind(R.id.viewpager)
+    ViewPager viewPager;
+    @Bind(R.id.back)
+    ImageView backbtn;
+    @Bind(R.id.follow_btn)
+    Button btnFolow;
+    @Bind(R.id.follower_name)
+    TextView tvName;
+    @Bind(R.id.picture)
+    CircleImageView picture;
+
     TabsPagerAdapter mAdapter;
     private List<ProfileTabsData> dataList;
     String userId;
@@ -44,7 +57,7 @@ public class OthersProfileActivity extends BaseActivity {
     private int magazinesCount;
     private int followersCount;
     private int likedArticlesCount;
-    private Button btnFolow;
+
 
     private static Fragment currentFragment;
 
@@ -60,22 +73,18 @@ public class OthersProfileActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile_layout);
-        backbtn = (ImageView) findViewById(R.id.back);
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        ButterKnife.bind(this);
+
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
         mAdapter.addFragment(new OthersProfileMagazines(), null);
         mAdapter.addFragment(new OtherProfilesFollowers(), null);
         mAdapter.addFragment(new OtherProfilesLikedArticles(), null);
         viewPager.setAdapter(mAdapter);
-        CircleImageView picture = (CircleImageView) findViewById(R.id.picture);
-        TextView tvName = (TextView) findViewById(R.id.follower_name);
-        btnFolow = (Button) findViewById(R.id.follow_btn);
 
         magazinesCount = getIntent().getIntExtra("MagazinesCount", 0);
         followersCount = getIntent().getIntExtra("FollowersCount", 0);
         likedArticlesCount = getIntent().getIntExtra("LikedArticlesCount", 0);
 
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         dataList = createTabsList();
         updateTitles();
@@ -110,11 +119,11 @@ public class OthersProfileActivity extends BaseActivity {
         tvName.setText(name);
 
         if (isFollowing.equals("true")) {
-            btnFolow.setText("Following");
+            btnFolow.setText(R.string.following);
             btnFolow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
             isFollowingUser = true;
         } else {
-            btnFolow.setText("Follow");
+            btnFolow.setText(R.string.follow);
             btnFolow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             isFollowingUser = false;
         }
@@ -130,7 +139,7 @@ public class OthersProfileActivity extends BaseActivity {
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             try {
                                 dismissProgressDialog();
-                                btnFolow.setText("Following");
+                                btnFolow.setText(R.string.following);
                                 btnFolow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                                 followersCount = followersCount + 1;
                                 dataList.get(1).setCount(followersCount);
@@ -151,7 +160,7 @@ public class OthersProfileActivity extends BaseActivity {
                         @Override
                         public void onFailure(Call<ResponseBody> call, Throwable t) {
                             dismissProgressDialog();
-                            btnFolow.setText("Follow");
+                            btnFolow.setText(R.string.follow);
                             btnFolow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                             isFollowingUser = false;
                         }
@@ -165,8 +174,8 @@ public class OthersProfileActivity extends BaseActivity {
                     final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
                     builder.setView(view);
 
-                    Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
-                    Button noBtn = (Button) view.findViewById(R.id.no_btn);
+                    Button yesBtn = ButterKnife.findById(view, R.id.yes_btn);
+                    Button noBtn = ButterKnife.findById(view, R.id.no_btn);
 
 
                     final AlertDialog alertDialog = builder.create();
@@ -184,7 +193,7 @@ public class OthersProfileActivity extends BaseActivity {
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     try {
                                         dismissProgressDialog();
-                                        btnFolow.setText("Follow");
+                                        btnFolow.setText(R.string.follow);
                                         btnFolow.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                                         followersCount = followersCount - 1;
                                         dataList.get(1).setCount(followersCount);
@@ -205,7 +214,7 @@ public class OthersProfileActivity extends BaseActivity {
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                                     dismissProgressDialog();
-                                    btnFolow.setText("Following");
+                                    btnFolow.setText(R.string.following);
                                     btnFolow.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_following_tick, 0, 0, 0);
                                     isFollowingUser = false;
                                 }

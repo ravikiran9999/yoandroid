@@ -39,12 +39,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import de.hdodenhof.circleimageview.CircleImageView;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 /**
  * This activity is used to transfer the balance to another Yo app user
@@ -296,7 +293,7 @@ public class TransferBalanceActivity extends BaseActivity {
         final View view = layoutInflater.inflate(R.layout.custom_dialog, null);
         builder.setView(view);
 
-        TextView textView = (TextView) view.findViewById(R.id.dialog_content);
+        TextView textView = ButterKnife.findById(view, R.id.dialog_content);
 
         String mAmount = Util.addDenomination(amount, amountWithDenomination);
 
@@ -311,9 +308,9 @@ public class TransferBalanceActivity extends BaseActivity {
         textView.setText(confirmationText);
 
 
-        Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+        Button yesBtn = ButterKnife.findById(view, R.id.yes_btn);
+        Button noBtn = ButterKnife.findById(view, R.id.no_btn);
         yesBtn.setText(getResources().getString(R.string.yes));
-        Button noBtn = (Button) view.findViewById(R.id.no_btn);
         noBtn.setText(getResources().getString(R.string.cancel));
         noBtn.setVisibility(View.VISIBLE);
 
@@ -389,10 +386,11 @@ public class TransferBalanceActivity extends BaseActivity {
         LayoutInflater layoutInflater = LayoutInflater.from(this);
         final View view = layoutInflater.inflate(R.layout.custom_dialog, null);
         builder.setView(view);
-        TextView textView = (TextView) view.findViewById(R.id.dialog_content);
-        textView.setText(R.string.cannot_transfer_full_balance);
 
-        Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
+        TextView textView = ButterKnife.findById(view, R.id.dialog_content);
+        Button yesBtn = ButterKnife.findById(view, R.id.yes_btn);
+
+        textView.setText(R.string.cannot_transfer_full_balance);
         yesBtn.setText(getResources().getString(R.string.ok));
 
         final AlertDialog alert = builder.create();
@@ -416,9 +414,9 @@ public class TransferBalanceActivity extends BaseActivity {
         final View view = layoutInflater.inflate(R.layout.custom_dialog, null);
         builder.setView(view);
 
-        Button okBtn = (Button) view.findViewById(R.id.yes_btn);
-        TextView tvTitle = (TextView) view.findViewById(R.id.dialog_title);
-        TextView tvDesc = (TextView) view.findViewById(R.id.dialog_content);
+        Button okBtn = ButterKnife.findById(view, R.id.yes_btn);
+        TextView tvTitle = ButterKnife.findById(view, R.id.dialog_title);
+        TextView tvDesc = ButterKnife.findById(view, R.id.dialog_content);
 
         tvTitle.setText(titleMsg);
         tvTitle.setVisibility(View.VISIBLE);
