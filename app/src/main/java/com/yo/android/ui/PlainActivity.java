@@ -56,7 +56,7 @@ public class PlainActivity extends BaseActivity {
             String termsConditionsScreen = getIntent().getStringExtra(Constants.TERMS_CONDITIONS);
             Bundle args = getIntent().getBundleExtra(KEY_ARGS);
             replaceFragment(this, GeneralWebViewFragment.newInstance(args), termsConditionsScreen);
-            setTitle(R.string.terms_and_conditions);
+            setTitleHideIcon(R.string.terms_and_conditions);
         }
     }
 

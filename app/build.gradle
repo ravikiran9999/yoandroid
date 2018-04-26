@@ -33,7 +33,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 8
-        versionName "1.0.7S"
+        versionName "1.0.7"
 
         // annotationProcess issue in latest gradle
         javaCompileOptions {
@@ -117,6 +117,7 @@ android {
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://yowatsup-release.appspot.com\""
             buildConfigField "String", "FIREBASE_URL", "\"https://yowatsup-release.firebaseio.com/\""
 
+            buildConfigField "String", "YO_SHEET_ID", "\"1sCx0ySvIuiN9ISaEbSP7tJFMnno7gAuyfBv6N7VUwME\""
         }
 
         enhancement {
@@ -137,10 +138,13 @@ android {
             buildConfigField "String", "STORAGE_BUCKET", "\"gs://enhancement-94ccd.appspot.com\""
             buildConfigField "String", "FIREBASE_URL", "\"https://enhancement-94ccd.firebaseio.com\""
 
+            buildConfigField "String", "YO_SHEET_ID", "\"1kOClpbd7APELyd_xXlSn_O6ZWF3sEY1Ve8HryLMU98E\""
+
             buildConfigField "boolean", "NEW_YO_CREDIT_SCREEN", "true"
             buildConfigField "boolean", "NEW_OTP_SCREEN", "true"
             buildConfigField "boolean", "NEW_CONTACTS_SCREEN", "true"
             buildConfigField "boolean", "YO_AWS_ACCOUNT", "true"
+
 
             minSdkVersion 18
         }
@@ -149,7 +153,7 @@ android {
     buildTypes {
         release {
             buildConfigField "boolean", "ORIGINAL_SMS_VERIFICATION", "true"
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             //signingConfig signingConfigs.config
             productFlavors.dev.signingConfig signingConfigs.devconfig

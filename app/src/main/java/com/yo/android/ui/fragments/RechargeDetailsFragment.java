@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -34,9 +33,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by Ramesh on 25/7/16.
- */
 public class RechargeDetailsFragment extends BaseFragment implements Callback<List<PaymentHistoryItem>>, SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Bind(R.id.txtEmpty)
@@ -164,8 +160,6 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
                 holder.getTxtPrice().setText(item.getMessage());
                 holder.getTxtPulse().setTextColor(mContext.getResources().getColor(R.color.colorPrimary));
             } else {
-                //holder.getTxtPrice().setText(String.format("%s%s", item.getCurrencySymbol(), item.getConvertedAddedCredit()));
-                //holder.getTxtPrice().setText(String.format("%s %s%s", item.getCurrencyCode(), item.getCurrencySymbol(), item.getConvertedAddedCredit()));
                 holder.getTxtPrice().setText(String.format("%s %s", mBalanceHelper.currencySymbolLookup(item.getCurrencyCode()), item.getConvertedAddedCredit()));
                 holder.getTxtPulse().setTextColor(mContext.getResources().getColor(R.color.dial_green));
             }
@@ -209,5 +203,4 @@ public class RechargeDetailsFragment extends BaseFragment implements Callback<Li
             mBalanceHelper.loadPaymentHistory(this);
         }
     }
-
 }

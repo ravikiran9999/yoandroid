@@ -24,7 +24,6 @@
 -dontwarn retrofit2.**
 -dontwarn org.codehaus.mojo.**
 -keep class retrofit2.** { *; }
--keepattributes Signature
 -keepattributes Exceptions
 -keepattributes *Annotation*
 
@@ -44,3 +43,6 @@
 -keepclassmembers class com.yo.android.model.** {
   *;
 }
+
+# Firebase
+-keep class com.google.android.gms.internal.** { *; }

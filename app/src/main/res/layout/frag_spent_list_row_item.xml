@@ -6,20 +6,11 @@
     android:orientation="vertical"
     android:padding="10dp">
 
-    <!--<ImageView
-        android:id="@+id/imgArrow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:padding="5dp"
-        android:src="@drawable/ic_uparrow" />-->
-
     <TextView
         android:id="@+id/txtDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
         android:textColor="@color/black"
         tools:text="16/02/2017" />
@@ -28,12 +19,11 @@
         android:id="@+id/ll_phone_duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
         android:layout_toLeftOf="@+id/spent_amount"
         android:layout_toRightOf="@+id/txtDate"
-        android:gravity="center_horizontal"
+        android:gravity="center"
         android:orientation="vertical">
 
         <TextView
@@ -43,7 +33,7 @@
             android:maxLines="1"
             android:ellipsize="end"
             android:textColor="@color/black"
-            tools:text="+91 9573535345" />
+            tools:text="+919573535345" />
 
         <TextView
             android:id="@+id/txt_duration"
@@ -59,7 +49,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
         android:layout_marginTop="5dp"
         android:gravity="right"
         android:orientation="vertical">
@@ -79,32 +68,5 @@
             android:textSize="10sp"
             tools:text="Transfer" />
     </LinearLayout>
-
-    <!-- <LinearLayout
-         android:id="@+id/duration_container"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_alignBaseline="@+id/txtPhone"
-         android:layout_marginLeft="10dp"
-         android:layout_toRightOf="@+id/imgArrow"
-         android:gravity="left"
-         android:orientation="vertical"
-         android:paddingTop="5dp"
-         android:visibility="gone">
-
-         <TextView
-             android:id="@+id/date"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             tools:text="17/06/2016,3:24 pm" />
-
-         <TextView
-             android:id="@+id/duration"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:paddingTop="2dp"
-             tools:text="Duration: 30min" />
-     </LinearLayout>-->
-
 
 </RelativeLayout>

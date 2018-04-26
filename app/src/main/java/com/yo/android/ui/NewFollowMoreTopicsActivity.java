@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -106,7 +107,6 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
 
         Intent intent = getIntent();
         from = intent.getStringExtra("From");
-        LayoutInflater layoutInflater = LayoutInflater.from(this);
 
         boolean backBtn = true;
         if ("UpdateProfileActivity".equals(from) || preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {

@@ -14,7 +14,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -404,8 +403,8 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SELECTED_OK && resultCode == RESULT_OK && data != null) {
-            if (data.hasExtra("COUNTRY_CODE")) {
-                String countryCode = data.getStringExtra("COUNTRY_CODE");
+            if (data.hasExtra(Constants.COUNTRY_CODE)) {
+                String countryCode = data.getStringExtra(Constants.COUNTRY_CODE);
                 String countryName = data.getStringExtra("COUNTRY_NAME");
                 String countryId = data.getStringExtra("COUNTRY_ID");
                 mCountryCode.setText(String.format(getString(R.string.sim_country_code), countryCode, countryName));

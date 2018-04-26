@@ -23,7 +23,6 @@ import com.yo.android.model.dialer.CallRateDetail;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
-import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,40 +31,30 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by Ramesh on 9/7/16.
- */
 public class CountryListActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
-    private final static String TAG = "CountryListActivity";
+    private final static String TAG = CountryListActivity.class.getSimpleName();
+
     @Bind(R.id.lv_app_contacts)
     NonScrollListView listView;
-
     @Bind(R.id.lv_app_contacts_recent)
     NonScrollListView listViewRecent;
-
     @Bind(R.id.tv_recent_title)
     TextView recentTextView;
-
     @Bind(R.id.no_search_results)
     TextView txtEmptyView;
-
     @Bind(R.id.side_index)
     ListView layout;
-
     @Bind(R.id.tv_title)
     TextView countryTitle;
 
     private CountryCallRatesAdapter adapter;
     private RecentCountryCallRatesAdapter recentAdapter;
-    private MenuItem searchMenuItem;
     private Context context;
-    private List<CallRateDetail> selectedRecentCallRateDetails = new ArrayList<>();
     List<CallRateDetail> recentCallRateDetails;
 
     @Override
@@ -187,7 +176,7 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
     private void prepareSearch(Menu menu) {
         final SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchMenuItem = menu.findItem(R.id.menu_search);
+        MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
         SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
         searchView.setQueryHint(Html.fromHtml("<font color = #88FFFFFF>" + "Search...." + "</font>"));
         searchView.setSearchableInfo(

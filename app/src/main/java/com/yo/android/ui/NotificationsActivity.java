@@ -76,11 +76,10 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notifications);
         ButterKnife.bind(this);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        String title = "Notifications";
-        actionBarTitle.setText(title);
+        setTitleHideIcon(R.string.notifications);
+        enableBack();
+
         notificationEnable.setVisibility(View.GONE);
         EventBus.getDefault().register(this);
 
@@ -316,7 +315,8 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
 
     public void onEventMainThread(String action) {
         if (Constants.UPDATE_NOTIFICATIONS.equals(action)) {
-            String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
+            getNotifications(null);
+            /*String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
             showProgressDialog();
             yoService.getNotifications(accessToken, "", "").enqueue(new Callback<List<Notification>>() {
                 @Override
@@ -360,7 +360,7 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
                     llNoNotifications.setVisibility(View.GONE);
                     networkFailureText.setVisibility(View.VISIBLE);
                 }
-            });
+            });*/
         }
     }
 

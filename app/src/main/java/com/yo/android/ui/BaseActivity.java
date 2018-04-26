@@ -29,6 +29,7 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecovera
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import com.orion.android.common.util.ResourcesHelper;
+import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.api.ApiCallback;
 import com.yo.android.api.YoApi;
@@ -356,13 +357,14 @@ public class BaseActivity extends ParentActivity {
         // Stage
         //final String spreadsheetId = "1OIkQq2O3en-x0ChsIAy2DX0YPS6n9sMzFQr_-xVy1Qs";
 
-        //Production
-        final String spreadsheetId = "1qgUuEqHNiKbIHq-yTlLNnHpBx9sCb7YLueJoxVEnLiA";
+        //Production old 1.0.6
+        //final String spreadsheetId = "1qgUuEqHNiKbIHq-yTlLNnHpBx9sCb7YLueJoxVEnLiA";
+
 
         List<List<Object>> values = new ArrayList<>();
         String range = " ";
         if (type.equals("Calls")) {
-            range = "1.0.4.6 Call Logs!A:L";
+            range = BuildConfig.VERSION_NAME + " Call Logs!A:L";
 
             DialerLogs.messageI(TAG, "Uploading to google sheet " + model.getName());
             if (TextUtils.isEmpty(model.getCallee().trim())) {
@@ -426,7 +428,7 @@ public class BaseActivity extends ParentActivity {
                     )
             );
         }
-        sendToGoogleDrive(sheets, model, spreadsheetId, range, values);
+        sendToGoogleDrive(sheets, model, BuildConfig.YO_SHEET_ID, range, values);
     }
 
     private static void sendToGoogleDrive(Sheets sheets, UploadModel model, String spreadsheetId, String range, List<List<Object>> values) {

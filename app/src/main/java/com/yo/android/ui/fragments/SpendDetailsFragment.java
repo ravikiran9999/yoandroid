@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -135,7 +136,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
                         java.util.Collections.sort(removedFreeSpents, new Comparator<SubscribersList>() {
                             @Override
                             public int compare(SubscribersList lhs, SubscribersList rhs) {
-                                return lhs.getTime().compareToIgnoreCase(rhs.getTime());
+                                return rhs.getTime().compareTo(lhs.getTime());
                             }
                         });
                         adapter.addItems(removedFreeSpents);
@@ -195,8 +196,8 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
         @Override
         public void onBindViewHolder(SpendDetailsViewHolder holder, int position) {
             final SubscribersList item = mSubscribersList.get(position);
-
-            holder.getDate().setText(item.getTime());
+            String date = new SimpleDateFormat(DateUtil.DATE_FORMAT8, Locale.getDefault()).format(item.getTime());
+            holder.getDate().setText(date);
 
             if (item.getDuration() != null) {
                 if (item.getDuration().contains(":")) {

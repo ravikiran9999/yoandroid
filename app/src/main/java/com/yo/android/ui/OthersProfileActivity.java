@@ -262,8 +262,11 @@ public class OthersProfileActivity extends BaseActivity {
         final View view = LayoutInflater.from(this).inflate(R.layout.profile_tab_holder, null);
         // We need to manually set the LayoutParams here because we don't have a view root
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        ((TextView) view.findViewById(R.id.count)).setText(String.valueOf(count));
-        ((TextView) view.findViewById(R.id.tab_name)).setText(title);
+        TextView countText = ButterKnife.findById(view, R.id.count);
+        TextView tabTitle = ButterKnife.findById(view,R.id.tab_name);
+        countText.setText(String.valueOf(count));
+        tabTitle.setText(title);
+
         if (isLast) {
             view.findViewById(R.id.divider).setVisibility(View.GONE);
         }

@@ -353,10 +353,10 @@ class CallBaseActivity extends BaseActivity {
                     String walletBalance = response.body().getWalletBalance();
                     if(Double.parseDouble(mBalanceHelper.removeCurrencyCodeString(switchBalance)) <= 1) {
                         Dialogs.recharge(CallBaseActivity.this);
-                        appLogglyUsecase.sendAlertsToLoggly(switchBalance + " : "+walletBalance, reason + ": switch balance is < 1", Constants.CRITICAL, 523);
+                        appLogglyUsecase.sendAlertsToLoggly("switchBalance : " + switchBalance + " & " + "walletBalance : " + walletBalance, reason + ": switch balance is < 1", Constants.CRITICAL, 523);
                     } else {
                         Dialogs.nexgeRegistrationIssue(CallBaseActivity.this);
-                        appLogglyUsecase.sendAlertsToLoggly(switchBalance + " : "+walletBalance, reason + ": nexge issue", Constants.CRITICAL, 809);
+                        appLogglyUsecase.sendAlertsToLoggly("switchBalance : " + switchBalance + " & " + "walletBalance : " + walletBalance, reason + ": nexge issue", Constants.CRITICAL, 809);
                     }
 
                 }

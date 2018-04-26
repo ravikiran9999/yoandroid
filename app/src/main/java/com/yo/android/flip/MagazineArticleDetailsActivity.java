@@ -29,12 +29,13 @@ import com.yo.dialer.googlesheet.UploadCallDetails;
 import com.yo.dialer.googlesheet.UploadModel;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,16 +45,24 @@ import retrofit2.Response;
  * The activity used to display the article content in a WebView
  */
 public class MagazineArticleDetailsActivity extends BaseActivity {
-    private ProgressBar progressBar;
     private Articles data;
     private int position;
     private String articlePlacement;
+
+    @Bind(R.id.cb_magazine_like)
+    CheckBox magazineLike;
+    @Bind(R.id.imv_magazine_add)
+    ImageView magazineAdd;
+    @Bind(R.id.imv_magazine_share)
+    ImageView magazineShare;
+    @Bind(R.id.webview_progressbar)
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_magazine_article_details);
-
+        ButterKnife.bind(this);
         enableBack();
 
         Intent intent = getIntent();
@@ -78,12 +87,6 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
         webview.getSettings().setUseWideViewPort(true);
         webview.getSettings().setDomStorageEnabled(true);
 
-        CheckBox magazineLike = (CheckBox) findViewById(R.id.cb_magazine_like);
-
-        ImageView magazineAdd = (ImageView) findViewById(R.id.imv_magazine_add);
-
-        ImageView magazineShare = (ImageView) findViewById(R.id.imv_magazine_share);
-
         webview.setWebViewClient(new WebViewClient() {
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 // do nothing
@@ -91,7 +94,6 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
         });
 
         webview.loadUrl(image);
-        progressBar = (ProgressBar) findViewById(R.id.webview_progressbar);
         webview.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {

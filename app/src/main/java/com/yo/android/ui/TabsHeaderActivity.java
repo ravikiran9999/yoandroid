@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
@@ -188,11 +189,7 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
     private void setupViewPager(ViewPager viewPager) {
         adapter = new TabsPagerAdapter(getSupportFragmentManager());
         Fragment fragment;
-        /*if (!BuildConfig.NEW_YO_CREDIT_SCREEN) {
-            fragment = new CreditAccountFragment();
-        } else {*/
-            fragment = new NewCreditAccountFragment();
-        //}
+        fragment = new NewCreditAccountFragment();
         if (getIntent().hasExtra(Constants.OPEN_ADD_BALANCE)) {
             Bundle bundle = new Bundle();
             bundle.putBoolean(Constants.OPEN_ADD_BALANCE, true);
@@ -350,12 +347,21 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
     }
 
     public void showNetworkStatus(int status) {
+        final int sdk = android.os.Build.VERSION.SDK_INT;
         if (status == 1) {
-            balanceText.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.small_green_circle);
+            if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                balanceText.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.white_circle_with_green_status) );
+            } else {
+                balanceText.setBackground(ContextCompat.getDrawable(this, R.drawable.white_circle_with_green_status));
+            }
         } else {
-            balanceText.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.small_red_circle);
+            if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                balanceText.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.white_circle_with_red_status) );
+            } else {
+                balanceText.setBackground(ContextCompat.getDrawable(this, R.drawable.white_circle_with_red_status));
+            }
         }
-        balanceText.setPadding(0, 0, 0, 5);
+        //balanceText.setPadding(0, 0, 0, 5);
     }
 
 }
