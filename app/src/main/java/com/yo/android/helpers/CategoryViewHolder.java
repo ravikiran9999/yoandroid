@@ -1,7 +1,5 @@
 package com.yo.android.helpers;
 
-import android.annotation.SuppressLint;
-import android.opengl.Visibility;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
@@ -10,7 +8,6 @@ import android.widget.TextView;
 import com.yo.android.R;
 import com.yo.android.adapters.CategoriesAdapter;
 import com.yo.android.adapters.YoViewHolder;
-import com.yo.android.sectionheaders.Section;
 import com.yo.android.ui.followmoretopics.CategoriesAccordionSection;
 
 import java.util.ArrayList;
@@ -19,6 +16,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class CategoryViewHolder extends YoViewHolder {
+
     @Bind(R.id.title)
     TextView title;
     @Bind(R.id.checkbox)

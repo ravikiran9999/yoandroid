@@ -30,6 +30,7 @@ import com.yo.dialer.DialerLogs;
 
 import java.util.List;
 
+import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -51,6 +52,7 @@ public class OutgoingCallActivity extends CallBaseActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialer_received_call);
+
         setIncoming(false);
         DialerLogs.messageI(TAG, "YO========Outgongcall call screen=====");
         DialerLogs.messageI(TAG, "YO==== Callee Number====" + callePhoneNumber);

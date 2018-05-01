@@ -34,33 +34,26 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-/**
- * Created by rajesh on 6/9/16.
- */
 public class CallLogDetailsActivity extends BaseActivity {
 
     @Bind(R.id.imv_calllog_details_profile_pic)
     CircleImageView imageView;
-
     @Bind(R.id.call_log_opponent_name)
     TextView opponentName;
-
     @Bind(R.id.call_log_opponent_number)
     TextView opponentNumber;
-
     @Bind(R.id.call_info_date)
     TextView callInfoDate;
-
     @Bind(R.id.call)
     ImageView callImg;
-
     @Bind(R.id.lv_call_log_details)
     ListView callLogHistoryListview;
+
     protected DateFormat dateFormat = new SimpleDateFormat("hh:mm a");
     protected DateFormat dateFormat1 = new SimpleDateFormat("MM/dd");
     protected DateFormat dateFormat2 = new SimpleDateFormat("EEE");
     protected SimpleDateFormat formatterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-    protected SimpleDateFormat formatterNewDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    protected SimpleDateFormat formatterNewDate = new SimpleDateFormat(DateUtil.DATE_FORMAT1);
 
     private ArrayList<CallLogsResult> callLogsDetails;
 
@@ -69,8 +62,10 @@ public class CallLogDetailsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.calllog_details);
         ButterKnife.bind(this);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(R.string.call_info);
+
+        setTitleHideIcon(R.string.call_info);
+        enableBack();
+
         callLogsDetails = getIntent().getParcelableArrayListExtra(Constants.CALL_LOG_DETAILS);
         String name = callLogsDetails.get(0).getDestination_name();
         String number = callLogsDetails.get(0).getDialnumber();
@@ -187,7 +182,7 @@ public class CallLogDetailsActivity extends BaseActivity {
             try {
                 String mDate = null;
                 String day = dateFormat2.format(formatterDate.parse(item.getStime()));
-                String currentDate = DateUtil.getChatListTimeFormat(convertDateFormatLong(item.getStime()));
+                String currentDate = DateUtil.getChatListTimeFormat(DateUtil.convertDateFormatLong(item.getStime()));
                 if (currentDate.equalsIgnoreCase(Constants.TODAY) || currentDate.equalsIgnoreCase(Constants.YESTERDAY)) {
                     mDate = currentDate;
                 } else {
@@ -222,15 +217,5 @@ public class CallLogDetailsActivity extends BaseActivity {
             TextView date;
         }
 
-        private long convertDateFormatLong(String dateString) {
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                Date date = sdf.parse(dateString);
-                return date.getTime();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            return 0;
-        }
     }
 }

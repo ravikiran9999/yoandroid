@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -145,6 +146,11 @@ public class BaseActivity extends ParentActivity {
     }
 
     protected void setTitleHideIcon(String title) {
+        notificationEnable.setVisibility(View.GONE);
+        actionBarTitle.setText(title);
+    }
+
+    protected void setTitleHideIcon(SpannableStringBuilder title) {
         notificationEnable.setVisibility(View.GONE);
         actionBarTitle.setText(title);
     }

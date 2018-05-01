@@ -18,11 +18,11 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.aphidmobile.utils.AphidLog;
 import com.aphidmobile.utils.UI;
 import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.orion.android.common.util.ToastFactory;
-import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.api.ApiCallback;
 import com.yo.android.api.YoApi;
@@ -38,7 +38,6 @@ import com.yo.android.usecase.MagazinesServicesUsecase;
 import com.yo.android.util.AutoReflectTopicsFollowActionsListener;
 import com.yo.android.util.AutoReflectWishListActionsListener;
 import com.yo.android.util.MagazineOtherPeopleReflectListener;
-import com.yo.android.util.Util;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -127,11 +126,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 layout = inflater.inflate(R.layout.magazine_landing_layout, null);
             } else if (type == 2) {
                 // Inflate the layout with suggestions page
-                /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
-                    layout = inflater.inflate(R.layout.landing_suggestions_page, null);
-                } else {*/
-                    layout = inflater.inflate(R.layout.new_landing_suggestions_page, null);
-                //}
+                layout = inflater.inflate(R.layout.new_landing_suggestions_page, null);
             } else {
                 // Inflate the layout with single article
                 layout = inflater.inflate(R.layout.magazine_flip_layout, null);
@@ -190,13 +185,12 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
             holder.articleFollowRight = UI.findViewById(layout, R.id.imv_magazine_follow_right);
 
-            /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
-                holder.lvSuggestions = (ListView) layout.findViewById(R.id.lv_suggestions);
-            } else {*/
-                holder.rvSuggestions = (RecyclerView) layout.findViewById(R.id.rv_suggestions);
-                holder.doneButton = (Button) layout.findViewById(R.id.btn_done);
-                holder.noSuggestionsTextView = (TextView) layout.findViewById(R.id.no_suggestions);
-            //}
+            holder.rvSuggestions = (RecyclerView) layout.findViewById(R.id.rv_suggestions);
+
+            holder.doneButton = (Button) layout.findViewById(R.id.btn_done);
+
+            holder.noSuggestionsTextView = (TextView) layout.findViewById(R.id.no_suggestions);
+
             holder.tvFollowMoreTopics = UI.findViewById(layout, R.id.tv_follow_more_topics);
 
             holder.tvTopicName = UI.findViewById(layout, R.id.imv_magazine_topic);
@@ -239,19 +233,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
         mMagazinesServicesUsecase.handleArticleImage(position, holder, holder.articlePhoto, data, context);
 
-/*<<<<<<< HEAD
-        if (holder.articlePhoto != null) {
-            final ImageView photoView = holder.articlePhoto;
-
-            photoView.setImageResource(R.drawable.magazine_backdrop);
-            if (data.getS3_image_filename() != null) {
-                mMagazinesServicesUsecase.handleImageLoading(holder, context, data, photoView);
-            } else {
-                photoView.setImageResource(R.drawable.magazine_backdrop);
-            }
-=======*/
         mMagazinesServicesUsecase.handleArticleAdd(holder.magazineAdd, data, context);
-//>>>>>>> 4056593f7dcc1b6568a3d53e115d921d4309687c
 
         mMagazinesServicesUsecase.handleArticleShare(holder.magazineShare, data);
 
@@ -302,65 +284,42 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
         } else {
             mMagazinesServicesUsecase.populateEmptyRightArticle(holder);
         }
-        /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
-            if (allArticles.size() >= 4 && MagazinesFragment.unSelectedTopics.size() > 0) {
-                if (holder.lvSuggestions != null) {
-                    SuggestionsAdapter suggestionsAdapter = new SuggestionsAdapter(context, magazineFlipArticlesFragment);
-                    holder.lvSuggestions.setAdapter(suggestionsAdapter);
-                    int n = 5;
-                    if (MagazinesFragment.unSelectedTopics.size() >= n) {
-                        List<Topics> subList = new ArrayList<>(MagazinesFragment.unSelectedTopics.subList(0, n));
-                        suggestionsAdapter.addItems(subList);
-                    } else {
-                        int count = MagazinesFragment.unSelectedTopics.size();
-                        if (count > 0) {
-                            List<Topics> subList = new ArrayList<>(MagazinesFragment.unSelectedTopics.subList(0, count));
-                            suggestionsAdapter.addItems(subList);
+
+        if (allArticles.size() >= 4 && MagazinesFragment.newCategoriesList.size() > 0) {
+            if (holder.rvSuggestions != null) {
+                ArrayList<Categories> addFourCategoriesList = new ArrayList<>();
+                for (Categories categories : MagazinesFragment.newCategoriesList) {
+                    if (addFourCategoriesList.size() < 4 && categories.getTags() != null && categories.getTags().size() > 0) {
+                        if (!categories.getTags().get(0).isSelected()) {
+                            addFourCategoriesList.add(categories);
                         }
                     }
                 }
-            }
-        } else {*/
 
-            if (allArticles.size() >= 4 && MagazinesFragment.newCategoriesList.size() > 0) {
-                if (holder.rvSuggestions != null) {
-                    ArrayList<Categories> addFourCategoriesList = new ArrayList<>();
-                    for (Categories categories : MagazinesFragment.newCategoriesList) {
-                        if (addFourCategoriesList.size() < 4 && categories.getTags() != null && categories.getTags().size() > 0) {
-                            if (!categories.getTags().get(0).isSelected()) {
-                                addFourCategoriesList.add(categories);
-                            }
-                        }
-                    }
+                if (addFourCategoriesList != null && addFourCategoriesList.size() > 0) {
 
-                    if (addFourCategoriesList != null && addFourCategoriesList.size() > 0) {
-
-                        newSuggestionsAdapter = new NewSuggestionsAdapter(context, magazineFlipArticlesFragment, addFourCategoriesList);
-                        newSuggestionsAdapter.notifyDataSetChanged();
-                        newSuggestionsAdapter.setTopicsItemListener(this);
-                        holder.rvSuggestions.setAdapter(newSuggestionsAdapter);
-                        holder.rvSuggestions.setNestedScrollingEnabled(false);
-                        holder.rvSuggestions.setLayoutManager(new GridLayoutManager(context, 2));
-                        holder.rvSuggestions.setVisibility(View.VISIBLE);
-                        holder.noSuggestionsTextView.setVisibility(View.GONE);
-                    } else {
-                        holder.noSuggestionsTextView.setVisibility(View.VISIBLE);
-                        holder.noSuggestionsTextView.setText(context.getString(R.string.no_topics_available));
-                    }
-
+                    newSuggestionsAdapter = new NewSuggestionsAdapter(context, magazineFlipArticlesFragment, addFourCategoriesList);
+                    newSuggestionsAdapter.notifyDataSetChanged();
+                    newSuggestionsAdapter.setTopicsItemListener(this);
+                    holder.rvSuggestions.setAdapter(newSuggestionsAdapter);
+                    holder.rvSuggestions.setNestedScrollingEnabled(false);
+                    holder.rvSuggestions.setLayoutManager(new GridLayoutManager(context, 2));
+                    holder.rvSuggestions.setVisibility(View.VISIBLE);
+                    holder.noSuggestionsTextView.setVisibility(View.GONE);
+                } else {
+                    holder.noSuggestionsTextView.setVisibility(View.VISIBLE);
+                    holder.noSuggestionsTextView.setText(context.getString(R.string.no_topics_available));
                 }
+
             }
+        }
         //}
         if (holder.tvFollowMoreTopics != null) {
             holder.tvFollowMoreTopics.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent;
-                    /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
-                        intent = new Intent(context, FollowMoreTopicsActivity.class);
-                    } else {*/
-                        intent = new Intent(context, NewFollowMoreTopicsActivity.class);
-                    //}
+                    intent = new Intent(context, NewFollowMoreTopicsActivity.class);
                     intent.putExtra("From", "Magazines");
                     context.startActivity(intent);
                 }
@@ -431,7 +390,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
 
     @Override
     public void updateFollowOrLikesStatus(Articles data, String type) {
-       mMagazinesServicesUsecase.autoReflectStatus(data, type, allArticles, context, this);
+        mMagazinesServicesUsecase.autoReflectStatus(data, type, allArticles, context, this);
     }
 
     @Override
@@ -487,11 +446,7 @@ public class MagazineArticlesBaseAdapter extends BaseAdapter implements AutoRefl
                 @Override
                 public void onClick(View v) {
                     Intent intent;
-                    /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
-                        intent = new Intent(context, FollowMoreTopicsActivity.class);
-                    } else {*/
-                        intent = new Intent(context, NewFollowMoreTopicsActivity.class);
-                    //}
+                    intent = new Intent(context, NewFollowMoreTopicsActivity.class);
                     intent.putExtra("From", "Magazines");
                     context.startActivity(intent);
                 }

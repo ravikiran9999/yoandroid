@@ -112,7 +112,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 gridView.setVisibility(View.VISIBLE);
                 final List<Collections> collectionsList = new ArrayList<Collections>();
                 Collections collections = new Collections();
-                collections.setName("Follow more topics");
+                collections.setName(getString(R.string.follow_more_topics));
                 collections.setImage("");
                 collectionsList.add(0, collections);
                 try {
@@ -124,11 +124,11 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                     gridView.setAdapter(myCollectionsAdapter);
                     isNetworkFailure = false;
                 } finally {
-                    if(response != null && response.body() != null) {
+                    if (response != null && response.body() != null) {
                         try {
                             response.body().clear();
                             response = null;
-                        }catch (Exception e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -217,7 +217,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
                     intent = new Intent(MyCollections.this, FollowMoreTopicsActivity.class);
                 } else {*/
-                    intent = new Intent(MyCollections.this, NewFollowMoreTopicsActivity.class);
+                intent = new Intent(MyCollections.this, NewFollowMoreTopicsActivity.class);
                 //}
                 intent.putExtra("From", "MyCollections");
                 startActivityForResult(intent, 2);
@@ -354,12 +354,12 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                                 myCollectionsAdapter.clearAll();
                                 myCollectionsAdapter.addItems(collectionsList);
                                 gridView.setAdapter(myCollectionsAdapter);
-                            }finally {
-                                if(response != null && response.body() != null) {
+                            } finally {
+                                if (response != null && response.body() != null) {
                                     try {
                                         response.body().clear();
                                         response = null;
-                                    }catch (Exception e) {
+                                    } catch (Exception e) {
                                         e.printStackTrace();
                                     }
                                 }
@@ -420,11 +420,11 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                                 myCollectionsAdapter.addItems(collectionsList);
                                 gridView.setAdapter(myCollectionsAdapter);
                             } finally {
-                                if(response != null && response.body() != null) {
+                                if (response != null && response.body() != null) {
                                     try {
                                         response.body().clear();
                                         response = null;
-                                    }catch (Exception e) {
+                                    } catch (Exception e) {
                                         e.printStackTrace();
                                     }
                                 }
@@ -485,11 +485,11 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                         myCollectionsAdapter.addItems(collectionsList);
                         gridView.setAdapter(myCollectionsAdapter);
                     } finally {
-                        if(response != null && response.body() != null) {
+                        if (response != null && response.body() != null) {
                             try {
                                 response.body().clear();
                                 response = null;
-                            }catch (Exception e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
@@ -533,11 +533,11 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
                         gridView.setAdapter(myCollectionsAdapter);
                     } finally {
-                        if(response != null && response.body() != null) {
+                        if (response != null && response.body() != null) {
                             try {
                                 response.body().clear();
                                 response = null;
-                            }catch (Exception e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }

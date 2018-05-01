@@ -32,9 +32,10 @@ import javax.inject.Inject;
 
 public class DialerHelper {
 
-    private static DialerHelper dialerHelper;
     private static final String TAG = DialerHelper.class.getSimpleName();
+
     private static Context mContext;
+    private static DialerHelper dialerHelper;
 
     public static DialerHelper getInstance(Context context) {
         mContext = context;
@@ -150,7 +151,7 @@ public class DialerHelper {
         imageLoadedCallback.onImageLoadComplete(future.get());
     }
 
-    public static String getCountryCodeFromNexgeUsername(final String calleePhoneNumber) {
+    public static String getCountryCode(final String calleePhoneNumber) {
 
         PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
         try {

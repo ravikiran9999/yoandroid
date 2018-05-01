@@ -53,8 +53,9 @@ public class SubscribersList {
         this.duration = duration;
     }
 
-    public Date getTime() {
-        return DateUtil.convertUtcToGmt(time);
+    public String getTime() {
+        //return DateUtil.convertUtcToGmt(time);
+        return time;
     }
 
     public void setTime(String time) {

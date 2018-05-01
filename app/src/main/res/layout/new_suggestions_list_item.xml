@@ -20,7 +20,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:textColor="@android:color/holo_red_dark"
+        android:background="@drawable/title_background"
+        android:textColor="@color/white"
+        android:maxLines="1"
         android:textSize="16sp" />
 
     <CheckBox

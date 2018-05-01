@@ -112,6 +112,7 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
         if ("UpdateProfileActivity".equals(from) || preferenceEndPoint.getBooleanPreference(Constants.ENABLE_FOLLOW_TOPICS_SCREEN)) {
             backBtn = false;
         }
+
         getSupportActionBar().setHomeButtonEnabled(backBtn);
         getSupportActionBar().setDisplayHomeAsUpEnabled(backBtn);
 
@@ -164,15 +165,6 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
                         }
                     }
                 }
-
-                /*categorisedList = new NewCategorizedList(NewFollowMoreTopicsActivity.this, recyclerView, initialTags, serverTopics);
-                new NewTagLoader(context, new NewFollowMoreTopicsActivity.TagsLoader() {
-                    @Override
-                    public void loaded() {
-                        searchTagsArrayList = new ArrayList<Tag>(initialTags);
-                        arraylist = new ArrayList<Tag>(initialTags);
-                    }
-                }, serverTopics, tagViewAdapter, initialTags, categorisedList).execute();*/
 
             }
 

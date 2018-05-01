@@ -274,7 +274,7 @@ class CallBaseActivity extends BaseActivity {
      * @param phoneNumber The callee phone number
      */
     protected void loadCallePhoneNumber(TextView callePhoneNumberTxt, String phoneNumber) {
-        callePhoneNumberTxt.setText("+" + phoneNumber);
+        callePhoneNumberTxt.setText(String.format(getString(R.string.plus_number), phoneNumber));
         DialerLogs.messageI(TAG, "YO====loadCallePhoneNumber====" + phoneNumber);
     }
 

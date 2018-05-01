@@ -19,16 +19,15 @@ import com.yo.android.R;
 import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.helpers.Helper;
 import com.yo.android.helpers.SpendDetailsViewHolder;
-import com.yo.android.model.Collections;
 import com.yo.android.model.SpendDetails;
 import com.yo.android.model.dialer.SubscribersList;
 import com.yo.android.provider.YoAppContactContract;
-import com.yo.android.util.Constants;
 import com.yo.android.util.DateUtil;
 import com.yo.android.util.Util;
 import com.yo.android.vox.BalanceHelper;
 
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -52,12 +51,11 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
     public static final String BALANCE_TRANSFER = "BalanceTransfer";
     public static final String MAGAZINES = "Magzines";
 
+
     @Bind(R.id.txtEmpty)
     TextView txtEmpty;
-
     @Bind(R.id.progress)
     ProgressBar progress;
-
     @Bind(R.id.listView)
     RecyclerView listView;
 
@@ -65,14 +63,11 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
     BalanceHelper mBalanceHelper;
 
     private SpentDetailsAdapter adapter;
+    private Context mContext;
 
 
     public static final String AUTHORITY = YoAppContactContract.CONTENT_AUTHORITY;
 
-    /**
-     * The default sort order for this table
-     */
-    public static final String DEFAULT_SORT_ORDER = "date DESC";
     /**
      * The content:// style URL for this table
      */
@@ -85,9 +80,15 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        adapter = new SpentDetailsAdapter(getActivity(), new ArrayList<SubscribersList>());
+        adapter = new SpentDetailsAdapter(mContext, new ArrayList<SubscribersList>());
     }
 
     @Override
@@ -106,7 +107,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         listView.setAdapter(adapter);
-        listView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        listView.setLayoutManager(new LinearLayoutManager(mContext));
         EventBus.getDefault().register(this);
         showProgressDialog();
         mBalanceHelper.loadSpentDetailsHistory(this);
@@ -118,34 +119,32 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
 
     @Override
     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-        if (getActivity() != null) {
-            if (response.body() != null) {
-                dismissProgressDialog();
-                try {
-                    List<SubscribersList> detailResponseList = new Gson().fromJson(new InputStreamReader(response.body().byteStream()), new TypeToken<List<SubscribersList>>() {
-                    }.getType());
-                    if (detailResponseList != null && !detailResponseList.isEmpty()) {
-                        List<SubscribersList> removedFreeSpents = new ArrayList<>();
-                        for (SubscribersList item : detailResponseList) {
-                            if (item.getCalltype().equals(PSTN) || item.getCalltype().equals(BALANCE_TRANSFER) || item.getCalltype().equals(MAGAZINES)) {
+        if (response.body() != null) {
+            dismissProgressDialog();
+            try {
+                List<SubscribersList> detailResponseList = new Gson().fromJson(new InputStreamReader(response.body().byteStream()), new TypeToken<List<SubscribersList>>() {
+                }.getType());
+                if (detailResponseList != null && !detailResponseList.isEmpty()) {
+                    List<SubscribersList> removedFreeSpents = new ArrayList<>();
+                    for (SubscribersList item : detailResponseList) {
+                        if (item.getCalltype().equals(PSTN) || item.getCalltype().equals(BALANCE_TRANSFER) || item.getCalltype().equals(MAGAZINES)) {
 
-                                if (!TextUtils.isEmpty(item.getCallcost()))
-                                    removedFreeSpents.add(item);
-                            }
+                            if (!TextUtils.isEmpty(item.getCallcost()))
+                                removedFreeSpents.add(item);
                         }
-                        java.util.Collections.sort(removedFreeSpents, new Comparator<SubscribersList>() {
-                            @Override
-                            public int compare(SubscribersList lhs, SubscribersList rhs) {
-                                return rhs.getTime().compareTo(lhs.getTime());
-                            }
-                        });
-                        adapter.addItems(removedFreeSpents);
                     }
-                } catch (Exception e) {
-                    mLog.w("SpendDetails", "onResponse", e);
+                    java.util.Collections.sort(removedFreeSpents, new Comparator<SubscribersList>() {
+                        @Override
+                        public int compare(SubscribersList lhs, SubscribersList rhs) {
+                            return rhs.getTime().compareTo(lhs.getTime());
+                        }
+                    });
+                    adapter.addItems(removedFreeSpents);
                 }
-                showEmptyText();
+            } catch (Exception e) {
+                mLog.w("SpendDetails", "onResponse", e);
             }
+            showEmptyText();
         }
     }
 
@@ -185,18 +184,21 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
 
         @Override
         public SpendDetailsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            Context context = parent.getContext();
-            LayoutInflater inflater = LayoutInflater.from(context);
+            LayoutInflater inflater = LayoutInflater.from(mContext);
 
             View contactView = inflater.inflate(R.layout.frag_spent_list_row_item, parent, false);
-            SpendDetailsViewHolder viewHolder = new SpendDetailsViewHolder(contactView);
-            return viewHolder;
+            return new SpendDetailsViewHolder(contactView);
         }
 
         @Override
         public void onBindViewHolder(SpendDetailsViewHolder holder, int position) {
             final SubscribersList item = mSubscribersList.get(position);
-            String date = new SimpleDateFormat(DateUtil.DATE_FORMAT8, Locale.getDefault()).format(item.getTime());
+            String date = null;
+            try {
+                date = DateUtil.formatDateMMMddyyyy(item.getTime());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             holder.getDate().setText(date);
 
             if (item.getDuration() != null) {
@@ -235,7 +237,7 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
             }
 
             holder.getTxtPrice().setText(mBalanceHelper.currencySymbolLookup(item.getCallcost()));
-            holder.getTxtReason().setText(item.getCalltype());
+            holder.getTxtReason().setText(getReason(item.getCalltype()));
         }
 
         @Override
@@ -252,6 +254,19 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
         public void clearAll() {
             mSubscribersList.clear();
             notifyDataSetChanged();
+        }
+    }
+
+    private String getReason(String type) {
+        switch (type) {
+            case PSTN:
+                return "Call";
+            case BALANCE_TRANSFER:
+                return "Transfer";
+            case MAGAZINES:
+                return MAGAZINES;
+            default:
+                return "";
         }
     }
 

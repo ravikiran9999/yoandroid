@@ -49,6 +49,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 
@@ -64,7 +65,6 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
     //private boolean isRemoved;
     private boolean isSharedPreferenceShown;
     private boolean isRenewal;
-    private ViewPager viewPager;
     private TabsPagerAdapter adapter;
     private Menu menu;
 
@@ -74,7 +74,17 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
     @Inject
     BalanceHelper mBalanceHelper;
 
+    @Bind(R.id.your_available_amount)
     TextView balanceText;
+    @Bind(R.id.htab_toolbar)
+    Toolbar toolbar;
+    @Bind(R.id.title)
+    TextView titleView;
+    @Bind(R.id.htab_viewpager)
+    ViewPager viewPager;
+    @Bind(R.id.htab_tabs)
+    TabLayout tabLayout;
+
 
     NetworkChangeReceiver networkChangeReceiver;
 
@@ -82,19 +92,14 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (!BuildConfig.NEW_YO_CREDIT_SCREEN) {
-            setContentView(R.layout.actvity_yo_credit);
-        } else {
-            setContentView(R.layout.new_yo_credit_screen);
-            balanceText = (TextView) findViewById(R.id.your_available_amount);
-            balanceText.setText(spannableString());
-        }
-
+        setContentView(R.layout.new_yo_credit_screen);
         ButterKnife.bind(this);
+
+        balanceText.setText(spannableString());
+
         updateCalled = 0;
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.htab_toolbar);
-        TextView titleView = (TextView) findViewById(R.id.title);
         setSupportActionBar(toolbar);
+
         if (getSupportActionBar() != null) {
             if (getIntent().hasExtra(Constants.OPEN_ADD_BALANCE)) {
                 //getSupportActionBar().setTitle(R.string.add_balance_title);
@@ -104,13 +109,12 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
                 titleView.setText(spannableStringTitle(R.string.yo_credit));
             }
         }
+
+
         isRenewal = getIntent().getBooleanExtra(Constants.RENEWAL, false);
         enableBack();
-        viewPager = (ViewPager) findViewById(R.id.htab_viewpager);
+
         setupViewPager(viewPager);
-
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.htab_tabs);
         tabLayout.setupWithViewPager(viewPager);
 
         // Collapsing toolbar
@@ -125,8 +129,8 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
                 @SuppressWarnings("ResourceType")
                 @Override
                 public void onGenerated(Palette palette) {
-                    int vibrantColor = palette.getVibrantColor(R.color.primary_500);
-                    int vibrantDarkColor = palette.getDarkVibrantColor(R.color.primary_700);
+                    int vibrantColor = palette.getVibrantColor(R.color.colorPrimary);
+                    int vibrantDarkColor = palette.getDarkVibrantColor(R.color.colorPrimaryDark);
                     collapsingToolbarLayout.setContentScrimColor(vibrantColor);
                     collapsingToolbarLayout.setStatusBarScrimColor(vibrantDarkColor);
                 }
@@ -349,19 +353,18 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
     public void showNetworkStatus(int status) {
         final int sdk = android.os.Build.VERSION.SDK_INT;
         if (status == 1) {
-            if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                balanceText.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.white_circle_with_green_status) );
+            if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                balanceText.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.white_circle_with_green_status));
             } else {
                 balanceText.setBackground(ContextCompat.getDrawable(this, R.drawable.white_circle_with_green_status));
             }
         } else {
-            if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                balanceText.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.white_circle_with_red_status) );
+            if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                balanceText.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.white_circle_with_red_status));
             } else {
                 balanceText.setBackground(ContextCompat.getDrawable(this, R.drawable.white_circle_with_red_status));
             }
         }
-        //balanceText.setPadding(0, 0, 0, 5);
     }
 
 }

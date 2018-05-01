@@ -43,6 +43,8 @@ import java.util.ListIterator;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -61,9 +63,15 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
     private List<Articles> articlesList = new ArrayList<Articles>();
+
     private MyBaseAdapter myBaseAdapter;
-    private TextView noArticals;
-    private FrameLayout flipContainer;
+    @Bind(R.id.txtEmptyArticals)
+    TextView noArticals;
+    @Bind(R.id.flipView_container)
+    FrameLayout flipContainer;
+    @Bind(R.id.flip_view)
+    FlipView flipView;
+
     private String magazineTitle;
     private String magazineId;
     private String magazineDesc;
@@ -75,16 +83,12 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.created_magazines);
-        noArticals = (TextView) findViewById(R.id.txtEmptyArticals);
-        flipContainer = (FrameLayout) findViewById(R.id.flipView_container);
-        FlipView flipView = (FlipView) findViewById(R.id.flip_view);
+        ButterKnife.bind(this);
+
         myBaseAdapter = new MyBaseAdapter(this);
         flipView.setAdapter(myBaseAdapter);
 
         flipContainer.setVisibility(View.GONE);
-
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         EventBus.getDefault().register(this);
 
@@ -94,10 +98,10 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
         magazineDesc = intent.getStringExtra("MagazineDesc");
         magazinePrivacy = intent.getStringExtra("MagazinePrivacy");
 
-        getSupportActionBar().setTitle(magazineTitle);
+        setTitleHideIcon(magazineTitle);
+        enableBack();
 
         loadArticles();
-
     }
 
     /**

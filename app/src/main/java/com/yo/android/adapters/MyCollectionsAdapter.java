@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -25,10 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
-
-/**
- * Created by creatives on 7/9/2016.
- */
 
 /**
  * This adapter is used to show the My Collections screen
@@ -132,16 +129,24 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
         }
         holder.getTextView().setText(item.getName());
         if (position != 0) {
-            holder.getTextView().setTextColor(mContext.getResources().getColor(android.R.color.white));
+            holder.getTextView().setTextColor(mContext.getResources().getColor(R.color.white));
+
+            final int sdk = android.os.Build.VERSION.SDK_INT;
+            if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                holder.getTextView().setBackgroundDrawable(ContextCompat.getDrawable(mContext, R.drawable.title_background));
+            } else {
+                holder.getTextView().setBackground(ContextCompat.getDrawable(mContext, R.drawable.title_background));
+            }
+
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.LEFT | Gravity.TOP;
-            params.leftMargin = 10;
+            //params.leftMargin = 10;
             params.rightMargin = 10;
             holder.getTextView().setLayoutParams(params);
 
         } else if (position == 0 && !"Follow more topics".equalsIgnoreCase(item.getName())) {
-            holder.getTextView().setTextColor(mContext.getResources().getColor(android.R.color.white));
+            holder.getTextView().setTextColor(mContext.getResources().getColor(R.color.white));
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.LEFT | Gravity.TOP;
@@ -149,7 +154,8 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
             params.rightMargin = 10;
             holder.getTextView().setLayoutParams(params);
         } else {
-            holder.getTextView().setTextColor(mContext.getResources().getColor(android.R.color.black));
+            holder.getTextView().setTextColor(mContext.getResources().getColor(R.color.black));
+            holder.getTextView().setAllCaps(true);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.CENTER;

@@ -1,55 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.yo.android.widgets.SquareItemLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/sq_layout"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grey_divider"
-    android:gravity="center"
-    android:orientation="vertical">
+    android:background="@drawable/tile_with_border"
+    android:elevation="@dimen/d2"
+    app:cardCornerRadius="@dimen/d2">
 
-    <ImageView
-        android:id="@+id/img_magazine"
+    <com.yo.android.widgets.SquareItemLinearLayout
+        android:id="@+id/sq_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitXY" />
+        android:gravity="center"
+        android:orientation="vertical">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitXY"
-        android:src="@drawable/image_blankmask" />
+        <ImageView
+            android:id="@+id/img_magazine"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
 
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textColor="@android:color/black"
-        android:textSize="16sp" />
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/tv_desc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="30dp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textColor="@android:color/black"
-        android:textSize="12sp" />
+        <TextView
+            android:id="@+id/tv_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="30dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@android:color/black"
+            android:textSize="12sp" />
 
-    <ImageView
-        android:id="@+id/imv_magazine_tick"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/ic_magazine_red_tick"
-        android:visibility="gone" />
+        <ImageView
+            android:id="@+id/imv_magazine_tick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/ic_magazine_red_tick"
+            android:visibility="gone" />
 
-</com.yo.android.widgets.SquareItemLinearLayout>
+    </com.yo.android.widgets.SquareItemLinearLayout>
+</android.support.v7.widget.CardView>

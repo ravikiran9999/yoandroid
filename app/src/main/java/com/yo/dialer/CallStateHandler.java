@@ -91,7 +91,7 @@ public class CallStateHandler {
             return true;
         } else {
             contact.setNexgieUserName(yoSipService.phoneNumber);
-            contact.setCountryCode(DialerHelper.getCountryCodeFromNexgeUsername(yoSipService.phoneNumber));
+            contact.setCountryCode(DialerHelper.getCountryCode(yoSipService.phoneNumber));
             return false;
         }
     }

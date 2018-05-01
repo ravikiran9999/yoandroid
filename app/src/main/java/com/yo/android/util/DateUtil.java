@@ -21,11 +21,12 @@ import java.util.TimeZone;
 public class DateUtil {
 
     public final static String DATE_FORMAT_FULL = "yyyy-MM-dd'T'HH:mm:ss";
-    public final static String DATE_FORMAT2 = "MMM dd, yyyy hh:mm a";
     public final static String DATE_FORMAT1 = "yyyy-MM-dd HH:mm:ss";
+    public final static String DATE_FORMAT2 = "MMM dd, yyyy hh:mm a";
     public final static String DATE_FORMAT8 = "MMM dd, yyyy";
     public final static String DATE_FORMAT9 = "MMM dd yyyy";
     public final static String DATE_FORMAT = "EEEE, MMMM d, yyyy HH:mm";
+    public final static String DATE_FORMAT_SHORT = "yyyy-MM-dd";
 
     public static Date convertUtcToGmt(String time) {
         try {
@@ -53,7 +54,7 @@ public class DateUtil {
 
     public static String getDate(String time) {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_SHORT);
             sdf.setTimeZone(TimeZone.getDefault());
             // Date gmtTime = sdf.parse(time);
             return sdf.format(sdf.parse(time));
@@ -126,7 +127,7 @@ public class DateUtil {
         } else if (now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1) {
             return context.getString(R.string.yesterday);
         } else {
-            SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy");
+            SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT8);
             return format.format(new Date(time));
 //            Format format = android.text.format.DateFormat.getDateFormat(context);
 //            return format.format(new Date(time));
@@ -152,7 +153,7 @@ public class DateUtil {
         return new SimpleDateFormat("hh:mm a").format(new Date(time));
     }
 
-    public static String getTimeFormatForChat(@NonNull final Context context,long time) {
+    public static String getTimeFormatForChat(@NonNull final Context context, long time) {
         SimpleDateFormat sFormat;
         String currentTime;
         try {
@@ -173,5 +174,25 @@ public class DateUtil {
     public static Date convertSecondsToDate(int seconds) {
         SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
         return new Date(formatter.format(new Date(seconds * 1000L)));
+    }
+
+    public static long convertDateFormatLong(String dateString) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_SHORT);
+            Date date = sdf.parse(dateString);
+            return date.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public static String formatDateMMMddyyyy(String date) throws ParseException {
+        SimpleDateFormat spf=new SimpleDateFormat(DATE_FORMAT_FULL);
+        Date newDate=spf.parse(date);
+        spf= new SimpleDateFormat(DATE_FORMAT8);
+        date = spf.format(newDate);
+
+        return date;
     }
 }
