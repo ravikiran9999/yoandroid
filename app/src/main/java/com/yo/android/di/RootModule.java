@@ -8,6 +8,7 @@ import com.yo.android.chat.ChatRefreshBackground;
 import com.yo.android.database.ChatMessageDao;
 import com.yo.android.database.RoomDao;
 import com.yo.android.ui.MagazineActivity;
+import com.yo.android.ui.MyCollectionDetailsActivity;
 import com.yo.android.ui.NewFollowMoreTopicsActivity;
 import com.yo.android.usecase.AddTopicsUsecase;
 import com.yo.android.usecase.AppLogglyUsecase;
@@ -22,6 +23,7 @@ import com.yo.android.usecase.OthersMagazineDetailsUsecase;
 import com.yo.android.usecase.OthersProfileLikedArticlesUsecase;
 import com.yo.android.usecase.PackageDenominationsUsecase;
 import com.yo.android.usecase.RandomTopicsUsecase;
+import com.yo.android.usecase.StoryUsecase;
 import com.yo.android.usecase.TopicDetailsUsecase;
 import com.yo.android.usecase.WebserviceUsecase;
 import com.yo.android.adapters.ChatRoomListAdapter;
@@ -68,7 +70,6 @@ import com.yo.android.ui.FollowingsActivity;
 import com.yo.android.ui.LoadMagazineActivity;
 import com.yo.android.ui.MainActivity;
 import com.yo.android.ui.MoreSettingsActivity;
-import com.yo.android.ui.MyCollectionDetails;
 import com.yo.android.ui.MyCollections;
 import com.yo.android.ui.NavigationDrawerActivity;
 import com.yo.android.ui.NewDailerActivity;
@@ -164,7 +165,7 @@ import dagger.Provides;
                 CountryListActivity.class,
                 CreateMagazineActivity.class,
                 MyCollections.class,
-                MyCollectionDetails.class,
+                MyCollectionDetailsActivity.class,
                 LoadMagazineActivity.class,
                 ShowPhotoActivity.class,
                 OthersProfileActivity.class,
@@ -282,6 +283,7 @@ import dagger.Provides;
                 TopicDetailsUsecase.class,
                 WishListUsecase.class,
                 ContactsSyncWithNameUsecase.class,
+                StoryUsecase.class,
         },
         includes = {
                 AppModule.class,

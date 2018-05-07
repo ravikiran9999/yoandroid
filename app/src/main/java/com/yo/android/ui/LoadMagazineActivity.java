@@ -17,11 +17,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.orion.android.common.preferences.PreferenceEndPoint;
 import com.yo.android.R;
+import com.yo.android.api.ApiCallback;
 import com.yo.android.api.YoApi;
 import com.yo.android.model.Articles;
 import com.yo.android.model.Topics;
+import com.yo.android.usecase.StoryUsecase;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
@@ -29,8 +30,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -41,42 +43,45 @@ import retrofit2.Response;
  */
 public class LoadMagazineActivity extends BaseActivity implements View.OnClickListener {
 
+    private static final String CREATE = "create";
+    private static final String ADD = "add";
+
+    @Bind(R.id.et_enter_url)
+    EditText etUrl;
+    @Bind(R.id.atv_enter_tag)
+    AutoCompleteTextView atvMagazineTag;
+    @Bind(R.id.imv_magazine_post)
+    Button btnPost;
+    @Bind(R.id.webview)
+    WebView webview;
+    @Bind(R.id.imv_close)
+    ImageView imvClose;
+
     @Inject
-    YoApi.YoService yoService;
-    @Inject
-    @Named("login")
-    protected PreferenceEndPoint preferenceEndPoint;
+    StoryUsecase storyUsecase;
+
     private String magazineId;
     private String url;
     private String magazineTitle;
     private String magazineDesc;
     private String magazinePrivacy;
     private boolean isInvalidUrl;
-    private EditText etUrl;
-    private AutoCompleteTextView atvMagazineTag;
     private String tag;
-    private Button btnPost;
     private boolean isPostClicked;
-    private WebView webview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_load_magazine);
-
+        ButterKnife.bind(this);
         Intent intent = getIntent();
         magazineId = intent.getStringExtra("MagazineId");
         magazineTitle = intent.getStringExtra("MagazineTitle");
         magazineDesc = intent.getStringExtra("MagazineDesc");
         magazinePrivacy = intent.getStringExtra("MagazinePrivacy");
 
-        etUrl = (EditText) findViewById(R.id.et_enter_url);
-        atvMagazineTag = (AutoCompleteTextView) findViewById(R.id.atv_enter_tag);
-        webview = (WebView) findViewById(R.id.webview);
         webview.getSettings().setJavaScriptEnabled(true);
 
-        btnPost = (Button) findViewById(R.id.imv_magazine_post);
-        ImageView imvClose = (ImageView) findViewById(R.id.imv_close);
 
         imvClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,7 +94,6 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
 
         webview.setWebViewClient(new WebViewClient() {
 
-
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
@@ -98,8 +102,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
 
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
-                mToastFactory.showToast("Please enter a valid url");
-                //btnPost.setVisibility(View.INVISIBLE);
+                mToastFactory.showToast(R.string.enter_valid_url);
                 isInvalidUrl = true;
                 etUrl.post(new Runnable() {
                     public void run() {
@@ -114,7 +117,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                 dismissProgressDialog();
                 if (!isInvalidUrl) {
                     //btnPost.setVisibility(View.VISIBLE);
-                    btnPost.setText("Post");
+                    btnPost.setText(R.string.post);
                 }
             }
         });
@@ -133,6 +136,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
 
     /**
      * Loads the url depending
+     *
      * @param webview The Webview
      */
     private void loadOrPostUrl(WebView webview) {
@@ -150,8 +154,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                     webview.loadUrl(url); // Load the url
                 } else {
                     Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
-                    mToastFactory.showToast("Please enter a valid url");
-                    //btnPost.setVisibility(View.INVISIBLE);
+                    mToastFactory.showToast(R.string.enter_valid_url);
                     etUrl.post(new Runnable() {
                         public void run() {
                             etUrl.requestFocus();
@@ -163,8 +166,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                     webview.loadUrl(url);
                 } else {
                     Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
-                    mToastFactory.showToast("Please enter a valid url");
-                    //btnPost.setVisibility(View.INVISIBLE);
+                    mToastFactory.showToast(R.string.enter_valid_url);
                     etUrl.post(new Runnable() {
                         public void run() {
                             etUrl.requestFocus();
@@ -174,8 +176,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
             }
         } else if (TextUtils.isEmpty(url.trim())) { // If the url is empty
             Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
-            mToastFactory.showToast("Please enter a url");
-            //btnPost.setVisibility(View.INVISIBLE);
+            mToastFactory.showToast(R.string.enter_url);
             etUrl.post(new Runnable() {
                 public void run() {
                     etUrl.requestFocus();
@@ -183,8 +184,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
             });
         } else { // If the tag is empty
             Util.hideKeyboard(LoadMagazineActivity.this, atvMagazineTag);
-            mToastFactory.showToast("Please enter a tag");
-            //btnPost.setVisibility(View.INVISIBLE);
+            mToastFactory.showToast(R.string.enter_tag);
             atvMagazineTag.post(new Runnable() {
                 public void run() {
                     atvMagazineTag.requestFocus();
@@ -200,17 +200,15 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
             loadOrPostUrl(webview);
         } else { // Button text is Post
 
-            String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
             if (!TextUtils.isEmpty(url.trim()) && !TextUtils.isEmpty(tag.trim())) { // Url is not empty then post the url
                 if (magazineId != null) {
-                    addStoryToExistingMagazine(accessToken); // Add story to existing magazine
+                    magazineWithStory("", ADD, url, magazineTitle, magazineDesc, magazinePrivacy, magazineId, tag); // Add story to existing magazine
                 } else {
-                    createMagazineWithStory(accessToken); // Create a new magazine with the new story
+                    magazineWithStory(CREATE, "", url, "", "", "", magazineId, tag); // Create a new magazine with the new story
                 }
             } else if (TextUtils.isEmpty(url.trim())) { // Url is empty
                 Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
-                mToastFactory.showToast("Please enter a url");
-                //btnPost.setVisibility(View.INVISIBLE);
+                mToastFactory.showToast(R.string.enter_url);
                 etUrl.post(new Runnable() {
                     public void run() {
                         etUrl.requestFocus();
@@ -218,8 +216,7 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
                 });
             } else { // Tag is empty
                 Util.hideKeyboard(LoadMagazineActivity.this, atvMagazineTag);
-                mToastFactory.showToast("Please enter a tag");
-                //btnPost.setVisibility(View.INVISIBLE);
+                mToastFactory.showToast(R.string.enter_tag);
                 atvMagazineTag.post(new Runnable() {
                     public void run() {
                         atvMagazineTag.requestFocus();
@@ -231,87 +228,38 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
 
     /**
      * Creates the story in the new magazine
-     *
-     * @param accessToken
      */
-    private void createMagazineWithStory(String accessToken) {
+    private void magazineWithStory(final String create, final String add, String url, final String magazineTitle, final String magazineDesc, final String magazinePrivacy, String magazineId, String tag) {
         if (!isPostClicked) {
             isPostClicked = true;
-            yoService.postStoryMagazineAPI(accessToken, url, magazineTitle, magazineDesc, magazinePrivacy, magazineId, tag).enqueue(new Callback<Articles>() {
+            storyUsecase.magazineStory(url, magazineTitle, magazineDesc, magazinePrivacy, magazineId, tag, new ApiCallback<Articles>() {
                 @Override
-                public void onResponse(Call<Articles> call, Response<Articles> response) {
-                    try {
-                        if (response != null && response.body() != null) {
-                            EventBus.getDefault().post(Constants.REFRESH_TOPICS_ACTION);
-                            setResult(RESULT_OK);
-                            finish();
-                            Intent intent = new Intent(LoadMagazineActivity.this, CreatedMagazineDetailActivity.class);
-                            intent.putExtra("MagazineTitle", magazineTitle);
-                            if (response.body() != null) {
-                                intent.putExtra("MagazineId", response.body().getMagzine_id());
-                            }
-                            intent.putExtra("MagazineDesc", magazineDesc);
-                            intent.putExtra("MagazinePrivacy", magazinePrivacy);
-                            startActivity(intent);
-                        } else if (response != null && response.errorBody() != null) {
-                            Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
-                            mToastFactory.showToast("Magazine Title is already taken");
-                            isPostClicked = false;
+                public void onResult(Articles result) {
+                    EventBus.getDefault().post(Constants.REFRESH_TOPICS_ACTION);
+                    setResult(RESULT_OK);
+                    finish();
+                    if (create != null) {
+                        Intent intent = new Intent(LoadMagazineActivity.this, CreatedMagazineDetailActivity.class);
+                        intent.putExtra("MagazineTitle", magazineTitle);
+                        if (result != null) {
+                            intent.putExtra("MagazineId", result.getMagzine_id());
                         }
-                    }finally {
-                        if(response != null && response.body() != null) {
-                            try {
-                                response = null;
-                            }catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
+                        intent.putExtra("MagazineDesc", magazineDesc);
+                        intent.putExtra("MagazinePrivacy", magazinePrivacy);
+                        startActivity(intent);
                     }
                 }
 
                 @Override
-                public void onFailure(Call<Articles> call, Throwable t) {
-                    isPostClicked = false;
-                }
-            });
-        }
-    }
-
-    /**
-     * Adds a story to an existing magazine
-     *
-     * @param accessToken
-     */
-    private void addStoryToExistingMagazine(String accessToken) {
-        if (!isPostClicked) {
-            isPostClicked = true;
-            //yoService.addStoryMagazineAPI(accessToken, url, magazineId, tag).enqueue(new Callback<Articles>() {
-            yoService.postStoryMagazineAPI(accessToken, url, "", "", "", magazineId, tag).enqueue(new Callback<Articles>() {
-                @Override
-                public void onResponse(Call<Articles> call, Response<Articles> response) {
-                    try {
-                        if (response.body() != null) {
-                            EventBus.getDefault().post(Constants.REFRESH_TOPICS_ACTION);
-                            setResult(RESULT_OK);
-                            finish();
-                        } else if (response.errorBody() != null) {
-                            Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
-                            mToastFactory.showToast("Article already added into current magazine");
-                            isPostClicked = false;
-                        }
-                    } finally {
-                        if(response != null && response.body() != null) {
-                            try {
-                                response = null;
-                            }catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                public void onFailure(String message) {
+                    if (TextUtils.isEmpty(message)) {
+                        Util.hideKeyboard(LoadMagazineActivity.this, etUrl);
+                        if (create != null) {
+                            mToastFactory.showToast(R.string.title_already_exists);
+                        } else if (add != null) {
+                            mToastFactory.showToast(R.string.article_already_added);
                         }
                     }
-                }
-
-                @Override
-                public void onFailure(Call<Articles> call, Throwable t) {
                     isPostClicked = false;
                 }
             });

@@ -3,9 +3,7 @@ package com.yo.android.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.view.ContextMenu;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -37,7 +35,6 @@ import javax.inject.Named;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -136,7 +133,7 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
                     });
 
                 } else if ("Topic".equals(tag)) {
-                    Intent intent = new Intent(NotificationsActivity.this, MyCollectionDetails.class);
+                    Intent intent = new Intent(NotificationsActivity.this, MyCollectionDetailsActivity.class);
                     intent.putExtra("TopicId", redirectId);
                     intent.putExtra("TopicName", title);
                     intent.putExtra("Type", "Tag");
@@ -174,7 +171,7 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
                     });
 
                 } else if ("Magzine".equals(tag)) {
-                    Intent intent = new Intent(NotificationsActivity.this, MyCollectionDetails.class);
+                    Intent intent = new Intent(NotificationsActivity.this, MyCollectionDetailsActivity.class);
                     intent.putExtra("TopicId", redirectId);
                     intent.putExtra("TopicName", title);
                     intent.putExtra("Type", "Magzine");

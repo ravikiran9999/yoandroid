@@ -240,7 +240,7 @@
             android:name=".ui.MyCollections"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.MyCollectionDetails"
+            android:name=".ui.MyCollectionDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.CreatedMagazineDetailActivity"

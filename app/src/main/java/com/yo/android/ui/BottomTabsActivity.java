@@ -416,7 +416,7 @@ public class BottomTabsActivity extends BaseActivity {
                     });
 
                 } else if ("Topic".equals(tag)) {
-                    Intent topicIntent = new Intent(BottomTabsActivity.this, MyCollectionDetails.class);
+                    Intent topicIntent = new Intent(BottomTabsActivity.this, MyCollectionDetailsActivity.class);
                     intent.putExtra("TopicId", redirectId);
                     intent.putExtra("TopicName", title);
                     intent.putExtra("Type", "Tag");
@@ -456,7 +456,7 @@ public class BottomTabsActivity extends BaseActivity {
                     });
 
                 } else if ("Magzine".equals(tag)) {
-                    Intent magazineIntent = new Intent(BottomTabsActivity.this, MyCollectionDetails.class);
+                    Intent magazineIntent = new Intent(BottomTabsActivity.this, MyCollectionDetailsActivity.class);
                     intent.putExtra("TopicId", redirectId);
                     intent.putExtra("TopicName", title);
                     intent.putExtra("Type", "Magzine");

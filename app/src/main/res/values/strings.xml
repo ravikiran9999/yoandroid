@@ -478,7 +478,19 @@
 
     <string name="pin_text">%1$s </string>
 
+    <string name="post">Post</string>
+
+    <!--toast messages-->
+    <string name="enter_magazine_total">Please enter the magazine title</string>
+    <string name="title_already_exists">Magazine Title is already taken</string>
+    <string name="enter_valid_url">Please enter a valid url</string>
+    <string name="enter_url">Please enter a url</string>
+    <string name="enter_tag">Please enter a tag</string>
+    <string name="article_already_added">Article already added into current magazine</string>
+
+    <!--title-->
     <string name="photo_preview">Photo Preview</string>
     <string name="edit_magazine">Edit Magazine</string>
     <string name="invite_friends">Invite Friends</string>
+    <string name="new_magazine">New Magazine</string>
 </resources>

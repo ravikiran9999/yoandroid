@@ -2,6 +2,7 @@ package com.yo.android.chat.ui.fragments;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -83,6 +84,12 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activity = (Activity) context;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -104,10 +111,9 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        activity = getActivity();
         if (getArguments() != null && getArguments().getParcelableArrayList(Constants.CHAT_FORWARD) != null) {
             forwardChatMessages = getArguments().getParcelableArrayList(Constants.CHAT_FORWARD);
-        } else if(getArguments() != null && getArguments().getParcelable(Constants.CHAT_SHARE) != null) {
+        } else if (getArguments() != null && getArguments().getParcelable(Constants.CHAT_SHARE) != null) {
             share = getArguments().getParcelable(Constants.CHAT_SHARE);
         }
         if (activity != null) {
@@ -235,6 +241,7 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
 
     /**
      * Sort contacts in alphabetical order
+     *
      * @param contactList
      */
     private void loadInAlphabeticalOrder(@NonNull List<Contact> contactList) {

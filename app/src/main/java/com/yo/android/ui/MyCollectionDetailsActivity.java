@@ -55,6 +55,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -64,45 +66,50 @@ import se.emilsjolander.flipview.FlipView;
 /**
  * This activity is used to display the articles of a followed topic
  */
-public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlipListener {
+public class MyCollectionDetailsActivity extends BaseActivity implements FlipView.OnFlipListener {
 
     @Inject
     YoApi.YoService yoService;
-
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
-    public List<Articles> articlesList = new ArrayList<Articles>();
-    private MyBaseAdapter myBaseAdapter;
-    private String type;
-    private String topicId;
-    public LinkedHashSet<Articles> articlesHashSet = new LinkedHashSet<>();
-    private static int currentFlippedPosition;
-    private List<String> readArticleIds;
-    private LinkedHashSet<List<String>> articlesIdsHashSet = new LinkedHashSet<>();
-    public TextView tvNoArticles;
-    public FlipView flipView;
-    private List<Articles> cachedArticlesList = new ArrayList<>();
-    private Context context;
     @Inject
     MagazinesServicesUsecase magazinesServicesUsecase;
     @Inject
     MyCollectionsDetailsUsecase myCollectionsDetailsUsecase;
 
+    @Bind(R.id.tv_no_articles)
+    public TextView tvNoArticles;
+    @Bind(R.id.flip_view)
+    public FlipView flipView;
+
+    public List<Articles> articlesList = new ArrayList<Articles>();
+    private MyBaseAdapter myBaseAdapter;
+    private String type;
+    private String topicId;
+    private String topicName;
+    public LinkedHashSet<Articles> articlesHashSet = new LinkedHashSet<>();
+    private static int currentFlippedPosition;
+    private List<String> readArticleIds;
+    private LinkedHashSet<List<String>> articlesIdsHashSet = new LinkedHashSet<>();
+    private List<Articles> cachedArticlesList = new ArrayList<>();
+    private Context context;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_collection_details);
+        ButterKnife.bind(this);
+
         context = this;
-        flipView = (FlipView) findViewById(R.id.flip_view);
-        tvNoArticles = (TextView) findViewById(R.id.tv_no_articles);
         myBaseAdapter = new MyBaseAdapter(this);
         flipView.setAdapter(myBaseAdapter);
         flipView.setOnFlipListener(this);
 
         Intent intent = getIntent();
         topicId = intent.getStringExtra("TopicId");
-        String topicName = intent.getStringExtra("TopicName");
+        topicName = intent.getStringExtra("TopicName");
         type = intent.getStringExtra("Type");
 
         setTitleHideIcon(topicName);
@@ -208,8 +215,11 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             ViewHolder holder = null;
             View layout = convertView;
             if (layout == null) {
-                layout = inflater.inflate(R.layout.magazine_flip_layout, null);
-
+                if (topicName.substring(topicName.length() - 5, topicName.length()).equalsIgnoreCase("snaps")) {
+                    layout = inflater.inflate(R.layout.magazine_flip_full_image_layout, null);
+                } else {
+                    layout = inflater.inflate(R.layout.magazine_flip_layout, null);
+                }
                 holder = new ViewHolder();
 
                 holder.articleTitle = UI.
@@ -387,11 +397,11 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                         .apply(requestOptions)
                         .into(photoView);
 
-                if(articleTitle != null) {
+                if (articleTitle != null) {
                     articleTitle.setText(AphidLog.format("%s", data.getTitle()));
                 }
 
-                if(textView1 != null) {
+                if (textView1 != null) {
                     textView1.setText(Html.fromHtml(data.getSummary()));
                 }
 
@@ -421,7 +431,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             share.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                   magazinesServicesUsecase.onShareClick(v, data);
+                    magazinesServicesUsecase.onShareClick(v, data);
                 }
             });
 
@@ -546,8 +556,8 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                     final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
                     builder.setView(view);
 
-                    Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
-                    Button noBtn = (Button) view.findViewById(R.id.no_btn);
+                    Button yesBtn = ButterKnife.findById(view, R.id.yes_btn);
+                    Button noBtn = ButterKnife.findById(view, R.id.no_btn);
 
                     final AlertDialog alertDialog = builder.create();
                     alertDialog.setCancelable(false);
@@ -589,8 +599,9 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
                     LayoutInflater layoutInflater = LayoutInflater.from(context);
                     final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
                     builder.setView(view);
-                    Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
-                    Button noBtn = (Button) view.findViewById(R.id.no_btn);
+
+                    Button yesBtn = ButterKnife.findById(view, R.id.yes_btn);
+                    Button noBtn = ButterKnife.findById(view, R.id.no_btn);
 
                     final AlertDialog alertDialog = builder.create();
                     alertDialog.setCancelable(false);
@@ -650,7 +661,7 @@ public class MyCollectionDetails extends BaseActivity implements FlipView.OnFlip
             setResult(6, intent);
             finish();
         } finally {
-            if(response != null && response.body() != null) {
+            if (response != null && response.body() != null) {
                 response.body().close();
             }
         }

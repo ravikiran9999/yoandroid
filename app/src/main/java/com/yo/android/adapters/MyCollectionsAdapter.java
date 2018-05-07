@@ -156,6 +156,7 @@ public class MyCollectionsAdapter extends AbstractBaseAdapter<Collections, MyCol
         } else {
             holder.getTextView().setTextColor(mContext.getResources().getColor(R.color.black));
             holder.getTextView().setAllCaps(true);
+            holder.getTextView().setBackgroundResource(android.R.color.transparent);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.CENTER;

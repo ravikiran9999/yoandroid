@@ -17,7 +17,7 @@ import com.yo.android.helpers.MagazinePreferenceEndPoint;
 import com.yo.android.model.Articles;
 import com.yo.android.model.MagazineArticles;
 import com.yo.android.ui.BaseActivity;
-import com.yo.android.ui.MyCollectionDetails;
+import com.yo.android.ui.MyCollectionDetailsActivity;
 import com.yo.android.util.ArticlesComparator;
 import com.yo.android.util.Constants;
 
@@ -64,9 +64,9 @@ public class MyCollectionsDetailsUsecase {
      * Displays the unread cached magazines
      * @param context The Context
      * @param topicId The topic id
-     * @param myBaseAdapter The {@link MyCollectionDetails.MyBaseAdapter} object
+     * @param myBaseAdapter The {@link MyCollectionDetailsActivity.MyBaseAdapter} object
      */
-    public void displayUnreadCachedMagazines(Context context, String topicId, MyCollectionDetails.MyBaseAdapter myBaseAdapter) {
+    public void displayUnreadCachedMagazines(Context context, String topicId, MyCollectionDetailsActivity.MyBaseAdapter myBaseAdapter) {
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         List<Articles> cachedTopicMagazinesList = new ArrayList<Articles>();
         List<Articles> cachedMagazinesList = magazinesServicesUsecase.getCachedMagazinesList(context);
@@ -122,9 +122,9 @@ public class MyCollectionsDetailsUsecase {
      * Calls the service to unlike the article
      * @param data The Articles object
      * @param context The Context
-     * @param myBaseAdapter The {@link MyCollectionDetails.MyBaseAdapter} object
+     * @param myBaseAdapter The {@link MyCollectionDetailsActivity.MyBaseAdapter} object
      */
-    public void unlikeMyCollectionArticles(final Articles data, final Context context, final MyCollectionDetails.MyBaseAdapter myBaseAdapter) {
+    public void unlikeMyCollectionArticles(final Articles data, final Context context, final MyCollectionDetailsActivity.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.unlikeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
@@ -147,9 +147,9 @@ public class MyCollectionsDetailsUsecase {
      * @param setLiked whether liked or unliked
      * @param toastMsg The msg displayed in the toast
      * @param context The Context
-     * @param myBaseAdapter The {@link MyCollectionDetails.MyBaseAdapter} object
+     * @param myBaseAdapter The {@link MyCollectionDetailsActivity.MyBaseAdapter} object
      */
-    private void handleLikeUnlikeMyCollectionFailure(Articles data, boolean isChecked, String setLiked, String toastMsg, Context context, MyCollectionDetails.MyBaseAdapter myBaseAdapter) {
+    private void handleLikeUnlikeMyCollectionFailure(Articles data, boolean isChecked, String setLiked, String toastMsg, Context context, MyCollectionDetailsActivity.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).dismissProgressDialog();
         Toast.makeText(context, toastMsg + data.getTitle(), Toast.LENGTH_LONG).show();
         data.setIsChecked(isChecked);
@@ -163,9 +163,9 @@ public class MyCollectionsDetailsUsecase {
      * Calls the service to like the article
      * @param data The Articles object
      * @param context The Context
-     * @param myBaseAdapter The {@link MyCollectionDetails.MyBaseAdapter} object
+     * @param myBaseAdapter The {@link MyCollectionDetailsActivity.MyBaseAdapter} object
      */
-    public void likeMyCollectionArticles(final Articles data, final Context context, final MyCollectionDetails.MyBaseAdapter myBaseAdapter) {
+    public void likeMyCollectionArticles(final Articles data, final Context context, final MyCollectionDetailsActivity.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).showProgressDialog();
         String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.likeArticlesAPI(data.getId(), accessToken).enqueue(new Callback<ResponseBody>() {
@@ -188,9 +188,9 @@ public class MyCollectionsDetailsUsecase {
      * @param setLiked whether liked or unliked
      * @param toastMsg The msg displayed in the toast
      * @param context The Context
-     * @param myBaseAdapter The {@link MyCollectionDetails.MyBaseAdapter} object
+     * @param myBaseAdapter The {@link MyCollectionDetailsActivity.MyBaseAdapter} object
      */
-    private void handleLikeUnlikeMyCollectionSuccess(final Articles data, boolean isChecked, String setLiked, String toastMsg, final Context context, final MyCollectionDetails.MyBaseAdapter myBaseAdapter) {
+    private void handleLikeUnlikeMyCollectionSuccess(final Articles data, boolean isChecked, String setLiked, String toastMsg, final Context context, final MyCollectionDetailsActivity.MyBaseAdapter myBaseAdapter) {
         ((BaseActivity) context).dismissProgressDialog();
         data.setIsChecked(isChecked);
         data.setLiked(setLiked);
@@ -210,11 +210,11 @@ public class MyCollectionsDetailsUsecase {
      * Gets the remaining articles of the topic
      *
      * @param existingArticles The list of existing article ids
-     * @param myBaseAdapter The {@link MyCollectionDetails.MyBaseAdapter} object
-     * @param  myCollectionDetails The {@link MyCollectionDetails} object
+     * @param myBaseAdapter The {@link MyCollectionDetailsActivity.MyBaseAdapter} object
+     * @param  myCollectionDetails The {@link MyCollectionDetailsActivity} object
      * @param topicId The topic id
      */
-    public void getRemainingArticlesInTopics(List<String> existingArticles, String topicId, final MyCollectionDetails myCollectionDetails, final MyCollectionDetails.MyBaseAdapter myBaseAdapter) {
+    public void getRemainingArticlesInTopics(List<String> existingArticles, String topicId, final MyCollectionDetailsActivity myCollectionDetails, final MyCollectionDetailsActivity.MyBaseAdapter myBaseAdapter) {
         String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.getRemainingArticlesInTopicAPI(accessToken, topicId, existingArticles).enqueue(new Callback<List<Articles>>() {
             @Override
@@ -260,10 +260,10 @@ public class MyCollectionsDetailsUsecase {
 
     /**
      * Gets the unread articles and sorts them
-     * @param myCollectionDetails The {@link MyCollectionDetails} object
-     * @param myBaseAdapter The {@link MyCollectionDetails.MyBaseAdapter} object
+     * @param myCollectionDetails The {@link MyCollectionDetailsActivity} object
+     * @param myBaseAdapter The {@link MyCollectionDetailsActivity.MyBaseAdapter} object
      */
-    private void getUnreadArticlesAndSort(MyCollectionDetails myCollectionDetails, MyCollectionDetails.MyBaseAdapter myBaseAdapter) {
+    private void getUnreadArticlesAndSort(MyCollectionDetailsActivity myCollectionDetails, MyCollectionDetailsActivity.MyBaseAdapter myBaseAdapter) {
         List<Articles> tempArticlesList = new ArrayList<Articles>(myCollectionDetails.articlesList);
         String userId = preferenceEndPoint.getStringPreference(Constants.USER_ID);
         String readCachedIds = MagazinePreferenceEndPoint.getInstance().getPref(myCollectionDetails, userId).getString("read_article_ids", "");
@@ -316,11 +316,11 @@ public class MyCollectionsDetailsUsecase {
      * Gets the remaining articles of the magazine
      *
      * @param existingArticles The list of existing article ids
-     * @param myBaseAdapter The {@link MyCollectionDetails.MyBaseAdapter} object
-     * @param myCollectionDetails The {@link MyCollectionDetails} object
+     * @param myBaseAdapter The {@link MyCollectionDetailsActivity.MyBaseAdapter} object
+     * @param myCollectionDetails The {@link MyCollectionDetailsActivity} object
      * @param topicId The topic id
      */
-    public void getRemainingArticlesInMagazine(List<String> existingArticles, final MyCollectionDetails myCollectionDetails, String topicId, final MyCollectionDetails.MyBaseAdapter myBaseAdapter) {
+    public void getRemainingArticlesInMagazine(List<String> existingArticles, final MyCollectionDetailsActivity myCollectionDetails, String topicId, final MyCollectionDetailsActivity.MyBaseAdapter myBaseAdapter) {
         String accessToken = preferenceEndPoint.getStringPreference(YoApi.ACCESS_TOKEN);
         yoService.getRemainingArticlesInMagAPI(accessToken, topicId, existingArticles).enqueue(new Callback<MagazineArticles>() {
             @Override
@@ -366,9 +366,9 @@ public class MyCollectionsDetailsUsecase {
     /**
      * Handles the failure of getting the remaining articles in a topic or magazine
      * @param t The Throwable instance
-     * @param myCollectionDetails The {@link MyCollectionDetails} object
+     * @param myCollectionDetails The {@link MyCollectionDetailsActivity} object
      */
-    private void failureError(Throwable t, MyCollectionDetails myCollectionDetails) {
+    private void failureError(Throwable t, MyCollectionDetailsActivity myCollectionDetails) {
         if(t instanceof SocketTimeoutException) {
             myCollectionDetails.tvNoArticles.setText(R.string.socket_time_out);
         } else {

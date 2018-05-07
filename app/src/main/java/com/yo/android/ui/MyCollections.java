@@ -18,7 +18,6 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.orion.android.common.preferences.PreferenceEndPoint;
-import com.yo.android.BuildConfig;
 import com.yo.android.R;
 import com.yo.android.adapters.MagazineArticlesBaseAdapter;
 import com.yo.android.adapters.MyCollectionsAdapter;
@@ -214,11 +213,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
         } else {
             if (position == 0 && "Follow more topics".equalsIgnoreCase(collections.getName())) {
                 Intent intent;
-                /*if (!BuildConfig.NEW_FOLLOW_MORE_TOPICS) {
-                    intent = new Intent(MyCollections.this, FollowMoreTopicsActivity.class);
-                } else {*/
                 intent = new Intent(MyCollections.this, NewFollowMoreTopicsActivity.class);
-                //}
                 intent.putExtra("From", "MyCollections");
                 startActivityForResult(intent, 2);
             } else {
@@ -226,7 +221,7 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
                 if (videoUrl != null && !TextUtils.isEmpty(videoUrl)) {
                     InAppVideoActivity.start(MyCollections.this, videoUrl, collections.getName());
                 } else {
-                    Intent intent = new Intent(MyCollections.this, MyCollectionDetails.class);
+                    Intent intent = new Intent(MyCollections.this, MyCollectionDetailsActivity.class);
                     intent.putExtra("TopicId", collections.getId());
                     intent.putExtra("TopicName", collections.getName());
                     intent.putExtra("Type", collections.getType());
@@ -283,12 +278,13 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
         LayoutInflater layoutInflater = LayoutInflater.from(this);
         final View view = layoutInflater.inflate(R.layout.unfollow_alert_dialog, null);
-        TextView tvDialogContent = (TextView) view.findViewById(R.id.dialog_content);
+
+        TextView tvDialogContent = ButterKnife.findById(view, R.id.dialog_content);
+        Button yesBtn = ButterKnife.findById(view, R.id.yes_btn);
+        Button noBtn = ButterKnife.findById(view, R.id.no_btn);
+
         tvDialogContent.setText(getResources().getString(R.string.delete_topic_message));
         builder.setView(view);
-
-        Button yesBtn = (Button) view.findViewById(R.id.yes_btn);
-        Button noBtn = (Button) view.findViewById(R.id.no_btn);
 
         yesBtn.setText(getString(R.string.yes));
         noBtn.setText(getString(R.string.no));
