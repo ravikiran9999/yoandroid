@@ -351,7 +351,8 @@ class CallBaseActivity extends BaseActivity {
                 public void onResponse(Call<Balance> call, Response<Balance> response) {
                     String switchBalance = response.body().getSwitchBalance();
                     String walletBalance = response.body().getWalletBalance();
-                    if(Double.parseDouble(mBalanceHelper.removeCurrencyCodeString(switchBalance)) <= 1) {
+                    String cRate = preferenceEndPoint.getStringPreference(Constants.COUNTRY_CALL_RATE, null);
+                    if(Double.parseDouble(mBalanceHelper.removeCurrencyCodeString(switchBalance)) < Double.parseDouble(cRate)) {
                         Dialogs.recharge(CallBaseActivity.this);
                         appLogglyUsecase.sendAlertsToLoggly("switchBalance : " + switchBalance + " & " + "walletBalance : " + walletBalance, reason + ": switch balance is < 1", Constants.CRITICAL, 523);
                     } else {

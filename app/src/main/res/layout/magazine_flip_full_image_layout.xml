@@ -1,126 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_top"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:background="@color/black">
+
+    <com.yo.android.helpers.ProportionalImageView
+        android:id="@+id/photo"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:adjustViewBounds="true"
+        android:background="@color/magazine_background" />
+
+    <Button
+        android:id="@+id/imv_magazine_follow"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/ic_magazine_follow"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="Follow"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/imv_black_mask"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/image_blankmask"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tv_full_image_title_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:visibility="gone"
+        tools:text="Article 1" />
 
     <RelativeLayout
-        android:id="@+id/rl_top"
+        android:id="@+id/rl_full_image_options"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.85">
+        android:layout_below="@+id/tv_full_image_title_top"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:visibility="gone">
+
+        <CheckBox
+            android:id="@+id/cb_full_image_magazine_like_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/magazine_like_white_selector"
+            android:paddingBottom="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp" />
 
         <ImageView
-            android:id="@+id/photo"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:scaleType="fitXY"
-            android:adjustViewBounds="true"
-            android:background="@color/magazine_background" />
-
-        <Button
-            android:id="@+id/imv_magazine_follow"
+            android:id="@+id/imv_full_image_magazine_add_top"
             android:layout_width="wrap_content"
-            android:layout_height="35dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/ic_magazine_follow"
-            android:gravity="center"
-            android:padding="5dp"
-            android:text="Follow"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:visibility="gone" />
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/cb_full_image_magazine_like_top"
+            android:padding="10dp"
+            android:src="@drawable/ic_add_white" />
 
         <ImageView
-            android:id="@+id/imv_black_mask"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:src="@drawable/image_blankmask"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/tv_full_image_title_top"
+            android:id="@+id/imv_full_image_magazine_share_top"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:visibility="gone"
-            tools:text="Article 1" />
-
-        <RelativeLayout
-            android:id="@+id/rl_full_image_options"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_full_image_title_top"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
-            android:visibility="gone">
-
-            <CheckBox
-                android:id="@+id/cb_full_image_magazine_like_top"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:button="@drawable/magazine_like_white_selector"
-                android:paddingBottom="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="10dp" />
-
-            <ImageView
-                android:id="@+id/imv_full_image_magazine_add_top"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/cb_full_image_magazine_like_top"
-                android:padding="10dp"
-                android:src="@drawable/ic_add_white" />
-
-            <ImageView
-                android:id="@+id/imv_full_image_magazine_share_top"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/imv_full_image_magazine_add_top"
-                android:padding="10dp"
-                android:src="@drawable/ic_magazine_share_white" />
-
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/imv_magazine_topic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/photo"
-            android:layout_alignParentLeft="true"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="@color/colorPrimary"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:padding="5dp"
-            android:singleLine="true"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:textSize="14sp" />
+            android:layout_toRightOf="@+id/imv_full_image_magazine_add_top"
+            android:padding="10dp"
+            android:src="@drawable/ic_magazine_share_white" />
 
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/imv_magazine_topic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ll_bottom_layout"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@color/colorPrimary"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:padding="5dp"
+        android:singleLine="true"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="14sp" />
 
     <LinearLayout
         android:id="@+id/ll_bottom_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/rl_top"
-        android:layout_weight="0.15"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -144,7 +133,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_toRightOf="@+id/cb_magazine_like"
-                android:background="@drawable/ic_new_chat_group_add_contact" />
+                android:background="@drawable/ic_add_white" />
 
             <ImageView
                 android:id="@+id/imv_magazine_share"
@@ -153,7 +142,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_toRightOf="@+id/imv_magazine_add"
-                android:background="@drawable/ic_magazine_share" />
+                android:background="@drawable/ic_magazine_share_white" />
 
             <Button
                 android:id="@+id/btn_magazine_follow_topics"
@@ -187,12 +176,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:maxLines="2"
-                android:textColor="@android:color/black"
+                android:textColor="@color/white"
                 android:textSize="@dimen/article_title_textsize"
                 android:textStyle="bold" />
 
-            <com.yo.android.helpers.ProportionalTextViewDescription
+            <!--<com.yo.android.helpers.ProportionalTextViewDescription
                 android:id="@+id/tv_article_short_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -213,8 +201,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Full story"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    tools:text="Full story" />
 
                 <TextView
                     android:id="@+id/tv_category_full_story"
@@ -225,7 +213,10 @@
                     android:maxLines="2"
                     android:textColor="@color/colorPrimary"
                     android:textSize="14sp" />
-            </LinearLayout>
+            </LinearLayout>-->
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+
+</RelativeLayout>
+
+

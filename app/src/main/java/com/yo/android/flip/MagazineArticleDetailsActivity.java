@@ -70,7 +70,7 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
         String image = intent.getStringExtra("Image");
         data = intent.getParcelableExtra("Article");
         position = intent.getIntExtra("Position", 0);
-        if(intent.hasExtra("ArticlePlacement")) {
+        if (intent.hasExtra("ArticlePlacement")) {
             articlePlacement = intent.getStringExtra("ArticlePlacement");
         } else {
             articlePlacement = "";
@@ -108,7 +108,7 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
         });
 
         magazineLike.setOnCheckedChangeListener(null);
-        if(data != null) {
+        if (data != null) {
             if ("true".equals(data.getLiked())) {
                 data.setIsChecked(true);
             } else {
@@ -136,9 +136,9 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
                                     if (MagazineArticlesBaseAdapter.reflectListener != null) {
                                         MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
                                     }
-                                    mToastFactory.showToast("You have liked the article " + data.getTitle());
+                                    mToastFactory.showToast(R.string.liked_article + data.getTitle());
                                 } finally {
-                                    if(response != null && response.body() != null) {
+                                    if (response != null && response.body() != null) {
                                         response.body().close();
                                     }
                                 }
@@ -147,7 +147,7 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
                             @Override
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
                                 dismissProgressDialog();
-                                Toast.makeText(MagazineArticleDetailsActivity.this, "Error while liking article " + data.getTitle(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(MagazineArticleDetailsActivity.this, R.string.like_article_error + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(false);
                                 data.setLiked("false");
                             }
@@ -166,9 +166,9 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
                                     if (MagazineArticlesBaseAdapter.reflectListener != null) {
                                         MagazineArticlesBaseAdapter.reflectListener.updateFollowOrLikesStatus(data, Constants.LIKE_EVENT);
                                     }
-                                    mToastFactory.showToast("You have unliked the article " + data.getTitle());
+                                    mToastFactory.showToast(R.string.unlike_article + data.getTitle());
                                 } finally {
-                                    if(response != null && response.body() != null) {
+                                    if (response != null && response.body() != null) {
                                         response.body().close();
                                     }
                                 }
@@ -177,7 +177,7 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
                             @Override
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
                                 dismissProgressDialog();
-                                Toast.makeText(MagazineArticleDetailsActivity.this, "Error while unliking article " + data.getTitle(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(MagazineArticleDetailsActivity.this, R.string.unlike_article_error + data.getTitle(), Toast.LENGTH_LONG).show();
                                 data.setIsChecked(true);
                                 data.setLiked("true");
                             }
@@ -251,7 +251,7 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             Intent intent = new Intent();
-            if(data != null) {
+            if (data != null) {
                 intent.putExtra("UpdatedArticle", data);
             }
             intent.putExtra("Pos", position);
@@ -273,7 +273,7 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
     public void onBackPressed() {
 
         Intent intent = new Intent();
-        if(data != null) {
+        if (data != null) {
             intent.putExtra("UpdatedArticle", data);
         }
         intent.putExtra("Pos", position);

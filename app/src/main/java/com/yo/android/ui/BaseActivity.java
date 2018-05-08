@@ -574,4 +574,5 @@ public class BaseActivity extends ParentActivity {
             }
         });
     }
+
 }

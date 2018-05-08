@@ -268,10 +268,10 @@ public class MyCollectionDetailsActivity extends BaseActivity implements FlipVie
                 holder.articleTitle
                         .setText(AphidLog.format("%s", data.getTitle()));
 
-                final TextView textView = holder.articleTitle;
+                /*final TextView textView = holder.articleTitle;
                 textView.setText(AphidLog.format("%s", data.getTitle()));
 
-                /*ViewTreeObserver vto = textView.getViewTreeObserver();
+                ViewTreeObserver vto = textView.getViewTreeObserver();
                 vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     private int maxLines = -1;
 
@@ -365,17 +365,20 @@ public class MyCollectionDetailsActivity extends BaseActivity implements FlipVie
                 }
             });
 
-            UI
-                    .<TextView>findViewById(layout, R.id.tv_category_full_story)
-                    .setText(AphidLog.format("%s", data.getTitle()));
-            UI
-                    .<TextView>findViewById(layout, R.id.tv_category_full_story)
-                    .setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            magazinesServicesUsecase.navigateToArticleWebView(context, data, position);
-                        }
-                    });
+            if (UI
+                    .<TextView>findViewById(layout, R.id.tv_category_full_story) != null) {
+                UI
+                        .<TextView>findViewById(layout, R.id.tv_category_full_story)
+                        .setText(AphidLog.format("%s", data.getTitle()));
+                UI
+                        .<TextView>findViewById(layout, R.id.tv_category_full_story)
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                magazinesServicesUsecase.navigateToArticleWebView(context, data, position);
+                            }
+                        });
+            }
 
 
             final ImageView photoView = holder.articlePhoto;
@@ -688,7 +691,6 @@ public class MyCollectionDetailsActivity extends BaseActivity implements FlipVie
      */
     public void removeReadArticles() {
 
-        Log.d("FlipArticlesFragment", "currentFlippedPosition outside loop " + currentFlippedPosition);
         if (myBaseAdapter.getCount() > 0) {
             for (int i = 0; i <= currentFlippedPosition; i++) {
                 String articleId = myBaseAdapter.getItem(i).getId();

@@ -487,6 +487,10 @@
     <string name="enter_url">Please enter a url</string>
     <string name="enter_tag">Please enter a tag</string>
     <string name="article_already_added">Article already added into current magazine</string>
+    <string name="liked_article">You have liked the article</string>
+    <string name="like_article_error">Error while liking article</string>
+    <string name="unlike_article">You have unliked the article</string>
+    <string name="unlike_article_error">Error while unliking article </string>
 
     <!--title-->
     <string name="photo_preview">Photo Preview</string>
