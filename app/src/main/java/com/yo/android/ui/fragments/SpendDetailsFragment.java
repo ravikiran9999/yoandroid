@@ -37,7 +37,8 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import okhttp3.ResponseBody;
@@ -52,11 +53,11 @@ public class SpendDetailsFragment extends BaseFragment implements Callback<Respo
     public static final String MAGAZINES = "Magzines";
 
 
-    @Bind(R.id.txtEmpty)
+    @BindView(R.id.txtEmpty)
     TextView txtEmpty;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     ProgressBar progress;
-    @Bind(R.id.listView)
+    @BindView(R.id.listView)
     RecyclerView listView;
 
     @Inject

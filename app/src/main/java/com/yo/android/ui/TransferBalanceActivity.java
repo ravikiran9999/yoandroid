@@ -34,7 +34,8 @@ import java.text.DecimalFormat;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -53,11 +54,11 @@ public class TransferBalanceActivity extends BaseActivity {
     private String phoneNo;
 
 
-    @Bind(R.id.et_enter_phone)
+    @BindView(R.id.et_enter_phone)
     EditText enteredPhoneNumber;
-    @Bind(R.id.current_balance)
+    @BindView(R.id.current_balance)
     TextView tvBalance;
-    @Bind(R.id.transfer_amount)
+    @BindView(R.id.transfer_amount)
     TextView tvTransferAmount;
 
     @Inject

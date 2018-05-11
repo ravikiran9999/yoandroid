@@ -10,7 +10,8 @@ import android.widget.TextView;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractViewHolder;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import android.view.View;
@@ -19,17 +20,17 @@ import android.widget.TextView;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractViewHolder;
 
-import butterknife.Bind;
+
 import butterknife.ButterKnife;
 
 /**
  * Created by Ramesh on 9/7/16.
  */
 public class CountryCodeListViewHolder extends AbstractViewHolder {
-    @Bind(R.id.country_name_txt)
+    @BindView(R.id.country_name_txt)
     TextView countryName;
 
-    @Bind(R.id.country_code_txt)
+    @BindView(R.id.country_code_txt)
     TextView countrycode;
 
     public CountryCodeListViewHolder(View view) {

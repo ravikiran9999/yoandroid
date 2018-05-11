@@ -24,7 +24,8 @@ import com.yo.android.voip.SipService;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.Bind;
+import butterknife.BindView;
+
 
 /**
  * Created by Ramesh on 27/6/16.
@@ -46,7 +47,7 @@ public class DialerActivity extends BaseActivity {
     @Named("voip_support")
     boolean isVoipSupported;
 
-    @Bind(R.id.no_search_results)
+    @BindView(R.id.no_search_results)
     protected TextView noResultsFound;
 
 

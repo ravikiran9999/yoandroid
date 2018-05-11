@@ -66,7 +66,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -88,23 +89,23 @@ public class UserProfileActivity extends BaseActivity implements SharedPreferenc
     private static final int PICK_CONTACT_REQUEST = 101;
     private static final int GROUP_SUBJECT_REQUEST = 102;
 
-    @Bind(R.id.profile_image)
+    @BindView(R.id.profile_image)
     CircleImageView profileImage;
-    @Bind(R.id.profile_call)
+    @BindView(R.id.profile_call)
     ImageView profileCall;
-    @Bind(R.id.profile_message)
+    @BindView(R.id.profile_message)
     ImageView profileMsg;
-    @Bind(R.id.profile_name)
+    @BindView(R.id.profile_name)
     TextView profileName;
-    @Bind(R.id.profile_number)
+    @BindView(R.id.profile_number)
     TextView profileNumber;
-    @Bind(R.id.profile_name_title)
+    @BindView(R.id.profile_name_title)
     TextView profileNameTitle;
-    @Bind(R.id.number_title)
+    @BindView(R.id.number_title)
     TextView numberTitle;
-    @Bind(R.id.name_card_view)
+    @BindView(R.id.name_card_view)
     CardView cardView;
-    @Bind(R.id.edit_subject)
+    @BindView(R.id.edit_subject)
     ImageView editSubjectView;
 
     private ProfileMembersAdapter profileMembersAdapter;

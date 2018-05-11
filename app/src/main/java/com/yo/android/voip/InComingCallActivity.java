@@ -48,7 +48,8 @@ import org.pjsip.pjsua2.pjsip_inv_state;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import de.greenrobot.event.EventBus;
 
 
@@ -75,7 +76,7 @@ public class InComingCallActivity extends BaseActivity implements View.OnClickLi
     private TextView mReceivedConnectionStatus;
     // private TextView mInComingHeaderConnectionStatus;
     private ImageView callerImageView;
-    @Bind(R.id.dialPadView)
+    @BindView(R.id.dialPadView)
     DialPadView dialPadView;
     int sec = 0, min = 0, hr = 0;
     private EventBus bus = EventBus.getDefault();

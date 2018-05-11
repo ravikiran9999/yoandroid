@@ -87,7 +87,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.MediaType;
@@ -134,12 +135,12 @@ public class MoreFragment extends BaseFragment implements AdapterView.OnItemClic
     @Inject
     ChatMessageDao chatMessageDao;
 
-    @Bind(R.id.add_change_photo_text)
+    @BindView(R.id.add_change_photo_text)
     TextView addOrChangePhotoText;
 
-    @Bind(R.id.profile_pic)
+    @BindView(R.id.profile_pic)
     CircleImageView profilePic;
-    @Bind(R.id.more_layout)
+    @BindView(R.id.more_layout)
     View mLayout;
 
     FrameLayout changePhoto;

@@ -31,7 +31,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import retrofit2.Call;
@@ -46,15 +47,15 @@ public class LoadMagazineActivity extends BaseActivity implements View.OnClickLi
     private static final String CREATE = "create";
     private static final String ADD = "add";
 
-    @Bind(R.id.et_enter_url)
+    @BindView(R.id.et_enter_url)
     EditText etUrl;
-    @Bind(R.id.atv_enter_tag)
+    @BindView(R.id.atv_enter_tag)
     AutoCompleteTextView atvMagazineTag;
-    @Bind(R.id.imv_magazine_post)
+    @BindView(R.id.imv_magazine_post)
     Button btnPost;
-    @Bind(R.id.webview)
+    @BindView(R.id.webview)
     WebView webview;
-    @Bind(R.id.imv_close)
+    @BindView(R.id.imv_close)
     ImageView imvClose;
 
     @Inject

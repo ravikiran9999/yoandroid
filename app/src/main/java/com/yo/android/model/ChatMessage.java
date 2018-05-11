@@ -9,15 +9,9 @@ import android.os.Parcelable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.ServerValue;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-import com.j256.ormlite.field.DatabaseField;
-import com.yo.android.util.Constants;
 import com.yo.android.util.DateUtil;
-import com.yo.android.util.Util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,19 +23,12 @@ import java.util.Map;
 @IgnoreExtraProperties
 public class ChatMessage implements Parcelable {
 
-    //@DatabaseField(id = true)
     private int msgID;
-    //@DatabaseField(columnName = Constants.MESSAGE)
     private String message;
-    //@DatabaseField
     private String senderID;
-    //@DatabaseField
     private int status;
-    //@DatabaseField
     private String imagePath;
-    //@DatabaseField
     private long time;
-    //@DatabaseField
     private boolean readUnreadStatus;
     private int delivered;
     private int sent;

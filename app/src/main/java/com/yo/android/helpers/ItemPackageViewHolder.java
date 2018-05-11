@@ -7,7 +7,8 @@ import android.widget.Button;
 import com.yo.android.R;
 import com.yo.android.model.ecommerce.ItemPackages;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -16,7 +17,7 @@ import butterknife.ButterKnife;
 
 public class ItemPackageViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.buy_package)
+    @BindView(R.id.buy_package)
     Button button;
 
     public ItemPackageViewHolder(View itemView) {

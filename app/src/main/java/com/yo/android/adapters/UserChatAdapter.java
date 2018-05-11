@@ -29,7 +29,8 @@ import com.yo.android.util.DateUtil;
 
 import java.util.Map;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
@@ -343,7 +344,7 @@ public class UserChatAdapter extends AbstractBaseAdapter<ChatMessage, UserChatVi
 
 
     public class HeaderViewHolder {
-        @Bind(R.id.time_stamp_text)
+        @BindView(R.id.time_stamp_text)
         TextView text;
 
         HeaderViewHolder(View v) {

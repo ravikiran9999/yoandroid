@@ -7,30 +7,31 @@ import android.widget.TextView;
 
 import com.yo.android.R;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class RechargeDetailsViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.imgArrow)
+    @BindView(R.id.imgArrow)
     ImageView arrow;
 
-    @Bind(R.id.txtPhone)
+    @BindView(R.id.txtPhone)
     TextView txtPhone;
 
-    @Bind(R.id.txt_price)
+    @BindView(R.id.txt_price)
     TextView txtPrice;
 
-    @Bind(R.id.txt_pulse)
+    @BindView(R.id.txt_pulse)
     TextView txtPulse;
 
-    @Bind(R.id.duration_container)
+    @BindView(R.id.duration_container)
     View durationContainer;
 
-    @Bind(R.id.date)
+    @BindView(R.id.date)
     TextView date;
 
-    @Bind(R.id.duration)
+    @BindView(R.id.duration)
     TextView duration;
 
     public RechargeDetailsViewHolder(View view) {

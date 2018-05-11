@@ -14,17 +14,18 @@ import com.yo.android.adapters.YoViewHolder;
 import com.yo.android.model.Categories;
 import com.yo.android.util.Util;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
 public class NewSuggestionsViewHolder extends YoViewHolder {
 
-    @Bind(R.id.img_magazine)
+    @BindView(R.id.img_magazine)
     ImageView imageView;
-    @Bind(R.id.tv_title)
+    @BindView(R.id.tv_title)
     TextView topic_textView;
-    @Bind(R.id.checkbox)
+    @BindView(R.id.checkbox)
     CheckBox checkBox;
 
     private Context mContext;

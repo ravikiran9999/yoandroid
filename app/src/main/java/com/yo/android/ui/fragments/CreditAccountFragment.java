@@ -42,7 +42,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -55,9 +56,9 @@ public class CreditAccountFragment extends BaseFragment implements SharedPrefere
     private static final int OPEN_ADD_BALANCE_RESULT = 1000;
     public static final int SEPERATOR = 1;
 
-    @Bind(R.id.lv_settings)
+    @BindView(R.id.lv_settings)
     protected RecyclerView menuRecyclerView;
-    @Bind(R.id.txtEmpty)
+    @BindView(R.id.txtEmpty)
     protected TextView txtEmpty;
 
     @Inject

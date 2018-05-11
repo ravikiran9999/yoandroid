@@ -23,7 +23,8 @@ import com.yo.android.util.Constants;
 
 import java.io.File;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -33,17 +34,15 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 public class ShowPhotoActivity extends BaseActivity {
 
     private static final String TAG = ShowPhotoActivity.class.getSimpleName();
-    @Bind(R.id.image_open)
+
+    @BindView(R.id.image_open)
     protected ImageView imageOpen;
-
-    private PhotoViewAttacher mAttacher;
-
-    @Bind(R.id.loadingFailed)
+    @BindView(R.id.loadingFailed)
     protected TextView loadingFailed;
-
-    @Bind(R.id.image_progress)
+    @BindView(R.id.image_progress)
     protected ProgressBar progressBar;
 
+    private PhotoViewAttacher mAttacher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +102,6 @@ public class ShowPhotoActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ButterKnife.unbind(this);
     }
 
     /**

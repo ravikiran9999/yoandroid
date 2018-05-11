@@ -21,16 +21,17 @@ import com.yo.android.chat.ui.fragments.BaseFragment;
 import com.yo.android.util.Util;
 import com.yo.android.widgets.CustomSwipeRefreshLayout;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public abstract class WebViewFragment extends BaseFragment implements
         SwipeRefreshLayout.OnRefreshListener,
         CustomSwipeRefreshLayout.CanChildScrollUpCallback {
 
-    @Bind(R.id.webview_stub)
+    @BindView(R.id.webview_stub)
     ViewStub webViewStub;
-    @Bind(R.id.swipe_layout) CustomSwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.swipe_layout) CustomSwipeRefreshLayout swipeRefreshLayout;
 
 
     WebView webView;

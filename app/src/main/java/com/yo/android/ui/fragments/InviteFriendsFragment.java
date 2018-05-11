@@ -31,7 +31,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -42,14 +43,14 @@ import retrofit2.Response;
  */
 public class InviteFriendsFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
-    @Bind(R.id.invite_list)
+    @BindView(R.id.invite_list)
     ListView lv_invite;
     private InviteFriendsAdapter inviteFriendsAdapter;
-    @Bind(R.id.side_index)
+    @BindView(R.id.side_index)
     ListView layout;
-    @Bind(R.id.txtEmpty)
+    @BindView(R.id.txtEmpty)
     TextView txtEmpty;
-    @Bind(R.id.no_search_results)
+    @BindView(R.id.no_search_results)
     TextView noSearchResultsTxtVw;
 
     private Menu menu;

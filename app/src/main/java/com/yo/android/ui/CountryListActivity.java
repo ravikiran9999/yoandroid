@@ -29,7 +29,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,17 +40,17 @@ public class CountryListActivity extends BaseActivity implements AdapterView.OnI
 
     private final static String TAG = CountryListActivity.class.getSimpleName();
 
-    @Bind(R.id.lv_app_contacts)
+    @BindView(R.id.lv_app_contacts)
     NonScrollListView listView;
-    @Bind(R.id.lv_app_contacts_recent)
+    @BindView(R.id.lv_app_contacts_recent)
     NonScrollListView listViewRecent;
-    @Bind(R.id.tv_recent_title)
+    @BindView(R.id.tv_recent_title)
     TextView recentTextView;
-    @Bind(R.id.no_search_results)
+    @BindView(R.id.no_search_results)
     TextView txtEmptyView;
-    @Bind(R.id.side_index)
+    @BindView(R.id.side_index)
     ListView layout;
-    @Bind(R.id.tv_title)
+    @BindView(R.id.tv_title)
     TextView countryTitle;
 
     private CountryCallRatesAdapter adapter;

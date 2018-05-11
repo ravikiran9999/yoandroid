@@ -7,7 +7,8 @@ import android.widget.EditText;
 
 import com.yo.android.R;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -16,7 +17,7 @@ public class EditGroupSubjectActivity extends Activity {
 
     public static final String GROUP_SUBJECT = "group_subject";
 
-    @Bind(R.id.edit_profile)
+    @BindView(R.id.edit_profile)
     EditText groupSubject;
 
     @Override

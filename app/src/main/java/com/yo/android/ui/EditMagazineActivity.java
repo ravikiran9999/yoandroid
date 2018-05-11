@@ -23,7 +23,8 @@ import com.yo.android.util.Util;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import okhttp3.ResponseBody;
@@ -45,11 +46,11 @@ public class EditMagazineActivity extends BaseActivity {
     private String magazineId;
     private String magazinePrivacy;
 
-    @Bind(R.id.et_title)
+    @BindView(R.id.et_title)
     EditText etTitle;
-    @Bind(R.id.et_desc)
+    @BindView(R.id.et_desc)
     EditText etDesc;
-    @Bind(R.id.tv_delete)
+    @BindView(R.id.tv_delete)
     TextView tvDelete;
 
     @Override

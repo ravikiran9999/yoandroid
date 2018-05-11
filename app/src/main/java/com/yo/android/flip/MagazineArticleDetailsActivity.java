@@ -34,7 +34,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -49,13 +50,13 @@ public class MagazineArticleDetailsActivity extends BaseActivity {
     private int position;
     private String articlePlacement;
 
-    @Bind(R.id.cb_magazine_like)
+    @BindView(R.id.cb_magazine_like)
     CheckBox magazineLike;
-    @Bind(R.id.imv_magazine_add)
+    @BindView(R.id.imv_magazine_add)
     ImageView magazineAdd;
-    @Bind(R.id.imv_magazine_share)
+    @BindView(R.id.imv_magazine_share)
     ImageView magazineShare;
-    @Bind(R.id.webview_progressbar)
+    @BindView(R.id.webview_progressbar)
     ProgressBar progressBar;
 
     @Override

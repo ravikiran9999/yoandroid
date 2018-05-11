@@ -47,7 +47,8 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.MediaType;
@@ -66,17 +67,17 @@ public class UpdateProfileActivity extends BaseActivity {
     private static final String TAG = UpdateProfileActivity.class.getSimpleName();
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 101;
 
-    @Bind(R.id.profile_layout)
+    @BindView(R.id.profile_layout)
     View mLayout;
-    @Bind(R.id.user_name)
+    @BindView(R.id.user_name)
     EditText username;
-    @Bind(R.id.mobile_number)
+    @BindView(R.id.mobile_number)
     TextView mobileNum;
-    @Bind(R.id.add_photo)
+    @BindView(R.id.add_photo)
     TextView addPhoto;
-    @Bind(R.id.profile_pic)
+    @BindView(R.id.profile_pic)
     ImageView profileImage;
-    @Bind(R.id.next_btn)
+    @BindView(R.id.next_btn)
     Button nextBtn;
 
     @Inject

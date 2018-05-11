@@ -12,7 +12,8 @@ import com.yo.android.ui.fragments.CreditAccountFragment;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -22,7 +23,7 @@ import butterknife.ButterKnife;
 public class DenominationViewHolder extends RecyclerView.ViewHolder implements DenominationAdapter.DenominationItemListener{
 
 
-    @Bind(R.id.inner_view)
+    @BindView(R.id.inner_view)
     RecyclerView recyclerView;
 
     private Fragment mFragment;

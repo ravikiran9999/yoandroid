@@ -79,7 +79,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 
@@ -91,13 +92,13 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private static final String TAG = "ChatFragment";
     public static final int GROUP_CREATED = 100;
 
-    @Bind(R.id.lv_chat_room)
+    @BindView(R.id.lv_chat_room)
     ListView listView;
-    @Bind(R.id.empty_chat)
+    @BindView(R.id.empty_chat)
     ImageView emptyImageView;
-    @Bind(R.id.no_search_results)
+    @BindView(R.id.no_search_results)
     protected TextView noSearchResult;
-    @Bind(R.id.swipeContainer)
+    @BindView(R.id.swipeContainer)
     protected SwipeRefreshLayout swipeRefreshContainer;
 
     private static ArrayList<Room> arrayOfUsers = new ArrayList<>();

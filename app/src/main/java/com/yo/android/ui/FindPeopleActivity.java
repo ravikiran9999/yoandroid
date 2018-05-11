@@ -39,7 +39,8 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -51,26 +52,26 @@ import retrofit2.Response;
 public class FindPeopleActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
 
-    /*@Bind(R.id.toolbar)
+    /*@BindView(R.id.toolbar)
     Toolbar toolbar;
-    @Bind(R.id.viewpager)
+    @BindView(R.id.viewpager)
     protected ViewPager viewPager;*/
-    @Bind(R.id.lv_find_people)
+    @BindView(R.id.lv_find_people)
     ListView lvFindPeople;
-    @Bind(R.id.imv_empty_followings)
+    @BindView(R.id.imv_empty_followings)
     ImageView imvEmptyFindPeople;
-    @Bind(R.id.no_data)
+    @BindView(R.id.no_data)
     TextView noData;
-    @Bind(R.id.ll_no_people)
+    @BindView(R.id.ll_no_people)
     LinearLayout llNoPeople;
-    @Bind(R.id.network_failure)
+    @BindView(R.id.network_failure)
     TextView networkFailureText;
 
-    /*@Bind(R.id.tablayout)
+    /*@BindView(R.id.tablayout)
     TabLayout tabLayout;*/
-    /*@Bind(R.id.header)
+    /*@BindView(R.id.header)
     LinearLayout headerLayout;*/
-    /*@Bind(R.id.collapse_toolbar)
+    /*@BindView(R.id.collapse_toolbar)
     CollapsingToolbarLayout collapsingToolbarLayout;*/
 
     @Inject

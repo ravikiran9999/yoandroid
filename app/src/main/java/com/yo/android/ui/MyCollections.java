@@ -33,7 +33,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -47,13 +48,13 @@ public class MyCollections extends BaseActivity implements AdapterView.OnItemLon
 
     public static final String TAG = MyCollections.class.getSimpleName();
 
-    @Bind(R.id.create_magazines_gridview)
+    @BindView(R.id.create_magazines_gridview)
     protected GridView gridView;
-    @Bind(R.id.no_search_results)
+    @BindView(R.id.no_search_results)
     protected TextView noSearchFound;
-    @Bind(R.id.swipeContainer)
+    @BindView(R.id.swipeContainer)
     protected SwipeRefreshLayout swipeRefreshContainer;
-    @Bind(R.id.network_failure)
+    @BindView(R.id.network_failure)
     TextView networkFailureText;
 
     @Inject

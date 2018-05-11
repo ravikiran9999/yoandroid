@@ -53,7 +53,8 @@ import java.util.Random;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnFocusChange;
@@ -79,17 +80,17 @@ public class NewOTPFragment extends BaseFragment implements View.OnClickListener
     private int count = 0;
     private boolean otpReceived = false;
 
-    @Bind(R.id.et_otp)
+    @BindView(R.id.et_otp)
     DigitsEditText etOtp;
-    @Bind(R.id.gv_keypad)
+    @BindView(R.id.gv_keypad)
     View gvKeypad;
-    @Bind(R.id.pin_content_layout)
+    @BindView(R.id.pin_content_layout)
     View llPin;
-    @Bind(R.id.tv_enter_otp)
+    @BindView(R.id.tv_enter_otp)
     TextView tvEnterOTP;
-    @Bind(R.id.tv_resend)
+    @BindView(R.id.tv_resend)
     TextView reSendTextBtn;
-    @Bind(R.id.next_btn)
+    @BindView(R.id.next_btn)
     Button nextBtn;
 
     private EditText mPinFirstDigitEditText;

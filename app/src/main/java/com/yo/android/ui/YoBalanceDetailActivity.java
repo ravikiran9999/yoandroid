@@ -10,18 +10,19 @@ import com.yo.android.R;
 import com.yo.android.adapters.BalanceDetailTabsPagerAdapter;
 import com.yo.android.widgets.ScrollTabHolder;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
 public class YoBalanceDetailActivity extends BaseActivity implements
         ScrollTabHolder, ViewPager.OnPageChangeListener {
 
-    @Bind(R.id.header)
+    @BindView(R.id.header)
     LinearLayout headerLayout;
-    @Bind(R.id.viewpager)
+    @BindView(R.id.viewpager)
     ViewPager viewPager;
-    @Bind(R.id.tablayout)
+    @BindView(R.id.tablayout)
     TabLayout tabLayout;
 
     public int mMinHeaderTranslation;

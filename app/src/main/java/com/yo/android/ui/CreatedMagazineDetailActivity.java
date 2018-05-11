@@ -43,7 +43,8 @@ import java.util.ListIterator;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import okhttp3.ResponseBody;
@@ -65,11 +66,11 @@ public class CreatedMagazineDetailActivity extends BaseActivity {
     private List<Articles> articlesList = new ArrayList<Articles>();
 
     private MyBaseAdapter myBaseAdapter;
-    @Bind(R.id.txtEmptyArticals)
+    @BindView(R.id.txtEmptyArticals)
     TextView noArticals;
-    @Bind(R.id.flipView_container)
+    @BindView(R.id.flipView_container)
     FrameLayout flipContainer;
-    @Bind(R.id.flip_view)
+    @BindView(R.id.flip_view)
     FlipView flipView;
 
     private String magazineTitle;

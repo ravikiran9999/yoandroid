@@ -26,7 +26,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import retrofit2.Call;
@@ -38,11 +39,11 @@ import retrofit2.Response;
  */
 public class CreateMagazineActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, AbsListView.OnScrollListener {
 
-    @Bind(R.id.swipeContainer)
+    @BindView(R.id.swipeContainer)
     protected SwipeRefreshLayout swipeRefreshContainer;
-    @Bind(R.id.no_search_results)
+    @BindView(R.id.no_search_results)
     protected TextView noSearchResults;
-    @Bind(R.id.create_magazines_gridview)
+    @BindView(R.id.create_magazines_gridview)
     protected GridView gridView;
 
     @Inject
@@ -53,7 +54,7 @@ public class CreateMagazineActivity extends BaseActivity implements SwipeRefresh
 
     CreateMagazinesAdapter createMagazinesAdapter;
     private String addArticleMagazineId = null;
-    @Bind(R.id.network_failure)
+    @BindView(R.id.network_failure)
     protected TextView networkFailureText;
     public boolean isNetworkFailure;
 

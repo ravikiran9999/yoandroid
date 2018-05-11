@@ -42,7 +42,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -55,29 +56,29 @@ public class NewCreditAccountFragment extends BaseFragment {
 
     private static final String BALL_CLIP_ROTATE = "BallClipRotateMultipleIndicator";
 
-    @Bind(R.id.avi_first)
+    @BindView(R.id.avi_first)
     protected AVLoadingIndicatorView aviFirst;
-    @Bind(R.id.avi_second)
+    @BindView(R.id.avi_second)
     protected AVLoadingIndicatorView aviSecond;
-    @Bind(R.id.avi_third)
+    @BindView(R.id.avi_third)
     protected AVLoadingIndicatorView aviThird;
-    @Bind(R.id.tv_first)
+    @BindView(R.id.tv_first)
     protected TextView tvFirst;
-    @Bind(R.id.tv_second)
+    @BindView(R.id.tv_second)
     protected TextView tvSecond;
-    @Bind(R.id.tv_third)
+    @BindView(R.id.tv_third)
     protected TextView tvThird;
-    @Bind(R.id.give_first)
+    @BindView(R.id.give_first)
     Button giveFirst;
-    @Bind(R.id.give_second)
+    @BindView(R.id.give_second)
     Button giveSecond;
-    @Bind(R.id.give_third)
+    @BindView(R.id.give_third)
     Button giveThird;
-    @Bind(R.id.buy_first_package)
+    @BindView(R.id.buy_first_package)
     Button buyFirstPackage;
-    @Bind(R.id.buy_second_package)
+    @BindView(R.id.buy_second_package)
     Button buySecondPackage;
-    @Bind(R.id.buy_third_package)
+    @BindView(R.id.buy_third_package)
     Button buyThirdPackage;
 
     @Inject

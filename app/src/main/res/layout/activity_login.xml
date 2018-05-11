@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="25dp"
-        android:text="An SMS with PIN would be sent to this number for verification"
+        android:text="@string/sms_with_pin"
         android:textColor="@android:color/white" />
 
     <EditText
@@ -46,11 +46,11 @@
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
         android:background="@android:color/white"
+        android:digits="@string/phone_number_input"
         android:ems="10"
         android:hint="@string/mobile_number"
         android:imeOptions="actionDone"
         android:inputType="number"
-        android:digits="@string/phone_number_input"
         android:padding="13dp"
         android:singleLine="true" />
 

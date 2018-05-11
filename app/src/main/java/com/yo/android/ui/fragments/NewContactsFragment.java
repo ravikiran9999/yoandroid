@@ -71,7 +71,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import retrofit2.Call;
@@ -116,19 +117,19 @@ public class NewContactsFragment extends BaseFragment implements AdapterView.OnI
 
     private boolean isAlreadyShown;
 
-    @Bind(R.id.no_search_results)
+    @BindView(R.id.no_search_results)
     TextView noSearchResult;
-    @Bind(R.id.allContactsSection)
+    @BindView(R.id.allContactsSection)
     Button btnAllContacts;
-    @Bind(R.id.yoContactsSection)
+    @BindView(R.id.yoContactsSection)
     Button btnYoContacts;
-    @Bind(R.id.tv_contacts_count)
+    @BindView(R.id.tv_contacts_count)
     TextView tvContactsCount;
-    @Bind(R.id.tabs_layout)
+    @BindView(R.id.tabs_layout)
     LinearLayout llTabsLayout;
-    @Bind(R.id.no_contacts)
+    @BindView(R.id.no_contacts)
     TextView tvNoContacts;
-    @Bind(R.id.side_index)
+    @BindView(R.id.side_index)
     ListView sideLayout;
 
     private boolean isAllContactsSelected = true;

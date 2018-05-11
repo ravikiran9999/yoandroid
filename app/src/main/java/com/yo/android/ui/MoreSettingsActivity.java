@@ -16,7 +16,8 @@ import com.yo.android.util.Util;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -24,16 +25,16 @@ import static com.yo.android.chat.ui.LoginActivity.URL;
 
 public class MoreSettingsActivity extends BaseActivity {
 
-    @Bind(R.id.share_lint_btn)
+    @BindView(R.id.share_lint_btn)
     TextView shareLinkBtn;
 
-    @Bind(R.id.sync_toggle)
+    @BindView(R.id.sync_toggle)
     Switch syncContactsSwitch;
 
-    @Bind(R.id.notification_toggle)
+    @BindView(R.id.notification_toggle)
     Switch notificationSwitch;
 
-    @Bind(R.id.account_privacy_toggle)
+    @BindView(R.id.account_privacy_toggle)
     Switch accountPrivacySwitch;
 
     @Inject

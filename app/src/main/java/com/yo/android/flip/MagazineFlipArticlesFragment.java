@@ -49,7 +49,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import retrofit2.Call;
@@ -68,25 +69,25 @@ public class MagazineFlipArticlesFragment extends BaseFragment implements Shared
 
     public MagazineArticlesBaseAdapter myBaseAdapter;
 
-    @Bind(R.id.refreshContainer)
+    @BindView(R.id.refreshContainer)
     SwipeRefreshLayout swipeRefreshContainer;
-    @Bind(R.id.article_root_layout)
+    @BindView(R.id.article_root_layout)
     public FrameLayout articlesRootLayout;
-    @Bind(R.id.ll_no_articles)
+    @BindView(R.id.ll_no_articles)
     public LinearLayout llNoArticles;
-    @Bind(R.id.flipView_container)
+    @BindView(R.id.flipView_container)
     public FrameLayout flipContainer;
-    @Bind(R.id.network_failure)
+    @BindView(R.id.network_failure)
     public TextView networkFailureText;
-    @Bind(R.id.server_failure)
+    @BindView(R.id.server_failure)
     public TextView serverFailureText;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     public ProgressBar mProgress;
-    @Bind(R.id.flip_view)
+    @BindView(R.id.flip_view)
     public FlipView flipView;
-    @Bind(R.id.btn_magazine_follow_topics)
+    @BindView(R.id.btn_magazine_follow_topics)
     public Button followMoreTopics;
-    @Bind(R.id.tv_progress_text)
+    @BindView(R.id.tv_progress_text)
     public TextView tvProgressText;
 
     @Inject

@@ -16,7 +16,8 @@ import com.yo.android.model.OwnMagazine;
 import com.yo.android.util.Constants;
 import com.yo.android.util.Util;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -32,11 +33,11 @@ public class NewMagazineActivity extends BaseActivity {
     private static final String PUBLIC = "Public";
     private static final String PRIVATE = "Private";
 
-    @Bind(R.id.magazine_title)
+    @BindView(R.id.magazine_title)
     EditText etTitle;
-    @Bind(R.id.magazine_desc)
+    @BindView(R.id.magazine_desc)
     EditText etDesc;
-    @Bind(R.id.privacy_toggle)
+    @BindView(R.id.privacy_toggle)
     SwitchCompat togglePrivacy;
 
     private boolean isSaveClicked;

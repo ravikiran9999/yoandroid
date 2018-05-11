@@ -52,7 +52,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -71,15 +72,15 @@ public class LoginActivity extends BaseActivity implements AdapterView.OnItemSel
     public static final String URL = "http://yowatsup.com/yoadmin/feeds/tc";
 
 
-    @Bind(R.id.et_enter_phone)
+    @BindView(R.id.et_enter_phone)
     protected EditText mPhoneNumberView;
 
 
-//    @Bind(R.id.spCountrySpinner)
+//    @BindView(R.id.spCountrySpinner)
 //    protected NiceSpinner spCountrySpinner;
 //
 
-    @Bind(R.id.et_country_code)
+    @BindView(R.id.et_country_code)
     protected EditText mCountryCode;
 
     @Inject

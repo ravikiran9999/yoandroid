@@ -49,7 +49,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 
@@ -68,21 +69,21 @@ public class TabsHeaderActivity extends BaseActivity implements SharedPreference
     private TabsPagerAdapter adapter;
     private Menu menu;
 
-    /*@Bind(R.id.network_status_view)
+    /*@BindView(R.id.network_status_view)
     ImageView networkView;*/
 
     @Inject
     BalanceHelper mBalanceHelper;
 
-    @Bind(R.id.your_available_amount)
+    @BindView(R.id.your_available_amount)
     TextView balanceText;
-    @Bind(R.id.htab_toolbar)
+    @BindView(R.id.htab_toolbar)
     Toolbar toolbar;
-    @Bind(R.id.title)
+    @BindView(R.id.title)
     TextView titleView;
-    @Bind(R.id.htab_viewpager)
+    @BindView(R.id.htab_viewpager)
     ViewPager viewPager;
-    @Bind(R.id.htab_tabs)
+    @BindView(R.id.htab_tabs)
     TabLayout tabLayout;
 
 

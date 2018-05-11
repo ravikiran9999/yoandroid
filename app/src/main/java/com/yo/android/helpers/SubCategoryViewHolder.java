@@ -13,12 +13,13 @@ import com.yo.android.ui.NewFollowMoreTopicsActivity;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class SubCategoryViewHolder extends YoViewHolder implements SubCategoryAdapter.TopicsItemListener {
 
-    @Bind(R.id.inner_view)
+    @BindView(R.id.inner_view)
     RecyclerView recyclerView;
 
     private SubCategoryAdapter subCategoryAdapter;

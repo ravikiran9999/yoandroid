@@ -479,6 +479,8 @@
     <string name="pin_text">%1$s </string>
 
     <string name="post">Post</string>
+    <string name="sms_with_pin">An SMS with PIN would be sent to this number for verification</string>
+
 
     <!--toast messages-->
     <string name="enter_magazine_total">Please enter the magazine title</string>

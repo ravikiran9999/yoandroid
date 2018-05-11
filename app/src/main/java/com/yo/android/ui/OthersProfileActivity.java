@@ -24,7 +24,8 @@ import com.yo.android.util.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.ResponseBody;
@@ -37,17 +38,17 @@ import retrofit2.Response;
  */
 public class OthersProfileActivity extends BaseActivity {
 
-    @Bind(R.id.tabs)
+    @BindView(R.id.tabs)
     TabLayout tabLayout;
-    @Bind(R.id.viewpager)
+    @BindView(R.id.viewpager)
     ViewPager viewPager;
-    @Bind(R.id.back)
+    @BindView(R.id.back)
     ImageView backbtn;
-    @Bind(R.id.follow_btn)
+    @BindView(R.id.follow_btn)
     Button btnFolow;
-    @Bind(R.id.follower_name)
+    @BindView(R.id.follower_name)
     TextView tvName;
-    @Bind(R.id.picture)
+    @BindView(R.id.picture)
     CircleImageView picture;
 
     TabsPagerAdapter mAdapter;

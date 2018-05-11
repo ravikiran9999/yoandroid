@@ -41,7 +41,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 
@@ -64,30 +65,30 @@ public class NewDailerActivity extends BaseActivity {
     private static final int[] mButtonIds = new int[]{R.id.zero, R.id.one, R.id.two, R.id.three,
             R.id.four, R.id.five, R.id.six, R.id.seven, R.id.eight, R.id.nine, R.id.star,
             R.id.pound};
-    @Bind(R.id.btnCall)
+    @BindView(R.id.btnCall)
     protected ImageView btnCallGreen;
 
-    @Bind(R.id.txt_balance)
+    @BindView(R.id.txt_balance)
     protected TextView txtBalance;
 
-    @Bind(R.id.add_balance)
+    @BindView(R.id.add_balance)
     protected TextView addBalance;
 
-    @Bind(R.id.txt_call_rate)
+    @BindView(R.id.txt_call_rate)
     protected TextView txtCallRate;
-    @Bind(R.id.global_call_rate)
+    @BindView(R.id.global_call_rate)
     TextView globalCallRate;
 
-    @Bind(R.id.country_name)
+    @BindView(R.id.country_name)
     protected TextView countryName;
 
 
-    @Bind(R.id.dialPadView)
+    @BindView(R.id.dialPadView)
     protected DialPadView dialPadView;
 
     protected EditText mDigits;
 
-    @Bind(R.id.deleteButton)
+    @BindView(R.id.deleteButton)
     protected ImageButton deleteButton;
 
     protected String sUserSimCountryCode;

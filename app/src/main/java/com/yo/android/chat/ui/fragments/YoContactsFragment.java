@@ -40,7 +40,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -59,11 +60,11 @@ public class YoContactsFragment extends BaseFragment implements AdapterView.OnIt
     private Menu menu;
     private Activity activity;
 
-    @Bind(R.id.lv_app_contacts)
+    @BindView(R.id.lv_app_contacts)
     ListView listView;
-    @Bind(R.id.side_index)
+    @BindView(R.id.side_index)
     ListView layout;
-    @Bind(R.id.no_search_results)
+    @BindView(R.id.no_search_results)
     TextView noResults;
 
     @Inject

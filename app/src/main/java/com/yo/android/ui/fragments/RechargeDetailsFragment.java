@@ -27,7 +27,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,13 +36,13 @@ import retrofit2.Response;
 
 public class RechargeDetailsFragment extends BaseFragment implements Callback<List<PaymentHistoryItem>>, SharedPreferences.OnSharedPreferenceChangeListener {
 
-    @Bind(R.id.txtEmpty)
+    @BindView(R.id.txtEmpty)
     TextView txtEmpty;
 
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     ProgressBar progress;
 
-    @Bind(R.id.listView)
+    @BindView(R.id.listView)
     RecyclerView listView;
     @Inject
     BalanceHelper mBalanceHelper;

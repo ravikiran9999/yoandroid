@@ -55,7 +55,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -78,9 +79,9 @@ public class MyCollectionDetailsActivity extends BaseActivity implements FlipVie
     @Inject
     MyCollectionsDetailsUsecase myCollectionsDetailsUsecase;
 
-    @Bind(R.id.tv_no_articles)
+    @BindView(R.id.tv_no_articles)
     public TextView tvNoArticles;
-    @Bind(R.id.flip_view)
+    @BindView(R.id.flip_view)
     public FlipView flipView;
 
     public List<Articles> articlesList = new ArrayList<Articles>();

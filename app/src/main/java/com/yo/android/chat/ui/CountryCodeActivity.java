@@ -22,7 +22,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CountryCodeActivity extends ParentActivity {
@@ -30,14 +30,14 @@ public class CountryCodeActivity extends ParentActivity {
     @Inject
     CountryCodeHelper mCountryCodeHelper;
 
-    @Bind(R.id.countrylist_item)
+    @BindView(R.id.countrylist_item)
     ListView countryList;
-    @Bind(R.id.no_search_results)
+    @BindView(R.id.no_search_results)
     TextView noSearchResultsTxtVw;
 
     private List<CountryCode> mList;
     private MenuItem searchMenuItem;
-    private  CountryCodeListAdapter countryAdapter;
+    private CountryCodeListAdapter countryAdapter;
 
 
     @Override
@@ -83,10 +83,11 @@ public class CountryCodeActivity extends ParentActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
-        Util.prepareSearch(this, menu,countryAdapter, noSearchResultsTxtVw,countryList,null, null);
+        Util.prepareSearch(this, menu, countryAdapter, noSearchResultsTxtVw, countryList, null, null);
         return super.onCreateOptionsMenu(menu);
     }
 

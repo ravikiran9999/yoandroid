@@ -22,7 +22,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,17 +37,17 @@ public class FollowingsActivity extends BaseActivity implements SwipeRefreshLayo
     @Inject
     YoApi.YoService yoService;
 
-    @Bind(R.id.lv_find_people)
+    @BindView(R.id.lv_find_people)
     protected ListView lvFindPeople;
-    @Bind(R.id.no_search_results)
+    @BindView(R.id.no_search_results)
     protected TextView noData;
-    @Bind(R.id.ll_no_people)
+    @BindView(R.id.ll_no_people)
     protected LinearLayout llNoPeople;
-    @Bind(R.id.imv_empty_followings)
+    @BindView(R.id.imv_empty_followings)
     protected ImageView imvEmptyFollowings;
-    @Bind(R.id.network_failure)
+    @BindView(R.id.network_failure)
     protected TextView networkFailureText;
-    /*@Bind(R.id.swipeContainer)
+    /*@BindView(R.id.swipeContainer)
     protected SwipeRefreshLayout swipeRefreshContainer;*/
 
     public boolean isEmptyDataSet;

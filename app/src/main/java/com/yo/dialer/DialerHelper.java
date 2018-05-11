@@ -48,7 +48,7 @@ public class DialerHelper {
     public String parsePhoneNumber(String username) {
         try {
             DialerLogs.messageE(TAG, "Username for parse Phone number" + username);
-            if (username != null) {
+            if (username != null && username.contains(BuildConfig.RELEASE_USER_TYPE)) { // checking contains condition, whether youser exists or not
                 return username.substring(username.indexOf(BuildConfig.RELEASE_USER_TYPE) + 6, username.length() - 1);
             }
         } catch (StringIndexOutOfBoundsException ex) {

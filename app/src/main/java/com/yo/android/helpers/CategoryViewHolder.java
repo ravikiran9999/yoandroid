@@ -12,14 +12,15 @@ import com.yo.android.ui.followmoretopics.CategoriesAccordionSection;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CategoryViewHolder extends YoViewHolder {
 
-    @Bind(R.id.title)
+    @BindView(R.id.title)
     TextView title;
-    @Bind(R.id.checkbox)
+    @BindView(R.id.checkbox)
     CheckBox checkBox;
 
     private CategoriesAdapter categoriesAdapter;

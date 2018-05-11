@@ -8,36 +8,37 @@ import android.widget.TextView;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractViewHolder;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CallLogsViewHolder extends AbstractViewHolder {
 
-    @Bind(R.id.tv_phone_number)
+    @BindView(R.id.tv_phone_number)
     TextView opponentName;
-    @Bind(R.id.header)
+    @BindView(R.id.header)
     TextView header;
-/*    @Bind(R.id.tv_time_stamp)
+/*    @BindView(R.id.tv_time_stamp)
     TextView timeStamp;*/
-    @Bind(R.id.tv_date_time)
+    @BindView(R.id.tv_date_time)
     TextView dateTimeStamp;
-    @Bind(R.id.iv_message_type)
+    @BindView(R.id.iv_message_type)
     TextView messageIcon;
-    @Bind(R.id.iv_contact_type)
+    @BindView(R.id.iv_contact_type)
     ImageView callIcon;
-    @Bind(R.id.imv_contact_pic)
+    @BindView(R.id.imv_contact_pic)
     ImageView contactPic;
-    @Bind(R.id.row_container)
+    @BindView(R.id.row_container)
     View rowContainer;
-    @Bind(R.id.row_container_details)
+    @BindView(R.id.row_container_details)
     View rowContainerdetails;
-    @Bind(R.id.create_new_contact)
+    @BindView(R.id.create_new_contact)
     TextView creatNewContact;
-    @Bind(R.id.add_to_contact)
+    @BindView(R.id.add_to_contact)
     TextView addToContact;
-    @Bind(R.id.info)
+    @BindView(R.id.info)
     TextView info;
-    @Bind(R.id.call_layout)
+    @BindView(R.id.call_layout)
     View callLayout;
 
     public TextView getHeader() {

@@ -18,7 +18,8 @@ import com.yo.android.util.Constants;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
@@ -31,9 +32,9 @@ public class InAppVideoActivity extends YouTubeFailureRecoveryActivity implement
     private static final String TAG = InAppVideoActivity.class.getSimpleName();
     private static final int RECOVERY_DIALOG_REQUEST = 1;
 
-    @Bind(R.id.layout)
+    @BindView(R.id.layout)
     LinearLayout baseLayout;
-    @Bind(R.id.player)
+    @BindView(R.id.player)
     YouTubePlayerView playerView;
 
     //https://www.youtube.com/watch?v=<VIDEO_ID>

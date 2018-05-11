@@ -6,20 +6,21 @@ import android.widget.TextView;
 
 import com.yo.android.R;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class SpendDetailsViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.txtPhone)
+    @BindView(R.id.txtPhone)
     TextView txtPhone;
-    @Bind(R.id.txt_price)
+    @BindView(R.id.txt_price)
     TextView txtPrice;
-    @Bind(R.id.txtDate)
+    @BindView(R.id.txtDate)
     TextView date;
-    @Bind(R.id.txt_duration)
+    @BindView(R.id.txt_duration)
     TextView duration;
-    @Bind(R.id.txt_reason)
+    @BindView(R.id.txt_reason)
     TextView txtReason;
 
 

@@ -95,7 +95,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
@@ -144,19 +145,19 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private Share share;
 
 
-    @Bind(R.id.emojiView)
+    @BindView(R.id.emojiView)
     ImageView emoji;
-    @Bind(R.id.cameraView)
+    @BindView(R.id.cameraView)
     ImageView cameraView;
-    @Bind(R.id.chat_text)
+    @BindView(R.id.chat_text)
     EditText chatText;
-    @Bind(R.id.listView)
+    @BindView(R.id.listView)
     StickyListHeadersListView listView;
-    @Bind(R.id.time_stamp_header)
+    @BindView(R.id.time_stamp_header)
     TextView listStickeyHeader;
-    @Bind(R.id.send)
+    @BindView(R.id.send)
     View send;
-    @Bind(R.id.root_view)
+    @BindView(R.id.root_view)
     View rootView;
 
     @Inject

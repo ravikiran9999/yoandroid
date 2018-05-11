@@ -44,7 +44,8 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.MediaType;
@@ -58,28 +59,28 @@ import retrofit2.Response;
  */
 public class AccountDetailsFragment extends BaseFragment {
 
-    @Bind(R.id.account_status_card)
+    @BindView(R.id.account_status_card)
     protected TextView accountStatus;
 
-    @Bind(R.id.account_name_card)
+    @BindView(R.id.account_name_card)
     protected TextView accountName;
 
-    @Bind(R.id.account_phone_number_card)
+    @BindView(R.id.account_phone_number_card)
     protected TextView accountPhoneNumber;
 
-    @Bind(R.id.account_dob_card)
+    @BindView(R.id.account_dob_card)
     protected TextView accountDOB;
 
-    @Bind(R.id.account_email_card)
+    @BindView(R.id.account_email_card)
     protected TextView accountEmail;
 
-    @Bind(R.id.toggle)
+    @BindView(R.id.toggle)
     protected RadioGroup genderToggle;
 
-    @Bind(R.id.male)
+    @BindView(R.id.male)
     protected RadioButton maleRadio;
 
-    @Bind(R.id.female)
+    @BindView(R.id.female)
     protected RadioButton femaleRadio;
 
     @Inject

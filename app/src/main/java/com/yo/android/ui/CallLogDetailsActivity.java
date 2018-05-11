@@ -30,23 +30,24 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CallLogDetailsActivity extends BaseActivity {
 
-    @Bind(R.id.imv_calllog_details_profile_pic)
+    @BindView(R.id.imv_calllog_details_profile_pic)
     CircleImageView imageView;
-    @Bind(R.id.call_log_opponent_name)
+    @BindView(R.id.call_log_opponent_name)
     TextView opponentName;
-    @Bind(R.id.call_log_opponent_number)
+    @BindView(R.id.call_log_opponent_number)
     TextView opponentNumber;
-    @Bind(R.id.call_info_date)
+    @BindView(R.id.call_info_date)
     TextView callInfoDate;
-    @Bind(R.id.call)
+    @BindView(R.id.call)
     ImageView callImg;
-    @Bind(R.id.lv_call_log_details)
+    @BindView(R.id.lv_call_log_details)
     ListView callLogHistoryListview;
 
     protected DateFormat dateFormat = new SimpleDateFormat("hh:mm a");

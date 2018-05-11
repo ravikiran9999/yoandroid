@@ -13,7 +13,8 @@ import android.widget.TextView;
 import com.yo.android.R;
 import com.yo.android.model.MoreData;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -23,11 +24,11 @@ import butterknife.ButterKnife;
 public class BalanceViewHolder extends RecyclerView.ViewHolder {
     private static final String YOUR_YO_BALANCE = "Your YO! balance";
 
-    @Bind(R.id.title)
+    @BindView(R.id.title)
     TextView textView;
-    @Bind(R.id.image)
+    @BindView(R.id.image)
     ImageView arrowView;
-    @Bind(R.id.text_view)
+    @BindView(R.id.text_view)
     TextView balanceView;
 
 

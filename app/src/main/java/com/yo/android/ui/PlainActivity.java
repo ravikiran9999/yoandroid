@@ -16,15 +16,16 @@ import com.yo.android.R;
 import com.yo.android.ui.fragments.GeneralWebViewFragment;
 import com.yo.android.util.Constants;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class PlainActivity extends BaseActivity {
 
     public final static String KEY_ARGS = "args";
 
-    @Bind(R.id.parent_container) FrameLayout parentContainer;
-    /*@Bind(R.id.tool_bar)
+    @BindView(R.id.parent_container) FrameLayout parentContainer;
+    /*@BindView(R.id.tool_bar)
     Toolbar toolbar;*/
 
     public static void start(@NonNull Activity activity,

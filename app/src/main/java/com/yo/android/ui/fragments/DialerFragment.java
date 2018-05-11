@@ -65,7 +65,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -84,17 +85,17 @@ public class DialerFragment extends BaseFragment implements SharedPreferences.On
     @Inject
     VoxFactory voxFactory;
 
-    @Bind(R.id.listView)
+    @BindView(R.id.listView)
     ListView listView;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     ProgressBar progress;
-    @Bind(R.id.txtEmptyCallLogs)
+    @BindView(R.id.txtEmptyCallLogs)
     TextView txtEmptyCallLogs;
-    @Bind(R.id.floatingDialer)
+    @BindView(R.id.floatingDialer)
     View floatingDialer;
-    @Bind(R.id.ll_no_calls)
+    @BindView(R.id.ll_no_calls)
     LinearLayout llNoCalls;
-    @Bind(R.id.no_search_results)
+    @BindView(R.id.no_search_results)
     protected TextView noSearchResult;
 
     @Inject

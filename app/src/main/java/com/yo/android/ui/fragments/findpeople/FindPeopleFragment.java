@@ -28,7 +28,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,17 +40,17 @@ import retrofit2.Response;
  */
 public class FindPeopleFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener {
 
-    @Bind(R.id.lv_find_people)
+    @BindView(R.id.lv_find_people)
     protected ListView lvFindPeople;
-    @Bind(R.id.no_data)
+    @BindView(R.id.no_data)
     protected TextView noData;
-    @Bind(R.id.ll_no_people)
+    @BindView(R.id.ll_no_people)
     protected LinearLayout llNoPeople;
-    @Bind(R.id.imv_empty_followings)
+    @BindView(R.id.imv_empty_followings)
     protected ImageView imvEmptyFindPeople;
-    @Bind(R.id.network_failure)
+    @BindView(R.id.network_failure)
     protected TextView networkFailureText;
-    @Bind(R.id.swipeContainer)
+    @BindView(R.id.swipeContainer)
     protected SwipeRefreshLayout swipeRefreshContainer;
 
     @Inject

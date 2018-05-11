@@ -37,7 +37,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -58,23 +59,23 @@ public class NewFollowMoreTopicsActivity extends BaseActivity {
     protected PreferenceEndPoint preferenceEndPoint;
 
 
-    @Bind(R.id.no_search_results)
+    @BindView(R.id.no_search_results)
     TextView noSearchResults;
-    @Bind(R.id.btn_done)
+    @BindView(R.id.btn_done)
     Button done;
-    @Bind(R.id.hello_interests)
+    @BindView(R.id.hello_interests)
     TextView tvHelloInterests;
-    @Bind(R.id.pick_topics)
+    @BindView(R.id.pick_topics)
     TextView tvPickTopics;
-    @Bind(R.id.recyclerView)
+    @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-    @Bind(R.id.tagsparent)
+    @BindView(R.id.tagsparent)
     LinearLayout tagsParentLayout;
-    @Bind(R.id.btn_skip)
+    @BindView(R.id.btn_skip)
     Button skip;
-    @Bind(R.id.bottom)
+    @BindView(R.id.bottom)
     LinearLayout bottomLayout;
-    @Bind(R.id.no_categories)
+    @BindView(R.id.no_categories)
     TextView noCategories;
 
     private List<String> followedTopicsIdsList;

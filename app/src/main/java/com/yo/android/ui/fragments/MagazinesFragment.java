@@ -64,7 +64,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import okhttp3.ResponseBody;
@@ -77,9 +78,9 @@ import retrofit2.Response;
  */
 public class MagazinesFragment extends BaseFragment implements SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener {
 
-    @Bind(R.id.no_search_results)
+    @BindView(R.id.no_search_results)
     protected TextView noSearchResults;
-    @Bind(R.id.bottom)
+    @BindView(R.id.bottom)
     protected FrameLayout layout;
 
     @Inject

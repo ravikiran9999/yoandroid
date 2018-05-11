@@ -8,7 +8,8 @@ import android.widget.TextView;
 import com.yo.android.R;
 import com.yo.android.model.denominations.Denominations;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -17,9 +18,9 @@ import butterknife.ButterKnife;
 
 public class DenominationItemViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.btn1)
+    @BindView(R.id.btn1)
     Button button;
-    @Bind(R.id.denomination_view)
+    @BindView(R.id.denomination_view)
     TextView denomination;
 
     public DenominationItemViewHolder(View itemView) {

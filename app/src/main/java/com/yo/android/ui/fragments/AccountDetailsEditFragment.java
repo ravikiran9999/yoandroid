@@ -27,7 +27,7 @@ import com.yo.android.util.Constants;
 
 import java.util.regex.Pattern;
 
-import butterknife.Bind;
+
 
 import static android.R.attr.id;
 

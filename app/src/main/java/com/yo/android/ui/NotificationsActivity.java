@@ -32,7 +32,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import retrofit2.Call;
@@ -46,15 +47,15 @@ public class NotificationsActivity extends BaseActivity implements SwipeRefreshL
 
     public static final String CLEAR = "clear";
 
-    @Bind(R.id.lv_notifications)
+    @BindView(R.id.lv_notifications)
     protected ListView lvNotifications;
-    @Bind(R.id.no_data)
+    @BindView(R.id.no_data)
     protected TextView noData;
-    @Bind(R.id.ll_no_notifications)
+    @BindView(R.id.ll_no_notifications)
     protected LinearLayout llNoNotifications;
-    @Bind(R.id.network_failure)
+    @BindView(R.id.network_failure)
     protected TextView networkFailureText;
-    @Bind(R.id.swipeContainer)
+    @BindView(R.id.swipeContainer)
     protected SwipeRefreshLayout swipeRefreshContainer;
 
     @Inject

@@ -6,18 +6,19 @@ import android.widget.TextView;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractViewHolder;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
  * Created by Ramesh on 9/7/16.
  */
 public class CallRatesCountryViewHolder extends AbstractViewHolder {
-    @Bind(R.id.txt_country)
+    @BindView(R.id.txt_country)
     TextView country;
-    @Bind(R.id.local_call_rate)
+    @BindView(R.id.local_call_rate)
     TextView localCallRate;
-    @Bind(R.id.global_call_rate)
+    @BindView(R.id.global_call_rate)
     TextView globalCallRate;
 
 

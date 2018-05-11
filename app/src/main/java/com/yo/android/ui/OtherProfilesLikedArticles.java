@@ -50,7 +50,8 @@ import java.util.ListIterator;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import se.emilsjolander.flipview.FlipView;
 
@@ -65,17 +66,17 @@ public class OtherProfilesLikedArticles extends BaseFragment implements OtherPeo
 
     @Inject
     YoApi.YoService yoService;
-    @Bind(R.id.refreshContainer)
+    @BindView(R.id.refreshContainer)
     SwipeRefreshLayout swipeRefreshContainer;
-    @Bind(R.id.txtEmptyArticals)
+    @BindView(R.id.txtEmptyArticals)
     public TextView noArticals;
-    @Bind(R.id.flipView_container)
+    @BindView(R.id.flipView_container)
     public FrameLayout flipContainer;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     public ProgressBar mProgress;
-    @Bind(R.id.tv_progress_text)
+    @BindView(R.id.tv_progress_text)
     public TextView tvProgressText;
-    @Bind(R.id.flip_view)
+    @BindView(R.id.flip_view)
     public FlipView flipView;
 
     public List<Articles> articlesList = new ArrayList<Articles>();

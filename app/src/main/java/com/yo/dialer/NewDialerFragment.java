@@ -45,7 +45,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
@@ -79,17 +80,17 @@ public class NewDialerFragment extends BaseFragment implements SharedPreferences
     private boolean isSharedPreferenceShown;
 
     // Used to show no call logs message on the view.
-    @Bind(R.id.ll_no_calls)
+    @BindView(R.id.ll_no_calls)
     LinearLayout llNoCalls;
 
     //While searching if there are no results show message using this view.
-    @Bind(R.id.no_search_results)
+    @BindView(R.id.no_search_results)
     protected TextView noSearchResult;
 
-    @Bind(R.id.listView)
+    @BindView(R.id.listView)
     ListView callLogListView;
 
-    @Bind(R.id.txtEmptyCallLogs)
+    @BindView(R.id.txtEmptyCallLogs)
     TextView txtEmptyCallLogs;
 
     //Used to read contact object based on nexge username.

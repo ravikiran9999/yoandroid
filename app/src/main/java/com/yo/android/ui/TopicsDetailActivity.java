@@ -42,7 +42,8 @@ import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import okhttp3.ResponseBody;
@@ -61,9 +62,9 @@ public class TopicsDetailActivity extends BaseActivity {
     @Inject
     @Named("login")
     protected PreferenceEndPoint preferenceEndPoint;
-    @Bind(R.id.tv_no_articles)
+    @BindView(R.id.tv_no_articles)
     public TextView tvNoArticles;
-    @Bind(R.id.flip_view)
+    @BindView(R.id.flip_view)
     public FlipView flipView;
     public List<Articles> articlesList = new ArrayList<Articles>();
     public MyBaseAdapter myBaseAdapter;

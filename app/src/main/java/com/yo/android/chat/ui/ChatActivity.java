@@ -45,7 +45,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import retrofit2.Call;
@@ -65,7 +65,7 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
     private String groupName;
     private String chatRoomId;
 
-    @Bind(R.id.progress_layout)
+    @BindView(R.id.progress_layout)
     RelativeLayout progressLayout;
 
     private TextView customTitle;

@@ -6,7 +6,8 @@ import android.widget.TextView;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractViewHolder;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -15,9 +16,9 @@ import butterknife.ButterKnife;
 
 public class WalletViewHolder extends AbstractViewHolder {
 
-    @Bind(R.id.txt_title_balance)
+    @BindView(R.id.txt_title_balance)
     TextView title;
-    @Bind(R.id.txt_balance)
+    @BindView(R.id.txt_balance)
     TextView balance;
 
     public WalletViewHolder(View view) {

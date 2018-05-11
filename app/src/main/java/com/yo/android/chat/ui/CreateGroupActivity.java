@@ -48,7 +48,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -68,13 +69,13 @@ public class CreateGroupActivity extends BaseActivity implements View.OnClickLis
     public static List<Contact> ContactsArrayList;
     File imgFile;
 
-    @Bind(R.id.imv_new_chat_group)
+    @BindView(R.id.imv_new_chat_group)
     ImageView groupImage;
-    @Bind(R.id.et_new_chat_group_name)
+    @BindView(R.id.et_new_chat_group_name)
     EditText groupName;
-    @Bind(R.id.add_contact)
+    @BindView(R.id.add_contact)
     TextView addContactIcon;
-    @Bind(R.id.selected_contacts_list)
+    @BindView(R.id.selected_contacts_list)
     ListView selectedList;
 
     @Inject

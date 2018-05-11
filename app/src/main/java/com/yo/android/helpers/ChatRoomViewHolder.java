@@ -7,7 +7,8 @@ import android.widget.TextView;
 import com.yo.android.R;
 import com.yo.android.adapters.AbstractViewHolder;
 
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -16,13 +17,13 @@ import butterknife.ButterKnife;
 
 public class ChatRoomViewHolder extends AbstractViewHolder {
 
-    @Bind(R.id.tv_opponent_name)
+    @BindView(R.id.tv_opponent_name)
     TextView opponentName;
-    @Bind(R.id.tv_time_stamp)
+    @BindView(R.id.tv_time_stamp)
     TextView timeStamp;
-    @Bind(R.id.tv_chat_message)
+    @BindView(R.id.tv_chat_message)
     TextView chat;
-    @Bind(R.id.imv_chat_room_pic)
+    @BindView(R.id.imv_chat_room_pic)
     ImageView chatRoomPic;
 
     public ChatRoomViewHolder(View view) {
