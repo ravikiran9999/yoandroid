@@ -460,9 +460,9 @@ public class ChatActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         EventBus.getDefault().post(new NotificationCountReset(0));
         EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     @Override

@@ -39,6 +39,7 @@ android {
         javaCompileOptions {
             annotationProcessorOptions {
                 includeCompileClasspath false
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()] // maintain database schema
             }
         }
 
@@ -262,6 +263,14 @@ dependencies {
     compile 'pub.devrel:easypermissions:0.3.0'
     compile 'com.android.support.constraint:constraint-layout:1.1.0'
     testCompile 'junit:junit:4.12'
+
+    // Room persistence
+    implementation "android.arch.persistence.room:runtime:$room_version"
+    annotationProcessor "android.arch.persistence.room:compiler:$room_version"
+    implementation "android.arch.persistence.room:rxjava2:$room_version"
+
+    //To view database files
+    debugImplementation 'com.amitshekhar.android:debug-db:1.0.3'
 }
 apply plugin: 'com.google.gms.google-services'
 

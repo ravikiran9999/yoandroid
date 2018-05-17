@@ -49,12 +49,20 @@ import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.chat.ui.CreateGroupActivity;
 import com.yo.android.database.RoomDao;
+import com.yo.android.database.RoomTypeConverters;
+import com.yo.android.database.idatabase.DataRepository;
+import com.yo.android.database.local.YoDataSource;
+import com.yo.android.database.local.YoDatabase;
+import com.yo.android.database.mapper.UserProfileMapper;
+import com.yo.android.database.mapper.UserRoomsMapper;
+import com.yo.android.database.model.UserRooms;
 import com.yo.android.helpers.PopupHelper;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.Contact;
 import com.yo.android.model.Popup;
 import com.yo.android.model.Room;
 import com.yo.android.model.RoomInfo;
+import com.yo.android.model.UserProfile;
 import com.yo.android.ui.BottomTabsActivity;
 import com.yo.android.util.Constants;
 import com.yo.android.util.DateUtil;
@@ -89,7 +97,7 @@ import de.greenrobot.event.EventBus;
  */
 public class ChatFragment extends BaseFragment implements AdapterView.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener, PopupDialogListener, SwipeRefreshLayout.OnRefreshListener {
 
-    private static final String TAG = "ChatFragment";
+    private static final String TAG = ChatFragment.class.getSimpleName();
     public static final int GROUP_CREATED = 100;
 
     @BindView(R.id.lv_chat_room)
@@ -113,6 +121,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
     private int executed;
     private int activeCount;
     private Room tempRoom;
+    private DataRepository dataRepository;
 
     Handler handler = new Handler();
 
@@ -152,6 +161,13 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         activeCount = 0;
         isShowDefault = false;
         roomsList = roomDao.getAll();
+
+        try {
+            YoDatabase yoDatabase = YoDatabase.getInstance(getActivity()); // create database
+            dataRepository = DataRepository.getInstance(YoDataSource.getInstance(yoDatabase.chatMessageDAO(), yoDatabase.userProfileDAO(), yoDatabase.roomDao()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -171,6 +187,7 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
         synchronized (this) {
             isRoomsExist(null);
         }
+
 
         return view;
     }
@@ -352,7 +369,23 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
 
                     firebaseUserRooms.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
+                        public void onDataChange(final DataSnapshot dataSnapshot) {
+                            new AsyncTask<Void, Void, Void>() {
+                                @Override
+                                protected Void doInBackground(Void... voids) {
+                                    UserProfile userProfile = dataSnapshot.child(Constants.PROFILE).getValue(com.yo.android.model.UserProfile.class);
+                                    try {
+                                        dataRepository.insertUserProfile(UserProfileMapper.map(userProfile, dataSnapshot.getKey()));
+                                        List<UserRooms> userRoomsList = UserRoomsMapper.map(dataSnapshot);
+                                        for(UserRooms userRooms : userRoomsList) {
+                                            dataRepository.insertUserRoom(userRooms);
+                                        }
+                                    }catch (Exception e) {
+
+                                    }
+                                    return null;
+                                }
+                            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
                             if (dataSnapshot.child(Constants.MY_ROOMS).exists()) {
                                 getAllRooms(swipeRefreshContainer, false);
@@ -617,13 +650,14 @@ public class ChatFragment extends BaseFragment implements AdapterView.OnItemClic
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.hasChild(Constants.ROOM_INFO)) {
                             Room mRoom = getMembersProfile(dataSnapshot);
+
                             if (mRoom != null && !arrayOfUsers.contains(mRoom)) {
                                 /*if(!mRoom.getMobileNumber().startsWith("+")) {
                                     mRoom.setMobileNumber("+" + mRoom.getMobileNumber());
                                 }*/
                                 arrayOfUsers.add(mRoom);
 
-                                roomDao.save(mRoom);
+                                //roomDao.save(mRoom);
                             }
 
                             /*if (activity != null) {

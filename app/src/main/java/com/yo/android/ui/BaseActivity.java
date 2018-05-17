@@ -167,9 +167,9 @@ public class BaseActivity extends ParentActivity {
     protected void onResume() {
         super.onResume();
 
-        if(isDeviceRooted(this)) {
+        /*if(isDeviceRooted(this)) {
             showRootedDeviceMessage();
-        }
+        }*/
 
     }
 

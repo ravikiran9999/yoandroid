@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -71,6 +72,10 @@ import com.yo.android.chat.firebase.ContactsSyncManager;
 import com.yo.android.chat.firebase.FirebaseService;
 import com.yo.android.chat.ui.ChatActivity;
 import com.yo.android.database.ChatMessageDao;
+import com.yo.android.database.idatabase.DataRepository;
+import com.yo.android.database.local.YoDataSource;
+import com.yo.android.database.local.YoDatabase;
+import com.yo.android.database.mapper.ChatMessageMapper;
 import com.yo.android.helpers.Helper;
 import com.yo.android.model.ChatMessage;
 import com.yo.android.model.RoomInfo;
@@ -143,7 +148,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     private int retryMessageCount = 0;
     private int falureCount = 0;
     private Share share;
-
+    private DataRepository dataRepository;
 
     @BindView(R.id.emojiView)
     ImageView emoji;
@@ -196,6 +201,14 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        try {
+            YoDatabase yoDatabase = YoDatabase.getInstance(getActivity()); // create database
+            dataRepository = DataRepository.getInstance(YoDataSource.getInstance(yoDatabase.chatMessageDAO(), yoDatabase.userProfileDAO(), yoDatabase.roomDao()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         Bundle bundle = this.getArguments();
         childRoomId = bundle.getString(Constants.CHAT_ROOM_ID);
         opponentNumber = bundle.getString(Constants.OPPONENT_PHONE_NUMBER);
@@ -224,6 +237,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mUpdateStatus = (UpdateStatus) getActivity();
+
     }
 
     @Override
@@ -1008,7 +1022,24 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
     public void onChildAdded(com.firebase.client.DataSnapshot dataSnapshot, String s) {
         try {
 
-            ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+            final ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+
+            new AsyncTask<Void, Void, Void>() {
+
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    try {
+                        dataRepository.insetChatMessage(ChatMessageMapper.map(chatMessage));
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+
+
             if (!chatMessageHashMap.keySet().contains(chatMessage.getMsgID())) {
 
                 chatMessageArray.add(chatMessage);
@@ -1105,6 +1136,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         forwardInt = 0;
     }
 
+    // Not using
     public void update(String voxUsername, String roomId) {
         Uri uri = YoAppContactContract.YoAppContactsEntry.CONTENT_URI;
         String where = YoAppContactContract.YoAppContactsEntry.COLUMN_NAME_PHONE_NUMBER + "=?";
@@ -1176,6 +1208,7 @@ public class UserChatFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
+    // Not using
     private void alarmManager() {
         Intent alarmIntent = new Intent(getActivity().getApplicationContext(), FirebaseService.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, alarmIntent, 0);
